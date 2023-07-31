@@ -1,9 +1,11 @@
 plugins {
-    id("java")
+    java
 }
 
 group = "com.xyzwps.lib"
-version = "unspecified"
+version = findProperty("lib.version")!!
+
+java.sourceCompatibility = JavaVersion.valueOf("VERSION_" + findProperty("lib.java.version"))
 
 repositories {
     mavenCentral()

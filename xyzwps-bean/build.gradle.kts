@@ -3,9 +3,9 @@ plugins {
 }
 
 group = "com.xyzwps.lib"
-version = "1.0-SNAPSHOT"
+version = findProperty("lib.version")!!
 
-java.sourceCompatibility = JavaVersion.VERSION_20
+java.sourceCompatibility = JavaVersion.valueOf("VERSION_" + findProperty("lib.java.version"))
 
 repositories {
     mavenCentral()
