@@ -1,13 +1,19 @@
 plugins {
     java
+    `maven-publish`
+    jacoco
+    id("me.champeau.jmh") version "0.7.1"
 }
 
 group = "com.xyzwps.lib"
 version = findProperty("lib.version")!!
-// TODO: 使用 properties 文件的写法太啰嗦了，想办法改成插件
+
 java.sourceCompatibility = JavaVersion.valueOf("VERSION_" + findProperty("lib.java.version"))
 
 repositories {
+    maven {
+        setUrl("https://maven.aliyun.com/repository/public/")
+    }
     mavenCentral()
 }
 
@@ -18,16 +24,20 @@ dependencies {
 
 tasks.test {
     useJUnitPlatform()
+    finalizedBy(tasks.jacocoTestReport)
 }
 
-tasks.withType<Test>().configureEach {
-    jvmArgs("--enable-preview")
+tasks.jacocoTestReport {
+    dependsOn(tasks.test)
 }
 
-tasks.withType<JavaCompile>().configureEach {
-    options.compilerArgs.add("--enable-preview")
+java {
+    withJavadocJar()
+    withSourcesJar()
 }
 
-tasks.withType<JavaExec>().configureEach {
-    jvmArgs("--enable-preview")
+jmh {
+    warmupIterations.set(1)
+    iterations.set(2)
+    fork.set(2)
 }
