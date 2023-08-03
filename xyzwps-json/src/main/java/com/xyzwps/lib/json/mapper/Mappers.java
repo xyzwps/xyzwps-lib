@@ -8,23 +8,27 @@ public final class Mappers {
     private final Map<Class<?>, Map<Class<?>, Mapper<?, ?>>> mappers = new HashMap<>();
 
     public Mappers() {
-        this
-                .add(new JsonDecimalAndBigDecimal())
-                .add(new JsonDecimalAndDouble())
-                .add(new JsonDecimalAndFloat())
-                .add(new JsonIntegerAndBigDecimal())
-                .add(new JsonIntegerAndBigInteger())
-                .add(new JsonIntegerAndDouble())
-                .add(new JsonIntegerAndFloat())
-                .add(new JsonIntegerAndBigInteger())
-                .add(new JsonIntegerAndLong())
-                .add(new JsonIntegerAndShort())
-                .add(new JsonStringAndString())
+        this.placeholder()
+                .add(new WithJsonDecimal.AndBigDecimal())
+                .add(new WithJsonDecimal.AndDouble())
+                .add(new WithJsonDecimal.AndFloat())
+                .add(new WithJsonInteger.AndBigDecimal())
+                .add(new WithJsonInteger.AndBigInteger())
+                .add(new WithJsonInteger.AndDouble())
+                .add(new WithJsonInteger.AndFloat())
+                .add(new WithJsonInteger.AndBigInteger())
+                .add(new WithJsonInteger.AndLong())
+                .add(new WithJsonInteger.AndShort())
+                .add(new WithJsonString.AndString())
         ;
     }
 
     public Mappers add(Mapper<?, ?> mapper) {
         getOrCreateMap(mapper.getValueType()).put(mapper.getElementType(), mapper);
+        return this;
+    }
+
+    private Mappers placeholder() {
         return this;
     }
 
