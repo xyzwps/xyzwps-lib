@@ -32,7 +32,9 @@ public final class TheMapper {
     }
 
     public <T> JsonObject toJsonObject(T t) {
-        return getJsonObjectMapper(t.getClass()).map(it -> ((Mapper<T, JsonObject>)it).toElement(t, this)).get();
+        // TODO: 处理 null
+        //noinspection unchecked
+        return getJsonObjectMapper(t.getClass()).map(it -> ((Mapper<T, JsonObject>) it).toElement(t, this)).orElse(null);
     }
 
     public <T> T parse(JsonElement element, Class<T> tClass) {
@@ -141,76 +143,5 @@ public final class TheMapper {
 
     private TheMapper placeholder() {
         return this;
-    }
-
-    public static void main(String[] args) {
-        var theMapper = new TheMapper()
-                .addJsonObjectMapper(new PersonMapper());
-
-        var person = new Person();
-        person.setId("id");
-
-        var json = theMapper.toJsonObject(person);
-        System.out.println("JSON: " + json);
-
-        var person2 = theMapper.parse(json, Person.class);
-        System.out.println("Person:" + person2);
-    }
-
-    public static class PersonMapper implements Mapper<Person, JsonObject> {
-
-        @Override
-        public Person toValue(JsonObject element, TheMapper m) {
-            var person = new Person();
-            person.setName(m.parse(element.get("name"), String.class));
-            person.setId(m.parse(element.get("id"), String.class));
-            return person;
-        }
-
-        @Override
-        public JsonObject toElement(Person person, TheMapper m) {
-            return new JsonObject()
-                    .put("name", person.getName())
-                    .put("id", person.getId());
-        }
-
-        @Override
-        public Class<Person> getValueType() {
-            return Person.class;
-        }
-
-        @Override
-        public Class<JsonObject> getElementType() {
-            return JsonObject.class;
-        }
-    }
-
-    public static class Person {
-        private String id;
-        private String name;
-
-        public String getId() {
-            return id;
-        }
-
-        public void setId(String id) {
-            this.id = id;
-        }
-
-        public String getName() {
-            return name;
-        }
-
-        public void setName(String name) {
-            this.name = name;
-        }
-
-        @Override
-        public String toString() {
-            return "Person{" +
-                    "id='" + id + '\'' +
-                    ", name='" + name + '\'' +
-                    '}';
-        }
     }
 }
