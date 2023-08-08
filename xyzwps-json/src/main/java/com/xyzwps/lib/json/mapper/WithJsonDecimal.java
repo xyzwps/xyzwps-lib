@@ -13,8 +13,13 @@ class WithJsonDecimal {
         }
 
         @Override
-        public BigDecimal toValue(JsonDecimal element) {
+        public BigDecimal toValue(JsonDecimal element, TheMapper m) {
             return element.value();
+        }
+
+        @Override
+        public JsonDecimal toElement(BigDecimal bigDecimal, TheMapper m) {
+            return new JsonDecimal(bigDecimal);
         }
     }
 
@@ -25,8 +30,13 @@ class WithJsonDecimal {
         }
 
         @Override
-        public Double toValue(JsonDecimal element) {
+        public Double toValue(JsonDecimal element, TheMapper m) {
             return element.value().doubleValue();
+        }
+
+        @Override
+        public JsonDecimal toElement(Double aDouble, TheMapper m) {
+            return new JsonDecimal(BigDecimal.valueOf(aDouble));
         }
     }
 
@@ -37,8 +47,13 @@ class WithJsonDecimal {
         }
 
         @Override
-        public Float toValue(JsonDecimal element) {
+        public Float toValue(JsonDecimal element, TheMapper m) {
             return element.value().floatValue();
+        }
+
+        @Override
+        public JsonDecimal toElement(Float aFloat, TheMapper m) {
+            return new JsonDecimal(BigDecimal.valueOf(aFloat));
         }
     }
 }

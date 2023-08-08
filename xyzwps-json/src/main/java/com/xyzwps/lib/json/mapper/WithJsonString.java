@@ -10,8 +10,13 @@ class WithJsonString {
         }
 
         @Override
-        public String toValue(JsonString element) {
+        public String toValue(JsonString element, TheMapper m) {
             return element.value();
+        }
+
+        @Override
+        public JsonString toElement(String s, TheMapper m) {
+            return new JsonString(s);
         }
     }
 }

@@ -6,6 +6,7 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 
 class WithJsonInteger {
+
     public static class AndBigDecimal extends BaseMapper<BigDecimal, JsonInteger> {
 
         protected AndBigDecimal() {
@@ -13,8 +14,13 @@ class WithJsonInteger {
         }
 
         @Override
-        public BigDecimal toValue(JsonInteger element) {
+        public BigDecimal toValue(JsonInteger element, TheMapper m) {
             return new BigDecimal(element.value());
+        }
+
+        @Override
+        public JsonInteger toElement(BigDecimal bigDecimal, TheMapper m) {
+            return new JsonInteger(bigDecimal.toBigInteger());
         }
     }
 
@@ -25,8 +31,13 @@ class WithJsonInteger {
         }
 
         @Override
-        public BigInteger toValue(JsonInteger element) {
+        public BigInteger toValue(JsonInteger element, TheMapper m) {
             return element.value();
+        }
+
+        @Override
+        public JsonInteger toElement(BigInteger bigInteger, TheMapper m) {
+            return new JsonInteger(bigInteger);
         }
     }
 
@@ -37,8 +48,13 @@ class WithJsonInteger {
         }
 
         @Override
-        public Double toValue(JsonInteger element) {
+        public Double toValue(JsonInteger element, TheMapper m) {
             return element.value().doubleValue();
+        }
+
+        @Override
+        public JsonInteger toElement(Double aDouble, TheMapper m) {
+            return new JsonInteger(BigInteger.valueOf(aDouble.longValue()));
         }
     }
 
@@ -49,8 +65,13 @@ class WithJsonInteger {
         }
 
         @Override
-        public Float toValue(JsonInteger element) {
+        public Float toValue(JsonInteger element, TheMapper m) {
             return element.value().floatValue();
+        }
+
+        @Override
+        public JsonInteger toElement(Float aFloat, TheMapper m) {
+            return new JsonInteger(BigInteger.valueOf(aFloat.longValue()));
         }
     }
 
@@ -61,8 +82,13 @@ class WithJsonInteger {
         }
 
         @Override
-        public Integer toValue(JsonInteger element) {
+        public Integer toValue(JsonInteger element, TheMapper m) {
             return element.value().intValue();
+        }
+
+        @Override
+        public JsonInteger toElement(Integer integer, TheMapper m) {
+            return new JsonInteger(BigInteger.valueOf(integer));
         }
     }
 
@@ -73,8 +99,13 @@ class WithJsonInteger {
         }
 
         @Override
-        public Long toValue(JsonInteger element) {
+        public Long toValue(JsonInteger element, TheMapper m) {
             return element.value().longValue();
+        }
+
+        @Override
+        public JsonInteger toElement(Long aLong, TheMapper m) {
+            return new JsonInteger(BigInteger.valueOf(aLong));
         }
     }
 
@@ -85,8 +116,13 @@ class WithJsonInteger {
         }
 
         @Override
-        public Short toValue(JsonInteger element) {
+        public Short toValue(JsonInteger element, TheMapper m) {
             return element.value().shortValue();
+        }
+
+        @Override
+        public JsonInteger toElement(Short aShort, TheMapper m) {
+            return new JsonInteger(BigInteger.valueOf(aShort));
         }
     }
 }

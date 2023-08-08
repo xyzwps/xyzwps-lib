@@ -10,6 +10,15 @@ public final class JsonObject implements JsonElement {
         this.map.put(property, element);
     }
 
+    public JsonElement get(String property) {
+        return this.map.get(property);
+    }
+
+    public JsonObject put(String property, String str) {
+        this.map.put(property, str == null ? JsonNull.INSTANCE : new JsonString(str));
+        return this;
+    }
+
     @Override
     public String toString() {
         var sb = new StringBuilder().append('{');
