@@ -289,6 +289,9 @@ public final class Dollar {
             return result;
         }
 
+        // TODO: last
+        // TODO: tail
+
         /**
          * Mapping a list of elements to another.
          *
