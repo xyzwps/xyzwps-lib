@@ -1,6 +1,7 @@
 package com.xyzwps.lib.json.mapper;
 
 import com.xyzwps.lib.json.element.*;
+import com.xyzwps.lib.json.mapper.builtin.*;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -13,6 +14,23 @@ public final class TheMapper {
 
     public TheMapper() {
         this.placeholder()
+                // Boolean
+                .addJsonBooleanMapper(BooleanMappers.JSON_BOOLEAN)
+                .addJsonIntegerMapper(BooleanMappers.JSON_INTEGER)
+                // Integer
+                .addJsonIntegerMapper(IntegerMappers.JSON_INTEGER)
+                .addJsonStringMapper(IntegerMappers.JSON_STRING)
+                // Short
+                .addJsonIntegerMapper(ShortMappers.JSON_INTEGER)
+                .addJsonStringMapper(ShortMappers.JSON_STRING)
+                // Long
+                .addJsonIntegerMapper(LongMappers.JSON_INTEGER)
+                .addJsonStringMapper(LongMappers.JSON_STRING)
+                // String
+                .addJsonStringMapper(StringMappers.JSON_STRING)
+                .addJsonIntegerMapper(StringMappers.JSON_INTEGER)
+                .addJsonBooleanMapper(StringMappers.JSON_BOOLEAN)
+                .addJsonDecimalMapper(StringMappers.JSON_DECIMAL)
 
                 .addJsonDecimalMapper(new WithJsonDecimal.AndBigDecimal())
                 .addJsonDecimalMapper(new WithJsonDecimal.AndDouble())
