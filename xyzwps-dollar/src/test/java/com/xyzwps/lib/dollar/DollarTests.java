@@ -538,19 +538,19 @@ class DollarTests {
     @Test
     void mapOf() {
         {
-            Map<Integer, Integer> map = Dollar.$.mapOf();
+            Map<Integer, Integer> map = $.mapOf();
             assertEquals(0, map.size());
             assertTrue(map instanceof HashMap); // HashMap preferred
         }
         {
-            Map<Integer, Integer> map = Dollar.$.mapOf(1, 1);
+            Map<Integer, Integer> map = $.mapOf(1, 1);
             assertEquals(1, map.size());
 
             assertEquals(1, map.get(1));
             assertTrue(map instanceof HashMap); // HashMap preferred
         }
         {
-            Map<Integer, Integer> map = Dollar.$.mapOf(1, 1, 2, 2);
+            Map<Integer, Integer> map = $.mapOf(1, 1, 2, 2);
             assertEquals(2, map.size());
 
             assertEquals(1, map.get(1));
@@ -558,7 +558,7 @@ class DollarTests {
             assertTrue(map instanceof HashMap); // HashMap preferred
         }
         {
-            Map<Integer, Integer> map = Dollar.$.mapOf(1, 1, 2, 2, 3, 3);
+            Map<Integer, Integer> map = $.mapOf(1, 1, 2, 2, 3, 3);
             assertEquals(3, map.size());
 
             assertEquals(1, map.get(1));
@@ -567,7 +567,7 @@ class DollarTests {
             assertTrue(map instanceof HashMap); // HashMap preferred
         }
         {
-            Map<Integer, Integer> map = Dollar.$.mapOf(1, 1, 2, 2, 3, 3, 4, 4);
+            Map<Integer, Integer> map = $.mapOf(1, 1, 2, 2, 3, 3, 4, 4);
             assertEquals(4, map.size());
 
             assertEquals(1, map.get(1));
@@ -577,7 +577,7 @@ class DollarTests {
             assertTrue(map instanceof HashMap); // HashMap preferred
         }
         {
-            Map<Integer, Integer> map = Dollar.$.mapOf(1, 1, 2, 2, 3, 3, 4, 4, 5, 5);
+            Map<Integer, Integer> map = $.mapOf(1, 1, 2, 2, 3, 3, 4, 4, 5, 5);
             assertEquals(5, map.size());
 
             assertEquals(1, map.get(1));
@@ -588,7 +588,7 @@ class DollarTests {
             assertTrue(map instanceof HashMap); // HashMap preferred
         }
         {
-            Map<Integer, Integer> map = Dollar.$.mapOf(1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6);
+            Map<Integer, Integer> map = $.mapOf(1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6);
             assertEquals(6, map.size());
 
             assertEquals(1, map.get(1));
@@ -600,7 +600,7 @@ class DollarTests {
             assertTrue(map instanceof HashMap); // HashMap preferred
         }
         {
-            Map<Integer, Integer> map = Dollar.$.mapOf(1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7);
+            Map<Integer, Integer> map = $.mapOf(1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7);
             assertEquals(7, map.size());
 
             assertEquals(1, map.get(1));
@@ -613,7 +613,7 @@ class DollarTests {
             assertTrue(map instanceof HashMap); // HashMap preferred
         }
         {
-            Map<Integer, Integer> map = Dollar.$.mapOf(1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8);
+            Map<Integer, Integer> map = $.mapOf(1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8);
             assertEquals(8, map.size());
 
             assertEquals(1, map.get(1));
@@ -627,7 +627,7 @@ class DollarTests {
             assertTrue(map instanceof HashMap); // HashMap preferred
         }
         {
-            Map<Integer, Integer> map = Dollar.$.mapOf(1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9);
+            Map<Integer, Integer> map = $.mapOf(1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9);
             assertEquals(9, map.size());
 
             assertEquals(1, map.get(1));
@@ -642,7 +642,7 @@ class DollarTests {
             assertTrue(map instanceof HashMap); // HashMap preferred
         }
         {
-            Map<Integer, Integer> map = Dollar.$.mapOf(1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 10, 10);
+            Map<Integer, Integer> map = $.mapOf(1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 10, 10);
             assertEquals(10, map.size());
 
             assertEquals(1, map.get(1));
@@ -738,86 +738,86 @@ class DollarTests {
 
     @Test
     void pad() {
-        assertThrows(IllegalArgumentException.class, () -> Dollar.$.pad("", -1, " "));
+        assertThrows(IllegalArgumentException.class, () -> $.pad("", -1, " "));
 
-        assertEquals("      ", Dollar.$.pad(null, 6, null));
-        assertEquals("      ", Dollar.$.pad(null, 6, ""));
-        assertEquals("      ", Dollar.$.pad(null, 6, " "));
-        assertEquals("aaaaaa", Dollar.$.pad(null, 6, "a"));
-        assertEquals("ababab", Dollar.$.pad(null, 6, "ab"));
-        assertEquals("abcdab", Dollar.$.pad(null, 6, "abcd"));
+        assertEquals("      ", $.pad(null, 6, null));
+        assertEquals("      ", $.pad(null, 6, ""));
+        assertEquals("      ", $.pad(null, 6, " "));
+        assertEquals("aaaaaa", $.pad(null, 6, "a"));
+        assertEquals("ababab", $.pad(null, 6, "ab"));
+        assertEquals("abcdab", $.pad(null, 6, "abcd"));
 
-        assertEquals("      ", Dollar.$.pad("", 6, null));
-        assertEquals("      ", Dollar.$.pad("", 6, ""));
-        assertEquals("      ", Dollar.$.pad("", 6, " "));
-        assertEquals("aaaaaa", Dollar.$.pad("", 6, "a"));
-        assertEquals("ababab", Dollar.$.pad("", 6, "ab"));
-        assertEquals("abcdab", Dollar.$.pad("", 6, "abcd"));
+        assertEquals("      ", $.pad("", 6, null));
+        assertEquals("      ", $.pad("", 6, ""));
+        assertEquals("      ", $.pad("", 6, " "));
+        assertEquals("aaaaaa", $.pad("", 6, "a"));
+        assertEquals("ababab", $.pad("", 6, "ab"));
+        assertEquals("abcdab", $.pad("", 6, "abcd"));
 
-        assertEquals(" +++  ", Dollar.$.pad("+++", 6, null));
-        assertEquals(" +++  ", Dollar.$.pad("+++", 6, ""));
-        assertEquals(" +++  ", Dollar.$.pad("+++", 6, " "));
-        assertEquals("a+++aa", Dollar.$.pad("+++", 6, "a"));
-        assertEquals("a+++ba", Dollar.$.pad("+++", 6, "ab"));
-        assertEquals("a+++bc", Dollar.$.pad("+++", 6, "abcd"));
+        assertEquals(" +++  ", $.pad("+++", 6, null));
+        assertEquals(" +++  ", $.pad("+++", 6, ""));
+        assertEquals(" +++  ", $.pad("+++", 6, " "));
+        assertEquals("a+++aa", $.pad("+++", 6, "a"));
+        assertEquals("a+++ba", $.pad("+++", 6, "ab"));
+        assertEquals("a+++bc", $.pad("+++", 6, "abcd"));
 
-        assertEquals("+++---***", Dollar.$.pad("+++---***", 6, "abcd"));
+        assertEquals("+++---***", $.pad("+++---***", 6, "abcd"));
     }
 
     @Test
     void padEnd() {
-        assertThrows(IllegalArgumentException.class, () -> Dollar.$.padEnd("", -1, " "));
+        assertThrows(IllegalArgumentException.class, () -> $.padEnd("", -1, " "));
 
-        assertEquals("      ", Dollar.$.padEnd(null, 6, null));
-        assertEquals("      ", Dollar.$.padEnd(null, 6, ""));
-        assertEquals("      ", Dollar.$.padEnd(null, 6, " "));
-        assertEquals("aaaaaa", Dollar.$.padEnd(null, 6, "a"));
-        assertEquals("ababab", Dollar.$.padEnd(null, 6, "ab"));
-        assertEquals("abcdab", Dollar.$.padEnd(null, 6, "abcd"));
+        assertEquals("      ", $.padEnd(null, 6, null));
+        assertEquals("      ", $.padEnd(null, 6, ""));
+        assertEquals("      ", $.padEnd(null, 6, " "));
+        assertEquals("aaaaaa", $.padEnd(null, 6, "a"));
+        assertEquals("ababab", $.padEnd(null, 6, "ab"));
+        assertEquals("abcdab", $.padEnd(null, 6, "abcd"));
 
-        assertEquals("      ", Dollar.$.padEnd("", 6, null));
-        assertEquals("      ", Dollar.$.padEnd("", 6, ""));
-        assertEquals("      ", Dollar.$.padEnd("", 6, " "));
-        assertEquals("aaaaaa", Dollar.$.padEnd("", 6, "a"));
-        assertEquals("ababab", Dollar.$.padEnd("", 6, "ab"));
-        assertEquals("abcdab", Dollar.$.padEnd("", 6, "abcd"));
+        assertEquals("      ", $.padEnd("", 6, null));
+        assertEquals("      ", $.padEnd("", 6, ""));
+        assertEquals("      ", $.padEnd("", 6, " "));
+        assertEquals("aaaaaa", $.padEnd("", 6, "a"));
+        assertEquals("ababab", $.padEnd("", 6, "ab"));
+        assertEquals("abcdab", $.padEnd("", 6, "abcd"));
 
-        assertEquals("+++   ", Dollar.$.padEnd("+++", 6, null));
-        assertEquals("+++   ", Dollar.$.padEnd("+++", 6, ""));
-        assertEquals("+++   ", Dollar.$.padEnd("+++", 6, " "));
-        assertEquals("+++aaa", Dollar.$.padEnd("+++", 6, "a"));
-        assertEquals("+++aba", Dollar.$.padEnd("+++", 6, "ab"));
-        assertEquals("+++abc", Dollar.$.padEnd("+++", 6, "abcd"));
+        assertEquals("+++   ", $.padEnd("+++", 6, null));
+        assertEquals("+++   ", $.padEnd("+++", 6, ""));
+        assertEquals("+++   ", $.padEnd("+++", 6, " "));
+        assertEquals("+++aaa", $.padEnd("+++", 6, "a"));
+        assertEquals("+++aba", $.padEnd("+++", 6, "ab"));
+        assertEquals("+++abc", $.padEnd("+++", 6, "abcd"));
 
-        assertEquals("+++---***", Dollar.$.padEnd("+++---***", 6, "abcd"));
+        assertEquals("+++---***", $.padEnd("+++---***", 6, "abcd"));
     }
 
     @Test
     void padStart() {
-        assertThrows(IllegalArgumentException.class, () -> Dollar.$.padStart("", -1, " "));
+        assertThrows(IllegalArgumentException.class, () -> $.padStart("", -1, " "));
 
-        assertEquals("      ", Dollar.$.padStart(null, 6, null));
-        assertEquals("      ", Dollar.$.padStart(null, 6, ""));
-        assertEquals("      ", Dollar.$.padStart(null, 6, " "));
-        assertEquals("aaaaaa", Dollar.$.padStart(null, 6, "a"));
-        assertEquals("ababab", Dollar.$.padStart(null, 6, "ab"));
-        assertEquals("abcdab", Dollar.$.padStart(null, 6, "abcd"));
+        assertEquals("      ", $.padStart(null, 6, null));
+        assertEquals("      ", $.padStart(null, 6, ""));
+        assertEquals("      ", $.padStart(null, 6, " "));
+        assertEquals("aaaaaa", $.padStart(null, 6, "a"));
+        assertEquals("ababab", $.padStart(null, 6, "ab"));
+        assertEquals("abcdab", $.padStart(null, 6, "abcd"));
 
-        assertEquals("      ", Dollar.$.padStart("", 6, null));
-        assertEquals("      ", Dollar.$.padStart("", 6, ""));
-        assertEquals("      ", Dollar.$.padStart("", 6, " "));
-        assertEquals("aaaaaa", Dollar.$.padStart("", 6, "a"));
-        assertEquals("ababab", Dollar.$.padStart("", 6, "ab"));
-        assertEquals("abcdab", Dollar.$.padStart("", 6, "abcd"));
+        assertEquals("      ", $.padStart("", 6, null));
+        assertEquals("      ", $.padStart("", 6, ""));
+        assertEquals("      ", $.padStart("", 6, " "));
+        assertEquals("aaaaaa", $.padStart("", 6, "a"));
+        assertEquals("ababab", $.padStart("", 6, "ab"));
+        assertEquals("abcdab", $.padStart("", 6, "abcd"));
 
-        assertEquals("   +++", Dollar.$.padStart("+++", 6, null));
-        assertEquals("   +++", Dollar.$.padStart("+++", 6, ""));
-        assertEquals("   +++", Dollar.$.padStart("+++", 6, " "));
-        assertEquals("aaa+++", Dollar.$.padStart("+++", 6, "a"));
-        assertEquals("aba+++", Dollar.$.padStart("+++", 6, "ab"));
-        assertEquals("abc+++", Dollar.$.padStart("+++", 6, "abcd"));
+        assertEquals("   +++", $.padStart("+++", 6, null));
+        assertEquals("   +++", $.padStart("+++", 6, ""));
+        assertEquals("   +++", $.padStart("+++", 6, " "));
+        assertEquals("aaa+++", $.padStart("+++", 6, "a"));
+        assertEquals("aba+++", $.padStart("+++", 6, "ab"));
+        assertEquals("abc+++", $.padStart("+++", 6, "abcd"));
 
-        assertEquals("+++---***", Dollar.$.padStart("+++---***", 6, "abcd"));
+        assertEquals("+++---***", $.padStart("+++---***", 6, "abcd"));
     }
 
     @Test
