@@ -289,8 +289,25 @@ public final class Dollar {
             return result;
         }
 
-        // TODO: last
-        // TODO: tail
+        /**
+         * Get the last element of a {@link List}.
+         *
+         * @param list to be handled
+         * @param <T>  the element type of list
+         * @return empty if list is empty or the last element of list is null.
+         */
+        public static <T> Optional<T> last(List<T> list) {
+            return $.isEmpty(list)
+                    ? Optional.empty()
+                    : Optional.ofNullable(list.get(list.size() - 1));
+        }
+
+        /**
+         * Alias of {@link #last(List)}.
+         */
+        public static <T> Optional<T> tail(List<T> list) {
+            return last(list);
+        }
 
         /**
          * Mapping a list of elements to another.

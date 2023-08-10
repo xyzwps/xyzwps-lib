@@ -820,5 +820,15 @@ class DollarTests {
         assertEquals("+++---***", Dollar.$.padStart("+++---***", 6, "abcd"));
     }
 
+    @Test
+    void lastAndTail() {
+        assertTrue($.last(null).isEmpty());
+        assertTrue($.tail(null).isEmpty());
 
+        assertEquals($.tail($.listOf(1, 2, 3)).orElse(-1), 3);
+        assertEquals($.last($.listOf(1, 2, 3)).orElse(-1), 3);
+
+        assertTrue($.last($.listOf(1, 2, null)).isEmpty());
+        assertTrue($.tail($.listOf(1, 2, null)).isEmpty());
+    }
 }
