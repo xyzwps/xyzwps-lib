@@ -1172,6 +1172,47 @@ public final class Dollar {
             return list;
         }
 
+        public static final String EMPTY_STRING = "";
+
+        /**
+         * Take the substring made up of the first <tt>n</tt> characters.
+         *
+         * @param str the string to take
+         * @param n   substring length
+         * @return the substring made up of the first <tt>n</tt> characters.
+         */
+        public static String take(final String str, final int n) {
+            if (n < 0) {
+                throw new IllegalArgumentException("n should be greater than or equal to 0");
+            }
+
+            if (str == null || n == 0) {
+                return EMPTY_STRING;
+            }
+
+            return str.length() < n ? str : str.substring(0, n);
+        }
+
+        /**
+         * Take the substring made up of the last <tt>n</tt> characters.
+         *
+         * @param str the string to take
+         * @param n   substring length
+         * @return the substring made up of the last <tt>n</tt> characters.
+         */
+        public static String takeRight(final String str, final int n) {
+            if (n < 0) {
+                throw new IllegalArgumentException("n should be greater than or equal to 0");
+            }
+
+            if (str == null || n == 0) {
+                return EMPTY_STRING;
+            }
+
+            var len = str.length();
+            return len < n ? str : str.substring(len - n, len);
+        }
+
         /**
          * Take elements from iterable until the first element predicated to be false is found.
          *

@@ -129,7 +129,7 @@ class DollarTests {
     }
 
     @Test
-    void take() {
+    void take_list() {
         {
             List<Integer> list = $.take($.listOf(1, 2, 3, 4), 2);
             assertEquals("[1, 2]", list.toString());
@@ -145,6 +145,36 @@ class DollarTests {
             assertEquals("[1, 2, 3]", list.toString());
             assertTrue(list instanceof ArrayList); // ArrayList preferred
         }
+    }
+
+    @Test
+    void take_string() {
+        for (int i = -100; i < 0; i++) {
+            final int n = i;
+            assertThrows(IllegalArgumentException.class, () -> $.take("a", n));
+        }
+
+        assertEquals($.EMPTY_STRING, $.take((String) null, 100));
+        assertEquals($.EMPTY_STRING, $.take("100", 0));
+
+        assertEquals("abc", $.take("abcdefg", 3));
+        assertEquals("abc", $.take("abc", 3));
+        assertEquals("abc", $.take("abc", 100));
+    }
+
+    @Test
+    void takeRight_string() {
+        for (int i = -100; i < 0; i++) {
+            final int n = i;
+            assertThrows(IllegalArgumentException.class, () -> $.takeRight("a", n));
+        }
+
+        assertEquals($.EMPTY_STRING, $.takeRight((String) null, 100));
+        assertEquals($.EMPTY_STRING, $.takeRight("100", 0));
+
+        assertEquals("efg", $.takeRight("abcdefg", 3));
+        assertEquals("abc", $.takeRight("abc", 3));
+        assertEquals("abc", $.takeRight("abc", 100));
     }
 
     @Test
