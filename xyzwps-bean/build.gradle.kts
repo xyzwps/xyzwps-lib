@@ -1,5 +1,6 @@
 plugins {
     java
+    groovy
 }
 
 group = "com.xyzwps.lib"
@@ -14,6 +15,7 @@ repositories {
 dependencies {
     testImplementation(platform("org.junit:junit-bom:5.9.1"))
     testImplementation("org.junit.jupiter:junit-jupiter")
+    testImplementation("org.apache.groovy:groovy:4.0.13")
 }
 
 tasks.test {

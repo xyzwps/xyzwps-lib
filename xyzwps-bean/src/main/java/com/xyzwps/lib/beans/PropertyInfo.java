@@ -1,5 +1,6 @@
 package com.xyzwps.lib.beans;
 
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -53,8 +54,53 @@ public class PropertyInfo {
         return getterInfo.get(object);
     }
 
+    public <T> T getPropertyOrThrow(Object object, Class<T> tClass) {
+        Objects.requireNonNull(object);
+        Objects.requireNonNull(tClass);
+        return switch (getterInfo.get(object)) {
+            case GetResult.NoSuchProperty ignored -> throw new NoSuchPropertyException(this);
+            case GetResult.Failed failed -> throw new UnhandledBeanException(failed.cause());
+            case GetResult.NotReadable ignored -> throw new PropertyIsNotReadableException(this);
+            case GetResult.Ok ok -> {
+                var value = ok.value();
+                if (fixType(tClass).isAssignableFrom(value.getClass())) {
+                    yield (T) value;
+                } else {
+                    throw new PropertyCaseException(this, tClass);
+                }
+            }
+        };
+    }
+
+    private static Class<?> fixType(Class<?> t) {
+        return primitiveToWrapper.getOrDefault(t, t);
+    }
+
+    private static final Map<Class<?>, Class<?>> primitiveToWrapper = Map.of(
+            boolean.class, Boolean.class,
+            short.class, Short.class,
+            int.class, Integer.class,
+            long.class, Long.class,
+            float.class, Float.class,
+            double.class, Double.class,
+            byte.class, Byte.class,
+            char.class, Character.class
+    );
+
     public SetResult setProperty(Object object, Object value) {
+        // TODO: 处理 short 等原生类型
         return setterInfo.set(object, value);
+    }
+
+    public void setPropertyOrThrow(Object object, Object value) {
+        Objects.requireNonNull(object);
+        switch (setterInfo.set(object, value)) {
+            case SetResult.Failed failed -> throw new UnhandledBeanException(failed.cause());
+            case SetResult.NoSuchProperty ignored -> throw new NoSuchPropertyException(this);
+            case SetResult.NotWritable ignored -> throw new PropertyIsNotWritableException(this);
+            case SetResult.Ok ignored -> {
+            }
+        }
     }
 
     public AnnotationsInfo getAnnotations() {
