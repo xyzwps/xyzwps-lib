@@ -54,6 +54,7 @@ public class PropertyInfo {
         return getterInfo.get(object);
     }
 
+    @SuppressWarnings("unchecked")
     public <T> T getPropertyOrThrow(Object object, Class<T> tClass) {
         Objects.requireNonNull(object);
         Objects.requireNonNull(tClass);
@@ -63,29 +64,14 @@ public class PropertyInfo {
             case GetResult.NotReadable ignored -> throw new PropertyIsNotReadableException(this);
             case GetResult.Ok ok -> {
                 var value = ok.value();
-                if (fixType(tClass).isAssignableFrom(value.getClass())) {
-                    yield (T) value;
-                } else {
+                try {
+                    yield (T) TryBestToGetProperty.INSTANCE.tryToGet(this.propertyType, tClass, value);
+                } catch (Exception e) {
                     throw new PropertyCaseException(this, tClass);
                 }
             }
         };
     }
-
-    private static Class<?> fixType(Class<?> t) {
-        return primitiveToWrapper.getOrDefault(t, t);
-    }
-
-    private static final Map<Class<?>, Class<?>> primitiveToWrapper = Map.of(
-            boolean.class, Boolean.class,
-            short.class, Short.class,
-            int.class, Integer.class,
-            long.class, Long.class,
-            float.class, Float.class,
-            double.class, Double.class,
-            byte.class, Byte.class,
-            char.class, Character.class
-    );
 
     private static final Map<Class<?>, Object> primitiveDefaultValues = Map.of(
             boolean.class, false,
@@ -98,52 +84,9 @@ public class PropertyInfo {
             char.class, (char) 0
     );
 
-    private Object convertPrimitiveValues(Object object) {
-        if (object == null) {
-            return primitiveDefaultValues.get(this.propertyType);
-        }
-
-        if (this.propertyType.equals(boolean.class)) {
-            return object;
-        }
-
-        if (this.propertyType.equals(short.class)) {
-            if (object instanceof Number n) return n.shortValue();
-            return object;
-        }
-
-        if (this.propertyType.equals(int.class)) {
-            if (object instanceof Number n) return n.intValue();
-            return object;
-        }
-
-        if (this.propertyType.equals(long.class)) {
-            if (object instanceof Number n) return n.longValue();
-            return object;
-        }
-
-        if (this.propertyType.equals(float.class)) {
-            if (object instanceof Number n) return n.floatValue();
-            return object;
-        }
-
-        if (this.propertyType.equals(double.class)) {
-            if (object instanceof Number n) return n.doubleValue();
-            return object;
-        }
-
-        if (this.propertyType.equals(char.class)) {
-            if (object instanceof CharSequence seq && seq.length() == 1) {
-                return seq.charAt(0);
-            }
-            return object;
-        }
-
-        return object;
-    }
 
     public SetResult setProperty(Object object, Object value) {
-        return setterInfo.set(object, convertPrimitiveValues(value));
+        return setterInfo.set(object, TryBestToSetProperty.INSTANCE.convertToSet(this.propertyType, value));
     }
 
     public void setPropertyOrThrow(Object object, Object value) {
