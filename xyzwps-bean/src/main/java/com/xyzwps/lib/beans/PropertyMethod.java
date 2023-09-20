@@ -1,5 +1,6 @@
 package com.xyzwps.lib.beans;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 public sealed interface PropertyMethod {
@@ -20,7 +21,7 @@ public sealed interface PropertyMethod {
             try {
                 this.method.invoke(object, value);
                 return SetResult.OK;
-            } catch (Exception e) {
+            } catch (InvocationTargetException | IllegalAccessException | IllegalArgumentException e) {
                 return SetResult.failed(e);
             }
         }

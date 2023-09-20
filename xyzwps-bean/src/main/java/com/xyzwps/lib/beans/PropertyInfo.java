@@ -87,14 +87,68 @@ public class PropertyInfo {
             char.class, Character.class
     );
 
+    private static final Map<Class<?>, Object> primitiveDefaultValues = Map.of(
+            boolean.class, false,
+            short.class, (short) 0,
+            int.class, 0,
+            long.class, 0L,
+            float.class, 0.0f,
+            double.class, 0.0,
+            byte.class, (byte) 0,
+            char.class, (char) 0
+    );
+
+    private Object convertPrimitiveValues(Object object) {
+        if (object == null) {
+            return primitiveDefaultValues.get(this.propertyType);
+        }
+
+        if (this.propertyType.equals(boolean.class)) {
+            return object;
+        }
+
+        if (this.propertyType.equals(short.class)) {
+            if (object instanceof Number n) return n.shortValue();
+            return object;
+        }
+
+        if (this.propertyType.equals(int.class)) {
+            if (object instanceof Number n) return n.intValue();
+            return object;
+        }
+
+        if (this.propertyType.equals(long.class)) {
+            if (object instanceof Number n) return n.longValue();
+            return object;
+        }
+
+        if (this.propertyType.equals(float.class)) {
+            if (object instanceof Number n) return n.floatValue();
+            return object;
+        }
+
+        if (this.propertyType.equals(double.class)) {
+            if (object instanceof Number n) return n.doubleValue();
+            return object;
+        }
+
+        if (this.propertyType.equals(char.class)) {
+            if (object instanceof CharSequence seq && seq.length() == 1) {
+                return seq.charAt(0);
+            }
+            return object;
+        }
+
+        return object;
+    }
+
     public SetResult setProperty(Object object, Object value) {
-        // TODO: 处理 short 等原生类型
-        return setterInfo.set(object, value);
+        return setterInfo.set(object, convertPrimitiveValues(value));
     }
 
     public void setPropertyOrThrow(Object object, Object value) {
         Objects.requireNonNull(object);
-        switch (setterInfo.set(object, value)) {
+        switch (this.setProperty(object, value)) {
             case SetResult.Failed failed -> throw new UnhandledBeanException(failed.cause());
             case SetResult.NoSuchProperty ignored -> throw new NoSuchPropertyException(this);
             case SetResult.NotWritable ignored -> throw new PropertyIsNotWritableException(this);
@@ -102,6 +156,7 @@ public class PropertyInfo {
             }
         }
     }
+
 
     public AnnotationsInfo getAnnotations() {
         return annotations;

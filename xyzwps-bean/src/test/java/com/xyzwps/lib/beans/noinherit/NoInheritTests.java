@@ -87,10 +87,8 @@ class NoInheritTests {
         assertEquals(100, (Integer) BeanUtils.getPropertyOrNull(person, "height"));
 
         var result = BeanUtils.setProperty(person, "height", null);
-        assertTrue(result instanceof SetResult.Failed);
-
-        BeanUtils.setPropertyOrIgnore(person, "height", null);
-        assertEquals(100, (Integer) BeanUtils.getPropertyOrNull(person, "height"));
+        assertTrue(result instanceof SetResult.Ok);
+        assertEquals(0, (Integer) BeanUtils.getPropertyOrNull(person, "height"));
     }
 
     @Test
