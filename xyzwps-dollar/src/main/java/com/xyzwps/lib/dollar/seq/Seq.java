@@ -164,6 +164,11 @@ public interface Seq<T> {
         return rConsumer -> this.forEach(t -> rConsumer.accept(mapFn.apply(t)));
     }
 
+    default IntSeq mapToInt(ToIntFunction<T> mapFn) {
+        Objects.requireNonNull(mapFn);
+        return consumer -> this.forEach(t -> consumer.accept(mapFn.applyAsInt(t)));
+    }
+
     /**
      * 把当前 {@link Seq} 中的元素按顺序映射到另一个 {@link Seq} 中。
      * <br/>

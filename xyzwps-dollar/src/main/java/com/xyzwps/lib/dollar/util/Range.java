@@ -2,6 +2,8 @@ package com.xyzwps.lib.dollar.util;
 
 import java.util.Iterator;
 import java.util.NoSuchElementException;
+import java.util.Objects;
+import java.util.function.IntConsumer;
 
 public final class Range implements Iterable<Integer> {
 
@@ -43,5 +45,12 @@ public final class Range implements Iterable<Integer> {
                 throw new NoSuchElementException();
             }
         };
+    }
+
+    public void forEachInt(IntConsumer consumer) {
+        Objects.requireNonNull(consumer);
+        for (int i = start; i < end; i++) {
+            consumer.accept(i);
+        }
     }
 }
