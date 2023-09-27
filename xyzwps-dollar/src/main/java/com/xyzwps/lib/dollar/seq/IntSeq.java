@@ -1,9 +1,12 @@
 package com.xyzwps.lib.dollar.seq;
 
+import com.xyzwps.lib.dollar.Direction;
 import com.xyzwps.lib.dollar.util.DoubleHolder;
+import com.xyzwps.lib.dollar.util.FixedSizeOrderedIntArray;
 import com.xyzwps.lib.dollar.util.IntHolder;
 import com.xyzwps.lib.dollar.util.Range;
 
+import java.util.List;
 import java.util.function.IntConsumer;
 
 public interface IntSeq {
@@ -55,7 +58,12 @@ public interface IntSeq {
         return holder.get();
     }
 
-    // TODO: min(n)
+    default List<Integer> min(int n) {
+        if (n < 1) throw new IllegalArgumentException("n should be greater than 0");
+        var array = new FixedSizeOrderedIntArray(n, Direction.ASC);
+        this.forEach(array::add);
+        return array.toList();
+    }
 
     default int max() {
         var holder = new IntHolder(Integer.MIN_VALUE);
@@ -63,7 +71,12 @@ public interface IntSeq {
         return holder.get();
     }
 
-    // TODO: max(n)
+    default List<Integer> max(int n) {
+        if (n < 1) throw new IllegalArgumentException("n should be greater than 0");
+        var array = new FixedSizeOrderedIntArray(n, Direction.DESC);
+        this.forEach(array::add);
+        return array.toList();
+    }
 
     default double avg() {
         var n = new IntHolder(0);
