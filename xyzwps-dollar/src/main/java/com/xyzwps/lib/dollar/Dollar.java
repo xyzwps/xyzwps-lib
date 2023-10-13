@@ -280,8 +280,8 @@ public final class Dollar {
 
             List<R> result = new ArrayList<>(capacity);
             if (iterable instanceof ArrayList<T> list) {
-                for (int i = 0; i < list.size(); i++) {
-                    result.add(mapFn.apply(list.get(i)));
+                for (T t : list) {
+                    result.add(mapFn.apply(t));
                 }
             } else {
                 for (T t : iterable) result.add(mapFn.apply(t));
@@ -326,8 +326,7 @@ public final class Dollar {
             }
 
             int capacity = 16;
-            if (iterable instanceof List) {
-                List<T> list = (List<T>) iterable;
+            if (iterable instanceof List<T> list) {
                 capacity = list.size();
             }
 
@@ -849,8 +848,7 @@ public final class Dollar {
             if (iterable == null) {
                 return Optional.empty();
             }
-            if (iterable instanceof List) {
-                List<T> list = (List<T>) iterable;
+            if (iterable instanceof List<T> list) {
                 return list.isEmpty() ? Optional.empty() : Optional.ofNullable(list.get(0));
             }
             Iterator<T> itr = iterable.iterator();

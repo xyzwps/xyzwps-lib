@@ -6,11 +6,21 @@ import com.xyzwps.lib.dollar.util.FixedSizeOrderedIntArray;
 import com.xyzwps.lib.dollar.util.IntHolder;
 import com.xyzwps.lib.dollar.util.Range;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.IntConsumer;
+import java.util.function.IntPredicate;
 
 public interface IntSeq {
     void forEach(IntConsumer consumer);
+
+    default double avg() {
+        var n = new IntHolder(0);
+        var avg = new DoubleHolder(0);
+        this.forEach(i -> avg.set((avg.get() * n.get() + i) / n.incrAndGet()));
+        return avg.get();
+    }
 
     // TODO: chunk
 
@@ -18,7 +28,14 @@ public interface IntSeq {
 
     // TODO: concat
 
-    // TODO: filter
+    default IntSeq filter(IntPredicate predicate) {
+        Objects.requireNonNull(predicate);
+        return (consumer -> this.forEach(it -> {
+            if (predicate.test(it)) {
+                consumer.accept(it);
+            }
+        }));
+    }
 
     // TODO: first
 
@@ -30,26 +47,19 @@ public interface IntSeq {
 
     // TODO: mapToObject
 
-    // TODO: orderBy
+    // TODO: mapToOtherPrimitives
 
-    // TODO: reduce
-
-    // TODO: reverse
-
-    // TODO: skip
-
-    // TODO: take
-
-    // TODO: unique
-
-    // TODO: uniqueBy
-
-    // TODO: zip
-
-    default int sum() {
-        var holder = new IntHolder(0);
-        this.forEach(holder::add);
+    default int max() {
+        var holder = new IntHolder(Integer.MIN_VALUE);
+        this.forEach(holder::addMax);
         return holder.get();
+    }
+
+    default List<Integer> max(int n) {
+        if (n < 1) throw new IllegalArgumentException("n should be greater than 0");
+        var array = new FixedSizeOrderedIntArray(n, Direction.DESC);
+        this.forEach(array::add);
+        return array.toList();
     }
 
     default int min() {
@@ -65,25 +75,34 @@ public interface IntSeq {
         return array.toList();
     }
 
-    default int max() {
-        var holder = new IntHolder(Integer.MIN_VALUE);
-        this.forEach(holder::addMax);
+    // TODO: orderBy
+
+    // TODO: reduce
+
+    // TODO: reverse
+
+    // TODO: skip
+
+    default int sum() {
+        var holder = new IntHolder(0);
+        this.forEach(holder::add);
         return holder.get();
     }
 
-    default List<Integer> max(int n) {
-        if (n < 1) throw new IllegalArgumentException("n should be greater than 0");
-        var array = new FixedSizeOrderedIntArray(n, Direction.DESC);
-        this.forEach(array::add);
-        return array.toList();
+    // TODO: take
+
+    default List<Integer> toList() {
+        var list = new ArrayList<Integer>();
+        this.forEach(list::add);
+        return list;
     }
 
-    default double avg() {
-        var n = new IntHolder(0);
-        var avg = new DoubleHolder(0);
-        this.forEach(i -> avg.set((avg.get() * n.get() + i) / n.incrAndGet()));
-        return avg.get();
-    }
+    // TODO: unique
+
+    // TODO: uniqueBy
+
+    // TODO: zip
+
 
     // ------------ static ------------
 

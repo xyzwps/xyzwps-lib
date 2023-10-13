@@ -7,6 +7,15 @@ import static org.junit.jupiter.api.Assertions.*;
 class IntSeqTests {
 
     @Test
+    void filter() {
+        assertEquals("[1, 3, 5]", IntSeq.range(1, 6).filter(i -> i % 2 == 1).toList().toString());
+        assertEquals("[2, 4]", IntSeq.range(1, 6).filter(i -> i % 2 == 0).toList().toString());
+        assertEquals("[]", IntSeq.range(1, 6).filter(i -> i > 100).toList().toString());
+
+        assertThrows(NullPointerException.class, () -> IntSeq.range(1, 6).filter(null).avg());
+    }
+
+    @Test
     void sum() {
         assertEquals(15, IntSeq.range(1, 6).sum());
         assertEquals(22, IntSeq.just(3, 7, 8, 4).sum());
