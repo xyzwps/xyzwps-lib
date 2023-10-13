@@ -1,4 +1,4 @@
-package com.xyzwps.lib.beans;
+package com.xyzwps.lib.beans.ex;
 
 public class WrappedBeanException extends RuntimeException {
 

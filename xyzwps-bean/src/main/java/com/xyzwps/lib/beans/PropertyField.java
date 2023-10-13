@@ -6,10 +6,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.regex.Pattern;
 
-/**
- * TODO: 重命名
- */
-public class SpringField {
+public class PropertyField {
 
     private final String fieldName;
     private final Field field;
@@ -18,7 +15,7 @@ public class SpringField {
     private final Class<?> fieldType;
     private final boolean isFinal;
 
-    private SpringField(Class<?> beanType, Field field) {
+    private PropertyField(Class<?> beanType, Field field) {
         this.beanType = Objects.requireNonNull(beanType);
         this.field = Objects.requireNonNull(field);
         this.fieldName = field.getName();
@@ -69,12 +66,12 @@ public class SpringField {
         return fieldName;
     }
 
-    public static Optional<SpringField> create(Class<?> beanType, Field field) {
+    public static Optional<PropertyField> create(Class<?> beanType, Field field) {
         if (Modifier.isStatic(field.getModifiers())) {
             return Optional.empty();
         }
         if (propertyFieldPattern.matcher(field.getName()).matches()) {
-            return Optional.of(new SpringField(beanType, field));
+            return Optional.of(new PropertyField(beanType, field));
         }
         return Optional.empty();
     }

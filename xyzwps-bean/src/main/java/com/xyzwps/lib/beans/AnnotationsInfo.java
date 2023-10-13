@@ -9,19 +9,19 @@ public class AnnotationsInfo {
 
     private final PropertyMethod.SetPropertyMethod setMethod;
 
-    private final SpringField springField;
+    private final PropertyField propertyField;
 
-    public AnnotationsInfo(GetterInfo getterInfo, SetterInfo setterInfo) {
-        if (getterInfo == null && setterInfo == null) {
+    public AnnotationsInfo(PropertyGetter propertyGetter, PropertySetter propertySetter) {
+        if (propertyGetter == null && propertySetter == null) {
             throw new IllegalArgumentException();
         }
-        this.getMethod = getterInfo == null ? null : getterInfo.getGetMethod();
-        this.setMethod = setterInfo == null ? null : setterInfo.getSetMethod();
-        this.springField = getterInfo != null ? getterInfo.getField() : setterInfo.getField();
+        this.getMethod = propertyGetter == null ? null : propertyGetter.getGetMethod();
+        this.setMethod = propertySetter == null ? null : propertySetter.getSetMethod();
+        this.propertyField = propertyGetter != null ? propertyGetter.getField() : propertySetter.getField();
     }
 
     public void forEach(BiConsumer<Annotation, From> consumer) {
-        for (var anno : springField.getField().getAnnotations()) {
+        for (var anno : propertyField.getField().getAnnotations()) {
             consumer.accept(anno, From.FIELD);
         }
         if (getMethod != null) {

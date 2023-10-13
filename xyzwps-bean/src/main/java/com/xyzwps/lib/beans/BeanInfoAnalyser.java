@@ -73,7 +73,7 @@ public class BeanInfoAnalyser {
         }
 
         void addField(Field field) {
-            SpringField.create(beanType, field)
+            PropertyField.create(beanType, field)
                     .ifPresent(info -> createOrGetHolder(info.getFieldName()).addField(info));
         }
 
@@ -87,7 +87,7 @@ public class BeanInfoAnalyser {
         }
 
         void addSuperClassField(Class<?> superClass, Field field) {
-            SpringField.create(superClass, field)
+            PropertyField.create(superClass, field)
                     .ifPresent(info -> createOrGetHolder(info.getFieldName()).addSuperField(info));
         }
 

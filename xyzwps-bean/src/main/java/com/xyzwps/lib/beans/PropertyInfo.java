@@ -1,5 +1,7 @@
 package com.xyzwps.lib.beans;
 
+import com.xyzwps.lib.beans.ex.*;
+
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
@@ -12,26 +14,26 @@ public class PropertyInfo {
     private final Class<?> beanType;
     private final Class<?> propertyType;
     private final AnnotationsInfo annotations;
-    private final GetterInfo getterInfo;
-    private final SetterInfo setterInfo;
+    private final PropertyGetter propertyGetter;
+    private final PropertySetter propertySetter;
     private final boolean readable;
     private final boolean writable;
     // TODO: support indexed properties
 
-    public PropertyInfo(Class<?> beanType, String propertyName, Class<?> propertyType, GetterInfo getterInfo, SetterInfo setterInfo) {
+    public PropertyInfo(Class<?> beanType, String propertyName, Class<?> propertyType, PropertyGetter propertyGetter, PropertySetter propertySetter) {
         this.beanType = Objects.requireNonNull(beanType);
         this.propertyName = Objects.requireNonNull(propertyName);
         this.propertyType = Objects.requireNonNull(propertyType);
 
-        if (getterInfo == null && setterInfo == null) {
+        if (propertyGetter == null && propertySetter == null) {
             throw new IllegalArgumentException("There should be at least one of GetterInfo and SetterInfo.");
         }
 
-        this.getterInfo = getterInfo;
-        this.setterInfo = setterInfo;
-        this.readable = getterInfo != null && getterInfo.isReadable();
-        this.writable = setterInfo != null && setterInfo.isWritable();
-        this.annotations = new AnnotationsInfo(getterInfo, setterInfo);
+        this.propertyGetter = propertyGetter;
+        this.propertySetter = propertySetter;
+        this.readable = propertyGetter != null && propertyGetter.isReadable();
+        this.writable = propertySetter != null && propertySetter.isWritable();
+        this.annotations = new AnnotationsInfo(propertyGetter, propertySetter);
     }
 
     public String getPropertyName() {
@@ -51,14 +53,14 @@ public class PropertyInfo {
     }
 
     public GetResult getProperty(Object object) {
-        return getterInfo.get(object);
+        return propertyGetter.get(object);
     }
 
     @SuppressWarnings("unchecked")
     public <T> T getPropertyOrThrow(Object object, Class<T> tClass) {
         Objects.requireNonNull(object);
         Objects.requireNonNull(tClass);
-        return switch (getterInfo.get(object)) {
+        return switch (propertyGetter.get(object)) {
             case GetResult.NoSuchProperty ignored -> throw new NoSuchPropertyException(this);
             case GetResult.Failed failed -> throw new UnhandledBeanException(failed.cause());
             case GetResult.NotReadable ignored -> throw new PropertyIsNotReadableException(this);
@@ -86,7 +88,7 @@ public class PropertyInfo {
 
 
     public SetResult setProperty(Object object, Object value) {
-        return setterInfo.set(object, TryBestToSetProperty.INSTANCE.convertToSet(this.propertyType, value));
+        return propertySetter.set(object, TryBestToSetProperty.INSTANCE.convertToSet(this.propertyType, value));
     }
 
     public void setPropertyOrThrow(Object object, Object value) {
@@ -100,6 +102,9 @@ public class PropertyInfo {
         }
     }
 
+    public Class<?> getBeanType() {
+        return beanType;
+    }
 
     public AnnotationsInfo getAnnotations() {
         return annotations;
@@ -111,7 +116,7 @@ public class PropertyInfo {
         private final Class<?> beanType;
         private SetPropertyMethod setMethod;
         private GetPropertyMethod getMethod;
-        private SpringField springField;
+        private PropertyField propertyField;
 
 
         public Holder(Class<?> beanType, String propertyName) {
@@ -128,16 +133,16 @@ public class PropertyInfo {
             }
 
             var propertyType = decidePropertyType();
-            var getterInfo = GetterInfo.create(getMethod, springField);
-            var setterInfo = SetterInfo.create(setMethod, springField);
+            var getterInfo = PropertyGetter.create(getMethod, propertyField);
+            var setterInfo = PropertySetter.create(setMethod, propertyField);
             return Optional.of(new PropertyInfo(beanType, propertyName, propertyType, getterInfo, setterInfo));
         }
 
 
         private Class<?> decidePropertyType() {
             Class<?> propertyType = null;
-            if (springField != null) {
-                propertyType = springField.getFieldType();
+            if (propertyField != null) {
+                propertyType = propertyField.getFieldType();
             }
 
             if (getMethod != null) {
@@ -178,9 +183,9 @@ public class PropertyInfo {
             }
         }
 
-        public void addField(SpringField springField) {
-            if (this.springField == null) {
-                this.springField = springField;
+        public void addField(PropertyField propertyField) {
+            if (this.propertyField == null) {
+                this.propertyField = propertyField;
             }
         }
 
@@ -196,9 +201,9 @@ public class PropertyInfo {
             }
         }
 
-        public void addSuperField(SpringField field) {
-            if (this.springField == null) {
-                this.springField = field;
+        public void addSuperField(PropertyField field) {
+            if (this.propertyField == null) {
+                this.propertyField = field;
             }
         }
     }

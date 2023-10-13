@@ -1,4 +1,6 @@
-package com.xyzwps.lib.beans;
+package com.xyzwps.lib.beans.ex;
+
+import com.xyzwps.lib.beans.PropertyInfo;
 
 import java.util.Objects;
 
