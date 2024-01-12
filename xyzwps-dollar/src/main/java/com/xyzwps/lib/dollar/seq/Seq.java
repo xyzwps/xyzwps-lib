@@ -54,6 +54,8 @@ public interface Seq<T> {
         };
     }
 
+    // TODO: diff
+
     /**
      * 从当前 {@link Seq} 中按顺序筛选满足条件的元素到另个 {@link Seq} 中。
      * <br/>
