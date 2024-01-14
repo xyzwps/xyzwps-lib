@@ -1,16 +1,16 @@
 package com.xyzwps.lib.dollar.sequence;
 
-public sealed interface Current<T> {
-    record Value<T>(T value) implements Current<T> {
+public sealed interface NextResult<T> {
+    record Value<T>(T value) implements NextResult<T> {
     }
 
     @SuppressWarnings("rawtypes")
-    enum End implements Current {
+    enum End implements NextResult {
         INSTANCE
     }
 
     @SuppressWarnings("unchecked")
-    static <T> Current<T> end() {
+    static <T> NextResult<T> end() {
         return End.INSTANCE;
     }
 }

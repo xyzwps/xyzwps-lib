@@ -1,4 +1,4 @@
-package com.xyzwps.lib.dollar.seq;
+package com.xyzwps.lib.dollar.foreach;
 
 import com.xyzwps.lib.dollar.Direction;
 import com.xyzwps.lib.dollar.util.DoubleHolder;

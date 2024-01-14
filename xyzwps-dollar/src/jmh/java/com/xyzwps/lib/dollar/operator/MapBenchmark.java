@@ -1,7 +1,7 @@
 package com.xyzwps.lib.dollar.operator;
 
 import com.xyzwps.lib.dollar.chain.Chain;
-import com.xyzwps.lib.dollar.seq.Seq;
+import com.xyzwps.lib.dollar.foreach.Traversable;
 import org.openjdk.jmh.annotations.*;
 import org.openjdk.jmh.infra.Blackhole;
 
@@ -29,8 +29,8 @@ public class MapBenchmark {
 
     @Benchmark
     public void arrayList_seqMap(Blackhole blackhole) {
-        Seq<Integer> seq = ARRAY_LIST::forEach;
-        blackhole.consume(seq.map(i -> i * 2).toList().size());
+        Traversable<Integer> traversable = ARRAY_LIST::forEach;
+        blackhole.consume(traversable.map(i -> i * 2).toList().size());
     }
 
     @Benchmark
@@ -50,8 +50,8 @@ public class MapBenchmark {
 
     @Benchmark
     public void linkedList_seqMap(Blackhole blackhole) {
-        Seq<Integer> seq = LINKED_LIST::forEach;
-        blackhole.consume(seq.map(i -> i * 2).toList().size());
+        Traversable<Integer> traversable = LINKED_LIST::forEach;
+        blackhole.consume(traversable.map(i -> i * 2).toList().size());
     }
 
     @Benchmark

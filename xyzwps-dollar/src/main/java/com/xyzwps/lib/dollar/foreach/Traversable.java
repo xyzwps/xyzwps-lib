@@ -1,4 +1,4 @@
-package com.xyzwps.lib.dollar.seq;
+package com.xyzwps.lib.dollar.foreach;
 
 
 import com.xyzwps.lib.dollar.Direction;
@@ -15,11 +15,11 @@ import static com.xyzwps.lib.dollar.util.Comparators.*;
  *
  * @param <T>
  */
-public interface Seq<T> {
+public interface Traversable<T> {
 
     void forEach(Consumer<? super T> consumer);
 
-    default Seq<List<T>> chunk(final int chunkSize) {
+    default Traversable<List<T>> chunk(final int chunkSize) {
         if (chunkSize < 1) {
             throw new IllegalArgumentException("Each chunk should have at least one element.");
         }
@@ -41,11 +41,11 @@ public interface Seq<T> {
         };
     }
 
-    default Seq<T> compact() {
+    default Traversable<T> compact() {
         return this.filter(t -> !$.isFalsey(t));
     }
 
-    default Seq<T> concat(Iterable<T> seq2) {
+    default Traversable<T> concat(Iterable<T> seq2) {
         if (seq2 == null) return this;
 
         return tConsumer -> {
@@ -57,17 +57,17 @@ public interface Seq<T> {
     // TODO: diff
 
     /**
-     * 从当前 {@link Seq} 中按顺序筛选满足条件的元素到另个 {@link Seq} 中。
+     * 从当前 {@link Traversable} 中按顺序筛选满足条件的元素到另个 {@link Traversable} 中。
      * <br/>
-     * Retain the elements which are satisfied with {@code predicate} into another {@link Seq} in order.
+     * Retain the elements which are satisfied with {@code predicate} into another {@link Traversable} in order.
      *
      * @param predicate 被保留的元素应该满足的条件。
      *                  <br/>
      *                  The condition that retaining elements should be satisfied with.
-     * @return 筛选结果 {@link Seq}。
-     * <br/>Result {@link Seq}.
+     * @return 筛选结果 {@link Traversable}。
+     * <br/>Result {@link Traversable}.
      */
-    default Seq<T> filter(Predicate<T> predicate) {
+    default Traversable<T> filter(Predicate<T> predicate) {
         Objects.requireNonNull(predicate);
         return tConsumer -> this.forEach(t -> {
             if (predicate.test(t)) {
@@ -77,18 +77,18 @@ public interface Seq<T> {
     }
 
     /**
-     * 从当前 {@link Seq} 中按顺序筛选满足条件的元素到另个 {@link Seq} 中。
+     * 从当前 {@link Traversable} 中按顺序筛选满足条件的元素到另个 {@link Traversable} 中。
      * <br/>
-     * Retain the elements which are satisfied with {@code predicate} into another {@link Seq} in order.
+     * Retain the elements which are satisfied with {@code predicate} into another {@link Traversable} in order.
      *
      * @param predicate 被保留的元素应该满足的条件。第二个参数是元素对应的索引。
      *                  <br/>
      *                  The condition that retaining elements should be satisfied with.
      *                  The second argument is the index of corresponding element.
-     * @return 筛选结果 {@link Seq}。
-     * <br/>Result {@link Seq}.
+     * @return 筛选结果 {@link Traversable}。
+     * <br/>Result {@link Traversable}.
      */
-    default Seq<T> filter(ObjIntPredicate<T> predicate) {
+    default Traversable<T> filter(ObjIntPredicate<T> predicate) {
         Objects.requireNonNull(predicate);
         var counter = new Counter(0);
         return tConsumer -> this.forEach(t -> {
@@ -107,11 +107,11 @@ public interface Seq<T> {
         return Optional.ofNullable(holder.value());
     }
 
-    default <R> Seq<R> flatMap(Function<T, Seq<R>> flatMapFn) {
-        return rConsumer -> this.forEach(t -> {
-            Seq<R> rSeq = flatMapFn.apply(t);
-            if (rSeq != null) {
-                rSeq.forEach(rConsumer);
+    default <R> Traversable<R> flatMap(Function<T, Traversable<R>> flatMapFn) {
+        return consumer -> this.forEach(t -> {
+            Traversable<R> rt = flatMapFn.apply(t);
+            if (rt != null) {
+                rt.forEach(consumer);
             }
         });
     }
@@ -122,7 +122,7 @@ public interface Seq<T> {
         this.forEach(t -> handler.accept(t, counter.getAndIncr()));
     }
 
-    default <K> MESeq<K, List<T>> groupBy(Function<T, K> toKey) {
+    default <K> MapEntryTraversable<K, List<T>> groupBy(Function<T, K> toKey) {
         Objects.requireNonNull(toKey);
         Map<K, List<T>> map = new HashMap<>();
         this.forEach(t -> map.computeIfAbsent(toKey.apply(t), k -> new ArrayList<>()).add(t));
@@ -140,7 +140,7 @@ public interface Seq<T> {
         }).toString();
     }
 
-    default <K> MESeq<K, T> keyBy(Function<T, K> toKey) {
+    default <K> MapEntryTraversable<K, T> keyBy(Function<T, K> toKey) {
         Objects.requireNonNull(toKey);
         Map<K, T> map = new HashMap<>();
         this.forEach(t -> map.computeIfAbsent(toKey.apply(t), k -> t));
@@ -148,9 +148,9 @@ public interface Seq<T> {
     }
 
     /**
-     * 把当前 {@link Seq} 中的元素按顺序映射到另一个 {@link Seq} 中。
+     * 把当前 {@link Traversable} 中的元素按顺序映射到另一个 {@link Traversable} 中。
      * <br/>
-     * Mapping elements into another {@link Seq} in order.
+     * Mapping elements into another {@link Traversable} in order.
      *
      * @param mapFn 映射函数。
      *              <br/>
@@ -158,10 +158,10 @@ public interface Seq<T> {
      * @param <R>   映射结果的类型。
      *              <br/>
      *              Type of mapping result.
-     * @return 映射结果 {@link Seq}。
-     * <br/>Mapping result {@link Seq}.
+     * @return 映射结果 {@link Traversable}。
+     * <br/>Mapping result {@link Traversable}.
      */
-    default <R> Seq<R> map(Function<T, R> mapFn) {
+    default <R> Traversable<R> map(Function<T, R> mapFn) {
         Objects.requireNonNull(mapFn);
         return rConsumer -> this.forEach(t -> rConsumer.accept(mapFn.apply(t)));
     }
@@ -172,9 +172,9 @@ public interface Seq<T> {
     }
 
     /**
-     * 把当前 {@link Seq} 中的元素按顺序映射到另一个 {@link Seq} 中。
+     * 把当前 {@link Traversable} 中的元素按顺序映射到另一个 {@link Traversable} 中。
      * <br/>
-     * Mapping elements into another {@link Seq} in order.
+     * Mapping elements into another {@link Traversable} in order.
      *
      * @param mapFn 映射函数。第二个参数是元素对应的索引。
      *              <br/>
@@ -183,16 +183,16 @@ public interface Seq<T> {
      * @param <R>   映射结果的类型。
      *              <br/>
      *              Type of mapping result.
-     * @return 映射结果 {@link Seq}。
-     * <br/>Result {@link Seq}.
+     * @return 映射结果 {@link Traversable}。
+     * <br/>Result {@link Traversable}.
      */
-    default <R> Seq<R> map(ObjIntFunction<T, R> mapFn) {
+    default <R> Traversable<R> map(ObjIntFunction<T, R> mapFn) {
         Objects.requireNonNull(mapFn);
         Counter counter = new Counter(0);
         return rConsumer -> this.forEach(t -> rConsumer.accept(mapFn.apply(t, counter.getAndIncr())));
     }
 
-    default <K extends Comparable<K>> Seq<T> orderBy(Function<T, K> toKey, Direction direction) {
+    default <K extends Comparable<K>> Traversable<T> orderBy(Function<T, K> toKey, Direction direction) {
         Objects.requireNonNull(toKey);
         Objects.requireNonNull(direction);
         ArrayList<T> list = this.toList();
@@ -207,7 +207,7 @@ public interface Seq<T> {
         return rHolder.value();
     }
 
-    default Seq<T> reverse() {
+    default Traversable<T> reverse() {
         ArrayList<T> list = this.toList();
         ArrayListReverseIterator<T> itr = new ArrayListReverseIterator<>(list);
         return tConsumer -> {
@@ -215,7 +215,7 @@ public interface Seq<T> {
         };
     }
 
-    default Seq<T> skip(int n) {
+    default Traversable<T> skip(int n) {
         return tConsumer -> {
             int[] counter = {0};
             this.forEach(t -> {
@@ -228,7 +228,7 @@ public interface Seq<T> {
         };
     }
 
-    default Seq<T> skipWhile(Predicate<T> predicate) {
+    default Traversable<T> skipWhile(Predicate<T> predicate) {
         return tConsumer -> {
             boolean[] next = {true};
             this.forEach(t -> {
@@ -240,10 +240,9 @@ public interface Seq<T> {
         };
     }
 
-    default Seq<T> take(final int n) {
-        if (n < 1) {
-            throw new IllegalArgumentException("You should take at least one element.");
-        }
+    default Traversable<T> take(final int n) {
+        if (n < 1) throw new IllegalArgumentException();
+
 
         return StopException.stop(tConsumer -> {
             Counter counter = new Counter(0);
@@ -259,7 +258,7 @@ public interface Seq<T> {
         });
     }
 
-    default Seq<T> takeWhile(Predicate<T> predicate) {
+    default Traversable<T> takeWhile(Predicate<T> predicate) {
         Objects.requireNonNull(predicate);
         return StopException.stop(tConsumer -> this.forEach(t -> {
             if (predicate.test(t)) {
@@ -284,7 +283,7 @@ public interface Seq<T> {
         });
     }
 
-    default Seq<T> unique() {
+    default Traversable<T> unique() {
         Set<T> set = new HashSet<>();
         return tConsumer -> {
             this.forEach(t -> {
@@ -298,7 +297,7 @@ public interface Seq<T> {
         };
     }
 
-    default <K> Seq<T> uniqueBy(Function<T, K> toKey) {
+    default <K> Traversable<T> uniqueBy(Function<T, K> toKey) {
         Objects.requireNonNull(toKey);
         Set<K> set = new HashSet<>();
         return tConsumer -> {
@@ -319,7 +318,7 @@ public interface Seq<T> {
     }
 
 
-    default <R, T2> Seq<R> zip(Iterable<T2> iterable, BiFunction<T, T2, R> zipper) {
+    default <R, T2> Traversable<R> zip(Iterable<T2> iterable, BiFunction<T, T2, R> zipper) {
         Objects.requireNonNull(zipper);
         if (iterable == null) {
             return this.map(t -> zipper.apply(t, null));
@@ -334,23 +333,23 @@ public interface Seq<T> {
         };
     }
 
-    default <T2> Seq<Pair<T, T2>> zip(Iterable<T2> iterable) {
+    default <T2> Traversable<Pair<T, T2>> zip(Iterable<T2> iterable) {
         return this.zip(iterable, Pair::of);
     }
 
 
     // ------------ static ------------
 
-    static <T> Seq<T> empty() {
+    static <T> Traversable<T> empty() {
         return Functions::consumeNothing;
     }
 
-    static <T> Seq<T> from(Iterable<T> list) {
-        return list == null ? Seq.empty() : list::forEach;
+    static <T> Traversable<T> from(Iterable<T> list) {
+        return list == null ? Traversable.empty() : list::forEach;
     }
 
     @SafeVarargs
-    static <T> Seq<T> just(T... args) {
+    static <T> Traversable<T> just(T... args) {
         return tConsumer -> {
             for (T t : args) {
                 tConsumer.accept(t);
@@ -358,7 +357,17 @@ public interface Seq<T> {
         };
     }
 
-    static Seq<Integer> range(int start, int end) {
+    @SuppressWarnings("InfiniteLoopStatement")
+    static Traversable<Long> infinite(long start) {
+        var counter = new LongCounter(start);
+        return consumer -> {
+            while (true) {
+                consumer.accept(counter.getAndIncr());
+            }
+        };
+    }
+
+    static Traversable<Integer> range(int start, int end) {
         return from(new Range(start, end));
     }
 }

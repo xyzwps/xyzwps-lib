@@ -1,4 +1,4 @@
-package com.xyzwps.lib.dollar.seq;
+package com.xyzwps.lib.dollar.foreach;
 
 
 class StopException extends RuntimeException {
@@ -9,10 +9,10 @@ class StopException extends RuntimeException {
 
     static final StopException INSTANCE = new StopException();
 
-    static <T> Seq<T> stop(Seq<T> seq) {
+    static <T> Traversable<T> stop(Traversable<T> traversable) {
         return tConsumer -> {
             try {
-                seq.forEach(tConsumer);
+                traversable.forEach(tConsumer);
             } catch (StopException ignored) {
             }
         };

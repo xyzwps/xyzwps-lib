@@ -1,12 +1,11 @@
 package com.xyzwps.lib.dollar.util;
 
 public final class Counter {
-    private int count = 0;
+    private int count;
     private final int init;
 
     public Counter(int init) {
-        this.count = init;
-        this.init = init;
+        this.count = this.init = init;
     }
 
     public int getAndIncr() {
