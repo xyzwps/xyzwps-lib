@@ -21,6 +21,21 @@ public interface Generator<T> {
         return create(iterable.iterator());
     }
 
+    static <T> Generator<T> create(Supplier<Iterable<T>> iterableSupplier) {
+        if (iterableSupplier == null) return empty();
+        return new Generator<>() {
+            Iterator<T> itr = null;
+
+            @Override
+            public NextResult<T> next() {
+                if (this.itr == null) {
+                    this.itr = iterableSupplier.get().iterator();
+                }
+                return itr.hasNext() ? new NextResult.Value<>(itr.next()) : NextResult.end();
+            }
+        };
+    }
+
     static <T> Generator<T> empty() {
         return NextResult::end;
     }
@@ -159,12 +174,10 @@ public interface Generator<T> {
     }
 
     default <R> Generator<R> map(Function<T, R> mapper) {
-        Objects.requireNonNull(mapper);
         return this.map((it, i) -> mapper.apply(it));
     }
 
     default <R> Generator<R> map(ObjIntFunction<T, R> mapper) {
-        Objects.requireNonNull(mapper);
         var counter = new Counter(0);
         return () -> switch (this.next()) {
             case NextResult.End end -> end;
@@ -173,16 +186,15 @@ public interface Generator<T> {
     }
 
     default <K extends Comparable<K>> Generator<T> orderBy(Function<T, K> toKey, Direction direction) {
-        Objects.requireNonNull(toKey);
-        Objects.requireNonNull(direction);
-        ArrayList<T> list = this.toList();
-        Comparator<T> comparator = direction == Direction.DESC ? descComparator(toKey) : ascComparator(toKey);
-        list.sort(comparator);
-        return Generator.create(list);
+        return create(() -> {
+            ArrayList<T> list = this.toList();
+            Comparator<T> comparator = direction == Direction.DESC ? descComparator(toKey) : ascComparator(toKey);
+            list.sort(comparator);
+            return list;
+        });
     }
 
     default <R> R reduce(R init, BiFunction<T, R, R> reducer) {
-        Objects.requireNonNull(reducer);
         R result = init;
         for (var current = this.next(); current instanceof NextResult.Value<T> value; current = this.next()) {
             result = reducer.apply(value.value(), result);
@@ -191,7 +203,7 @@ public interface Generator<T> {
     }
 
     default Generator<T> reverse() {
-        return create(this.toList().reversed());
+        return create(() -> this.toList().reversed());
     }
 
     default Generator<T> skip(int n) {

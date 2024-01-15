@@ -38,8 +38,9 @@ public interface Chain<T> {
     Iterator<T> iterator();
 
     default String join(String sep) {
-        return this.reduce(new StringJoiner(sep == null ? "null" : sep), (it, joiner) -> {
-            joiner.add(it == null ? "null" : it.toString());
+        Objects.requireNonNull(sep);
+        return this.reduce(new StringJoiner(sep), (it, joiner) -> {
+            joiner.add(it == null ? null : it.toString());
             return joiner;
         }).toString();
     }

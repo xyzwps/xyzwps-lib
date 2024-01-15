@@ -1,9 +1,11 @@
 package com.xyzwps.lib;
 
 import com.xyzwps.lib.dollar.ChainFactory;
+import com.xyzwps.lib.dollar.Direction;
 import com.xyzwps.lib.dollar.MapEntryChainFactory;
 import com.xyzwps.lib.dollar.iterator.RangeIterable;
 import com.xyzwps.lib.dollar.util.Counter;
+import com.xyzwps.lib.dollar.util.ObjIntFunction;
 import com.xyzwps.lib.dollar.util.ObjIntPredicate;
 
 import java.util.ArrayList;
@@ -11,9 +13,11 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.function.ObjIntConsumer;
 import java.util.function.Predicate;
 
+import static com.xyzwps.lib.dollar.Dollar.$.orderBy;
 import static org.junit.jupiter.api.Assertions.*;
 
 public record ChainCases(ChainFactory cf, MapEntryChainFactory mf) {
@@ -45,18 +49,22 @@ public record ChainCases(ChainFactory cf, MapEntryChainFactory mf) {
 
             testHead();
             testIterator();
+            testJoin();
+
+            testMap();
+            testMap2();
+
+            testOrderBy();
+            testReduce();
+            testReverse();
+            testSize();
         }
 
         /**
          * <K> MapEntryChain<K, List<T>> groupBy(Function<T, K> toKey);
-         * String join(String sep) {
+         *
          * <K> MapEntryChain<K, T> keyBy(Function<T, K> toKey);
-         * <R> Chain<R> map(Function<T, R> mapper);
-         * <R> Chain<R> map(ObjIntFunction<T, R> mapper);
-         * <K extends Comparable<K>> Chain<T> orderBy(Function<T, K> toKey, Direction direction);
-         * <R> R reduce(R init, BiFunction<T, R, R> reducer);
-         * Chain<T> reverse();
-         * int size() {
+         * <p>
          * Chain<T> skip(int n);
          * Chain<T> skipWhile(Predicate<T> predicate);
          * Chain<T> takeWhile(Predicate<T> predicate);
@@ -65,6 +73,114 @@ public record ChainCases(ChainFactory cf, MapEntryChainFactory mf) {
          * Chain<T> unique() {
          * <K> Chain<T> uniqueBy(Function<T, K> toKey) {
          */
+
+        void testSize() {
+            assertEquals(0, cf.just().size());
+            assertEquals(3, cf.just(1, 2, 3).size());
+        }
+
+        void testReverse() {
+            assertEquals("[1, 2, 3, 4, 5]", cf.just(5, 4, 3, 2, 1).reverse().toList().toString());
+
+            // laziness
+            var actions = new ArrayList<String>();
+            var c = cf.just(1, 2, 3, 4, 5)
+                    .map((it) -> {
+                        actions.add("map1 " + it);
+                        return it * 2;
+                    })
+                    .reverse()
+                    .map(it -> {
+                        actions.add("map2 " + it);
+                        return it / 2;
+                    });
+            assertTrue(actions.isEmpty());
+            assertEquals("[5, 4, 3, 2, 1]", c.toList().toString());
+            assertIterableEquals(List.of(
+                    "map1 1", "map1 2", "map1 3", "map1 4", "map1 5",
+                    "map2 10", "map2 8", "map2 6", "map2 4", "map2 2"
+            ), actions);
+        }
+
+        void testReduce() {
+            assertEquals(15, cf.just(1, 2, 3, 4, 5).reduce(0, Integer::sum));
+
+            assertThrows(NullPointerException.class, () -> cf.just(1, 2, 3, 4, 5).reduce(0, null));
+        }
+
+        void testOrderBy() {
+            assertEquals("[1, 2, 3, 4, 5]", cf.just(1, 4, 3, 2, 5).orderBy(Function.identity(), Direction.ASC).toList().toString());
+            assertEquals("[5, 4, 3, 2, 1]", cf.just(1, 4, 3, 2, 5).orderBy(Function.identity(), Direction.DESC).toList().toString());
+
+            assertThrows(NullPointerException.class, () -> cf.just(1, 4, 3, 2, 5).orderBy(null, Direction.ASC));
+            assertThrows(NullPointerException.class, () -> cf.just(1, 4, 3, 2, 5).orderBy(null, Direction.DESC));
+            assertThrows(NullPointerException.class, () -> cf.just(1, 4, 3, 2, 5).orderBy(Function.identity(), null));
+
+            // laziness
+            {
+                var actions = new ArrayList<String>();
+                var c = cf.just(1.1, 4.1, 3.1, 2.1, 5.1)
+                        .map((it, i) -> {
+                            actions.add("map " + i);
+                            return it.intValue();
+                        })
+                        .orderBy(Function.identity(), Direction.ASC)
+                        .map(it -> {
+                            actions.add("map2 " + it);
+                            return it * 2;
+                        });
+                assertTrue(actions.isEmpty());
+                assertEquals("[2, 4, 6, 8, 10]", c.toList().toString());
+                assertIterableEquals(List.of(
+                        "map 0", "map 1", "map 2", "map 3", "map 4",
+                        "map2 1", "map2 2", "map2 3", "map2 4", "map2 5"
+                ), actions);
+            }
+        }
+
+        void testMap2() {
+            assertEquals("[1, 4, 9, 16]", cf.just(1, 2, 3, 4).map((it, i) -> it * (i + 1)).toList().toString());
+
+            assertThrows(NullPointerException.class, () -> cf.just(1, 2, 3, 4).map((ObjIntFunction<Integer, Object>) null));
+
+            // laziness
+            {
+                var actions = new ArrayList<String>();
+                var c = cf.just(1, 2, 3, 4)
+                        .map((it, i) -> {
+                            actions.add(String.format("map(%d, %d)", it, i));
+                            return it * (i + 1);
+                        });
+                assertTrue(actions.isEmpty());
+                assertEquals("[1, 4, 9, 16]", c.toList().toString());
+                assertIterableEquals(List.of("map(1, 0)", "map(2, 1)", "map(3, 2)", "map(4, 3)"), actions);
+            }
+        }
+
+        void testMap() {
+            assertEquals("[2, 4, 6, 8]", cf.just(1, 2, 3, 4).map(i -> i * 2).toList().toString());
+
+            assertThrows(NullPointerException.class, () -> cf.just(1, 2, 3, 4).map((Function<Integer, Object>) null));
+
+            // laziness
+            {
+                var actions = new ArrayList<String>();
+                var c = cf.just(1, 2, 3, 4)
+                        .map(i -> {
+                            actions.add("map " + i);
+                            return i * 2;
+                        });
+                assertTrue(actions.isEmpty());
+                assertEquals("[2, 4, 6, 8]", c.toList().toString());
+                assertIterableEquals(List.of("map 1", "map 2", "map 3", "map 4"), actions);
+            }
+        }
+
+        void testJoin() {
+            assertEquals("1234", cf.just(1, 2, 3, 4).join(""));
+            assertEquals("1-2-3-4", cf.just(1, 2, 3, 4).join("-"));
+            assertThrows(NullPointerException.class, () -> cf.just(1, 2, 3, 4).join(null));
+        }
 
         void testIterator() {
             {

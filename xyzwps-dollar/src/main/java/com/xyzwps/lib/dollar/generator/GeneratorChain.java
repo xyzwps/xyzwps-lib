@@ -87,21 +87,26 @@ public class GeneratorChain<T> implements Chain<T> {
 
     @Override
     public <R> Chain<R> map(Function<T, R> mapper) {
+        Objects.requireNonNull(mapper);
         return new GeneratorChain<>(generator.map(mapper));
     }
 
     @Override
     public <R> Chain<R> map(ObjIntFunction<T, R> mapper) {
+        Objects.requireNonNull(mapper);
         return new GeneratorChain<>(generator.map(mapper));
     }
 
     @Override
     public <K extends Comparable<K>> Chain<T> orderBy(Function<T, K> toKey, Direction direction) {
+        Objects.requireNonNull(toKey);
+        Objects.requireNonNull(direction);
         return new GeneratorChain<>(generator.orderBy(toKey, direction));
     }
 
     @Override
     public <R> R reduce(R init, BiFunction<T, R, R> reducer) {
+        Objects.requireNonNull(reducer);
         return generator.reduce(init, reducer);
     }
 
