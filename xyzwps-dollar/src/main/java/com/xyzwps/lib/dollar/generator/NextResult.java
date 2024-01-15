@@ -1,4 +1,4 @@
-package com.xyzwps.lib.dollar.sequence;
+package com.xyzwps.lib.dollar.generator;
 
 public sealed interface NextResult<T> {
     record Value<T>(T value) implements NextResult<T> {

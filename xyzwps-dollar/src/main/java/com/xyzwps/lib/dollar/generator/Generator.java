@@ -1,10 +1,13 @@
-package com.xyzwps.lib.dollar.sequence;
+package com.xyzwps.lib.dollar.generator;
 
-import com.xyzwps.lib.dollar.Dollar;
+import com.xyzwps.lib.dollar.Direction;
 import com.xyzwps.lib.dollar.util.*;
 
 import java.util.*;
 import java.util.function.*;
+
+import static com.xyzwps.lib.dollar.util.Comparators.ascComparator;
+import static com.xyzwps.lib.dollar.util.Comparators.descComparator;
 
 public interface Generator<T> {
     NextResult<T> next();
@@ -27,6 +30,16 @@ public interface Generator<T> {
         return () -> new NextResult.Value<>(counter.getAndIncr());
     }
 
+    static <T> Generator<T> fromArray(T[] array) {
+        if (array == null || array.length == 0) return empty();
+
+        var index = new Counter(0);
+        return () -> {
+            var i = index.getAndIncr();
+            return i < array.length ? new NextResult.Value<>(array[i]) : NextResult.end();
+        };
+    }
+
     default Generator<List<T>> chunk(int n) {
         if (n < 2) throw new IllegalArgumentException();
         return () -> {
@@ -37,10 +50,6 @@ public interface Generator<T> {
             if (list.isEmpty()) return NextResult.end();
             return new NextResult.Value<>(list);
         };
-    }
-
-    default Generator<T> compact() {
-        return this.filter(Dollar.$::isFalsey);
     }
 
     default Generator<T> concat(Iterable<T> iterable) {
@@ -84,7 +93,12 @@ public interface Generator<T> {
         };
     }
 
-    default <R> Generator<R> flatMap(Function<T, Generator<R>> fn) {
+    default <R> Generator<R> flatMap(Function<T, Iterable<R>> fn) {
+        Objects.requireNonNull(fn);
+        return this.flatMapToGenerator((it) -> Generator.create(fn.apply(it)));
+    }
+
+    default <R> Generator<R> flatMapToGenerator(Function<T, Generator<R>> fn) {
         Objects.requireNonNull(fn);
         var holder = new ObjectHolder<Generator<R>>(null);
         return () -> {
@@ -122,8 +136,6 @@ public interface Generator<T> {
         }
     }
 
-    // TODO: groupBy
-
     default Optional<T> head() {
         return first();
     }
@@ -151,8 +163,6 @@ public interface Generator<T> {
         };
     }
 
-    // TODO: keyBy
-
     default <R> Generator<R> map(Function<T, R> mapper) {
         Objects.requireNonNull(mapper);
         return this.map((it, i) -> mapper.apply(it));
@@ -167,7 +177,14 @@ public interface Generator<T> {
         };
     }
 
-    // TODO: orderBy
+    default <K extends Comparable<K>> Generator<T> orderBy(Function<T, K> toKey, Direction direction) {
+        Objects.requireNonNull(toKey);
+        Objects.requireNonNull(direction);
+        ArrayList<T> list = this.toList();
+        Comparator<T> comparator = direction == Direction.DESC ? descComparator(toKey) : ascComparator(toKey);
+        list.sort(comparator);
+        return Generator.create(list);
+    }
 
     default <R> R reduce(R init, BiFunction<T, R, R> reducer) {
         Objects.requireNonNull(reducer);
@@ -182,39 +199,76 @@ public interface Generator<T> {
         return create(this.toList().reversed());
     }
 
-    default int size() {
-        int s = 0;
-        for (var current = this.next(); current instanceof NextResult.Value<T>; current = this.next()) {
-            s++;
-        }
-        return s;
-    }
-
-
     default Generator<T> skip(int n) {
         var counter = new Counter(0);
         return () -> {
             if (counter.get() >= n) {
                 return this.next();
-            } else {
-                while (counter.getAndIncr() < n) {
+            }
+
+            while (counter.getAndIncr() < n) {
+                switch (this.next()) {
+                    case NextResult.End ignored -> {
+                        return NextResult.end();
+                    }
+                    case NextResult.Value<T> ignored -> {
+                        // skip, do nothing
+                    }
+                }
+            }
+            return this.next();
+        };
+    }
+
+    default Generator<T> skipWhile(Predicate<T> predicate) {
+        Objects.requireNonNull(predicate);
+        var shouldSkip = new BooleanValueHolder(true);
+        return () -> {
+            if (shouldSkip.value()) {
+                while (true) {
                     switch (this.next()) {
                         case NextResult.End ignored -> {
+                            shouldSkip.set(false);
                             return NextResult.end();
                         }
-                        case NextResult.Value<T> ignored -> {
-                            // skip, do nothing
+                        case NextResult.Value<T> value -> {
+                            if (!predicate.test(value.value())) {
+                                shouldSkip.set(false);
+                                return value;
+                            }
                         }
                     }
                 }
-                return this.next();
             }
+
+            return this.next();
         };
     }
+
 
     default Generator<T> take(int n) {
         var counter = new Counter(0);
         return () -> counter.getAndIncr() < n ? this.next() : NextResult.end();
+    }
+
+    default Generator<T> takeWhile(Predicate<T> predicate) {
+        Objects.requireNonNull(predicate);
+        var done = new BooleanValueHolder(false);
+        return () -> {
+            if (done.value()) return NextResult.end();
+
+            return switch (this.next()) {
+                case NextResult.End end -> end;
+                case NextResult.Value<T> value -> {
+                    if (predicate.test(value.value())) {
+                        yield value;
+                    } else {
+                        done.set(true);
+                        yield NextResult.end();
+                    }
+                }
+            };
+        };
     }
 
     default <R> R takeInto(int n, R init, BiFunction<T, R, R> reducer) {
@@ -232,52 +286,12 @@ public interface Generator<T> {
         return result;
     }
 
-    default List<T> toList() {
+    default ArrayList<T> toList() {
         return this.reduce(new ArrayList<>(), (it, li) -> {
             li.add(it);
             return li;
         });
     }
 
-    default Set<T> toSet() {
-        return this.reduce(new HashSet<>(), (it, li) -> {
-            li.add(it);
-            return li;
-        });
-    }
-
-
-    default Generator<T> unique() {
-        var dedupSet = new HashSet<T>();
-        return this.filter(it -> {
-            if (dedupSet.contains(it)) {
-                return false;
-            } else {
-                dedupSet.add(it);
-                return true;
-            }
-        });
-    }
-
     // TODO: zip
-
-    static void main(String[] args) {
-        var lazy = Generator.create(List.of(1, 2, 3, 4, 5));
-
-        var handled = lazy
-                .map(i -> {
-                    System.out.printf("=> map: %d + 4 = %d\n", i, i + 4);
-                    return i + 4;
-                })
-                .take(3);
-        System.out.println("============");
-        handled.forEach(it -> System.out.printf("=> forEach %d \n", it));
-
-        handled.forEach(it -> System.out.printf("=> forEach %d \n", it));
-
-        infinite(0).take(7).forEach(System.out::println);
-
-        infinite(0).map(it -> it * 2).take(7).forEach(System.out::println);
-    }
-
 }
