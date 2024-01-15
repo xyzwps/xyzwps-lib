@@ -12,7 +12,7 @@ public interface Chain<T> {
     Chain<List<T>> chunk(int chunkSize);
 
     default Chain<T> compact() {
-        return this.filter(Dollar.$::isFalsey);
+        return this.filter(it -> !Dollar.$.isFalsey(it));
     }
 
     Chain<T> concat(Iterable<T> iterable);

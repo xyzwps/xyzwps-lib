@@ -24,16 +24,20 @@ public class GeneratorChain<T> implements Chain<T> {
 
     @Override
     public Chain<T> concat(Iterable<T> iterable) {
+        if (iterable == null) return this;
+
         return new GeneratorChain<>(generator.concat(iterable));
     }
 
     @Override
     public Chain<T> filter(Predicate<T> predicate) {
+        Objects.requireNonNull(predicate);
         return new GeneratorChain<>(generator.filter(predicate));
     }
 
     @Override
     public Chain<T> filter(ObjIntPredicate<T> predicate) {
+        Objects.requireNonNull(predicate);
         return new GeneratorChain<>(generator.filter(predicate));
     }
 
@@ -44,6 +48,7 @@ public class GeneratorChain<T> implements Chain<T> {
 
     @Override
     public <R> Chain<R> flatMap(Function<T, Iterable<R>> flatter) {
+        Objects.requireNonNull(flatter);
         return new GeneratorChain<>(generator.flatMap(flatter));
     }
 

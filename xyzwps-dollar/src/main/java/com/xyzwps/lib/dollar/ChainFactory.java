@@ -9,7 +9,7 @@ public interface ChainFactory {
     @SuppressWarnings("unchecked")
     <T> Chain<T> just(T... elements);
 
-    Chain<Long> infinite(long start);
+    Chain<Integer> infinite(int start);
 
     Chain<Integer> range(int start, int end);
 }

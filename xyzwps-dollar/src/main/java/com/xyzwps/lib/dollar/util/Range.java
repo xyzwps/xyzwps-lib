@@ -5,6 +5,8 @@ import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.function.IntConsumer;
 
+// TODO: 删除
+@Deprecated
 public final class Range implements Iterable<Integer> {
 
     /**

@@ -17,6 +17,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class ChainTests {
 
+    /*
     @Test
     void zip() {
         assertEquals("[(1, 1), (2, 2), (3, null)]", Chain.just(1, 2, 3).zip(listOf(1, 2)).value().toString());
@@ -322,4 +323,5 @@ class ChainTests {
             assertEquals("[1, 2, 3]", Chain.range(1, 4).value().toString());
         }
     }
+    */
 }

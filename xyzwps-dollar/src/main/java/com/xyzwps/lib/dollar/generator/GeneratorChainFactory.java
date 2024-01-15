@@ -24,7 +24,7 @@ public enum GeneratorChainFactory implements ChainFactory {
     }
 
     @Override
-    public Chain<Long> infinite(long start) {
+    public Chain<Integer> infinite(int start) {
         return new GeneratorChain<>(Generator.infinite(start));
     }
 

@@ -25,8 +25,8 @@ public interface Generator<T> {
         return NextResult::end;
     }
 
-    static Generator<Long> infinite(long start) {
-        var counter = new LongCounter(start);
+    static Generator<Integer> infinite(int start) {
+        var counter = new Counter(start);
         return () -> new NextResult.Value<>(counter.getAndIncr());
     }
 
@@ -41,7 +41,7 @@ public interface Generator<T> {
     }
 
     default Generator<List<T>> chunk(int n) {
-        if (n < 2) throw new IllegalArgumentException();
+        if (n < 1) throw new IllegalArgumentException();
         return () -> {
             var list = this.takeInto(n, new ArrayList<T>(n), (it, li) -> {
                 li.add(it);
@@ -64,20 +64,19 @@ public interface Generator<T> {
     }
 
     default Generator<T> filter(Predicate<T> predicate) {
-        Objects.requireNonNull(predicate);
         return filter((it, i) -> predicate.test(it));
     }
 
     default Generator<T> filter(ObjIntPredicate<T> predicate) {
-        Objects.requireNonNull(predicate);
+        var counter = new Counter(0);
         return () -> {
-            for (int i = 0; true; i++) {
+            while (true) {
                 switch (this.next()) {
                     case NextResult.End ignored -> {
                         return NextResult.end();
                     }
                     case NextResult.Value<T> value -> {
-                        if (predicate.test(value.value(), i)) {
+                        if (predicate.test(value.value(), counter.getAndIncr())) {
                             return value;
                         }
                     }
@@ -94,7 +93,6 @@ public interface Generator<T> {
     }
 
     default <R> Generator<R> flatMap(Function<T, Iterable<R>> fn) {
-        Objects.requireNonNull(fn);
         return this.flatMapToGenerator((it) -> Generator.create(fn.apply(it)));
     }
 
@@ -134,10 +132,6 @@ public interface Generator<T> {
         for (var current = this.next(); current instanceof NextResult.Value<T> value; current = this.next()) {
             consumer.accept(value.value(), counter.getAndIncr());
         }
-    }
-
-    default Optional<T> head() {
-        return first();
     }
 
     default Iterator<T> iterator() {
@@ -274,11 +268,9 @@ public interface Generator<T> {
     default <R> R takeInto(int n, R init, BiFunction<T, R, R> reducer) {
         Objects.requireNonNull(reducer);
         R result = init;
-        int i = 0;
-        for (var current = this.next(); current instanceof NextResult.Value<T> value; current = this.next()) {
-            if (i < n) {
+        for (int i = 0; i < n; i++) {
+            if (this.next() instanceof NextResult.Value<T> value) {
                 result = reducer.apply(value.value(), result);
-                i++;
             } else {
                 break;
             }
