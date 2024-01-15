@@ -122,12 +122,10 @@ public interface Generator<T> {
     }
 
     default void forEach(Consumer<T> consumer) {
-        Objects.requireNonNull(consumer);
         this.forEach((it, i) -> consumer.accept(it));
     }
 
     default void forEach(ObjIntConsumer<T> consumer) {
-        Objects.requireNonNull(consumer);
         var counter = new Counter(0);
         for (var current = this.next(); current instanceof NextResult.Value<T> value; current = this.next()) {
             consumer.accept(value.value(), counter.getAndIncr());
@@ -136,11 +134,14 @@ public interface Generator<T> {
 
     default Iterator<T> iterator() {
         var self = this;
-        return new Iterator<T>() {
-            private NextResult<T> nextResult = self.next();
+        return new Iterator<>() {
+            private NextResult<T> nextResult = null;
 
             @Override
             public boolean hasNext() {
+                if (nextResult == null) {
+                    nextResult = self.next();
+                }
                 return nextResult instanceof NextResult.Value<T>;
             }
 
@@ -149,7 +150,7 @@ public interface Generator<T> {
                 return switch (nextResult) {
                     case NextResult.End ignored -> throw new NoSuchElementException();
                     case NextResult.Value<T> value -> {
-                        nextResult = self.next();
+                        nextResult = null;
                         yield value.value();
                     }
                 };

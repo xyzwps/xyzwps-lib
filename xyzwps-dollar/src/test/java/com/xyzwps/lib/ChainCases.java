@@ -10,6 +10,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.function.Consumer;
+import java.util.function.ObjIntConsumer;
 import java.util.function.Predicate;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -38,14 +40,15 @@ public record ChainCases(ChainFactory cf, MapEntryChainFactory mf) {
             testFilter2();
             testFirst();
             testFlatMap();
+            testForEach();
+            testForEach2();
+
             testHead();
+            testIterator();
         }
 
         /**
-         * void forEach(Consumer<T> consumer);
-         * void forEach(ObjIntConsumer<T> consumer);
          * <K> MapEntryChain<K, List<T>> groupBy(Function<T, K> toKey);
-         * Iterator<T> iterator();
          * String join(String sep) {
          * <K> MapEntryChain<K, T> keyBy(Function<T, K> toKey);
          * <R> Chain<R> map(Function<T, R> mapper);
@@ -62,6 +65,52 @@ public record ChainCases(ChainFactory cf, MapEntryChainFactory mf) {
          * Chain<T> unique() {
          * <K> Chain<T> uniqueBy(Function<T, K> toKey) {
          */
+
+        void testIterator() {
+            {
+                var itr = cf.just(1, 2, 3, 4).iterator();
+                var counter = new Counter(1);
+                while (itr.hasNext()) {
+                    assertEquals(itr.next(), counter.getAndIncr());
+                }
+            }
+
+            // laziness
+            {
+                var actions = new ArrayList<String>();
+                var itr = cf.just(1, 2, 4)
+                        .flatMap(i -> {
+                            actions.add("flatmap " + i);
+                            return new RangeIterable(i, i * 2);
+                        })
+                        .iterator();
+                assertTrue(actions.isEmpty());
+                var counter = new Counter(1);
+                while (itr.hasNext()) {
+                    assertEquals(itr.next(), counter.getAndIncr());
+                }
+                assertIterableEquals(List.of("flatmap 1", "flatmap 2", "flatmap 4"), actions);
+            }
+        }
+
+        void testForEach2() {
+            var list = new ArrayList<Integer>();
+            cf.just(1, 2, 3).forEach((it, i) -> {
+                list.add(i);
+                list.add(it);
+            });
+            assertEquals("[0, 1, 1, 2, 2, 3]", list.toString());
+
+            assertThrows(NullPointerException.class, () -> cf.just(1, 2, 3).forEach((ObjIntConsumer<Integer>) null));
+        }
+
+        void testForEach() {
+            var list = new ArrayList<Integer>();
+            cf.just(1, 2, 3).forEach(i -> list.add(i));
+            assertEquals("[1, 2, 3]", list.toString());
+
+            assertThrows(NullPointerException.class, () -> cf.just(1, 2, 3).forEach((Consumer<Integer>) null));
+        }
 
         void testFlatMap() {
             assertEquals("[1, 1, 2, 1, 2, 3]", cf.just(1, 2, 3).flatMap(i -> new RangeIterable(1, 1 + i)).toList().toString());

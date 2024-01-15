@@ -54,11 +54,13 @@ public class GeneratorChain<T> implements Chain<T> {
 
     @Override
     public void forEach(Consumer<T> consumer) {
+        Objects.requireNonNull(consumer);
         generator.forEach(consumer);
     }
 
     @Override
     public void forEach(ObjIntConsumer<T> consumer) {
+        Objects.requireNonNull(consumer);
         generator.forEach(consumer);
     }
 
