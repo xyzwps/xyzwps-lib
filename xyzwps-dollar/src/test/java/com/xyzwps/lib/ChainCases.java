@@ -8,10 +8,7 @@ import com.xyzwps.lib.dollar.util.Counter;
 import com.xyzwps.lib.dollar.util.ObjIntFunction;
 import com.xyzwps.lib.dollar.util.ObjIntPredicate;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.NoSuchElementException;
+import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.ObjIntConsumer;
@@ -43,14 +40,13 @@ public record ChainCases(ChainFactory cf, MapEntryChainFactory mf) {
             testFlatMap();
             testForEach();
             testForEach2();
-
+            testGroupBy();
             testHead();
             testIterator();
             testJoin();
-
+            testKeyBy();
             testMap();
             testMap2();
-
             testOrderBy();
             testReduce();
             testReverse();
@@ -62,15 +58,123 @@ public record ChainCases(ChainFactory cf, MapEntryChainFactory mf) {
             testToList();
             testToSet();
             testUnique();
+            testUniqueBy();
         }
 
-        /**
-         * <K> MapEntryChain<K, List<T>> groupBy(Function<T, K> toKey);
-         *
-         * <K> MapEntryChain<K, T> keyBy(Function<T, K> toKey);
-         * <p>
-         * <K> Chain<T> uniqueBy(Function<T, K> toKey) {
-         */
+
+        void testKeyBy() {
+            assertThrows(NullPointerException.class, () -> cf.just(1, 2, 3).keyBy(null));
+
+            // keep the first met
+            {
+                var map = cf.just(1, 2, 3, 4, 5).keyBy(i -> i % 3).toMap();
+                assertEquals(3, map.size());
+                assertEquals(1, map.get(1));
+                assertEquals(2, map.get(2));
+                assertEquals(3, map.get(0));
+            }
+
+            // laziness
+            {
+                var actions = new ArrayList<String>();
+                var c = cf.just(1, 2, 3)
+                        .map(i -> {
+                            actions.add("map " + i);
+                            return i;
+                        })
+                        .keyBy(Function.identity())
+                        .mapKeys((key) -> {
+                            actions.add("map key");
+                            return key;
+                        });
+                assertTrue(actions.isEmpty());
+
+                var map = c.toMap();
+                assertEquals(3, map.size());
+
+                assertEquals(1, map.get(1));
+                assertEquals(2, map.get(2));
+                assertEquals(3, map.get(3));
+
+                assertIterableEquals(List.of(
+                        "map 1", "map key",
+                        "map 2", "map key",
+                        "map 3", "map key"
+                ), actions);
+            }
+        }
+
+        void testGroupBy() {
+            assertThrows(NullPointerException.class, () -> cf.just(1, 2, 3).groupBy(null));
+
+            // laziness
+            {
+                var mapKeysActions = new HashMap<Integer, String>();
+                var actions = new ArrayList<String>();
+                var c = cf.just(1, 2, 3, 4, 5, 6, 7)
+                        .map(it -> {
+                            actions.add("map " + it);
+                            return it;
+                        })
+                        .groupBy(i -> i % 3)
+                        .mapKeys((key, value) -> {
+                            mapKeysActions.put(key, String.format("mapkey %s %s", key, value));
+                            actions.add("mapkey");
+                            return key;
+                        });
+                assertTrue(actions.isEmpty());
+                assertTrue(mapKeysActions.isEmpty());
+
+                var map = c.toMap();
+                assertEquals("[3, 6]", map.get(0).toString());
+                assertEquals("[1, 4, 7]", map.get(1).toString());
+                assertEquals("[2, 5]", map.get(2).toString());
+                assertEquals(3, map.size());
+
+                assertIterableEquals(List.of(
+                        "map 1", "map 2", "map 3", "map 4", "map 5", "map 6", "map 7",
+                        "mapkey", "mapkey", "mapkey"
+                ), actions);
+                assertEquals(3, mapKeysActions.size());
+                assertEquals("mapkey 0 [3, 6]", mapKeysActions.get(0));
+                assertEquals("mapkey 1 [1, 4, 7]", mapKeysActions.get(1));
+                assertEquals("mapkey 2 [2, 5]", mapKeysActions.get(2));
+            }
+        }
+
+        void testUniqueBy() {
+            assertEquals("[1, 2, 3, 4]", cf.just(1, 2, 1, 2, 3, 1, 2, 3, 4)
+                    .uniqueBy(i -> i % 4)
+                    .toList().toString());
+
+            assertThrows(NullPointerException.class, () -> cf.just(1, 2).uniqueBy(null));
+
+            // laziness
+            {
+                var actions = new ArrayList<String>();
+                var c = cf.just(1, 2, 2, 3, 4, 1, 4)
+                        .map(i -> {
+                            actions.add("map1 " + i);
+                            return i;
+                        })
+                        .uniqueBy(i -> i % 4)
+                        .map(i -> {
+                            actions.add("map2 " + i);
+                            return i;
+                        });
+                assertTrue(actions.isEmpty());
+                assertEquals("[1, 2, 3, 4]", c.toList().toString());
+                assertIterableEquals(List.of(
+                        "map1 1", "map2 1",
+                        "map1 2", "map2 2",
+                        "map1 2",
+                        "map1 3", "map2 3",
+                        "map1 4", "map2 4",
+                        "map1 1",
+                        "map1 4"
+                ), actions);
+            }
+        }
 
         void testUnique() {
             assertEquals("[1, 2, 3, 4]", cf.just(1, 2, 1, 2, 3, 1, 2, 3, 4).unique().toList().toString());

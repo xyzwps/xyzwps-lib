@@ -67,9 +67,11 @@ public class GeneratorChain<T> implements Chain<T> {
     @Override
     public <K> MapEntryChain<K, List<T>> groupBy(Function<T, K> toKey) {
         Objects.requireNonNull(toKey);
-        var map = new HashMap<K, List<T>>();
-        this.forEach(t -> map.computeIfAbsent(toKey.apply(t), k -> new ArrayList<>()).add(t));
-        return GeneratorMapEntryChainFactory.INSTANCE.from(map);
+        return GeneratorMapEntryChainFactory.INSTANCE.from(() -> {
+            var map = new HashMap<K, List<T>>();
+            this.forEach(t -> map.computeIfAbsent(toKey.apply(t), k -> new ArrayList<>()).add(t));
+            return map;
+        });
     }
 
     @Override

@@ -4,8 +4,6 @@ import com.xyzwps.lib.dollar.Chain;
 import com.xyzwps.lib.dollar.ChainFactory;
 import com.xyzwps.lib.dollar.iterator.RangeIterable;
 
-import java.util.Objects;
-
 public enum GeneratorChainFactory implements ChainFactory {
     INSTANCE;
 
