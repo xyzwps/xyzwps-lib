@@ -55,11 +55,34 @@ public record ChainCases(ChainFactory cf, MapEntryChainFactory mf) {
         testMEMapKeys2();
         testMEMapValues();
         testMEMapValues2();
+        testMEReduce();
+        testMEValues();
+    }
 
+    void testMEValues() {
+        assertTrue(mf.empty().values().toList().isEmpty());
 
-//        default <R> R reduce(R initValue, Function3<K, V, R, R> callbackFn) {
-//        default HashMap<K, V> toMap() {
-//        Chain<V> values();
+        // laziness
+        {
+            var map = treeMapOf(Pair.of(1, 100), Pair.of(2, 200), Pair.of(3, 300));
+            var actions = new ArrayList<String>();
+            var c = mf.from(map)
+                    .mapKeys(it -> {
+                        actions.add("mapKey " + it);
+                        return it;
+                    })
+                    .values();
+            assertTrue(actions.isEmpty());
+            assertEquals("[100, 200, 300]", c.toList().toString());
+            assertIterableEquals(List.of("mapKey 1", "mapKey 2", "mapKey 3"), actions);
+        }
+    }
+
+    void testMEReduce() {
+        assertThrows(NullPointerException.class, () -> mf.empty().reduce(new Object(), null));
+
+        var map = treeMapOf(Pair.of(1, 100), Pair.of(2, 200), Pair.of(3, 300));
+        assertEquals(1400, mf.from(map).reduce(0, (k, v, r) -> r + k * v));
     }
 
     void testMEMapValues2() {
