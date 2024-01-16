@@ -1,9 +1,9 @@
-package com.xyzwps.lib.dollar.foreach;
+package com.xyzwps.lib.dollar.seq;
 
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static com.xyzwps.lib.dollar.foreach.ISeq.*;
+import static com.xyzwps.lib.dollar.seq.ISeq.*;
 
 class ISeqTests {
 

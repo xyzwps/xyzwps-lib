@@ -1,7 +1,7 @@
 package com.xyzwps.lib.dollar.operator;
 
 import com.xyzwps.lib.dollar.chain.Chain;
-import com.xyzwps.lib.dollar.foreach.Traversable;
+import com.xyzwps.lib.dollar.seq.Traversable;
 import org.openjdk.jmh.annotations.*;
 import org.openjdk.jmh.infra.Blackhole;
 

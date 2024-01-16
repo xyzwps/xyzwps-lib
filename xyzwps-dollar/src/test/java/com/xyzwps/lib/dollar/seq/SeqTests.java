@@ -1,4 +1,4 @@
-package com.xyzwps.lib.dollar.foreach;
+package com.xyzwps.lib.dollar.seq;
 
 import com.xyzwps.lib.dollar.util.Counter;
 import com.xyzwps.lib.dollar.util.ObjIntPredicate;

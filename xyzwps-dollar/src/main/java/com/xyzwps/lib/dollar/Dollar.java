@@ -2,8 +2,8 @@ package com.xyzwps.lib.dollar;
 
 import com.xyzwps.lib.dollar.util.Function3;
 import com.xyzwps.lib.dollar.util.ObjIntFunction;
-import com.xyzwps.lib.dollar.foreach.MapEntryTraversable;
-import com.xyzwps.lib.dollar.foreach.Traversable;
+import com.xyzwps.lib.dollar.seq.MapEntryTraversable;
+import com.xyzwps.lib.dollar.seq.Traversable;
 import com.xyzwps.lib.dollar.iterator.EmptyIterator;
 import com.xyzwps.lib.dollar.util.Pair;
 import com.xyzwps.lib.dollar.util.Range;

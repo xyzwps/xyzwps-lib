@@ -1,6 +1,6 @@
 package com.xyzwps.lib.dollar;
 
-import com.xyzwps.lib.dollar.foreach.Traversable;
+import com.xyzwps.lib.dollar.seq.Traversable;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
