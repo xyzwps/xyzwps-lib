@@ -5,10 +5,9 @@ import java.util.NoSuchElementException;
 
 /**
  * An empty iterator. You can get nothing here.
- *
- * @param <T> element type. Haha.
  */
-public class EmptyIterator<T> implements Iterator<T> {
+public enum EmptyIterator implements Iterator<Object> {
+    INSTANCE;
 
     @Override
     public boolean hasNext() {
@@ -16,12 +15,10 @@ public class EmptyIterator<T> implements Iterator<T> {
     }
 
     @Override
-    public T next() {
+    public Object next() {
         throw new NoSuchElementException();
     }
 
-    private EmptyIterator() {
-    }
 
     /**
      * Create an empty iterator.
@@ -29,7 +26,8 @@ public class EmptyIterator<T> implements Iterator<T> {
      * @param <T> element type
      * @return an empty iterator
      */
+    @SuppressWarnings("unchecked")
     public static <T> Iterator<T> create() {
-        return new EmptyIterator<>();
+        return (Iterator<T>) INSTANCE;
     }
 }

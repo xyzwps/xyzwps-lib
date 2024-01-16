@@ -9,10 +9,10 @@ class StopException extends RuntimeException {
 
     static final StopException INSTANCE = new StopException();
 
-    static <T> Traversable<T> stop(Traversable<T> traversable) {
+    static <T> Seq<T> stop(Seq<T> seq) {
         return tConsumer -> {
             try {
-                traversable.forEach(tConsumer);
+                seq.forEach(tConsumer);
             } catch (StopException ignored) {
             }
         };

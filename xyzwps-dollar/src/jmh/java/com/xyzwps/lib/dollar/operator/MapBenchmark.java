@@ -1,7 +1,7 @@
 package com.xyzwps.lib.dollar.operator;
 
-import com.xyzwps.lib.dollar.chain.Chain;
-import com.xyzwps.lib.dollar.seq.Traversable;
+//import com.xyzwps.lib.dollar.chain.Chain;
+import com.xyzwps.lib.dollar.seq.Seq;
 import org.openjdk.jmh.annotations.*;
 import org.openjdk.jmh.infra.Blackhole;
 
@@ -29,8 +29,8 @@ public class MapBenchmark {
 
     @Benchmark
     public void arrayList_seqMap(Blackhole blackhole) {
-        Traversable<Integer> traversable = ARRAY_LIST::forEach;
-        blackhole.consume(traversable.map(i -> i * 2).toList().size());
+        Seq<Integer> seq = ARRAY_LIST::forEach;
+        blackhole.consume(seq.map(i -> i * 2).toList().size());
     }
 
     @Benchmark
@@ -43,15 +43,15 @@ public class MapBenchmark {
         blackhole.consume(ARRAY_LIST.stream().map(i -> i * 2).toList().size());
     }
 
-    @Benchmark
-    public void arrayList_chainMap(Blackhole blackhole) {
-        blackhole.consume(Chain.from(ARRAY_LIST).map(i -> i * 2).toList().size());
-    }
+//    @Benchmark
+//    public void arrayList_chainMap(Blackhole blackhole) {
+//        blackhole.consume(Chain.from(ARRAY_LIST).map(i -> i * 2).toList().size());
+//    }
 
     @Benchmark
     public void linkedList_seqMap(Blackhole blackhole) {
-        Traversable<Integer> traversable = LINKED_LIST::forEach;
-        blackhole.consume(traversable.map(i -> i * 2).toList().size());
+        Seq<Integer> seq = LINKED_LIST::forEach;
+        blackhole.consume(seq.map(i -> i * 2).toList().size());
     }
 
     @Benchmark
@@ -64,9 +64,9 @@ public class MapBenchmark {
         blackhole.consume(LINKED_LIST.stream().map(i -> i * 2).toList().size());
     }
 
-    @Benchmark
-    public void linkedList_chainMap(Blackhole blackhole) {
-        blackhole.consume(Chain.from(LINKED_LIST).map(i -> i * 2).toList().size());
-    }
+//    @Benchmark
+//    public void linkedList_chainMap(Blackhole blackhole) {
+//        blackhole.consume(Chain.from(LINKED_LIST).map(i -> i * 2).toList().size());
+//    }
 
 }

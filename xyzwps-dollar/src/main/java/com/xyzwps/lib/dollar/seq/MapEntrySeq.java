@@ -11,11 +11,11 @@ import java.util.function.BiPredicate;
 import java.util.function.Function;
 
 
-public interface MapEntryTraversable<K, V> {
+public interface MapEntrySeq<K, V> {
 
     void forEach(BiConsumer<K, V> consumer);
 
-    default MapEntryTraversable<K, V> filter(BiPredicate<K, V> predicateFn) {
+    default MapEntrySeq<K, V> filter(BiPredicate<K, V> predicateFn) {
         Objects.requireNonNull(predicateFn);
         return kvConsumer -> this.forEach((k, v) -> {
             if (predicateFn.test(k, v)) {
@@ -24,11 +24,11 @@ public interface MapEntryTraversable<K, V> {
         });
     }
 
-    default Traversable<K> keys() {
+    default Seq<K> keys() {
         return vConsumer -> this.forEach((k, v) -> vConsumer.accept(k));
     }
 
-    default <K2> MapEntryTraversable<K2, V> mapKeys(Function<K, K2> mapKeyFn) {
+    default <K2> MapEntrySeq<K2, V> mapKeys(Function<K, K2> mapKeyFn) {
         Objects.requireNonNull(mapKeyFn);
         final HashSet<K2> dedupSet = new HashSet<>();
         return k2vConsumer -> this.forEach((k, v) -> {
@@ -40,7 +40,7 @@ public interface MapEntryTraversable<K, V> {
         });
     }
 
-    default <K2> MapEntryTraversable<K2, V> mapKeys(BiFunction<K, V, K2> mapKeyFn) {
+    default <K2> MapEntrySeq<K2, V> mapKeys(BiFunction<K, V, K2> mapKeyFn) {
         Objects.requireNonNull(mapKeyFn);
         final HashSet<K2> dedupSet = new HashSet<>();
         return k2vConsumer -> this.forEach((k, v) -> {
@@ -52,12 +52,12 @@ public interface MapEntryTraversable<K, V> {
         });
     }
 
-    default <V2> MapEntryTraversable<K, V2> mapValues(Function<V, V2> mapValueFn) {
+    default <V2> MapEntrySeq<K, V2> mapValues(Function<V, V2> mapValueFn) {
         Objects.requireNonNull(mapValueFn);
         return kv2Consumer -> this.forEach((k, v) -> kv2Consumer.accept(k, mapValueFn.apply(v)));
     }
 
-    default <V2> MapEntryTraversable<K, V2> mapValues(BiFunction<V, K, V2> mapValueFn) {
+    default <V2> MapEntrySeq<K, V2> mapValues(BiFunction<V, K, V2> mapValueFn) {
         Objects.requireNonNull(mapValueFn);
         return kv2Consumer -> this.forEach((k, v) -> kv2Consumer.accept(k, mapValueFn.apply(v, k)));
     }
@@ -75,17 +75,17 @@ public interface MapEntryTraversable<K, V> {
         return result;
     }
 
-    default Traversable<V> values() {
+    default Seq<V> values() {
         return vConsumer -> this.forEach((k, v) -> vConsumer.accept(v));
     }
 
     // ------------ static ------------
 
-    static <K, V> MapEntryTraversable<K, V> empty() {
+    static <K, V> MapEntrySeq<K, V> empty() {
         return Functions::consumeNothing;
     }
 
-    static <K, V> MapEntryTraversable<K, V> from(Map<K, V> map) {
+    static <K, V> MapEntrySeq<K, V> from(Map<K, V> map) {
         return map == null || map.isEmpty() ? empty() : map::forEach;
     }
 }

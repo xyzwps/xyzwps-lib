@@ -1,6 +1,6 @@
 package com.xyzwps.lib.dollar;
 
-import com.xyzwps.lib.dollar.seq.Traversable;
+import com.xyzwps.lib.dollar.seq.Seq;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -14,7 +14,7 @@ class LazinessTests {
     void forTake() {
         List<String> trace = $.listOf();
 
-        Traversable<Integer> stages = $.just(1, 2, 3, 4, 5, 6, 7)
+        Seq<Integer> stages = $.just(1, 2, 3, 4, 5, 6, 7)
                 .map(i -> {
                     trace.add(String.format("map %d to %d", i, i + 2));
                     return i + 2;

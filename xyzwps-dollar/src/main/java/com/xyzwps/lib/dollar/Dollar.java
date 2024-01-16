@@ -2,8 +2,8 @@ package com.xyzwps.lib.dollar;
 
 import com.xyzwps.lib.dollar.util.Function3;
 import com.xyzwps.lib.dollar.util.ObjIntFunction;
-import com.xyzwps.lib.dollar.seq.MapEntryTraversable;
-import com.xyzwps.lib.dollar.seq.Traversable;
+import com.xyzwps.lib.dollar.seq.MapEntrySeq;
+import com.xyzwps.lib.dollar.seq.Seq;
 import com.xyzwps.lib.dollar.iterator.EmptyIterator;
 import com.xyzwps.lib.dollar.util.Pair;
 import com.xyzwps.lib.dollar.util.Range;
@@ -30,8 +30,8 @@ public final class Dollar {
      * @param <T>  list element type
      * @return a list stage
      */
-    public static <T> Traversable<T> $(Iterable<T> list) {
-        return Traversable.from(list);
+    public static <T> Seq<T> $(Iterable<T> list) {
+        return Seq.from(list);
     }
 
 
@@ -43,8 +43,8 @@ public final class Dollar {
      * @param <V> map value type
      * @return a map stage
      */
-    public static <K, V> MapEntryTraversable<K, V> $(Map<K, V> map) {
-        return MapEntryTraversable.from(map);
+    public static <K, V> MapEntrySeq<K, V> $(Map<K, V> map) {
+        return MapEntrySeq.from(map);
     }
 
 
@@ -805,8 +805,8 @@ public final class Dollar {
          * @param <T> element type
          * @return list stage
          */
-        public static <T> Traversable<T> empty() {
-            return Traversable.empty();
+        public static <T> Seq<T> empty() {
+            return Seq.empty();
         }
 
 
@@ -818,8 +818,8 @@ public final class Dollar {
          * @return list stage
          */
         @SafeVarargs
-        public static <T> Traversable<T> just(T... args) {
-            return Traversable.just(args);
+        public static <T> Seq<T> just(T... args) {
+            return Seq.just(args);
         }
 
 
@@ -830,7 +830,7 @@ public final class Dollar {
          * @param end   range end - excluded
          * @return list stage
          */
-        public static Traversable<Integer> range(int start, int end) {
+        public static Seq<Integer> range(int start, int end) {
             return new Range(start, end)::forEach;
         }
 
