@@ -4,6 +4,8 @@ import com.xyzwps.lib.dollar.Chain;
 import com.xyzwps.lib.dollar.ChainFactory;
 import com.xyzwps.lib.dollar.iterator.RangeIterable;
 
+import java.util.Objects;
+
 public enum GeneratorChainFactory implements ChainFactory {
     INSTANCE;
 
@@ -14,6 +16,8 @@ public enum GeneratorChainFactory implements ChainFactory {
 
     @Override
     public <T> Chain<T> from(Iterable<T> iterable) {
+        if (iterable == null) return empty();
+
         return new GeneratorChain<>(Generator.create(iterable));
     }
 

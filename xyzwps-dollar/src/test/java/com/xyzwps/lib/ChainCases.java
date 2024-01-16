@@ -17,7 +17,6 @@ import java.util.function.Function;
 import java.util.function.ObjIntConsumer;
 import java.util.function.Predicate;
 
-import static com.xyzwps.lib.dollar.Dollar.$.orderBy;
 import static org.junit.jupiter.api.Assertions.*;
 
 public record ChainCases(ChainFactory cf, MapEntryChainFactory mf) {
@@ -35,8 +34,6 @@ public record ChainCases(ChainFactory cf, MapEntryChainFactory mf) {
     class TestChain {
 
         void test() {
-            testTake();
-
             testChunk();
             testCompact();
             testConcat();
@@ -58,6 +55,13 @@ public record ChainCases(ChainFactory cf, MapEntryChainFactory mf) {
             testReduce();
             testReverse();
             testSize();
+            testSkip();
+            testSkipWhile();
+            testTake();
+            testTakeWhile();
+            testToList();
+            testToSet();
+            testUnique();
         }
 
         /**
@@ -65,14 +69,180 @@ public record ChainCases(ChainFactory cf, MapEntryChainFactory mf) {
          *
          * <K> MapEntryChain<K, T> keyBy(Function<T, K> toKey);
          * <p>
-         * Chain<T> skip(int n);
-         * Chain<T> skipWhile(Predicate<T> predicate);
-         * Chain<T> takeWhile(Predicate<T> predicate);
-         * ArrayList<T> toList() {
-         * HashSet<T> toSet() {
-         * Chain<T> unique() {
          * <K> Chain<T> uniqueBy(Function<T, K> toKey) {
          */
+
+        void testUnique() {
+            assertEquals("[1, 2, 3, 4]", cf.just(1, 2, 1, 2, 3, 1, 2, 3, 4).unique().toList().toString());
+
+            // laziness
+            {
+                var actions = new ArrayList<String>();
+                var c = cf.just(1, 2, 2, 3, 4, 1, 4)
+                        .map(i -> {
+                            actions.add("map1 " + i);
+                            return i;
+                        })
+                        .unique()
+                        .map(i -> {
+                            actions.add("map2 " + i);
+                            return i;
+                        });
+                assertTrue(actions.isEmpty());
+                assertEquals("[1, 2, 3, 4]", c.toList().toString());
+                assertIterableEquals(List.of(
+                        "map1 1", "map2 1",
+                        "map1 2", "map2 2",
+                        "map1 2",
+                        "map1 3", "map2 3",
+                        "map1 4", "map2 4",
+                        "map1 1",
+                        "map1 4"
+                ), actions);
+            }
+        }
+
+        void testToSet() {
+            assertEquals("[]", cf.empty().toSet().toString());
+
+            assertEquals("[]", cf.just().toSet().toString());
+            {
+                var set = cf.just(1, 2, 1).toSet();
+                assertEquals(set.size(), 2);
+                assertTrue(set.contains(1));
+                assertTrue(set.contains(2));
+            }
+
+            assertEquals("[]", cf.from(null).toSet().toString());
+            {
+                var set = cf.from(List.of(1, 2, 1, 2)).toSet();
+                assertEquals(set.size(), 2);
+                assertTrue(set.contains(1));
+                assertTrue(set.contains(2));
+            }
+
+            {
+                var set = cf.range(1, 3).toSet();
+                assertEquals(set.size(), 2);
+                assertTrue(set.contains(1));
+                assertTrue(set.contains(2));
+            }
+            assertEquals("[]", cf.range(1, 1).toSet().toString());
+            {
+                var set = cf.range(1, -3).toSet();
+                assertEquals(set.size(), 4);
+                assertTrue(set.contains(1));
+                assertTrue(set.contains(0));
+                assertTrue(set.contains(-1));
+                assertTrue(set.contains(-2));
+            }
+        }
+
+        void testToList() {
+            assertEquals("[]", cf.empty().toList().toString());
+
+            assertEquals("[]", cf.just().toList().toString());
+            assertEquals("[1, 2]", cf.just(1, 2).toList().toString());
+
+            assertEquals("[]", cf.from(null).toList().toString());
+            assertEquals("[1, 2]", cf.from(List.of(1, 2)).toList().toString());
+
+            assertEquals("[1, 2]", cf.range(1, 3).toList().toString());
+            assertEquals("[]", cf.range(1, 1).toList().toString());
+            assertEquals("[1, 0, -1, -2]", cf.range(1, -3).toList().toString());
+        }
+
+        void testTakeWhile() {
+            assertEquals("[1, 2, 3]", cf.just(1, 2, 3, 4, 5).takeWhile(it -> it < 4).toList().toString());
+            assertEquals("[]", cf.just(1, 2, 3, 4, 5).takeWhile(it -> it < 0).toList().toString());
+
+            assertThrows(NullPointerException.class, () -> cf.just(1, 2, 3, 4, 5).takeWhile(null));
+
+            // laziness
+            {
+                var actions = new ArrayList<String>();
+                var c = cf.just(1, 2, 3, 4, 5)
+                        .map(it -> {
+                            actions.add("map1 " + it);
+                            return it * 2;
+                        })
+                        .takeWhile(it -> it < 8)
+                        .map(it -> {
+                            actions.add("map2 " + it);
+                            return it + 2;
+                        });
+                assertTrue(actions.isEmpty());
+                assertEquals("[4, 6, 8]", c.toList().toString());
+                assertIterableEquals(List.of(
+                        "map1 1", "map2 2",
+                        "map1 2", "map2 4",
+                        "map1 3", "map2 6",
+                        "map1 4"
+                ), actions);
+            }
+        }
+
+        void testSkipWhile() {
+            assertEquals("[4, 5]", cf.just(1, 2, 3, 4, 5).skipWhile(it -> it < 4).toList().toString());
+            assertEquals("[]", cf.just(1, 2, 3, 4, 5).skipWhile(it -> it < 6).toList().toString());
+
+            assertThrows(NullPointerException.class, () -> cf.just(1, 2, 3, 4, 5).skipWhile(null));
+
+            // laziness
+            {
+                var actions = new ArrayList<String>();
+                var c = cf.just(1, 2, 3, 4, 5)
+                        .map(it -> {
+                            actions.add("map1 " + it);
+                            return it * 2;
+                        })
+                        .skipWhile(it -> it < 6)
+                        .map(it -> {
+                            actions.add("map2 " + it);
+                            return it + 2;
+                        });
+                assertTrue(actions.isEmpty());
+                assertEquals("[8, 10, 12]", c.toList().toString());
+                assertIterableEquals(List.of(
+                        "map1 1",
+                        "map1 2",
+                        "map1 3", "map2 6",
+                        "map1 4", "map2 8",
+                        "map1 5", "map2 10"
+                ), actions);
+            }
+        }
+
+        void testSkip() {
+            assertEquals("[4, 5]", cf.just(1, 2, 3, 4, 5).skip(3).toList().toString());
+            assertEquals("[]", cf.just(1, 2, 3, 4, 5).skip(5).toList().toString());
+            assertEquals("[1, 2, 3, 4, 5]", cf.just(1, 2, 3, 4, 5).skip(0).toList().toString());
+            assertEquals("[1, 2, 3, 4, 5]", cf.just(1, 2, 3, 4, 5).skip(-1).toList().toString());
+
+            // laziness
+            {
+                var actions = new ArrayList<String>();
+                var c = cf.just(1, 2, 3, 4, 5)
+                        .map(it -> {
+                            actions.add("map1 " + it);
+                            return it * 2;
+                        })
+                        .skip(3)
+                        .map(it -> {
+                            actions.add("map2 " + it);
+                            return it + 2;
+                        });
+                assertTrue(actions.isEmpty());
+                assertEquals("[10, 12]", c.toList().toString());
+                assertIterableEquals(List.of(
+                        "map1 1",
+                        "map1 2",
+                        "map1 3",
+                        "map1 4", "map2 8",
+                        "map1 5", "map2 10"
+                ), actions);
+            }
+        }
 
         void testSize() {
             assertEquals(0, cf.just().size());
@@ -416,6 +586,7 @@ public record ChainCases(ChainFactory cf, MapEntryChainFactory mf) {
 
         void testTake() {
             assertIterableEquals(List.of(0, 1, 2, 3, 4), cf.infinite(0).take(5).toList());
+            assertIterableEquals(List.of(0, 1, 2, 3, 4), cf.just(0, 1, 2, 3, 4).take(100).toList());
 
             assertIterableEquals(List.of(), cf.infinite(0).take(0).toList());
 

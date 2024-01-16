@@ -228,7 +228,6 @@ public interface Generator<T> {
     }
 
     default Generator<T> skipWhile(Predicate<T> predicate) {
-        Objects.requireNonNull(predicate);
         var shouldSkip = new BooleanValueHolder(true);
         return () -> {
             if (shouldSkip.value()) {
@@ -259,7 +258,6 @@ public interface Generator<T> {
     }
 
     default Generator<T> takeWhile(Predicate<T> predicate) {
-        Objects.requireNonNull(predicate);
         var done = new BooleanValueHolder(false);
         return () -> {
             if (done.value()) return NextResult.end();

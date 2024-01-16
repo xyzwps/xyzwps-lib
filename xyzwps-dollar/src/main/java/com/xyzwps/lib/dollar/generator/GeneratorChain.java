@@ -122,6 +122,7 @@ public class GeneratorChain<T> implements Chain<T> {
 
     @Override
     public Chain<T> skipWhile(Predicate<T> predicate) {
+        Objects.requireNonNull(predicate);
         return new GeneratorChain<>(generator.skipWhile(predicate));
     }
 
@@ -132,6 +133,7 @@ public class GeneratorChain<T> implements Chain<T> {
 
     @Override
     public Chain<T> takeWhile(Predicate<T> predicate) {
+        Objects.requireNonNull(predicate);
         return new GeneratorChain<>(generator.takeWhile(predicate));
     }
 }
