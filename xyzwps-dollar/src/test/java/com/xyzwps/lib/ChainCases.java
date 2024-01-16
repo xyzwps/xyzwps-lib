@@ -1,18 +1,11 @@
 package com.xyzwps.lib;
 
-import com.xyzwps.lib.dollar.ChainFactory;
-import com.xyzwps.lib.dollar.Direction;
-import com.xyzwps.lib.dollar.MapEntryChainFactory;
+import com.xyzwps.lib.dollar.*;
 import com.xyzwps.lib.dollar.iterator.RangeIterable;
-import com.xyzwps.lib.dollar.util.Counter;
-import com.xyzwps.lib.dollar.util.ObjIntFunction;
-import com.xyzwps.lib.dollar.util.ObjIntPredicate;
+import com.xyzwps.lib.dollar.util.*;
 
 import java.util.*;
-import java.util.function.Consumer;
-import java.util.function.Function;
-import java.util.function.ObjIntConsumer;
-import java.util.function.Predicate;
+import java.util.function.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -20,6 +13,7 @@ public record ChainCases(ChainFactory cf, MapEntryChainFactory mf) {
 
     public void test() {
         testChain();
+        testMapEntryChain();
     }
 
     void testChain() {
@@ -51,6 +45,185 @@ public record ChainCases(ChainFactory cf, MapEntryChainFactory mf) {
         testToSet();
         testUnique();
         testUniqueBy();
+    }
+
+    void testMapEntryChain() {
+        testMEForEach();
+        testMEFilter();
+        testMEKeys();
+        testMEMapKeys();
+        testMEMapKeys2();
+        testMEMapValues();
+        testMEMapValues2();
+
+
+//        default <R> R reduce(R initValue, Function3<K, V, R, R> callbackFn) {
+//        default HashMap<K, V> toMap() {
+//        Chain<V> values();
+    }
+
+    void testMEMapValues2() {
+        assertThrows(NullPointerException.class, () -> mf.empty().mapValues((BiFunction<Object, Object, Object>) null));
+
+        // laziness
+        {
+            var map = treeMapOf(Pair.of(1, 100), Pair.of(2, 200), Pair.of(3, 300));
+            var actions = new ArrayList<String>();
+            var c = mf.from(map)
+                    .mapValues((v, k) -> {
+                        actions.add("mapValue " + v);
+                        return (v + 1) * k;
+                    });
+            assertTrue(actions.isEmpty());
+            var result = c.toMap();
+            assertIterableEquals(List.of("mapValue 100", "mapValue 200", "mapValue 300"), actions);
+            assertEquals(3, result.size());
+            assertEquals(101, result.get(1));
+            assertEquals(402, result.get(2));
+            assertEquals(903, result.get(3));
+        }
+    }
+
+    void testMEMapValues() {
+        assertThrows(NullPointerException.class, () -> mf.empty().mapValues((Function<Object, Object>) null));
+
+        // laziness
+        {
+            var map = treeMapOf(Pair.of(1, 100), Pair.of(2, 200), Pair.of(3, 300));
+            var actions = new ArrayList<String>();
+            var c = mf.from(map)
+                    .mapValues(it -> {
+                        actions.add("mapValue " + it);
+                        return it + 1;
+                    });
+            assertTrue(actions.isEmpty());
+            var result = c.toMap();
+            assertIterableEquals(List.of("mapValue 100", "mapValue 200", "mapValue 300"), actions);
+            assertEquals(3, result.size());
+            assertEquals(101, result.get(1));
+            assertEquals(201, result.get(2));
+            assertEquals(301, result.get(3));
+        }
+    }
+
+    void testMEMapKeys2() {
+        assertThrows(NullPointerException.class, () -> mf.empty().mapKeys((BiFunction<Object, Object, Object>) null));
+
+        // laziness
+        {
+            var map = treeMapOf(Pair.of(1, 100), Pair.of(2, 200), Pair.of(3, 300));
+            var actions = new ArrayList<String>();
+            var c = mf.from(map)
+                    .mapKeys((k, v) -> {
+                        actions.add("mapKey " + k);
+                        return k + v;
+                    });
+            assertTrue(actions.isEmpty());
+            var result = c.toMap();
+            assertIterableEquals(List.of("mapKey 1", "mapKey 2", "mapKey 3"), actions);
+            assertEquals(3, result.size());
+            assertEquals(100, result.get(101));
+            assertEquals(200, result.get(202));
+            assertEquals(300, result.get(303));
+        }
+    }
+
+    void testMEMapKeys() {
+        assertThrows(NullPointerException.class, () -> mf.empty().mapKeys((Function<Object, Object>) null));
+
+        // laziness
+        {
+            var map = treeMapOf(Pair.of(1, 100), Pair.of(2, 200), Pair.of(3, 300));
+            var actions = new ArrayList<String>();
+            var c = mf.from(map)
+                    .mapKeys(it -> {
+                        actions.add("mapKey " + it);
+                        return it * 2;
+                    });
+            assertTrue(actions.isEmpty());
+            var result = c.toMap();
+            assertIterableEquals(List.of("mapKey 1", "mapKey 2", "mapKey 3"), actions);
+            assertEquals(3, result.size());
+            assertEquals(100, result.get(2));
+            assertEquals(200, result.get(4));
+            assertEquals(300, result.get(6));
+        }
+    }
+
+    void testMEKeys() {
+        assertTrue(mf.empty().keys().toList().isEmpty());
+
+        // laziness
+        {
+            var map = treeMapOf(Pair.of(1, 100), Pair.of(2, 200), Pair.of(3, 300));
+            var actions = new ArrayList<String>();
+            var c = mf.from(map)
+                    .mapKeys(it -> {
+                        actions.add("mapKey " + it);
+                        return it;
+                    })
+                    .keys();
+            assertTrue(actions.isEmpty());
+            assertEquals("[1, 2, 3]", c.toList().toString());
+            assertIterableEquals(List.of("mapKey 1", "mapKey 2", "mapKey 3"), actions);
+        }
+    }
+
+    void testMEFilter() {
+        assertThrows(NullPointerException.class, () -> mf.empty().filter(null));
+
+        var map = treeMapOf(Pair.of(1, 100), Pair.of(2, 200), Pair.of(3, 300));
+
+        // filter keys && laziness
+        {
+            var actions = new ArrayList<String>();
+            var c = mf.from(map)
+                    .filter((k, v) -> {
+                        actions.add(String.format("filter %d %d", k, v));
+                        return k % 2 == 1;
+                    });
+            assertTrue(actions.isEmpty());
+            var result = c.toMap();
+            assertIterableEquals(List.of("filter 1 100", "filter 2 200", "filter 3 300"), actions);
+            assertEquals(2, result.size());
+            assertEquals(100, result.get(1));
+            assertEquals(300, result.get(3));
+        }
+
+        // filter values && laziness
+        {
+            var actions = new ArrayList<String>();
+            var c = mf.from(map)
+                    .filter((k, v) -> {
+                        actions.add(String.format("filter %d %d", k, v));
+                        return v > 100;
+                    });
+            assertTrue(actions.isEmpty());
+            var result = c.toMap();
+            assertIterableEquals(List.of("filter 1 100", "filter 2 200", "filter 3 300"), actions);
+            assertEquals(2, result.size());
+            assertEquals(200, result.get(2));
+            assertEquals(300, result.get(3));
+        }
+    }
+
+    void testMEForEach() {
+        assertThrows(NullPointerException.class, () -> mf.empty().forEach(null));
+
+        var map = treeMapOf(Pair.of(1, "1"), Pair.of(2, "2"), Pair.of(3, "3"));
+        var actions = new ArrayList<String>();
+        mf.from(map).forEach((k, v) -> actions.add(String.format("k %d, v %s", k, v)));
+        assertEquals(3, actions.size());
+        assertIterableEquals(List.of("k 1, v 1", "k 2, v 2", "k 3, v 3"), actions);
+    }
+
+    @SafeVarargs
+    static <K extends Comparable<K>, V> TreeMap<K, V> treeMapOf(Pair<K, V>... pairs) {
+        var m = new TreeMap<K, V>();
+        for (var p : pairs) {
+            m.put(p.key(), p.value());
+        }
+        return m;
     }
 
 
