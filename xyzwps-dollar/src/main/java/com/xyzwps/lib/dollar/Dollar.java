@@ -1,12 +1,11 @@
 package com.xyzwps.lib.dollar;
 
+import com.xyzwps.lib.dollar.seq.SeqChainFactory;
+import com.xyzwps.lib.dollar.seq.SeqMapEntryChainFactory;
 import com.xyzwps.lib.dollar.util.Function3;
 import com.xyzwps.lib.dollar.util.ObjIntFunction;
-import com.xyzwps.lib.dollar.seq.MapEntrySeq;
-import com.xyzwps.lib.dollar.seq.Seq;
 import com.xyzwps.lib.dollar.iterator.EmptyIterator;
 import com.xyzwps.lib.dollar.util.Pair;
-import com.xyzwps.lib.dollar.util.Range;
 import com.xyzwps.lib.dollar.util.Unreachable;
 
 import java.util.*;
@@ -23,6 +22,10 @@ import static com.xyzwps.lib.dollar.util.Comparators.*;
  */
 public final class Dollar {
 
+    private static final ChainFactory cf = SeqChainFactory.INSTANCE;
+    private static final MapEntryChainFactory mf = SeqMapEntryChainFactory.INSTANCE;
+
+
     /**
      * Create a stage chain from a {@link List}.
      *
@@ -30,8 +33,8 @@ public final class Dollar {
      * @param <T>  list element type
      * @return a list stage
      */
-    public static <T> Seq<T> $(Iterable<T> list) {
-        return Seq.from(list);
+    public static <T> Chain<T> $(Iterable<T> list) {
+        return cf.from(list);
     }
 
 
@@ -43,8 +46,8 @@ public final class Dollar {
      * @param <V> map value type
      * @return a map stage
      */
-    public static <K, V> MapEntrySeq<K, V> $(Map<K, V> map) {
-        return MapEntrySeq.from(map);
+    public static <K, V> MapEntryChain<K, V> $(Map<K, V> map) {
+        return mf.from(map);
     }
 
 
@@ -299,7 +302,7 @@ public final class Dollar {
         public static <T> Optional<T> last(List<T> list) {
             return $.isEmpty(list)
                     ? Optional.empty()
-                    : Optional.ofNullable(list.get(list.size() - 1));
+                    : Optional.ofNullable(list.getLast());
         }
 
         /**
@@ -805,8 +808,8 @@ public final class Dollar {
          * @param <T> element type
          * @return list stage
          */
-        public static <T> Seq<T> empty() {
-            return Seq.empty();
+        public static <T> Chain<T> empty() {
+            return cf.empty();
         }
 
 
@@ -818,8 +821,8 @@ public final class Dollar {
          * @return list stage
          */
         @SafeVarargs
-        public static <T> Seq<T> just(T... args) {
-            return Seq.just(args);
+        public static <T> Chain<T> just(T... args) {
+            return cf.just(args);
         }
 
 
@@ -830,8 +833,8 @@ public final class Dollar {
          * @param end   range end - excluded
          * @return list stage
          */
-        public static Seq<Integer> range(int start, int end) {
-            return new Range(start, end)::forEach;
+        public static Chain<Integer> range(int start, int end) {
+            return cf.range(start, end);
         }
 
         /**
@@ -849,7 +852,7 @@ public final class Dollar {
                 return Optional.empty();
             }
             if (iterable instanceof List<T> list) {
-                return list.isEmpty() ? Optional.empty() : Optional.ofNullable(list.get(0));
+                return list.isEmpty() ? Optional.empty() : Optional.ofNullable(list.getFirst());
             }
             Iterator<T> itr = iterable.iterator();
             return itr.hasNext() ? Optional.ofNullable(itr.next()) : Optional.empty();
