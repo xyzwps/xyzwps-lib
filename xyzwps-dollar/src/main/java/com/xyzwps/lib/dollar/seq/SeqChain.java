@@ -3,6 +3,8 @@ package com.xyzwps.lib.dollar.seq;
 import com.xyzwps.lib.dollar.Chain;
 import com.xyzwps.lib.dollar.Direction;
 import com.xyzwps.lib.dollar.MapEntryChain;
+import com.xyzwps.lib.dollar.iterator.LazyIterable;
+import com.xyzwps.lib.dollar.iterator.LazyIterator;
 import com.xyzwps.lib.dollar.util.ObjIntFunction;
 import com.xyzwps.lib.dollar.util.ObjIntPredicate;
 
@@ -74,7 +76,7 @@ public class SeqChain<T> implements Chain<T> {
 
     @Override
     public Iterator<T> iterator() {
-        return seq.toList().iterator(); // TODO: 低效，好像也没啥办法
+        return new LazyIterator<>(() -> seq.toList().iterator());
     }
 
     @Override

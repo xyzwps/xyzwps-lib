@@ -26,7 +26,7 @@ class DemoTests {
                 .flatMap(i -> {
                     int t1 = i, t2 = i + 2;
                     log.add(String.format("  2) flat map %d to %d, %d", i, t1, t2));
-                    return $.just(t1, t2);
+                    return $.just(t1, t2).toList();
                 })
                 .orderBy(Function.identity(), Direction.DESC)
                 .filter(i -> {
@@ -40,7 +40,7 @@ class DemoTests {
                     return r;
                 })
                 .unique()
-                .value();
+                .toList();
 
         assertEquals("[28, 24, 20, 16]", result.toString());
 
@@ -82,12 +82,12 @@ class DemoTests {
                 $.listOf(28, 24, 20, 16),
                 $.just(2, 3, 4, 5, 6)
                         .map(i -> i * 2)
-                        .flatMap(i -> $.just(i, i + 2))
+                        .flatMap(i -> $.just(i, i + 2).toList())
                         .orderBy(Function.identity(), Direction.DESC)
                         .filter(i -> i > 6)
                         .map(i -> i * 2)
                         .unique()
-                        .value()
+                        .toList()
         );
     }
 

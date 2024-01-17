@@ -14,7 +14,7 @@ class LazinessTests {
     void forTake() {
         List<String> trace = $.listOf();
 
-        Seq<Integer> stages = $.just(1, 2, 3, 4, 5, 6, 7)
+        Chain<Integer> stages = $.just(1, 2, 3, 4, 5, 6, 7)
                 .map(i -> {
                     trace.add(String.format("map %d to %d", i, i + 2));
                     return i + 2;
@@ -31,7 +31,7 @@ class LazinessTests {
 
         assertTrue(trace.isEmpty());
 
-        assertIterableEquals($.listOf(1, 3, 5), stages.value());
+        assertIterableEquals($.listOf(1, 3, 5), stages.toList());
         assertIterableEquals(
                 $.listOf(
                         "map 1 to 3",

@@ -14,18 +14,16 @@ import java.util.Set;
 class ChainTests {
     @Test
     void testGenerator() {
-        new ChainCases(GeneratorChainFactory.INSTANCE, GeneratorMapEntryChainFactory.INSTANCE, new HashSet<>()).test();
+        new ChainCases(GeneratorChainFactory.INSTANCE, GeneratorMapEntryChainFactory.INSTANCE).test();
     }
 
     @Test
     void testSeq() {
-        new ChainCases(SeqChainFactory.INSTANCE, SeqMapEntryChainFactory.INSTANCE, Set.of(
-                ChainFeature.ITERATOR_IS_NOT_LAZY
-        )).test();
+        new ChainCases(SeqChainFactory.INSTANCE, SeqMapEntryChainFactory.INSTANCE).test();
     }
 
     @Test
     void testIterator() {
-        new ChainCases(IteratorChainFactory.INSTANCE, IteratorMapEntryChainFactory.INSTANCE, Set.of()).test();
+        new ChainCases(IteratorChainFactory.INSTANCE, IteratorMapEntryChainFactory.INSTANCE).test();
     }
 }

@@ -1,14 +1,17 @@
 package com.xyzwps.lib.dollar.iterator;
 
 import java.util.Iterator;
+import java.util.Objects;
 import java.util.function.Supplier;
 
-class LazyIterable<T> implements Iterable<T> {
+import static com.xyzwps.lib.dollar.util.ObjectUtils.*;
+
+public class LazyIterable<T> implements Iterable<T> {
 
     private final Supplier<Iterable<T>> supplier;
 
-    LazyIterable(Supplier<Iterable<T>> supplier) {
-        this.supplier = supplier;
+    public LazyIterable(Supplier<Iterable<T>> supplier) {
+        this.supplier = Objects.requireNonNull(supplier);
     }
 
     private Iterable<T> iterable;
@@ -16,7 +19,7 @@ class LazyIterable<T> implements Iterable<T> {
     @Override
     public Iterator<T> iterator() {
         if (iterable == null) {
-            iterable = supplier.get();
+            iterable = defaultTo(supplier.get(), EmptyIterable.create());
         }
         return iterable.iterator();
     }

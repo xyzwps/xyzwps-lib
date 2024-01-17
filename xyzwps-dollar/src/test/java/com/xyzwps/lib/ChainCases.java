@@ -11,8 +11,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public record ChainCases(
         ChainFactory cf,
-        MapEntryChainFactory mf,
-        Set<ChainFeature> features
+        MapEntryChainFactory mf
 ) {
 
     public void test() {
@@ -657,21 +656,7 @@ public record ChainCases(
             }
         }
 
-        if (features.contains(ChainFeature.ITERATOR_IS_NOT_LAZY)) {
-            // eager
-            var actions = new ArrayList<String>();
-            var itr = cf.just(1, 2, 4)
-                    .flatMap(i -> {
-                        actions.add("flatmap " + i);
-                        return new RangeIterable(i, i * 2);
-                    })
-                    .iterator();
-            assertIterableEquals(List.of("flatmap 1", "flatmap 2", "flatmap 4"), actions);
-            var counter = new Counter(1);
-            while (itr.hasNext()) {
-                assertEquals(itr.next(), counter.getAndIncr());
-            }
-        } else {
+        {
             // laziness
             var actions = new ArrayList<String>();
             var itr = cf.just(1, 2, 4)
