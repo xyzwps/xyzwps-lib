@@ -14,7 +14,6 @@ class TakeIterator<T> implements Iterator<T> {
         this.n = n;
     }
 
-
     @Override
     public boolean hasNext() {
         return current < n && from.hasNext();

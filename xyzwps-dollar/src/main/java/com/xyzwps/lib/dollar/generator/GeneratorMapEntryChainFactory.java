@@ -25,7 +25,7 @@ public enum GeneratorMapEntryChainFactory implements MapEntryChainFactory {
     public <K, V> MapEntryChain<K, V> from(Supplier<Map<K, V>> supplier) {
         Objects.requireNonNull(supplier);
         return new GeneratorMapEntryChain<>(new GeneratorChain<>(
-                Generator.create(() -> {
+                Generator.fromSupplier(() -> {
                     var map = supplier.get();
                     return map == null ? Collections.emptySet() : map.entrySet();
                 })

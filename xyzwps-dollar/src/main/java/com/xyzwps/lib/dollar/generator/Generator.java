@@ -12,16 +12,16 @@ import static com.xyzwps.lib.dollar.util.Comparators.descComparator;
 public interface Generator<T> {
     NextResult<T> next();
 
-    static <T> Generator<T> create(Iterator<T> iterator) {
+    static <T> Generator<T> fromIterator(Iterator<T> iterator) {
         Objects.requireNonNull(iterator);
         return () -> iterator.hasNext() ? new NextResult.Value<>(iterator.next()) : NextResult.end();
     }
 
-    static <T> Generator<T> create(Iterable<T> iterable) {
-        return create(iterable.iterator());
+    static <T> Generator<T> fromIterable(Iterable<T> iterable) {
+        return fromIterator(iterable.iterator());
     }
 
-    static <T> Generator<T> create(Supplier<Iterable<T>> iterableSupplier) {
+    static <T> Generator<T> fromSupplier(Supplier<Iterable<T>> iterableSupplier) {
         if (iterableSupplier == null) return empty();
         return new Generator<>() {
             Iterator<T> itr = null;
@@ -68,7 +68,7 @@ public interface Generator<T> {
     }
 
     default Generator<T> concat(Iterable<T> iterable) {
-        return concat(create(iterable));
+        return concat(fromIterable(iterable));
     }
 
     default Generator<T> concat(Generator<T> generator) {
@@ -108,7 +108,7 @@ public interface Generator<T> {
     }
 
     default <R> Generator<R> flatMap(Function<T, Iterable<R>> fn) {
-        return this.flatMapToGenerator((it) -> Generator.create(fn.apply(it)));
+        return this.flatMapToGenerator((it) -> Generator.fromIterable(fn.apply(it)));
     }
 
     default <R> Generator<R> flatMapToGenerator(Function<T, Generator<R>> fn) {
@@ -186,7 +186,7 @@ public interface Generator<T> {
     }
 
     default <K extends Comparable<K>> Generator<T> orderBy(Function<T, K> toKey, Direction direction) {
-        return create(() -> {
+        return fromSupplier(() -> {
             ArrayList<T> list = this.toList();
             Comparator<T> comparator = direction == Direction.DESC ? descComparator(toKey) : ascComparator(toKey);
             list.sort(comparator);
@@ -203,7 +203,7 @@ public interface Generator<T> {
     }
 
     default Generator<T> reverse() {
-        return create(() -> this.toList().reversed());
+        return fromSupplier(() -> this.toList().reversed());
     }
 
     default Generator<T> skip(int n) {

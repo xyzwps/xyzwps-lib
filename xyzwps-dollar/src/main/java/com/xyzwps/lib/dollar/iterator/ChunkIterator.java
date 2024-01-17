@@ -5,7 +5,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
 
- record ChunkIterator<T>(Iterator<T> up, int size) implements Iterator<List<T>> {
+record ChunkIterator<T>(Iterator<T> up, int size) implements Iterator<List<T>> {
     @Override
     public boolean hasNext() {
         return up.hasNext();

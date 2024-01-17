@@ -16,7 +16,7 @@ public enum GeneratorChainFactory implements ChainFactory {
     public <T> Chain<T> from(Iterable<T> iterable) {
         if (iterable == null) return empty();
 
-        return new GeneratorChain<>(Generator.create(iterable));
+        return new GeneratorChain<>(Generator.fromIterable(iterable));
     }
 
     @SafeVarargs
@@ -32,6 +32,6 @@ public enum GeneratorChainFactory implements ChainFactory {
 
     @Override
     public Chain<Integer> range(int start, int end) {
-        return new GeneratorChain<>(Generator.create(new RangeIterable(start, end)));
+        return new GeneratorChain<>(Generator.fromIterable(new RangeIterable(start, end)));
     }
 }

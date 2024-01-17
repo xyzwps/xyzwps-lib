@@ -15,7 +15,7 @@ public class IteratorChain<T> implements Chain<T> {
     private final Iterable<T> iterable;
 
     public IteratorChain(Iterable<T> iterable) {
-        this.iterable = iterable == null ? ChainIterable.empty() : iterable;
+        this.iterable = iterable == null ? EmptyIterable.create() : iterable;
     }
 
     public static <T, R> IteratorChain<R> nest(Iterable<T> up, Function<Iterator<T>, Iterator<R>> grow) {

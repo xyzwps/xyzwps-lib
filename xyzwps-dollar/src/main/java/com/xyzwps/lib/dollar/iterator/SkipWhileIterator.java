@@ -29,7 +29,6 @@ class SkipWhileIterator<T> implements Iterator<T> {
 
     private Stage stage = Stage.SkipStage.INSTANCE;
 
-
     void tryToSkip() {
         if (stage instanceof Stage.SkipStage) {
             while (up.hasNext()) {
@@ -59,6 +58,7 @@ class SkipWhileIterator<T> implements Iterator<T> {
             case Stage.SkipStage ignored -> throw new NoSuchElementException(); // all skipped
             case Stage.FindFirstStage value -> {
                 stage = Stage.LastStage.INSTANCE;
+                //noinspection unchecked
                 yield (T) value.value;
             }
             case Stage.LastStage ignored -> up.next();
