@@ -28,9 +28,9 @@ public final class ArrayListReverseIterator<T> implements Iterator<T> {
 
     @Override
     public T next() {
-        if (this.index == 0) {
-            throw new NoSuchElementException();
+        if (hasNext()) {
+            return list.get(--index);
         }
-        return list.get(--this.index);
+        throw new NoSuchElementException();
     }
 }

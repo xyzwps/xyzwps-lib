@@ -47,20 +47,7 @@ public class ChainIterable<T> implements Iterable<T> {
         return new ChainIterable<>(() -> new InfiniteIterator(start));
     }
 
-   public static void main(String[] args) {
-        var t = infinite(0)
-                .filter(i -> {
-                    System.out.printf("=> filter: %d > 1\n", i);
-                    return i > 1;
-                })
-                .map(i -> {
-                    System.out.printf("=> map: %d + 4 = %d\n", i, i + 4);
-                    return i + 4;
-                })
-                .take(2);
-        System.out.println("============");
-        t.forEach(it -> System.out.printf("=> forEach %d \n", it));
-        System.out.println("============");
+    public static <T> ChainIterable<T> empty() {
+        return new ChainIterable<>(EmptyIterable.create());
     }
-
 }

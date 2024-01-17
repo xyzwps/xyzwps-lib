@@ -1,19 +1,23 @@
 package com.xyzwps.lib.dollar.iterator;
 
+import com.xyzwps.lib.dollar.util.Counter;
+import com.xyzwps.lib.dollar.util.ObjIntPredicate;
 import com.xyzwps.lib.dollar.util.ObjectHolder;
 
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.function.Predicate;
 
-class FilterIterator<T> implements Iterator<T> {
+class Filter2Iterator<T> implements Iterator<T> {
 
-    private final Predicate<T> predicate;
+    private final ObjIntPredicate<T> predicate;
     private final Iterator<T> up;
+    private final Counter counter;
 
-    public FilterIterator(Iterator<T> up, Predicate<T> predicate) {
+    Filter2Iterator(Iterator<T> up, ObjIntPredicate<T> predicate) {
         this.up = up;
         this.predicate = predicate;
+        this.counter = new Counter(0);
     }
 
     private ObjectHolder<T> next = null;
@@ -23,7 +27,7 @@ class FilterIterator<T> implements Iterator<T> {
 
         while (up.hasNext()) {
             var next = up.next();
-            if (predicate.test(next)) {
+            if (predicate.test(next, counter.getAndIncr())) {
                 this.next = new ObjectHolder<>(next);
                 return;
             }

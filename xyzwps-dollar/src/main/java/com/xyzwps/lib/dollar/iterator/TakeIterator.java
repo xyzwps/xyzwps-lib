@@ -4,7 +4,7 @@ import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.Objects;
 
-public class TakeIterator<T> implements Iterator<T> {
+class TakeIterator<T> implements Iterator<T> {
     private final int n;
     private final Iterator<T> from;
     private int current = 0;
