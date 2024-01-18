@@ -103,7 +103,7 @@ public interface Generator<T> {
     default Optional<T> first() {
         return switch (this.next()) {
             case NextResult.End ignored -> Optional.empty();
-            case NextResult.Value<T> value -> Optional.ofNullable(value.value());
+            case NextResult.Value<T>(T value) -> Optional.ofNullable(value);
         };
     }
 
@@ -121,7 +121,7 @@ public interface Generator<T> {
                         case NextResult.End ignore -> {
                             return NextResult.end();
                         }
-                        case NextResult.Value<T> value -> holder.set(fn.apply(value.value()));
+                        case NextResult.Value<T>(T value) -> holder.set(fn.apply(value));
                     }
                 }
 
@@ -142,8 +142,8 @@ public interface Generator<T> {
 
     default void forEach(ObjIntConsumer<T> consumer) {
         var counter = new Counter(0);
-        for (var current = this.next(); current instanceof NextResult.Value<T> value; current = this.next()) {
-            consumer.accept(value.value(), counter.getAndIncr());
+        for (var current = this.next(); current instanceof NextResult.Value<T>(T value); current = this.next()) {
+            consumer.accept(value, counter.getAndIncr());
         }
     }
 
@@ -164,9 +164,9 @@ public interface Generator<T> {
             public T next() {
                 return switch (nextResult) {
                     case NextResult.End ignored -> throw new NoSuchElementException();
-                    case NextResult.Value<T> value -> {
+                    case NextResult.Value<T>(T value) -> {
                         nextResult = null;
-                        yield value.value();
+                        yield value;
                     }
                 };
             }
@@ -181,7 +181,7 @@ public interface Generator<T> {
         var counter = new Counter(0);
         return () -> switch (this.next()) {
             case NextResult.End end -> end;
-            case NextResult.Value<T> value -> new NextResult.Value<>(mapper.apply(value.value(), counter.getAndIncr()));
+            case NextResult.Value<T>(T value) -> new NextResult.Value<>(mapper.apply(value, counter.getAndIncr()));
         };
     }
 
@@ -196,8 +196,8 @@ public interface Generator<T> {
 
     default <R> R reduce(R init, BiFunction<T, R, R> reducer) {
         R result = init;
-        for (var current = this.next(); current instanceof NextResult.Value<T> value; current = this.next()) {
-            result = reducer.apply(value.value(), result);
+        for (var current = this.next(); current instanceof NextResult.Value<T>(T value); current = this.next()) {
+            result = reducer.apply(value, result);
         }
         return result;
     }
@@ -280,8 +280,8 @@ public interface Generator<T> {
         Objects.requireNonNull(reducer);
         R result = init;
         for (int i = 0; i < n; i++) {
-            if (this.next() instanceof NextResult.Value<T> value) {
-                result = reducer.apply(value.value(), result);
+            if (this.next() instanceof NextResult.Value<T>(T value)) {
+                result = reducer.apply(value, result);
             } else {
                 break;
             }
