@@ -8,4 +8,6 @@ public interface Reducible {
     default ReducedResult reduce(Environment env) {
         throw new RuntimeException("Cannot reduce");
     }
+
+    EvaluatedResult evaluate(Environment env);
 }

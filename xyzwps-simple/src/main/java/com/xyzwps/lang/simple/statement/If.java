@@ -1,17 +1,28 @@
 package com.xyzwps.lang.simple.statement;
 
-import com.xyzwps.lang.simple.Environment;
-import com.xyzwps.lang.simple.Expression;
-import com.xyzwps.lang.simple.ReducedResult;
-import com.xyzwps.lang.simple.Statement;
+import com.xyzwps.lang.simple.*;
 import com.xyzwps.lang.simple.expression.value.Bool;
 
 import static com.xyzwps.lang.simple.ReducedResult.*;
+import static com.xyzwps.lang.simple.EvaluatedResult.*;
 
 public record If(Expression condition,
                  Statement consequence,
                  Statement alternative
 ) implements Statement {
+
+    @Override
+    public EvaluatedResult evaluate(Environment env) {
+        var evalCond = condition.evaluate(env);
+        if (evalCond instanceof EvalValue evalValue) {
+            if (evalValue.value() instanceof Bool bool) {
+                return bool.value()
+                        ? consequence.evaluate(env)
+                        : alternative.evaluate(env);
+            }
+        }
+        throw new IllegalStateException();
+    }
 
     @Override
     public boolean reducible() {

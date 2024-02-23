@@ -1,14 +1,22 @@
 package com.xyzwps.lang.simple.statement;
 
-import com.xyzwps.lang.simple.Environment;
-import com.xyzwps.lang.simple.Expression;
-import com.xyzwps.lang.simple.ReducedResult;
-import com.xyzwps.lang.simple.Statement;
+import com.xyzwps.lang.simple.*;
 import com.xyzwps.lang.simple.expression.Value;
 
 import static com.xyzwps.lang.simple.ReducedResult.*;
+import static com.xyzwps.lang.simple.EvaluatedResult.*;
 
 public record Assign(String name, Expression exp) implements Statement {
+
+    @Override
+    public EvaluatedResult evaluate(Environment env) {
+        var evaluated = exp.evaluate(env);
+        if (evaluated instanceof EvalValue value) {
+            return new EvalEnviroment(env.add(name, value.value()));
+        }
+        throw new IllegalStateException();
+    }
+
     @Override
     public boolean reducible() {
         return true;

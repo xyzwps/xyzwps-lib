@@ -1,12 +1,27 @@
 package com.xyzwps.lang.simple.statement;
 
 import com.xyzwps.lang.simple.Environment;
+import com.xyzwps.lang.simple.EvaluatedResult;
 import com.xyzwps.lang.simple.ReducedResult;
 import com.xyzwps.lang.simple.Statement;
 
 import static com.xyzwps.lang.simple.ReducedResult.*;
+import static com.xyzwps.lang.simple.EvaluatedResult.*;
 
 public record Sequence(Statement first, Statement second) implements Statement {
+    @Override
+    public EvaluatedResult evaluate(Environment env) {
+        if (first instanceof DoNothing) {
+            return second.evaluate(env);
+        } else {
+            var evaluatedFirst = first.evaluate(env);
+            if (evaluatedFirst instanceof EvalEnviroment evalEnv) {
+                return second.evaluate(evalEnv.environment());
+            }
+            throw new IllegalStateException();
+        }
+    }
+
     @Override
     public boolean reducible() {
         return true;
