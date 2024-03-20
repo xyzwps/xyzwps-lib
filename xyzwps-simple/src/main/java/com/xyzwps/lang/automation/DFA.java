@@ -17,7 +17,7 @@ public class DFA {
         return acceptStates.contains(currentState);
     }
 
-    public DFA readCharacter(char character) {
+    public DFA readCharacter(Character character) {
         this.currentState = ruleBook.nextState(this.currentState, character);
         return this;
     }

@@ -1,8 +1,10 @@
 package com.xyzwps.lang.automation;
 
-public record FARule(int state, char character, int nextState) {
-    public boolean canApplyTo(int state, char character) {
-        return this.state == state && this.character == character;
+import java.util.Objects;
+
+public record FARule(int state, Character character, int nextState) {
+    public boolean canApplyTo(int state, Character character) {
+        return this.state == state && Objects.equals(this.character, character);
     }
 
     public int follow() {

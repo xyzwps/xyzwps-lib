@@ -3,22 +3,27 @@ package com.xyzwps.lang.automation;
 import java.util.Set;
 
 public class NFA {
-    private Set<Integer> currentStates;
+    private Set<Integer> _currentStates;
     private final Set<Integer> acceptStates;
     private final NFARuleBook ruleBook;
 
     public NFA(int startState, Set<Integer> acceptStates, NFARuleBook ruleBook) {
-        this.currentStates = Set.of(startState);
+        this._currentStates = Set.of(startState);
         this.acceptStates = acceptStates;
         this.ruleBook = ruleBook;
     }
 
+    private Set<Integer> getCurrentStates() {
+        this._currentStates = ruleBook.followFreeMoves(_currentStates);
+        return _currentStates;
+    }
+
     public boolean accepting() {
-        return acceptStates.stream().anyMatch(currentStates::contains);
+        return acceptStates.stream().anyMatch(getCurrentStates()::contains);
     }
 
     public void readCharacter(char character) {
-        this.currentStates = ruleBook.nextStates(currentStates, character);
+        this._currentStates = ruleBook.nextStates(this.getCurrentStates(), character);
     }
 
     public NFA readString(String string) {
