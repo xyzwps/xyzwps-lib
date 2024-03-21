@@ -4,7 +4,7 @@ import java.util.Map;
 
 import static com.xyzwps.lib.paimon.TokenType.*;
 
-public class Lexer {
+public class Scanner {
 
     private char ch;
     private int line;
@@ -12,7 +12,7 @@ public class Lexer {
 
     private final StringCharReader reader;
 
-    public Lexer(String source) {
+    public Scanner(String source) {
         this.reader = new StringCharReader(source);
         this.nextCh();
     }
@@ -53,6 +53,9 @@ public class Lexer {
             case ';':
                 nextCh();
                 return new TokenInfo(SEMI, ";", line);
+            case ',':
+                nextCh();
+                return new TokenInfo(COMMA, ",", line);
             case '.':
                 nextCh();
                 return new TokenInfo(DOT, ".", line);
@@ -88,35 +91,10 @@ public class Lexer {
             case '*':
                 nextCh();
                 return new TokenInfo(STAR, "*", line);
-            case '\'': {
-                nextCh();
-                // TODO: 特殊字符
-                if (ch == '\'') {
-                    reportScannerError("Invalid char");
-                }
-
-                buffer = new StringBuffer();
-                buffer.append(ch);
-
-                nextCh();
-                if (ch == '\'') {
-                    nextCh();
-                    return new TokenInfo(CHAR, buffer.toString(), line);
-                } else {
-                    reportScannerError("Invalid char");
-                }
-            }
-            case '"': {
-                buffer = new StringBuffer();
-                nextCh();
-                while (ch != '"') {
-                    // TODO: 处理转义字符 | 换行
-                    buffer.append(ch);
-                    nextCh();
-                }
-                nextCh();
-                return new TokenInfo(STR_LITERAL, buffer.toString(), line);
-            }
+            case '\'':
+                return getCharLiteral();
+            case '"':
+                return getStringLiteral();
             default: {
                 // identifier
                 if (isLetter(ch) || ch == '_' || ch == '$') {
@@ -127,11 +105,7 @@ public class Lexer {
                     }
 
                     var identifier = buffer.toString();
-                    if (reserved.containsKey(identifier)) {
-                        return new TokenInfo(reserved.get(identifier), identifier, line);
-                    } else {
-                        return new TokenInfo(IDENTIFIER, identifier, line);
-                    }
+                    return new TokenInfo(reserved.getOrDefault(identifier, IDENTIFIER), identifier, line);
                 }
                 // int literal
                 else if (ch == '0') {
@@ -151,11 +125,77 @@ public class Lexer {
         }
     }
 
+    private TokenInfo getStringLiteral() {
+        buffer = new StringBuffer();
+        nextCh();
+        while (ch != '"') {
+            /* 字符串不支持换行 */
+            if (ch == '\n') {
+                reportScannerError("String literal is not enclosed.");
+            }
+            /* 转义字符 */
+            else if (ch == '\\') {
+                nextCh();
+                if (stringEscapes.containsKey(ch)) {
+                    buffer.append(stringEscapes.get(ch));
+                    nextCh();
+                } else {
+                    reportScannerError("String literal: unsupported escaping characters");
+                }
+            }
+            /* 默认情况 */
+            else {
+                buffer.append(ch);
+                nextCh();
+            }
+        } // end while
+        nextCh();
+        return new TokenInfo(STR_LITERAL, buffer.toString(), line);
+    }
+
+    private TokenInfo getCharLiteral() {
+        nextCh();
+        switch (ch) {
+            case '\'' /* 单引号后面不能紧跟单引号 */ -> {
+                reportScannerError("Invalid char");
+            }
+            case '\\' /* 转义字符 */ -> {
+                nextCh();
+                if (charEscapes.containsKey(ch)) {
+                    buffer = new StringBuffer();
+                    buffer.append(charEscapes.get(ch));
+                    nextCh();
+                    if (ch == '\'') {
+                        nextCh();
+                        return new TokenInfo(CHAR_LITERAL, buffer.toString(), line);
+                    } else {
+                        reportScannerError("Invalid char");
+                    }
+                } else {
+                    reportScannerError("Invalid char");
+                }
+            }
+            default -> {
+                buffer = new StringBuffer();
+                buffer.append(ch);
+                nextCh();
+                if (ch == '\'') {
+                    nextCh();
+                    return new TokenInfo(CHAR_LITERAL, buffer.toString(), line);
+                } else {
+                    reportScannerError("Invalid char");
+                }
+            }
+        }
+
+        throw new UnreachableBranchException();
+    }
+
     private static final Map<String, TokenType> reserved = Map.ofEntries(
             Map.entry("abstract", ABSTRACT),
             Map.entry("boolean", BOOLEAN),
             // TODO: case
-            Map.entry("char", CHAR),
+            Map.entry("char", CHAR_LITERAL),
             // TODO: class
             // TODO: default
             Map.entry("double", DOUBLE),
@@ -189,4 +229,22 @@ public class Lexer {
     private static void reportScannerError(String message) {
         throw new UnsupportedOperationException("TODO: 尚未实现 " + message);
     }
+
+    private static final Map<Character, Character> charEscapes = Map.of(
+            'f', '\f',
+            'n', '\n',
+            'r', '\r',
+            't', '\t',
+            '\'', '\'',
+            '\\', '\\'
+    );
+
+    private static final Map<Character, Character> stringEscapes = Map.of(
+            'f', '\f',
+            'n', '\n',
+            'r', '\r',
+            't', '\t',
+            '"', '"',
+            '\\', '\\'
+    );
 }

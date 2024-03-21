@@ -15,8 +15,8 @@ public class Main {
                 
                 public void doSomething() {
                     int i = 1 * 3;
-                    char c = 'c';
-                    System.out.println("Haha");
+                    char c, d, e, f = 'c', '\\n', '\\\\', '\\'';
+                    System.out.println("Haha\\t\\\\\\"");
                 }
             }
              """;
@@ -32,10 +32,10 @@ public class Main {
             }
         }
 
-        System.out.println("-> lexer");
-        var lexer = new Lexer(source);
+        System.out.println("-> scanner");
+        var scanner = new Scanner(source);
         while (true) {
-            var next = lexer.getNextToken();
+            var next = scanner.getNextToken();
             System.out.println(next);
             if (next.type() == TokenType.EOF) {
                 break;
