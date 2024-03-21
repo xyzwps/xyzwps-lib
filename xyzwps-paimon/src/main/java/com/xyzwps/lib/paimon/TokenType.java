@@ -1,0 +1,30 @@
+package com.xyzwps.lib.paimon;
+
+public enum TokenType {
+    ABSTRACT,
+    ASSIGN,
+    BOOLEAN,
+    CHAR,
+    DOT,
+    DOUBLE,
+    EOF,
+    EQUAL,
+    FOR,
+    IDENTIFIER,
+    INT,
+    INT_LITERAL,
+    LBRACE,
+    LBRACK,
+    LCURLY,
+    LNOT,
+    LONG,
+    NEW,
+    NULL,
+    RBRACE,
+    RBRACK,
+    RCURLY,
+    SEMI,
+    STR_LITERAL,
+    STAR,
+    WHILE;
+}
