@@ -10,10 +10,10 @@ public class Scanner {
     private int line;
     private StringBuffer buffer;
 
-    private final StringCharReader reader;
+    private final CharReader reader;
 
     public Scanner(String source) {
-        this.reader = new StringCharReader(source);
+        this.reader = new CharReader(source);
         this.nextCh();
     }
 
@@ -31,7 +31,7 @@ public class Scanner {
                 nextCh();
             }
 
-            // 这里是把注释当成了空白处理
+            // TODO: 这里是把注释当成了空白处理
             if (ch == '/') {
                 nextCh();
                 if (ch == '/') {
@@ -50,6 +50,58 @@ public class Scanner {
         switch (ch) {
             case EOFCH:
                 return new TokenInfo(EOF, "<EOF>", line);
+            case '+':
+                nextCh();
+                if (ch == '=') {
+                    nextCh();
+                    return new TokenInfo(PLUS_ASSIGN, "+=", line);
+                } else {
+                    return new TokenInfo(PLUS, "+", line);
+                }
+            case '-':
+                nextCh();
+                if (ch == '=') {
+                    nextCh();
+                    return new TokenInfo(MINUS_ASSIGN, "-=", line);
+                } else if (ch == '>') {
+                    nextCh();
+                    return new TokenInfo(ARROW, "->", line);
+                } else {
+                    return new TokenInfo(MINUS, "-", line);
+                }
+            case '*':
+                nextCh();
+                if (ch == '=') {
+                    nextCh();
+                    return new TokenInfo(STAT_ASSIGN, "*=", line);
+                } else {
+                    return new TokenInfo(STAR, "*", line);
+                }
+            case '/':
+                // TODO: 处理注释
+                nextCh();
+                if (ch == '=') {
+                    nextCh();
+                    return new TokenInfo(DIV_ASSIGN, "/=", line);
+                } else {
+                    return new TokenInfo(DIV, "/", line);
+                }
+            case '<':
+                nextCh();
+                if (ch == '=') {
+                    nextCh();
+                    return new TokenInfo(LE, "<=", line);
+                } else {
+                    return new TokenInfo(LT, "<", line);
+                }
+            case '>':
+                nextCh();
+                if (ch == '=') {
+                    nextCh();
+                    return new TokenInfo(GE, ">=", line);
+                } else {
+                    return new TokenInfo(GT, ">", line);
+                }
             case ';':
                 nextCh();
                 return new TokenInfo(SEMI, ";", line);
@@ -88,9 +140,6 @@ public class Scanner {
             case '!':
                 nextCh();
                 return new TokenInfo(LNOT, "!", line);
-            case '*':
-                nextCh();
-                return new TokenInfo(STAR, "*", line);
             case '\'':
                 return getCharLiteral();
             case '"':
@@ -193,22 +242,52 @@ public class Scanner {
 
     private static final Map<String, TokenType> reserved = Map.ofEntries(
             Map.entry("abstract", ABSTRACT),
+            Map.entry("as", AS),
+            Map.entry("async", ASYNC),
+            Map.entry("break", BREAK),
+            Map.entry("await", AWAIT),
             Map.entry("boolean", BOOLEAN),
-            // TODO: case
+            Map.entry("case", CASE),
             Map.entry("char", CHAR_LITERAL),
-            // TODO: class
-            // TODO: default
+            Map.entry("const", CONST),
+            Map.entry("continue", CONTINUE),
+            Map.entry("class", CLASS),
+            Map.entry("default", DEFAULT),
+            Map.entry("do", DO),
             Map.entry("double", DOUBLE),
+            Map.entry("else", ELSE),
+            Map.entry("enum", ENUM),
+            Map.entry("externs", EXTENDS),
+            Map.entry("final", FINAL),
+            Map.entry("float", FLOAT),
             Map.entry("for", FOR),
-            // TODO: import
+            Map.entry("goto", GOTO),
+            Map.entry("if", IF),
+            Map.entry("implements", IMPLEMENTS),
+            Map.entry("import", IMPORT),
             Map.entry("int", INT),
+            Map.entry("interface", INTERFACE),
             Map.entry("long", LONG),
             Map.entry("new", NEW),
             Map.entry("null", NULL),
-            // TODO: private | protected | public
-            // TODO: switch
+            Map.entry("open", OPEN),
+            Map.entry("private", PRIVATE),
+            Map.entry("protected", PROTECTED),
+            Map.entry("public", PUBLIC),
+            Map.entry("record", RECORD),
+            Map.entry("return", RETURN),
+            Map.entry("sealed", SEALED),
+            Map.entry("static", STATIC),
+            Map.entry("string", STRING),
+            Map.entry("short", SHORT),
+            Map.entry("switch", SWITCH),
+            Map.entry("throw", THROW),
+            Map.entry("throws", THROWS),
+            Map.entry("unsigned", UNSIGNED),
+            Map.entry("val", VAL),
+            Map.entry("var", VAR),
+            Map.entry("void", VOID),
             Map.entry("while", WHILE)
-            // TODO: add more reserved words
     );
 
 

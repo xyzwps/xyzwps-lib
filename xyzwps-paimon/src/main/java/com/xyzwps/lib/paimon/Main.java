@@ -23,7 +23,7 @@ public class Main {
 
     public static void main(String[] args) {
         System.out.println("-> chars");
-        var reader = new StringCharReader(source);
+        var reader = new CharReader(source);
         while (true) {
             var next = reader.nextCh();
             System.out.println(next);
