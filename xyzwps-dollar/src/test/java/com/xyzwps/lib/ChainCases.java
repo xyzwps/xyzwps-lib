@@ -48,6 +48,7 @@ public record ChainCases(
         testToSet();
         testUnique();
         testUniqueBy();
+        testZip();
     }
 
     void testMapEntryChain() {
@@ -911,5 +912,20 @@ public record ChainCases(
         }
     }
 
+    void testZip() {
+
+        assertEquals("[(1, 1), (2, 2), (3, null)]", cf.just(1, 2, 3).zip(List.of(1, 2)).toList().toString());
+        assertEquals("[(1, 1), (2, 2), (3, 3)]", cf.just(1, 2, 3).zip(List.of(1, 2, 3)).toList().toString());
+        assertEquals("[(1, 1), (2, 2), (3, 3), (null, 4), (null, 5)]", cf.just(1, 2, 3).zip(List.of(1, 2, 3, 4, 5)).toList().toString());
+
+        assertEquals("[(1, null), (2, null), (3, null)]", cf.just(1, 2, 3).zip(List.of()).toList().toString());
+        assertEquals("[(1, null), (2, null), (3, null)]", cf.just(1, 2, 3).zip(null).toList().toString());
+
+        assertEquals("[2, 4, 3]", cf.just(1, 2, 3).zip(List.of(1, 2), (l, r) -> (l == null ? 0 : l) + (r == null ? 0 : r)).toList().toString());
+
+        assertThrows(NullPointerException.class, () -> cf.from(List.of(1)).zip(List.of(2), null));
+
+        assertEquals(cf.from((List<Integer>) null).zip(null).toList().size(), 0);
+    }
 
 }

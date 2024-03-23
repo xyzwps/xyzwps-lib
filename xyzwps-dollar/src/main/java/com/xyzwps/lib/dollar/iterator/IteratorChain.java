@@ -150,4 +150,14 @@ public class IteratorChain<T> implements Chain<T> {
         Objects.requireNonNull(predicate);
         return nest(iterable, itr -> new TakeWhileIterator<>(itr, predicate));
     }
+
+    @Override
+    public <R, T2> Chain<R> zip(Iterable<T2> zipped, BiFunction<T, T2, R> zipper) {
+        Objects.requireNonNull(zipper);
+        if (zipped == null) {
+            return map(it -> zipper.apply(it, null));
+        }
+
+        return nest(iterable, itr -> new ZipIterator<>(itr, zipped.iterator(), zipper));
+    }
 }

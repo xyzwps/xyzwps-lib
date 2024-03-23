@@ -1,12 +1,12 @@
 package com.xyzwps.lib.dollar.operator;
 
-//import com.xyzwps.lib.dollar.chain.Chain;
-import com.xyzwps.lib.dollar.seq.Seq;
+import com.xyzwps.lib.dollar.generator.GeneratorChainFactory;
+import com.xyzwps.lib.dollar.iterator.IteratorChainFactory;
+import com.xyzwps.lib.dollar.seq.SeqChainFactory;
 import org.openjdk.jmh.annotations.*;
 import org.openjdk.jmh.infra.Blackhole;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 
 import static com.xyzwps.lib.dollar.Dollar.*;
@@ -15,58 +15,47 @@ import static com.xyzwps.lib.dollar.Dollar.*;
 public class MapBenchmark {
 
     static final List<Integer> ARRAY_LIST = new ArrayList<>();
-    static final List<Integer> LINKED_LIST = new LinkedList<>();
 
     @Setup
     public void setup() {
         ARRAY_LIST.clear();
-        LINKED_LIST.clear();
-        for (int i = 0; i < 50; i++) {
+        for (int i = 0; i < 500000; i++) {
             ARRAY_LIST.add(i);
-            LINKED_LIST.add(i);
         }
     }
 
+    static final int MEASURE_ITR = 5;
+
     @Benchmark
-    public void arrayList_seqMap(Blackhole blackhole) {
-        Seq<Integer> seq = ARRAY_LIST::forEach;
-        blackhole.consume(seq.map(i -> i * 2).toList().size());
+    @Measurement(iterations = MEASURE_ITR)
+    public void seqMap(Blackhole blackhole) {
+        var seq = SeqChainFactory.INSTANCE.from(ARRAY_LIST);
+        blackhole.consume(seq.map(i -> i * 2 + 1).filter(i -> i % 3 == 0).size());
     }
 
     @Benchmark
-    public void arrayList_dollarMap(Blackhole blackhole) {
-        blackhole.consume($.map(ARRAY_LIST, i -> i * 2).size());
+    @Measurement(iterations = MEASURE_ITR)
+    public void generatorMap(Blackhole blackhole) {
+        var gen = GeneratorChainFactory.INSTANCE.from(ARRAY_LIST);
+        blackhole.consume(gen.map(i -> i * 2 + 1).filter(i -> i % 3 == 0).size());
     }
 
     @Benchmark
-    public void arrayList_streamMap(Blackhole blackhole) {
-        blackhole.consume(ARRAY_LIST.stream().map(i -> i * 2).toList().size());
-    }
-
-//    @Benchmark
-//    public void arrayList_chainMap(Blackhole blackhole) {
-//        blackhole.consume(Chain.from(ARRAY_LIST).map(i -> i * 2).toList().size());
-//    }
-
-    @Benchmark
-    public void linkedList_seqMap(Blackhole blackhole) {
-        Seq<Integer> seq = LINKED_LIST::forEach;
-        blackhole.consume(seq.map(i -> i * 2).toList().size());
+    @Measurement(iterations = MEASURE_ITR)
+    public void iteratorMap(Blackhole blackhole) {
+        var itr = IteratorChainFactory.INSTANCE.from(ARRAY_LIST);
+        blackhole.consume(itr.map(i -> i * 2 + 1).filter(i -> i % 3 == 0).size());
     }
 
     @Benchmark
-    public void linkedList_dollarMap(Blackhole blackhole) {
-        blackhole.consume($.map(LINKED_LIST, i -> i * 2).size());
+    @Measurement(iterations = MEASURE_ITR)
+    public void dollarMap(Blackhole blackhole) {
+        blackhole.consume($.filter($.map(ARRAY_LIST, i -> i * 2 + 1), i -> i % 3 == 0).size());
     }
 
     @Benchmark
-    public void linkedList_streamMap(Blackhole blackhole) {
-        blackhole.consume(LINKED_LIST.stream().map(i -> i * 2).toList().size());
+    @Measurement(iterations = MEASURE_ITR)
+    public void streamMap(Blackhole blackhole) {
+        blackhole.consume(ARRAY_LIST.stream().map(i -> i * 2 + 1).filter(i -> i % 3 == 0).count());
     }
-
-//    @Benchmark
-//    public void linkedList_chainMap(Blackhole blackhole) {
-//        blackhole.consume(Chain.from(LINKED_LIST).map(i -> i * 2).toList().size());
-//    }
-
 }

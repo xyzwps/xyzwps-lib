@@ -1,8 +1,10 @@
 package com.xyzwps.lib.dollar;
 
+import com.xyzwps.lib.dollar.seq.Seq;
 import com.xyzwps.lib.dollar.util.Counter;
 import com.xyzwps.lib.dollar.util.ObjIntFunction;
 import com.xyzwps.lib.dollar.util.ObjIntPredicate;
+import com.xyzwps.lib.dollar.util.Pair;
 
 import java.util.*;
 import java.util.function.*;
@@ -105,5 +107,9 @@ public interface Chain<T> {
         });
     }
 
-    // TODO: zip
+    <R, T2> Chain<R> zip(Iterable<T2> iterable, BiFunction<T, T2, R> zipper);
+
+    default <T2> Chain<Pair<T, T2>> zip(Iterable<T2> iterable) {
+        return this.zip(iterable, Pair::of);
+    }
 }

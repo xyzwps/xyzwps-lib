@@ -3,7 +3,6 @@ package com.xyzwps.lib.dollar.seq;
 import com.xyzwps.lib.dollar.Chain;
 import com.xyzwps.lib.dollar.Direction;
 import com.xyzwps.lib.dollar.MapEntryChain;
-import com.xyzwps.lib.dollar.iterator.LazyIterable;
 import com.xyzwps.lib.dollar.iterator.LazyIterator;
 import com.xyzwps.lib.dollar.util.ObjIntFunction;
 import com.xyzwps.lib.dollar.util.ObjIntPredicate;
@@ -137,5 +136,22 @@ public class SeqChain<T> implements Chain<T> {
     public Chain<T> takeWhile(Predicate<T> predicate) {
         Objects.requireNonNull(predicate);
         return new SeqChain<>(seq.takeWhile(predicate));
+    }
+
+    @Override
+    public <R, T2> Chain<R> zip(Iterable<T2> iterable, BiFunction<T, T2, R> zipper) {
+        Objects.requireNonNull(zipper);
+        if (iterable == null) {
+            return this.map(it -> zipper.apply(it, null));
+        }
+
+        return new SeqChain<>(consumer -> {
+            var itr2 = iterable.iterator();
+            seq.forEach(it -> consumer.accept(zipper.apply(it, itr2.hasNext() ? itr2.next() : null)));
+            while (itr2.hasNext()) {
+                consumer.accept(zipper.apply(null, itr2.next()));
+            }
+        });
+
     }
 }

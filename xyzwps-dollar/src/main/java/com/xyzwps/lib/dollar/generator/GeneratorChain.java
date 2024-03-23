@@ -138,4 +138,29 @@ public class GeneratorChain<T> implements Chain<T> {
         Objects.requireNonNull(predicate);
         return new GeneratorChain<>(generator.takeWhile(predicate));
     }
+
+    @Override
+    public <R, T2> Chain<R> zip(Iterable<T2> iterable, BiFunction<T, T2, R> zipper) {
+        Objects.requireNonNull(zipper);
+        if (iterable == null) {
+            return map(it -> zipper.apply(it, null));
+        }
+
+        var t1gen = this.generator;
+        var t2gen = Generator.fromIterable(iterable);
+
+        return new GeneratorChain<>(() -> {
+            var t1 = t1gen.next();
+            var t2 = t2gen.next();
+
+            if (t1 instanceof NextResult.Value<T> v1) {
+                return new NextResult.Value<>(zipper.apply(v1.value(), t2 instanceof NextResult.Value<T2> v2 ? v2.value() : null));
+            } else if (t2 instanceof NextResult.Value<T2> v2) {
+                return new NextResult.Value<>(zipper.apply(null, v2.value()));
+            } else {
+                return NextResult.end();
+            }
+        });
+
+    }
 }

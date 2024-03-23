@@ -18,21 +18,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class ChainTests {
 
     /*
-    @Test
-    void zip() {
-        assertEquals("[(1, 1), (2, 2), (3, null)]", Chain.just(1, 2, 3).zip(listOf(1, 2)).value().toString());
-        assertEquals("[(1, 1), (2, 2), (3, 3)]", Chain.just(1, 2, 3).zip(listOf(1, 2, 3)).value().toString());
-        assertEquals("[(1, 1), (2, 2), (3, 3), (null, 4), (null, 5)]", Chain.just(1, 2, 3).zip(listOf(1, 2, 3, 4, 5)).value().toString());
 
-        assertEquals("[(1, null), (2, null), (3, null)]", Chain.just(1, 2, 3).zip(listOf()).value().toString());
-        assertEquals("[(1, null), (2, null), (3, null)]", Chain.just(1, 2, 3).zip(null).value().toString());
-
-        assertEquals("[2, 4, 3]", Chain.just(1, 2, 3).zip(listOf(1, 2), (l, r) -> (l == null ? 0 : l) + (r == null ? 0 : r)).value().toString());
-
-        assertThrows(NullPointerException.class, () -> Chain.from(listOf(1)).zip(listOf(2), null));
-
-        assertEquals(Chain.from((List<Integer>) null).zip(null).value().size(), 0);
-    }
 
     @Test
     void value() {
