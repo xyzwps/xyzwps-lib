@@ -51,7 +51,7 @@ public final class Dollar {
     }
 
 
-    public static class $ {
+    public static final class $ {
 
 
         /**
