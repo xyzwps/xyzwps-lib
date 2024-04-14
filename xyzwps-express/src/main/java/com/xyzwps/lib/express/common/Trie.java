@@ -86,6 +86,10 @@ public class Trie<T> {
         this.iterate(List.of(), root, Objects.requireNonNull(consumer));
     }
 
+    // TODO: support /{param}
+    // TODO: support /*
+    // TODO: support /**
+
     private void iterate(List<String> prefix, Node<T> node, BiConsumer<List<String>, T> consumer) {
         if (node.value != null) {
             consumer.accept(prefix, node.value);
@@ -103,16 +107,6 @@ public class Trie<T> {
 
     // TODO: to immutable
 
-    /**
-     * <pre>
-     *       (a, b, c)
-     *           |
-     *          / \
-     *         T  (e, f, g)
-     *                |
-     *
-     * </pre>
-     */
     static class Node<T> {
         final Map<String, Node<T>> mapping;
         T value;
