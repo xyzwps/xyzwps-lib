@@ -130,4 +130,26 @@ class Middleware2ComposerTests {
         assertEquals("1st-p1b 2nd-p1b 3rd-p1b 4th-p1b 4th-p1a 3rd-p1a ", sb1.toString());
         assertEquals("1st-p2b 2nd-p2b 3rd-p2b 4th-p2b 4th-p2a 3rd-p2a ", sb2.toString());
     }
+
+    @Test
+    void composerMiddlewareWithoutCallingNext() {
+        var mw = compose(
+                makeMw("1st-"),
+                (p1, p2, n) -> {
+                    var prefix = "2nd-";
+                    p1.append(prefix).append("p1b ");
+                    p2.append(prefix).append("p2b ");
+                    p2.append(prefix).append("p2a ");
+                    p1.append(prefix).append("p1a ");
+                },
+                makeMw("3rd-"),
+                makeMw("4th-"));
+        var sb1 = new StringBuilder();
+        var sb2 = new StringBuilder();
+
+        mw.call(sb1, sb2, Next.EMPTY);
+
+        assertEquals("1st-p1b 2nd-p1b 2nd-p1a 1st-p1a ", sb1.toString());
+        assertEquals("1st-p2b 2nd-p2b 2nd-p2a 1st-p2a ", sb2.toString());
+    }
 }
