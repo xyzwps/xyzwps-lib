@@ -5,12 +5,12 @@ import java.util.ArrayList;
 import java.util.Optional;
 import java.util.function.IntConsumer;
 
-public class SimpleRequestParser implements RequestParser {
+public class SimpleRawRequestParser implements RequestParser {
 
     @Override
     public RawRequest parse(InputStream in) throws IOException {
         var startLine = new StartLineReader(in).read();
-        var headerLines = new ArrayList<RawRequest.HeaderLine>();
+        var headerLines = new ArrayList<HeaderLine>();
         while (true) {
             var headerLine = new HeaderReader(in).read();
             if (headerLine.isEmpty()) {
@@ -18,7 +18,7 @@ public class SimpleRequestParser implements RequestParser {
             }
             headerLines.add(headerLine.get());
         }
-        return new RawRequest(startLine, headerLines, new RawRequest.RequestBodyPayload(in));
+        return new RawRequest(startLine, headerLines, in);
     }
 
     private static class HeaderReader {
@@ -31,7 +31,7 @@ public class SimpleRequestParser implements RequestParser {
             this.stage = 0;
         }
 
-        Optional<RawRequest.HeaderLine> read() throws IOException {
+        Optional<HeaderLine> read() throws IOException {
             var name = new StringBuilder();
             var value = new StringBuilder();
             reader.read(b -> {
@@ -53,7 +53,7 @@ public class SimpleRequestParser implements RequestParser {
             if (this.emptyLine) {
                 return Optional.empty();
             } else {
-                return Optional.of(new RawRequest.HeaderLine(name.toString(), value.toString().trim()));
+                return Optional.of(new HeaderLine(name.toString(), value.toString().trim()));
             }
         }
     }

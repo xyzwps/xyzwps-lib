@@ -1,13 +1,14 @@
 package com.xyzwps.lib.express;
 
 import java.io.InputStream;
-import java.net.URI;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
-public record RawRequest(StartLine startLine, List<HeaderLine> headerLines, RequestBodyPayload bodyPayload) {
+import static com.xyzwps.lib.dollar.Dollar.*;
+
+public record RawRequest(StartLine startLine, List<HeaderLine> headerLines, InputStream in) {
 
     @Override
     public String toString() {
@@ -21,15 +22,11 @@ public record RawRequest(StartLine startLine, List<HeaderLine> headerLines, Requ
         return String.join("\n", b);
     }
 
-    public static final class StartLine {
-        public final HttpMethod method;
-        public final String url;
-        public final String protocol;
-
-        public StartLine(HttpMethod method, String url, String protocol) {
-            this.method = Objects.requireNonNull(method);
-            this.url = Objects.requireNonNull(url);
-            this.protocol = Objects.requireNonNull(protocol);
+    public record StartLine(HttpMethod method, String url, String protocol) {
+        public StartLine {
+            Objects.requireNonNull(method);
+            Objects.requireNonNull(url);
+            Objects.requireNonNull(protocol);
         }
 
         @Override
@@ -38,21 +35,12 @@ public record RawRequest(StartLine startLine, List<HeaderLine> headerLines, Requ
         }
     }
 
-    public static final class HeaderLine {
-        public final String name;
-        public final String value;
 
-        public HeaderLine(String name, String value) {
-            this.name = Objects.requireNonNull(name);
-            this.value = Objects.requireNonNull(value);
-        }
-
-        @Override
-        public String toString() {
-            return name + ": " + value;
-        }
-    }
-
-    public record RequestBodyPayload(InputStream in) {
+    public HttpRequest<InputStream> toHttpRequest() {
+        var headers = $(this.headerLines)
+                .groupBy(HeaderLine::name)
+                .mapValues((values, name) -> new HttpHeader(name, List.copyOf($.map(values, HeaderLine::value))))
+                .toMap();
+        return new SimpleHttpRequest<>(this.startLine.method, this.startLine.url, this.startLine.protocol, Map.copyOf(headers), this.in);
     }
 }
