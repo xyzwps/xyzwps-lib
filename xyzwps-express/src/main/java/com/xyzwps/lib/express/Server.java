@@ -1,5 +1,8 @@
 package com.xyzwps.lib.express;
 
+import com.xyzwps.lib.express.common.Middleware2Composer;
+import com.xyzwps.lib.express.common.Next;
+
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.net.ServerSocket;
@@ -7,23 +10,29 @@ import java.net.Socket;
 
 public class Server {
 
-    private final ServerSocket serverSocket;
+    private HttpMiddleware middleware = HttpMiddleware.DO_NOTHING;
 
-    public Server(int port) {
-        try {
-            this.serverSocket = new ServerSocket(port);
-        } catch (IOException e) {
-            throw new UncheckedIOException("Create server socket failed", e);
-        }
+    public Server use(HttpMiddleware mw) {
+        this.middleware = Middleware2Composer.compose2(middleware, mw)::call;
+        return this;
     }
 
-    public void run() {
+    public void listen(int port) {
+        var serverSocket = createServerSocket(port);
         while (true) {
             try {
-                this.handleSocket(this.serverSocket.accept());
+                this.handleSocket(serverSocket.accept());
             } catch (IOException e) {
                 throw new UncheckedIOException("Accept server socket failed", e);
             }
+        }
+    }
+
+    private static ServerSocket createServerSocket(int port) {
+        try {
+            return new ServerSocket(port);
+        } catch (IOException e) {
+            throw new UncheckedIOException("Create server socket failed", e);
         }
     }
 
@@ -32,14 +41,11 @@ public class Server {
             try {
                 var in = socket.getInputStream();
                 var request = new SimpleRawRequestParser().parse(in).toHttpRequest();
-                System.out.printf("-> %s %s", request.method(), request.url());
-                var response = new SimpleHttpResponse(socket.getOutputStream(), request)
-                                       .status(200)
-                                       .header("Content-Type", "application/json");
-                response.send("[\"Hello\":\"World\"]");
+                var response = new SimpleHttpResponse(socket.getOutputStream(), request);
+                this.middleware.call(request, response, Next.EMPTY);
                 socket.shutdownOutput(); // TODO: keep-alive
             } catch (IOException e) {
-                System.out.println(e);
+                System.out.println(e); // TODO: handle exception
             }
         });
     }

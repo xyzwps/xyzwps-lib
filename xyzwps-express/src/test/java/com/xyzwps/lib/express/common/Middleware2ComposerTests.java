@@ -3,12 +3,13 @@ package com.xyzwps.lib.express.common;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static com.xyzwps.lib.express.common.Middleware2Composer.compose;
 
-class ComposedMiddleware2Tests {
+class Middleware2ComposerTests {
 
     @Test
     void composeNothing() {
-        var mw = new ComposedMiddleware2<StringBuilder, StringBuilder>();
+        var mw = compose();
         var sb1 = new StringBuilder();
         var sb2 = new StringBuilder();
         mw.call(sb1, sb2, Next.EMPTY);
@@ -29,7 +30,7 @@ class ComposedMiddleware2Tests {
 
     @Test
     void composeOne() {
-        var mw = new ComposedMiddleware2<>(makeMw(""));
+        var mw = compose(makeMw(""));
         var sb1 = new StringBuilder();
         var sb2 = new StringBuilder();
 
@@ -41,7 +42,7 @@ class ComposedMiddleware2Tests {
 
     @Test
     void composeTwo() {
-        var mw = new ComposedMiddleware2<>(makeMw("1st-"), makeMw("2nd-"));
+        var mw = compose(makeMw("1st-"), makeMw("2nd-"));
         var sb1 = new StringBuilder();
         var sb2 = new StringBuilder();
 
@@ -53,7 +54,7 @@ class ComposedMiddleware2Tests {
 
     @Test
     void composeThree() {
-        var mw = new ComposedMiddleware2<>(makeMw("1st-"), makeMw("2nd-"), makeMw("3rd-"));
+        var mw = compose(makeMw("1st-"), makeMw("2nd-"), makeMw("3rd-"));
         var sb1 = new StringBuilder();
         var sb2 = new StringBuilder();
 
@@ -65,7 +66,7 @@ class ComposedMiddleware2Tests {
 
     @Test
     void composeFour() {
-        var mw = new ComposedMiddleware2<>(makeMw("1st-"), makeMw("2nd-"), makeMw("3rd-"), makeMw("4th-"));
+        var mw = compose(makeMw("1st-"), makeMw("2nd-"), makeMw("3rd-"), makeMw("4th-"));
         var sb1 = new StringBuilder();
         var sb2 = new StringBuilder();
 
@@ -77,19 +78,19 @@ class ComposedMiddleware2Tests {
 
     @Test
     void composeNull() {
-        assertThrows(NullPointerException.class, () -> new ComposedMiddleware2<>((Middleware2<StringBuilder, StringBuilder>) null));
+        assertThrows(NullPointerException.class, () -> compose((Middleware2<StringBuilder, StringBuilder>) null));
 
-        assertThrows(NullPointerException.class, () -> new ComposedMiddleware2<>(makeMw(""), null));
-        assertThrows(NullPointerException.class, () -> new ComposedMiddleware2<>(null, makeMw("")));
+        assertThrows(NullPointerException.class, () -> compose(makeMw(""), null));
+        assertThrows(NullPointerException.class, () -> compose(null, makeMw("")));
 
-        assertThrows(NullPointerException.class, () -> new ComposedMiddleware2<>(makeMw("1"), makeMw("2"), null));
-        assertThrows(NullPointerException.class, () -> new ComposedMiddleware2<>(makeMw("1"), null, makeMw("3")));
-        assertThrows(NullPointerException.class, () -> new ComposedMiddleware2<>(null, makeMw("2"), makeMw("3")));
+        assertThrows(NullPointerException.class, () -> compose(makeMw("1"), makeMw("2"), null));
+        assertThrows(NullPointerException.class, () -> compose(makeMw("1"), null, makeMw("3")));
+        assertThrows(NullPointerException.class, () -> compose(null, makeMw("2"), makeMw("3")));
     }
 
     @Test
     void composerThrowExceptionBeforeNext() {
-        var mw = new ComposedMiddleware2<>(
+        var mw = compose(
                 makeMw("1st-"),
                 (p1, p2, n) -> {
                     var prefix = "2nd-";
@@ -110,7 +111,7 @@ class ComposedMiddleware2Tests {
 
     @Test
     void composerThrowExceptionAfterNext() {
-        var mw = new ComposedMiddleware2<>(
+        var mw = compose(
                 makeMw("1st-"),
                 (p1, p2, n) -> {
                     var prefix = "2nd-";
