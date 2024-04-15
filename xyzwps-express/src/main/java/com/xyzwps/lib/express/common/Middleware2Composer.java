@@ -1,13 +1,16 @@
 package com.xyzwps.lib.express.common;
 
+import java.util.List;
 import java.util.Objects;
+
+import static com.xyzwps.lib.dollar.Dollar.*;
 
 public final class Middleware2Composer {
 
     @SafeVarargs
     public static <P1, P2> Middleware2<P1, P2> compose(Middleware2<P1, P2>... mws) {
         if (mws.length == 0) {
-            return (p1, p2, n) -> {
+            return (p1, p2, n) -> { // TODO: throw nothing to compose
             };
         }
 
@@ -18,6 +21,25 @@ public final class Middleware2Composer {
         Middleware2<P1, P2> result = Objects.requireNonNull(mws[mws.length - 1], "Middleware cannot be null");
         for (int i = mws.length - 2; i >= 0; i--) {
             var mw = mws[i];
+            result = compose2(mw, result);
+        }
+
+        return result;
+    }
+
+    public static <P1, P2> Middleware2<P1, P2> compose(List<Middleware2<P1, P2>> mws) {
+        if ($.isEmpty(mws)) {
+            return (p1, p2, n) -> {  // TODO: throw nothing to compose
+            };
+        }
+
+        if (mws.size() == 1) {
+            return Objects.requireNonNull(mws.getFirst(), "Middleware cannot be null");
+        }
+
+        Middleware2<P1, P2> result = Objects.requireNonNull(mws.getLast(), "Middleware cannot be null");
+        for (int i = mws.size() - 2; i >= 0; i--) {
+            var mw = mws.get(i);
             result = compose2(mw, result);
         }
 

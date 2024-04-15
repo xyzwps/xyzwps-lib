@@ -34,7 +34,9 @@ public final class SimpleHttpResponse implements HttpResponse {
 
     @Override
     public void send(byte[] bytes) {
-        header("Content-Length", Integer.toString(bytes == null ? 0 : bytes.length));
+        this
+                .header("Content-Length", Integer.toString(bytes == null ? 0 : bytes.length))
+                .header("Connection", "keep-alive");
 
         try {
             out.write(request.protocol().getBytes());

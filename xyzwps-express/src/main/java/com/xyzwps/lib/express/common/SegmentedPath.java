@@ -12,15 +12,16 @@ public final class SegmentedPath implements Comparable<SegmentedPath>, Iterable<
     private final String[] segments;
 
     /**
-     * @param segments any of segments cannot be empty
+     * @param checkStart started index to check segments
+     * @param segments   any of segments cannot be empty
      */
-    private SegmentedPath(String... segments) {
+    private SegmentedPath(int checkStart, String... segments) {
         if (segments == null || segments.length == 0) {
             this.segments = EMPTY_ARRAY;
             return;
         }
 
-        for (int i = 0; i < segments.length; i++) {
+        for (int i = checkStart; i < segments.length; i++) {
             var segment = segments[i];
             if ($.isEmpty(segment)) {
                 throw new IllegalArgumentException(String.format("The segments[%d] cannot be empty", i));
@@ -32,14 +33,14 @@ public final class SegmentedPath implements Comparable<SegmentedPath>, Iterable<
 
     private static final String[] EMPTY_ARRAY = new String[0];
 
-    public static final SegmentedPath ROOT = new SegmentedPath();
+    public static final SegmentedPath ROOT = new SegmentedPath(0);
 
     public SegmentedPath append(String segment) {
         final int thisLen = segments.length;
         var newSegments = new String[thisLen + 1];
         System.arraycopy(segments, 0, newSegments, 0, thisLen);
         newSegments[thisLen] = segment;
-        return new SegmentedPath(newSegments); // TODO: newSegments 的前面大部分已经被检查过了，可以尝试优化
+        return new SegmentedPath(thisLen, newSegments);
     }
 
     public SegmentedPath append(SegmentedPath path) {
@@ -51,7 +52,7 @@ public final class SegmentedPath implements Comparable<SegmentedPath>, Iterable<
         var newSegments = new String[thisLen + path.segments.length];
         System.arraycopy(segments, 0, newSegments, 0, thisLen);
         System.arraycopy(path.segments, 0, newSegments, thisLen, path.segments.length);
-        return new SegmentedPath(newSegments); // TODO: newSegments 的前面大部分已经被检查过了，可以尝试优化
+        return new SegmentedPath(newSegments.length, newSegments);
     }
 
     @Override
@@ -69,11 +70,11 @@ public final class SegmentedPath implements Comparable<SegmentedPath>, Iterable<
             return ROOT;
         }
 
-        return new SegmentedPath(Arrays.stream(url.split("/")).filter($::isNotEmpty).toArray(String[]::new));
+        return new SegmentedPath(0, Arrays.stream(url.split("/")).filter($::isNotEmpty).toArray(String[]::new));
     }
 
     public static SegmentedPath of(String... segments) {
-        return new SegmentedPath(segments);
+        return new SegmentedPath(0, segments);
     }
 
     @Override
@@ -87,5 +88,18 @@ public final class SegmentedPath implements Comparable<SegmentedPath>, Iterable<
 
     public boolean isRoot() {
         return segments.length == 0;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null) return false;
+        if (o == this) return true;
+
+        return o instanceof SegmentedPath p && Arrays.equals(segments, p.segments);
+    }
+
+    @Override
+    public int hashCode() {
+        return Arrays.hashCode(segments);
     }
 }
