@@ -35,7 +35,6 @@ public record RawRequest(StartLine startLine, List<HeaderLine> headerLines, Inpu
         }
     }
 
-
     public HttpRequest<InputStream> toHttpRequest() {
         var headers = $(this.headerLines)
                 .groupBy(HeaderLine::name)

@@ -21,7 +21,8 @@ public class Server {
         var serverSocket = createServerSocket(port);
         while (true) {
             try {
-                this.handleSocket(serverSocket.accept());
+                var socket = serverSocket.accept();
+                this.handleSocket(socket);
             } catch (IOException e) {
                 throw new UncheckedIOException("Accept server socket failed", e);
             }
@@ -38,7 +39,6 @@ public class Server {
 
     void handleSocket(Socket socket) {
         Thread.ofVirtual().start(() -> {
-
             try {
                 var in = socket.getInputStream();
                 var out = socket.getOutputStream();
@@ -48,8 +48,10 @@ public class Server {
 
                 this.middleware.call(request, response, Next.EMPTY);
 
-                socket.shutdownOutput(); // TODO: keep-alive
+//                socket.shutdownOutput(); // TODO: keep-alive
             } catch (IOException e) {
+                System.out.println(e); // TODO: handle exception
+            } catch (Exception e) {
                 System.out.println(e); // TODO: handle exception
             }
         });

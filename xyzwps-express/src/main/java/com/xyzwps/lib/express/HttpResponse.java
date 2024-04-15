@@ -8,7 +8,6 @@ public interface HttpResponse {
 
     /**
      * TODO: 延迟发送
-     * @param object
      */
-    void send(String object);
+    void send(byte[] bytes);
 }

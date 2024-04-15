@@ -9,10 +9,10 @@ public class Main {
 
         new Server()
                 .use((req, resp, next) -> {
-                    System.out.printf("-> %s %s\n", req.method(), req.url());
+                    System.out.printf("-> %s %s \n", req.method(), req.url());
                     resp.status(200)
                             .header("Content-Type", "application/json");
-                    resp.send("[\"Hello\":\"World\"]");
+                    resp.send("[\"Hello\":\"World\"]".getBytes());
                 })
 //                .use(router.routes())routes
                 .listen(3000);

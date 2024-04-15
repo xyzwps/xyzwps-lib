@@ -33,7 +33,9 @@ public final class SimpleHttpResponse implements HttpResponse {
     }
 
     @Override
-    public void send(String object) {
+    public void send(byte[] bytes) {
+        header("Content-Length", Integer.toString(bytes == null ? 0 : bytes.length));
+
         try {
             out.write(request.protocol().getBytes());
             out.write(' ');
@@ -53,8 +55,8 @@ public final class SimpleHttpResponse implements HttpResponse {
             out.write('\r');
             out.write('\n');
 
-            if (object != null) {
-                out.write(object.getBytes());
+            if (bytes != null) {
+                out.write(bytes);
             }
 
             out.flush();
