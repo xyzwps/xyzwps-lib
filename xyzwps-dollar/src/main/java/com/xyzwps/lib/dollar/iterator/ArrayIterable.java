@@ -13,22 +13,30 @@ public class ArrayIterable<T> implements Iterable<T> {
 
     @Override
     public Iterator<T> iterator() {
-        return new Iterator<T>() {
-            private int current = 0;
+        return new ArrayIterator<>(array);
+    }
 
-            @Override
-            public boolean hasNext() {
-                return current < array.length;
-            }
+    public static class ArrayIterator<T> implements Iterator<T> {
+        private final T[] array;
 
-            @Override
-            public T next() {
-                if (this.hasNext()) {
-                    return array[current++];
-                } else {
-                    throw new NoSuchElementException();
-                }
+        public ArrayIterator(T[] array) {
+            this.array = array;
+        }
+
+        private int current = 0;
+
+        @Override
+        public boolean hasNext() {
+            return array != null && array.length != 0 && current < array.length;
+        }
+
+        @Override
+        public T next() {
+            if (this.hasNext()) {
+                return array[current++];
+            } else {
+                throw new NoSuchElementException();
             }
-        };
+        }
     }
 }

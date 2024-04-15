@@ -28,49 +28,49 @@ class TrieTests {
          * add
          */
 
-        t.addSegmentedPath(List.of("auth", "login"), 1);
-        t.addSegmentedPath(List.of("auth", "register"), 2);
-        t.addSegmentedPath(List.of("home"), 3);
-        t.addSegmentedPath(List.of(), 4);
-        t.addSegmentedPath(List.of("auth", "oauth", "authorize", "wx"), 5);
-        t.addSegmentedPath(List.of("auth", "oauth", "authorize", "ali"), 6);
-        t.addSegmentedPath(List.of("auth", "oauth", "authorize", "ms"), 7);
+        t.add(SegmentedPath.of("auth", "login"), 1);
+        t.add(SegmentedPath.of("auth", "register"), 2);
+        t.add(SegmentedPath.of("home"), 3);
+        t.add(SegmentedPath.of(), 4);
+        t.add(SegmentedPath.of("auth", "oauth", "authorize", "wx"), 5);
+        t.add(SegmentedPath.of("auth", "oauth", "authorize", "ali"), 6);
+        t.add(SegmentedPath.of("auth", "oauth", "authorize", "ms"), 7);
 
         /*
          * get
          */
 
-        assertEquals(1, t.get(List.of("auth", "login")).orElseThrow());
-        assertEquals(2, t.get(List.of("auth", "register")).orElseThrow());
-        assertEquals(3, t.get(List.of("home")).orElseThrow());
-        assertEquals(4, t.get(List.of()).orElseThrow());
+        assertEquals(1, t.get(SegmentedPath.of("auth", "login")).orElseThrow());
+        assertEquals(2, t.get(SegmentedPath.of("auth", "register")).orElseThrow());
+        assertEquals(3, t.get(SegmentedPath.of("home")).orElseThrow());
+        assertEquals(4, t.get(SegmentedPath.of()).orElseThrow());
         assertEquals(4, t.get(null).orElseThrow());
-        assertEquals(5, t.get(List.of("auth", "oauth", "authorize", "wx")).orElseThrow());
-        assertEquals(6, t.get(List.of("auth", "oauth", "authorize", "ali")).orElseThrow());
-        assertEquals(7, t.get(List.of("auth", "oauth", "authorize", "ms")).orElseThrow());
+        assertEquals(5, t.get(SegmentedPath.of("auth", "oauth", "authorize", "wx")).orElseThrow());
+        assertEquals(6, t.get(SegmentedPath.of("auth", "oauth", "authorize", "ali")).orElseThrow());
+        assertEquals(7, t.get(SegmentedPath.of("auth", "oauth", "authorize", "ms")).orElseThrow());
 
         /*
          * get nothing
          */
 
-        assertTrue(t.get(List.of("auth")).isEmpty());
-        assertTrue(t.get(List.of("auth", "oauth")).isEmpty());
-        assertTrue(t.get(List.of("auth", "oauth", "authorize")).isEmpty());
-        assertTrue(t.get(List.of("auth", "oauth", "authorize", "wx", "v2")).isEmpty());
+        assertTrue(t.get(SegmentedPath.of("auth")).isEmpty());
+        assertTrue(t.get(SegmentedPath.of("auth", "oauth")).isEmpty());
+        assertTrue(t.get(SegmentedPath.of("auth", "oauth", "authorize")).isEmpty());
+        assertTrue(t.get(SegmentedPath.of("auth", "oauth", "authorize", "wx", "v2")).isEmpty());
 
         // getOrSetDefault
         {
             Supplier<Integer> defaultSupplier = () -> 100;
 
-            assertEquals(5, t.getOrSetDefault(List.of("auth", "oauth", "authorize", "wx"), defaultSupplier));
-            assertEquals(5, t.get(List.of("auth", "oauth", "authorize", "wx")).orElseThrow());
+            assertEquals(5, t.getOrSetDefault(SegmentedPath.of("auth", "oauth", "authorize", "wx"), defaultSupplier));
+            assertEquals(5, t.get(SegmentedPath.of("auth", "oauth", "authorize", "wx")).orElseThrow());
 
-            assertTrue(t.get(List.of("auth", "oauth", "authorize", "wx", "v2")).isEmpty());
-            assertEquals(100, t.getOrSetDefault(List.of("auth", "oauth", "authorize", "wx", "v2"), defaultSupplier));
-            assertEquals(100, t.get(List.of("auth", "oauth", "authorize", "wx", "v2")).orElseThrow());
+            assertTrue(t.get(SegmentedPath.of("auth", "oauth", "authorize", "wx", "v2")).isEmpty());
+            assertEquals(100, t.getOrSetDefault(SegmentedPath.of("auth", "oauth", "authorize", "wx", "v2"), defaultSupplier));
+            assertEquals(100, t.get(SegmentedPath.of("auth", "oauth", "authorize", "wx", "v2")).orElseThrow());
 
             assertEquals("Default supplier cannot produce a null", assertThrows(NullPointerException.class,
-                    () -> t.getOrSetDefault(List.of("auth", "oauth", "authorize", "wx", "v3"), () -> null)).getMessage());
+                    () -> t.getOrSetDefault(SegmentedPath.of("auth", "oauth", "authorize", "wx", "v3"), () -> null)).getMessage());
         }
 
         // iterate
@@ -95,12 +95,12 @@ class TrieTests {
         // add trie
         {
             var t2 = new Trie<Integer>();
-            t2.addSegmentedPath(List.of("insert"), 201);
-            t2.addSegmentedPath(List.of("update"), 202);
-            t2.addSegmentedPath(List.of("delete"), 203);
-            t2.addSegmentedPath(List.of("select", "all"), 204);
-            t2.addSegmentedPath(List.of("select", "by-id"), 205);
-            t.addTrie(List.of("post"), t2);
+            t2.add(SegmentedPath.of("insert"), 201);
+            t2.add(SegmentedPath.of("update"), 202);
+            t2.add(SegmentedPath.of("delete"), 203);
+            t2.add(SegmentedPath.of("select", "all"), 204);
+            t2.add(SegmentedPath.of("select", "by-id"), 205);
+            t.addTrie(SegmentedPath.of("post"), t2);
 
             // --
 
@@ -130,8 +130,8 @@ class TrieTests {
         // add trie failed
         {
             var t2 = new Trie<Integer>();
-            t2.addSegmentedPath(List.of("insert"), 201);
-            assertEquals("Duplicated path '/post/insert'", assertThrows(IllegalStateException.class, () -> t.addTrie(List.of("post"), t2)).getMessage());
+            t2.add(SegmentedPath.of("insert"), 201);
+            assertEquals("Duplicated path '/post/insert'", assertThrows(IllegalArgumentException.class, () -> t.addTrie(SegmentedPath.of("post"), t2)).getMessage());
         }
 
     }

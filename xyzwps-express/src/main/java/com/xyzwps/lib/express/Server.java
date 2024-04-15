@@ -38,11 +38,16 @@ public class Server {
 
     void handleSocket(Socket socket) {
         Thread.ofVirtual().start(() -> {
+
             try {
                 var in = socket.getInputStream();
+                var out = socket.getOutputStream();
+
                 var request = new SimpleRawRequestParser().parse(in).toHttpRequest();
-                var response = new SimpleHttpResponse(socket.getOutputStream(), request);
+                var response = new SimpleHttpResponse(out, request);
+
                 this.middleware.call(request, response, Next.EMPTY);
+
                 socket.shutdownOutput(); // TODO: keep-alive
             } catch (IOException e) {
                 System.out.println(e); // TODO: handle exception

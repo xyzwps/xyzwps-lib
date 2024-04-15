@@ -12,46 +12,43 @@ public class Trie<T> {
         this.root = new Node<>(new HashMap<>());
     }
 
-    public void addSegmentedPath(List<String> pathSegments, T value) {
-        if (pathSegments == null || pathSegments.isEmpty()) {
-            // empty
+    public void add(SegmentedPath path, T value) {
+        if (path == null || path.isRoot()) {
             if (root.value != null) {
-                throw new IllegalStateException("Duplicated path '/'");
+                throw duplicatedPathError(SegmentedPath.ROOT);
             }
             this.root.value = value;
             return;
         }
 
         var current = root;
-        for (var segment : pathSegments) {
+        for (var segment : path) {
             current = current.mapping.computeIfAbsent(segment, (key) -> new Node<T>(new HashMap<>()));
         }
         if (current.value != null) {
-            throw new IllegalStateException(String.format("Duplicated path '/%s'", String.join("/", pathSegments)));
+            throw duplicatedPathError(path);
         }
         current.value = value;
     }
 
-    public void addTrie(List<String> prefix, Trie<T> trie) {
+    private static IllegalArgumentException duplicatedPathError(SegmentedPath duplicatedPath) {
+        return new IllegalArgumentException(String.format("Duplicated path '%s'", duplicatedPath));
+    }
+
+    public void addTrie(SegmentedPath prefix, Trie<T> trie) {
         Objects.requireNonNull(prefix);
         Objects.requireNonNull(trie);
-
-        trie.iterate((segments, value) -> {
-            var fullSegments = new ArrayList<String>();
-            fullSegments.addAll(prefix);
-            fullSegments.addAll(segments);
-            this.addSegmentedPath(fullSegments, value);
-        });
+        trie.iterate((segments, value) -> this.add(prefix.append(segments), value));
 
     }
 
-    public Optional<T> get(List<String> pathSegments) {
-        if (pathSegments == null || pathSegments.isEmpty()) {
+    public Optional<T> get(SegmentedPath path) {
+        if (path == null || path.isRoot()) {
             return Optional.ofNullable(root.value);
         }
 
         var current = root;
-        for (var segment : pathSegments) {
+        for (var segment : path) {
             current = current.mapping.get(segment);
             if (current == null) {
                 return Optional.empty();
@@ -61,11 +58,11 @@ public class Trie<T> {
     }
 
     /**
-     * @param pathSegments    path segments
+     * @param path            path
      * @param defaultSupplier cannot produce a null.
      */
-    public T getOrSetDefault(List<String> pathSegments, Supplier<T> defaultSupplier) {
-        if (pathSegments == null || pathSegments.isEmpty()) {
+    public T getOrSetDefault(SegmentedPath path, Supplier<T> defaultSupplier) {
+        if (path == null || path.isRoot()) {
             if (root.value == null) {
                 return root.value = Objects.requireNonNull(defaultSupplier.get(), "Default supplier cannot produce a null");
             }
@@ -73,7 +70,7 @@ public class Trie<T> {
         }
 
         var current = root;
-        for (var segment : pathSegments) {
+        for (var segment : path) {
             current = current.mapping.computeIfAbsent(segment, (key) -> new Node<T>(new HashMap<>()));
         }
         if (current.value == null) {
@@ -82,27 +79,19 @@ public class Trie<T> {
         return current.value;
     }
 
-    public void iterate(BiConsumer<List<String>, T> consumer) {
-        this.iterate(List.of(), root, Objects.requireNonNull(consumer));
+    public void iterate(BiConsumer<SegmentedPath, T> consumer) {
+        this.iterate(SegmentedPath.ROOT, root, Objects.requireNonNull(consumer));
     }
 
     // TODO: support /{param}
     // TODO: support /*
     // TODO: support /**
 
-    private void iterate(List<String> prefix, Node<T> node, BiConsumer<List<String>, T> consumer) {
+    private void iterate(SegmentedPath prefix, Node<T> node, BiConsumer<SegmentedPath, T> consumer) {
         if (node.value != null) {
             consumer.accept(prefix, node.value);
         }
-        node.mapping.forEach((key, v) -> iterate(append(prefix, key), v, consumer));
-    }
-
-    private static <E> List<E> append(List<E> list, E e) {
-        Objects.requireNonNull(list);
-        Objects.requireNonNull(e);
-        var array = list.toArray((E[]) new Object[list.size() + 1]);
-        array[array.length - 1] = e;
-        return List.of(array);
+        node.mapping.forEach((key, v) -> iterate(prefix.append(key), v, consumer));
     }
 
     // TODO: to immutable
