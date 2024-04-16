@@ -10,8 +10,7 @@ public final class Middleware2Composer {
     @SafeVarargs
     public static <P1, P2> Middleware2<P1, P2> compose(Middleware2<P1, P2>... mws) {
         if (mws.length == 0) {
-            return (p1, p2, n) -> { // TODO: throw nothing to compose
-            };
+            throw new IllegalArgumentException("No middlewares to compose");
         }
 
         if (mws.length == 1) {
@@ -29,8 +28,7 @@ public final class Middleware2Composer {
 
     public static <P1, P2> Middleware2<P1, P2> compose(List<Middleware2<P1, P2>> mws) {
         if ($.isEmpty(mws)) {
-            return (p1, p2, n) -> {  // TODO: throw nothing to compose
-            };
+            throw new IllegalArgumentException("No middlewares to compose");
         }
 
         if (mws.size() == 1) {
