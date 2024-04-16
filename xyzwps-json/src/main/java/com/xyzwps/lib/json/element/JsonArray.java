@@ -12,8 +12,8 @@ public final class JsonArray implements JsonElement {
     @Override
     public String toString() {
         var sb = new StringBuilder().append('[');
-        if (elements.size() > 0) {
-            sb.append(elements.get(0).toString());
+        if (!elements.isEmpty()) {
+            sb.append(elements.getFirst().toString());
         }
         for (int i = 1; i < elements.size(); i++) {
             sb.append(',').append(elements.get(i).toString());

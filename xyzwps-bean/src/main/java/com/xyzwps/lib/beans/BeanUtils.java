@@ -15,7 +15,6 @@ public final class BeanUtils {
                 : getBeanInfoFromObject(object);
     }
 
-    // TODO: 这里是不是可以优化下
     private static final ConcurrentMap<Class<?>, BeanInfo> beanInfoCache = new ConcurrentHashMap<>();
 
     private static BeanInfo getBeanInfoFromClass(Class<?> beanClass) {

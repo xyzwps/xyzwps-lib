@@ -18,9 +18,9 @@ public class PropertyInfo {
     private final PropertySetter propertySetter;
     private final boolean readable;
     private final boolean writable;
-    // TODO: support indexed properties
+    // don‘t support indexed properties
 
-    public PropertyInfo(Class<?> beanType, String propertyName, Class<?> propertyType, PropertyGetter propertyGetter, PropertySetter propertySetter) {
+    PropertyInfo(Class<?> beanType, String propertyName, Class<?> propertyType, PropertyGetter propertyGetter, PropertySetter propertySetter) {
         this.beanType = Objects.requireNonNull(beanType);
         this.propertyName = Objects.requireNonNull(propertyName);
         this.propertyType = Objects.requireNonNull(propertyType);
