@@ -10,8 +10,13 @@ public class Main {
                     resp.status(200).header("Content-Type", "application/json");
                     resp.send("{\"msg\":\"get user\"}".getBytes());
                 })
+                .use((req, resp, next) -> {
+                    System.out.println(" > ready to get posts");
+                    next.call();
+                })
                 .get("/{id}/posts", (req, resp, next) -> {
                     resp.status(200).header("Content-Type", "application/json");
+                    System.out.println(" > posts gotten");
                     resp.send("{\"msg\":\"get user posts\"}".getBytes());
                 });
 
