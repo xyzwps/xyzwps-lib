@@ -4,9 +4,9 @@ import java.util.regex.Pattern;
 
 import static com.xyzwps.lib.dollar.Dollar.*;
 
-public interface UrlSegment {
+public interface HSegment {
 
-    static UrlSegment from(String segment) {
+    static HSegment from(String segment) {
         if ($.isEmpty(segment)) {
             throw new IllegalArgumentException("Segment string cannot be empty");
         }
@@ -35,7 +35,7 @@ public interface UrlSegment {
         return new PlainSegment(segment);
     }
 
-    record PlainSegment(String value) implements UrlSegment {
+    record PlainSegment(String value) implements HSegment {
         static final Pattern SEG_PATTERN = Pattern.compile("^[A-Za-z_][A-Za-z0-9_-]*");
 
         public boolean notMatch(String url) {
@@ -48,7 +48,7 @@ public interface UrlSegment {
         }
     }
 
-    record VariableSegment(String variableName) implements UrlSegment {
+    record VariableSegment(String variableName) implements HSegment {
         static final Pattern VAR_PATTERN = Pattern.compile("^[A-Za-z_][A-Za-z0-9_]*");
 
         @Override
@@ -57,7 +57,7 @@ public interface UrlSegment {
         }
     }
 
-    enum StarSegment implements UrlSegment {
+    enum StarSegment implements HSegment {
         INSTANCE;
 
         @Override
@@ -66,7 +66,7 @@ public interface UrlSegment {
         }
     }
 
-    enum Star2Segment implements UrlSegment {
+    enum Star2Segment implements HSegment {
         INSTANCE;
 
         @Override

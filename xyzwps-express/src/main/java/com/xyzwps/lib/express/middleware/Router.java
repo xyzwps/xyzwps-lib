@@ -2,7 +2,7 @@ package com.xyzwps.lib.express.middleware;
 
 import com.xyzwps.lib.express.HttpMethod;
 import com.xyzwps.lib.express.HttpMiddleware;
-import com.xyzwps.lib.express.common.SegmentedUrl;
+import com.xyzwps.lib.express.common.HPath;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -19,7 +19,7 @@ public final class Router {
         HttpMiddleware[] mergedMws = new HttpMiddleware[mws.length + 1];
         System.arraycopy(mws, 0, mergedMws, 1, mws.length);
         mergedMws[0] = mw0;
-        items.add(new RouteItem.Handler(SegmentedUrl.from(url), method, mergedMws));
+        items.add(new RouteItem.Handler(HPath.from(url), method, mergedMws));
         return this;
     }
 
@@ -43,7 +43,7 @@ public final class Router {
     public Router nest(String prefix, Router router) {
         Objects.requireNonNull(router);
         // TODO: prefix 不允许有 /**
-        var segmentedPrefix = SegmentedUrl.from(prefix);
+        var segmentedPrefix = HPath.from(prefix);
         router.setMatchStart(this.matchStart + segmentedPrefix.length());
         items.add(new RouteItem.Nest(segmentedPrefix, router));
         return this;
@@ -85,7 +85,7 @@ public final class Router {
 
     public HttpMiddleware routes() {
         return (req, resp, next) -> {
-            var path = SegmentedUrl.urlToStringSegments(req.url());
+            var path = HPath.pathToSegmentStrings(req.url());
             var mws = this.match(req.method(), path);
             var composed = HttpMiddleware.compose(mws);
             composed.call(req, resp, next);
@@ -93,10 +93,10 @@ public final class Router {
     }
 
     sealed interface RouteItem {
-        record Handler(SegmentedUrl url, HttpMethod method, HttpMiddleware[] middlewares) implements RouteItem {
+        record Handler(HPath url, HttpMethod method, HttpMiddleware[] middlewares) implements RouteItem {
         }
 
-        record Nest(SegmentedUrl prefix, Router router) implements RouteItem {
+        record Nest(HPath prefix, Router router) implements RouteItem {
         }
 
         record Use(HttpMiddleware mw) implements RouteItem {
