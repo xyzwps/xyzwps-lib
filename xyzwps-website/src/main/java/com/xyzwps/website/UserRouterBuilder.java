@@ -1,11 +1,18 @@
-package com.xyzwps.lib.express;
+package com.xyzwps.website;
 
 import com.xyzwps.lib.express.middleware.Router;
 
-public class Main {
-    public static void main(String[] args) {
+import javax.inject.Inject;
+import javax.inject.Singleton;
 
-        var userRouter = new Router()
+@Singleton
+public class UserRouterBuilder {
+
+    public final Router router;
+
+    @Inject
+    UserRouterBuilder() {
+        this.router = new Router()
                 .get("/{id}", (req, resp, next) -> {
                     resp.status(200).header("Content-Type", "application/json");
                     resp.send("{\"msg\":\"get user\"}".getBytes());
@@ -19,20 +26,5 @@ public class Main {
                     System.out.println(" > posts gotten");
                     resp.send("{\"msg\":\"get user posts\"}".getBytes());
                 });
-
-        var router = new Router()
-                .get("/hello/world", (req, resp, next) -> {
-                    resp.status(200).header("Content-Type", "application/json");
-                    resp.send("[\"Hello\":\"World\"]".getBytes());
-                })
-                .nest("/users", userRouter);
-
-        new Server()
-                .use((req, resp, next) -> {
-                    System.out.printf("-> %s %s \n", req.method(), req.url());
-                    next.call();
-                })
-                .use(router.routes())
-                .listen(3000);
     }
 }
