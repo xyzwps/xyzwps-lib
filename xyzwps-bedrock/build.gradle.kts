@@ -1,10 +1,11 @@
 plugins {
     java
+    groovy
 }
 
 group = "com.xyzwps.lib"
 version = findProperty("lib.version")!!
-// TODO: 使用 properties 文件的写法太啰嗦了，想办法改成插件
+
 java.sourceCompatibility = JavaVersion.valueOf("VERSION_" + findProperty("lib.java.version"))
 
 repositories {
@@ -12,10 +13,9 @@ repositories {
 }
 
 dependencies {
-    implementation(project(":xyzwps-bean"))
-    implementation(project(":xyzwps-bedrock"))
     testImplementation(platform("org.junit:junit-bom:5.9.1"))
     testImplementation("org.junit.jupiter:junit-jupiter")
+    testImplementation("org.apache.groovy:groovy:4.0.13")
 }
 
 tasks.test {

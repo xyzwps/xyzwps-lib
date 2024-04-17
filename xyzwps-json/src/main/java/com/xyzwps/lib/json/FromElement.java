@@ -1,8 +1,10 @@
 package com.xyzwps.lib.json;
 
 import com.xyzwps.lib.beans.BeanUtils;
+import com.xyzwps.lib.bedrock.lang.DefaultValues;
 import com.xyzwps.lib.json.element.*;
 
+import java.lang.reflect.Type;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.*;
@@ -109,7 +111,7 @@ public final class FromElement {
         this.fromElementTable.put(Objects.requireNonNull(type), Objects.requireNonNull(converter));
     }
 
-    public <T> T fromElement(JsonElement element, Class<T> type) {
+    public <T> T fromElement(JsonElement element, Type type) {
         Objects.requireNonNull(element);
         Objects.requireNonNull(type);
 
@@ -126,27 +128,16 @@ public final class FromElement {
             var beanInfo = BeanUtils.getBeanInfo(type);
             var parsedProps = new HashMap<String, Object>();
             beanInfo.getBeanProperties().forEach(prop -> {
-                var propName = prop.getPropertyName();
+                var propName = prop.propertyName();
                 var propElement = jo.get(propName);
-                var propValue = propElement == null ? defaultValue(prop.getPropertyType()) : fromElement(propElement, prop.getPropertyType());
+                var propValue = propElement == null ? DefaultValues.get(prop.propertyType()) : fromElement(propElement, prop.propertyType());
                 parsedProps.put(propName, propValue);
             });
             return beanInfo.create(parsedProps);
         }
-        throw new JsonException("Cannot convert to " + type.getCanonicalName() + " from " + element.getClass().getSimpleName());
+        throw new JsonException("Cannot convert to " + type.getTypeName() + " from " + element.getClass().getSimpleName());
     }
 
-    private static Object defaultValue(Class<?> type) {
-        if (type == byte.class) return (byte) 0;
-        if (type == short.class) return (short) 0;
-        if (type == int.class) return 0;
-        if (type == long.class) return 0L;
-        if (type == char.class) return (char) 0;
-        if (type == float.class) return 0F;
-        if (type == double.class) return 0.0;
-        if (type == boolean.class) return false;
-        return null;
-    }
 
     // TODO: 处理泛型类，如 List<Integer> 之类的
 }

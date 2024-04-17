@@ -13,6 +13,7 @@ repositories {
 }
 
 dependencies {
+    implementation(project(":xyzwps-bedrock"))
     testImplementation(platform("org.junit:junit-bom:5.9.1"))
     testImplementation("org.junit.jupiter:junit-jupiter")
     testImplementation("org.apache.groovy:groovy:4.0.13")

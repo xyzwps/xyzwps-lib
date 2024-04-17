@@ -1,7 +1,6 @@
 package com.xyzwps.lib.beans;
 
 import java.lang.reflect.Constructor;
-import java.lang.reflect.Modifier;
 import java.lang.reflect.RecordComponent;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -14,9 +13,9 @@ record RecordAnalyzer(Class<?> beanClass) implements BeanInfoAnalyser {
         var props = new ArrayList<PropertyInfo>(rcs.length);
         for (var rc : rcs) {
             var getMethod = new PropertyMethod.GetPropertyMethod(beanClass,
-                    rc.getAccessor(), AccessLevel.PUBLIC, rc.getType(), rc.getName());
+                    rc.getAccessor(), AccessLevel.PUBLIC, rc.getGenericType(), rc.getName());
             var getter = PropertyGetter.create(getMethod, null);
-            var prop = new PropertyInfo(beanClass, rc.getName(), rc.getType(), getter, null);
+            var prop = new PropertyInfo(rc.getName(), rc.getGenericType(), getter, null, beanClass);
             props.add(prop);
         }
         return new BeanInfo(beanClass, getConstructor(), props, true);

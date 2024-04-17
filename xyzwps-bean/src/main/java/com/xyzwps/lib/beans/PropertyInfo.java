@@ -2,55 +2,34 @@ package com.xyzwps.lib.beans;
 
 import com.xyzwps.lib.beans.ex.*;
 
+import java.lang.reflect.Type;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
 import static com.xyzwps.lib.beans.PropertyMethod.*;
 
-public class PropertyInfo {
-
-    private final String propertyName;
-    private final Class<?> beanType;
-    private final Class<?> propertyType;
-    private final AnnotationsInfo annotations;
-    private final PropertyGetter propertyGetter;
-    private final PropertySetter propertySetter;
-    private final boolean readable;
-    private final boolean writable;
-    // don‘t support indexed properties
-
-    PropertyInfo(Class<?> beanType, String propertyName, Class<?> propertyType, PropertyGetter propertyGetter, PropertySetter propertySetter) {
-        this.beanType = Objects.requireNonNull(beanType);
-        this.propertyName = Objects.requireNonNull(propertyName);
-        this.propertyType = Objects.requireNonNull(propertyType);
+public record PropertyInfo(String propertyName, Type propertyType,
+                           PropertyGetter propertyGetter, PropertySetter propertySetter,
+                           Class<?> beanType) {
+    public PropertyInfo {
+        Objects.requireNonNull(beanType);
+        Objects.requireNonNull(propertyName);
+        Objects.requireNonNull(propertyType);
 
         if (propertyGetter == null && propertySetter == null) {
             throw new IllegalArgumentException("There should be at least one of GetterInfo and SetterInfo.");
         }
-
-        this.propertyGetter = propertyGetter;
-        this.propertySetter = propertySetter;
-        this.readable = propertyGetter != null && propertyGetter.isReadable();
-        this.writable = propertySetter != null && propertySetter.isWritable();
-        this.annotations = new AnnotationsInfo(propertyGetter, propertySetter);
     }
 
-    public String getPropertyName() {
-        return propertyName;
+    public boolean readable() {
+        return propertyGetter != null && propertyGetter.isReadable();
     }
 
-    public Class<?> getPropertyType() {
-        return propertyType;
+    public boolean writable() {
+        return propertySetter != null && propertySetter.isWritable();
     }
 
-    public boolean isReadable() {
-        return readable;
-    }
-
-    public boolean isWritable() {
-        return writable;
-    }
 
     public GetResult getProperty(Object object) {
         return propertyGetter.get(object);
@@ -75,17 +54,6 @@ public class PropertyInfo {
         };
     }
 
-    private static final Map<Class<?>, Object> primitiveDefaultValues = Map.of(
-            boolean.class, false,
-            short.class, (short) 0,
-            int.class, 0,
-            long.class, 0L,
-            float.class, 0.0f,
-            double.class, 0.0,
-            byte.class, (byte) 0,
-            char.class, (char) 0
-    );
-
 
     public SetResult setProperty(Object object, Object value) {
         return propertySetter.set(object, TryBestToSetProperty.INSTANCE.convertToSet(this.propertyType, value));
@@ -102,13 +70,7 @@ public class PropertyInfo {
         }
     }
 
-    public Class<?> getBeanType() {
-        return beanType;
-    }
-
-    public AnnotationsInfo getAnnotations() {
-        return annotations;
-    }
+    // TODO: 处理注解
 
     public static class Holder {
 
@@ -135,12 +97,15 @@ public class PropertyInfo {
             var propertyType = decidePropertyType();
             var getterInfo = PropertyGetter.create(getMethod, propertyField);
             var setterInfo = PropertySetter.create(setMethod, propertyField);
-            return Optional.of(new PropertyInfo(beanType, propertyName, propertyType, getterInfo, setterInfo));
+            return Optional.of(new PropertyInfo(propertyName, propertyType, getterInfo, setterInfo, beanType));
         }
 
 
-        private Class<?> decidePropertyType() {
-            Class<?> propertyType = null;
+        private Type decidePropertyType() {
+            // TODO: 三方类型必须相同
+            // TODO: 三方必须来自于同一个类
+
+            Type propertyType = null;
             if (propertyField != null) {
                 propertyType = propertyField.getFieldType();
             }

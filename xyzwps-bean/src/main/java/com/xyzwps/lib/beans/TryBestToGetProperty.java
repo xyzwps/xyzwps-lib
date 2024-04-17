@@ -1,5 +1,6 @@
 package com.xyzwps.lib.beans;
 
+import java.lang.reflect.Type;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -9,7 +10,7 @@ class TryBestToGetProperty {
 
     static final TryBestToGetProperty INSTANCE = new TryBestToGetProperty();
 
-    private final ConcurrentMap<Class<?>, ConcurrentMap<Class<?>, Strategy>> strategies = new ConcurrentHashMap<>();
+    private final ConcurrentMap<Type, ConcurrentMap<Type, Strategy>> strategies = new ConcurrentHashMap<>();
 
     TryBestToGetProperty() {
         this.add(new Strategy(Boolean.class, boolean.class, (value) -> {
@@ -63,7 +64,7 @@ class TryBestToGetProperty {
         return this;
     }
 
-    public Object tryToGet(Class<?> propertyType, Class<?> returnType, Object value) {
+    public Object tryToGet(Type propertyType, Type returnType, Object value) {
         Objects.requireNonNull(propertyType);
         Objects.requireNonNull(returnType);
 

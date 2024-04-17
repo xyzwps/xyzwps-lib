@@ -3,7 +3,7 @@ package com.xyzwps.lib.beans;
 import java.lang.reflect.Modifier;
 import java.util.Objects;
 
-public interface BeanInfoAnalyser {
+interface BeanInfoAnalyser {
 
     BeanInfo analyse();
 

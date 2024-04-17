@@ -52,10 +52,10 @@ public final class BeanUtils {
         var beanInfo = getBeanInfo(object);
         var result = new HashMap<String, Object>();
         for (var property : beanInfo.getBeanProperties()) {
-            if (property.isReadable()) {
+            if (property.readable()) {
                 var getResult = property.getProperty(object);
                 if (getResult instanceof GetResult.Ok ok) {
-                    result.put(property.getPropertyName(), ok.value());
+                    result.put(property.propertyName(), ok.value());
                 } else {
                     throw new IllegalStateException("Impossible cases: " + getResult);
                 }

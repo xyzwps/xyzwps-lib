@@ -2,6 +2,7 @@ package com.xyzwps.lib.beans;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.Type;
 
 public sealed interface PropertyMethod {
 
@@ -13,7 +14,7 @@ public sealed interface PropertyMethod {
     record SetPropertyMethod(Class<?> beanType,
                              Method method,
                              AccessLevel accessLevel,
-                             Class<?> propertyType,
+                             Type propertyType,
                              String propertyName
     ) implements PropertyMethod {
 
@@ -30,7 +31,7 @@ public sealed interface PropertyMethod {
     record GetPropertyMethod(Class<?> beanType,
                              Method method,
                              AccessLevel accessLevel,
-                             Class<?> propertyType,
+                             Type propertyType,
                              String propertyName
     ) implements PropertyMethod {
 

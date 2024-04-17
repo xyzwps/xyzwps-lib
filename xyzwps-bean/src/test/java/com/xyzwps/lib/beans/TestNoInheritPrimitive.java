@@ -96,8 +96,8 @@ public class TestNoInheritPrimitive {
         /* boolean */
         {
             var prop = beanInfo.getPropertyInfo("booleanProp").orElseThrow(unexpected("no booleanProp"));
-            assertTrue(prop.isReadable());
-            assertTrue(prop.isWritable());
+            assertTrue(prop.readable());
+            assertTrue(prop.writable());
 
             assertFalse(bean.isBooleanProp());
             assertFalse(prop.getPropertyOrThrow(bean, boolean.class));
@@ -147,8 +147,8 @@ public class TestNoInheritPrimitive {
         /* short */
         {
             var prop = beanInfo.getPropertyInfo("shortProp").orElseThrow(unexpected("no shortProp"));
-            assertTrue(prop.isReadable());
-            assertTrue(prop.isWritable());
+            assertTrue(prop.readable());
+            assertTrue(prop.writable());
 
             assertEquals(0, bean.getShortProp());
             assertEquals(0, (int) prop.getPropertyOrThrow(bean, short.class));
@@ -202,8 +202,8 @@ public class TestNoInheritPrimitive {
         /* int */
         {
             var prop = beanInfo.getPropertyInfo("intProp").orElseThrow(unexpected("no intProp"));
-            assertTrue(prop.isReadable());
-            assertTrue(prop.isWritable());
+            assertTrue(prop.readable());
+            assertTrue(prop.writable());
 
             assertEquals(0, bean.getIntProp());
             assertEquals(0, prop.getPropertyOrThrow(bean, int.class));
@@ -257,8 +257,8 @@ public class TestNoInheritPrimitive {
         /* long */
         {
             var prop = beanInfo.getPropertyInfo("longProp").orElseThrow(unexpected("no longProp"));
-            assertTrue(prop.isReadable());
-            assertTrue(prop.isWritable());
+            assertTrue(prop.readable());
+            assertTrue(prop.writable());
 
             assertEquals(0, bean.getLongProp());
             assertEquals(0, prop.getPropertyOrThrow(bean, long.class));
@@ -312,8 +312,8 @@ public class TestNoInheritPrimitive {
         /* float */
         {
             var prop = beanInfo.getPropertyInfo("floatProp").orElseThrow(unexpected("no floatProp"));
-            assertTrue(prop.isReadable());
-            assertTrue(prop.isWritable());
+            assertTrue(prop.readable());
+            assertTrue(prop.writable());
 
             assertEquals(0, bean.getFloatProp());
             assertEquals(0, prop.getPropertyOrThrow(bean, float.class));
@@ -379,8 +379,8 @@ public class TestNoInheritPrimitive {
         /* double */
         {
             var prop = beanInfo.getPropertyInfo("doubleProp").orElseThrow(unexpected("no doubleProp"));
-            assertTrue(prop.isReadable());
-            assertTrue(prop.isWritable());
+            assertTrue(prop.readable());
+            assertTrue(prop.writable());
 
             assertEquals(0, bean.getDoubleProp());
             assertEquals(0, prop.getPropertyOrThrow(bean, double.class));
@@ -446,8 +446,8 @@ public class TestNoInheritPrimitive {
         /* byte */
         {
             var prop = beanInfo.getPropertyInfo("byteProp").orElseThrow(unexpected("no byteProp"));
-            assertTrue(prop.isReadable());
-            assertTrue(prop.isWritable());
+            assertTrue(prop.readable());
+            assertTrue(prop.writable());
 
             assertEquals((byte) 0, bean.getByteProp());
             assertEquals((byte) 0, prop.getPropertyOrThrow(bean, byte.class));
@@ -477,8 +477,8 @@ public class TestNoInheritPrimitive {
         /* char */
         {
             var prop = beanInfo.getPropertyInfo("charProp").orElseThrow(unexpected("no charProp"));
-            assertTrue(prop.isReadable());
-            assertTrue(prop.isWritable());
+            assertTrue(prop.readable());
+            assertTrue(prop.writable());
 
             assertEquals('\u0000', bean.getCharProp());
             assertEquals('\u0000', prop.getPropertyOrThrow(bean, char.class));

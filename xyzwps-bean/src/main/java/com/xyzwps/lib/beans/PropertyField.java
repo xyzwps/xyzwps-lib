@@ -2,6 +2,7 @@ package com.xyzwps.lib.beans;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
+import java.lang.reflect.Type;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.regex.Pattern;
@@ -12,14 +13,14 @@ public class PropertyField {
     private final Field field;
     private final AccessLevel accessLevel;
     private final Class<?> beanType;
-    private final Class<?> fieldType;
+    private final Type fieldType;
     private final boolean isFinal;
 
     private PropertyField(Class<?> beanType, Field field) {
         this.beanType = Objects.requireNonNull(beanType);
         this.field = Objects.requireNonNull(field);
         this.fieldName = field.getName();
-        this.fieldType = field.getType();
+        this.fieldType = field.getGenericType();
         var modifiers = field.getModifiers();
         this.accessLevel = AccessLevel.fromModifiers(modifiers);
         this.isFinal = Modifier.isFinal(modifiers);
@@ -58,7 +59,7 @@ public class PropertyField {
         return isFinal;
     }
 
-    public Class<?> getFieldType() {
+    public Type getFieldType() {
         return fieldType;
     }
 

@@ -18,10 +18,10 @@ public final class BeanInfo {
 
     BeanInfo(Class<?> beanClass, Constructor<?> constructor, List<PropertyInfo> properties, boolean isRecord) {
         this.beanClass = Objects.requireNonNull(beanClass);
-        this.properties = Collections.unmodifiableList(Objects.requireNonNull(properties));
+        this.properties = List.copyOf(Objects.requireNonNull(properties));
 
         Map<String, PropertyInfo> n2p = new HashMap<>();
-        properties.forEach(it -> n2p.put(it.getPropertyName(), it));
+        properties.forEach(it -> n2p.put(it.propertyName(), it));
         this.name2property = Collections.unmodifiableMap(n2p);
         this.isRecord = isRecord;
         this.constructor = Objects.requireNonNull(constructor);
@@ -69,7 +69,7 @@ public final class BeanInfo {
         Objects.requireNonNull(values);
         if (isRecord) {
             var args = this.properties.stream()
-                    .map(it -> values.get(it.getPropertyName())) // TODO: 类型安全检查
+                    .map(it -> values.get(it.propertyName())) // TODO: 类型安全检查
                     .toArray(Object[]::new);
             try {
                 return (T) constructor.newInstance(args);
@@ -80,8 +80,8 @@ public final class BeanInfo {
             try {
                 var obj = constructor.newInstance();
                 this.properties.forEach(prop -> {
-                    if (prop.isWritable()) {
-                        prop.setProperty(obj, values.get(prop.getPropertyName())); // TODO: 类型安全检查
+                    if (prop.writable()) {
+                        prop.setProperty(obj, values.get(prop.propertyName())); // TODO: 类型安全检查
                     }
                 });
                 return (T) obj;

@@ -10,12 +10,14 @@ repositories {
 
 dependencies {
     testReportAggregation(project(":xyzwps-bean"))
+    testReportAggregation(project(":xyzwps-bedrock"))
     testReportAggregation(project(":xyzwps-collection"))
     testReportAggregation(project(":xyzwps-dollar"))
     testReportAggregation(project(":xyzwps-express"))
     testReportAggregation(project(":xyzwps-json"))
 
     jacocoAggregation(project(":xyzwps-bean"))
+    jacocoAggregation(project(":xyzwps-bedrock"))
     jacocoAggregation(project(":xyzwps-collection"))
     jacocoAggregation(project(":xyzwps-dollar"))
     jacocoAggregation(project(":xyzwps-express"))

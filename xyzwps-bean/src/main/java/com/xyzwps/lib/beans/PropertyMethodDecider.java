@@ -16,7 +16,7 @@ public class PropertyMethodDecider {
         if ("getClass".equals(methodName)) return NONE;
 
         var parameterCount = method.getParameterCount();
-        var returnType = method.getReturnType();
+        var returnType = method.getGenericReturnType();
         var methodAccessLevel = AccessLevel.fromModifiers(modifiers);
         if (getterPattern.matcher(methodName).matches()) {
             if (parameterCount > 0) return NONE;
@@ -36,7 +36,7 @@ public class PropertyMethodDecider {
         if (setterPattern.matcher(methodName).matches()) {
             if (parameterCount != 1) return NONE;
 
-            var parameterType = method.getParameterTypes()[0];
+            var parameterType = method.getGenericParameterTypes()[0];
             return new SetPropertyMethod(beanType, method, methodAccessLevel, parameterType, extractPropertyName(3, methodName));
         }
 

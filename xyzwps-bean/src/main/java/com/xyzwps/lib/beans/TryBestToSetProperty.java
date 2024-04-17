@@ -1,5 +1,6 @@
 package com.xyzwps.lib.beans;
 
+import java.lang.reflect.Type;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -10,7 +11,7 @@ class TryBestToSetProperty {
 
     static final TryBestToSetProperty INSTANCE = new TryBestToSetProperty();
 
-    private final ConcurrentMap<Class<?>, Strategy> strategies = new ConcurrentHashMap<>();
+    private final ConcurrentMap<Type, Strategy> strategies = new ConcurrentHashMap<>();
 
     TryBestToSetProperty add(Strategy strategy) {
         Objects.requireNonNull(strategy);
@@ -18,7 +19,7 @@ class TryBestToSetProperty {
         return this;
     }
 
-    public Object convertToSet(Class<?> propertyType, Object value) {
+    public Object convertToSet(Type propertyType, Object value) {
         Objects.requireNonNull(propertyType);
         var strategy = strategies.get(propertyType);
         return strategy == null ? value : strategy.convertToSet(value);

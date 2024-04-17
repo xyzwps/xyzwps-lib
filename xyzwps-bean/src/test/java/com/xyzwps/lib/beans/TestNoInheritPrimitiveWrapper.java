@@ -96,8 +96,8 @@ public class TestNoInheritPrimitiveWrapper {
         /* boolean */
         {
             var prop = beanInfo.getPropertyInfo("booleanProp").orElseThrow(unexpected("no booleanProp"));
-            assertTrue(prop.isReadable());
-            assertTrue(prop.isWritable());
+            assertTrue(prop.readable());
+            assertTrue(prop.writable());
 
             assertNull(bean.getBooleanProp());
             assertFalse(prop.getPropertyOrThrow(bean, boolean.class));
@@ -146,8 +146,8 @@ public class TestNoInheritPrimitiveWrapper {
         /* short */
         {
             var prop = beanInfo.getPropertyInfo("shortProp").orElseThrow(unexpected("no shortProp"));
-            assertTrue(prop.isReadable());
-            assertTrue(prop.isWritable());
+            assertTrue(prop.readable());
+            assertTrue(prop.writable());
 
             assertNull(bean.getShortProp());
             assertEquals(0, (int) prop.getPropertyOrThrow(bean, short.class));
@@ -201,8 +201,8 @@ public class TestNoInheritPrimitiveWrapper {
         /* integer */
         {
             var prop = beanInfo.getPropertyInfo("integerProp").orElseThrow(unexpected("no integerProp"));
-            assertTrue(prop.isReadable());
-            assertTrue(prop.isWritable());
+            assertTrue(prop.readable());
+            assertTrue(prop.writable());
 
             assertNull(bean.getIntegerProp());
             assertEquals(0, prop.getPropertyOrThrow(bean, int.class));
@@ -256,8 +256,8 @@ public class TestNoInheritPrimitiveWrapper {
         /* long */
         {
             var prop = beanInfo.getPropertyInfo("longProp").orElseThrow(unexpected("no longProp"));
-            assertTrue(prop.isReadable());
-            assertTrue(prop.isWritable());
+            assertTrue(prop.readable());
+            assertTrue(prop.writable());
 
             assertNull(bean.getLongProp());
             assertEquals(0, prop.getPropertyOrThrow(bean, long.class));
@@ -311,8 +311,8 @@ public class TestNoInheritPrimitiveWrapper {
         /* float */
         {
             var prop = beanInfo.getPropertyInfo("floatProp").orElseThrow(unexpected("no floatProp"));
-            assertTrue(prop.isReadable());
-            assertTrue(prop.isWritable());
+            assertTrue(prop.readable());
+            assertTrue(prop.writable());
 
             assertNull(bean.getFloatProp());
             assertEquals(0, prop.getPropertyOrThrow(bean, float.class));
@@ -378,8 +378,8 @@ public class TestNoInheritPrimitiveWrapper {
         /* double */
         {
             var prop = beanInfo.getPropertyInfo("doubleProp").orElseThrow(unexpected("no doubleProp"));
-            assertTrue(prop.isReadable());
-            assertTrue(prop.isWritable());
+            assertTrue(prop.readable());
+            assertTrue(prop.writable());
 
             assertNull(bean.getDoubleProp());
             assertEquals(0, prop.getPropertyOrThrow(bean, double.class));
@@ -445,8 +445,8 @@ public class TestNoInheritPrimitiveWrapper {
         /* byte */
         {
             var prop = beanInfo.getPropertyInfo("byteProp").orElseThrow(unexpected("no byteProp"));
-            assertTrue(prop.isReadable());
-            assertTrue(prop.isWritable());
+            assertTrue(prop.readable());
+            assertTrue(prop.writable());
 
             assertNull(bean.getByteProp());
             assertEquals((byte) 0, prop.getPropertyOrThrow(bean, byte.class));
@@ -476,8 +476,8 @@ public class TestNoInheritPrimitiveWrapper {
         /* character */
         {
             var prop = beanInfo.getPropertyInfo("characterProp").orElseThrow(unexpected("no characterProp"));
-            assertTrue(prop.isReadable());
-            assertTrue(prop.isWritable());
+            assertTrue(prop.readable());
+            assertTrue(prop.writable());
 
             assertNull(bean.getCharacterProp());
             assertEquals('\u0000', prop.getPropertyOrThrow(bean, char.class));

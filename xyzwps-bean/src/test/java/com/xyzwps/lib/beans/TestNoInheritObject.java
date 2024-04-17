@@ -20,8 +20,8 @@ class TestNoInheritObject {
         /* String */
         {
             var prop = beanInfo.getPropertyInfo("stringProp").orElseThrow(unexpected("no stringProp"));
-            assertTrue(prop.isReadable());
-            assertTrue(prop.isWritable());
+            assertTrue(prop.readable());
+            assertTrue(prop.writable());
 
             assertNull(bean.getStringProp());
             assertNull(prop.getPropertyOrThrow(bean, String.class));
@@ -60,8 +60,8 @@ class TestNoInheritObject {
         /* java.util.Date  */
         {
             var prop = beanInfo.getPropertyInfo("dateProp").orElseThrow(unexpected("no dateProp"));
-            assertTrue(prop.isReadable());
-            assertTrue(prop.isWritable());
+            assertTrue(prop.readable());
+            assertTrue(prop.writable());
 
             assertNull(bean.getDateProp());
             assertNull(prop.getPropertyOrThrow(bean, Date.class));
