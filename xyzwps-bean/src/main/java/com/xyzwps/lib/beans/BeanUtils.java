@@ -22,7 +22,7 @@ public final class BeanUtils {
         if (beanInfo != null) {
             return beanInfo;
         }
-        beanInfo = new BeanInfoAnalyser(beanClass).analyse();
+        beanInfo = BeanInfoAnalyser.create(beanClass).analyse();
         beanInfoCache.put(beanClass, beanInfo);
         return beanInfo;
     }

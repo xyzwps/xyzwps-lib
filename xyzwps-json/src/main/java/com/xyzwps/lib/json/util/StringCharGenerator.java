@@ -1,6 +1,4 @@
-package com.xyzwps.lib.json;
-
-import com.xyzwps.lib.json.util.CharGenerator;
+package com.xyzwps.lib.json.util;
 
 import java.util.Objects;
 

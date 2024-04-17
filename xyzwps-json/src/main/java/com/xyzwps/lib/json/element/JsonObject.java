@@ -2,6 +2,8 @@ package com.xyzwps.lib.json.element;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
+import java.util.function.BiConsumer;
 
 public final class JsonObject implements JsonElement {
     private final Map<String, JsonElement> map = new HashMap<>();
@@ -15,7 +17,7 @@ public final class JsonObject implements JsonElement {
     }
 
     public JsonObject put(String property, String str) {
-        this.map.put(property, str == null ? JsonNull.INSTANCE : new JsonString(str));
+        this.map.put(Objects.requireNonNull(property), str == null ? JsonNull.INSTANCE : new JsonString(str));
         return this;
     }
 
@@ -36,5 +38,9 @@ public final class JsonObject implements JsonElement {
 
     private static class Env {
         boolean first = true;
+    }
+
+    public void forEach(BiConsumer<String, JsonElement> action) {
+        map.forEach(action);
     }
 }

@@ -1,7 +1,7 @@
 package com.xyzwps.lib.json.element;
 
 
-import com.xyzwps.lib.json.StringCharGenerator;
+import com.xyzwps.lib.json.util.StringCharGenerator;
 import org.junit.jupiter.api.Test;
 
 import java.util.function.Consumer;

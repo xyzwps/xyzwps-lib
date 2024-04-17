@@ -1,6 +1,6 @@
 package com.xyzwps.lib.json.token;
 
-import com.xyzwps.lib.json.StringCharGenerator;
+import com.xyzwps.lib.json.util.StringCharGenerator;
 import com.xyzwps.lib.json.SyntaxException;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
