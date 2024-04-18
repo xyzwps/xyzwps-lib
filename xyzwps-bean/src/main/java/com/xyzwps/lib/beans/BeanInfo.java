@@ -21,7 +21,7 @@ public final class BeanInfo {
         this.properties = List.copyOf(Objects.requireNonNull(properties));
 
         Map<String, PropertyInfo> n2p = new HashMap<>();
-        properties.forEach(it -> n2p.put(it.propertyName(), it));
+        properties.forEach(prop -> n2p.put(prop.name(), prop));
         this.name2property = Collections.unmodifiableMap(n2p);
         this.isRecord = isRecord;
         this.constructor = Objects.requireNonNull(constructor);
@@ -45,8 +45,8 @@ public final class BeanInfo {
     }
 
     public GetResult getProperty(Object object, String propertyName) {
-        var propertyInfo = this.name2property.get(propertyName);
-        return propertyInfo == null ? GetResult.noSuchProperty(propertyName) : propertyInfo.getProperty(object);
+        var prop = this.name2property.get(propertyName);
+        return prop == null ? GetResult.noSuchProperty(propertyName) : prop.get(object);
     }
 
     public Optional<PropertyInfo> getPropertyInfo(String propertyName) {
@@ -69,7 +69,7 @@ public final class BeanInfo {
         Objects.requireNonNull(values);
         if (isRecord) {
             var args = this.properties.stream()
-                    .map(it -> values.get(it.propertyName())) // TODO: 类型安全检查
+                    .map(prop -> values.get(prop.name())) // TODO: 类型安全检查
                     .toArray(Object[]::new);
             try {
                 return (T) constructor.newInstance(args);
@@ -81,7 +81,7 @@ public final class BeanInfo {
                 var obj = constructor.newInstance();
                 this.properties.forEach(prop -> {
                     if (prop.writable()) {
-                        prop.setProperty(obj, values.get(prop.propertyName())); // TODO: 类型安全检查
+                        prop.setProperty(obj, values.get(prop.name())); // TODO: 类型安全检查
                     }
                 });
                 return (T) obj;

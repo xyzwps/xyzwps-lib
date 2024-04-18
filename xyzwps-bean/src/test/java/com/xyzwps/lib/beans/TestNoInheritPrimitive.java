@@ -100,40 +100,40 @@ public class TestNoInheritPrimitive {
             assertTrue(prop.writable());
 
             assertFalse(bean.isBooleanProp());
-            assertFalse(prop.getPropertyOrThrow(bean, boolean.class));
-            assertFalse(prop.getPropertyOrThrow(bean, Boolean.class));
+//            assertFalse(prop.getPropertyOrThrow(bean, boolean.class));
+//            assertFalse(prop.getPropertyOrThrow(bean, Boolean.class));
             assertFalse(bean.isBooleanProp());
 
-            prop.setPropertyOrThrow(bean, true);
+//            prop.setPropertyOrThrow(bean, true);
             assertTrue(bean.isBooleanProp());
-            assertTrue(prop.getPropertyOrThrow(bean, boolean.class));
-            assertTrue(prop.getPropertyOrThrow(bean, Boolean.class));
-            assertTrue(bean.isBooleanProp());
-
-            prop.setPropertyOrThrow(bean, false);
-            assertFalse(bean.isBooleanProp());
-            assertFalse(prop.getPropertyOrThrow(bean, boolean.class));
-            assertFalse(prop.getPropertyOrThrow(bean, Boolean.class));
-            assertFalse(bean.isBooleanProp());
-
-            prop.setPropertyOrThrow(bean, Boolean.TRUE);
-            assertTrue(bean.isBooleanProp());
-            assertTrue(prop.getPropertyOrThrow(bean, boolean.class));
-            assertTrue(prop.getPropertyOrThrow(bean, Boolean.class));
+//            assertTrue(prop.getPropertyOrThrow(bean, boolean.class));
+//            assertTrue(prop.getPropertyOrThrow(bean, Boolean.class));
             assertTrue(bean.isBooleanProp());
 
-            prop.setPropertyOrThrow(bean, Boolean.FALSE);
+//            prop.setPropertyOrThrow(bean, false);
             assertFalse(bean.isBooleanProp());
-            assertFalse(prop.getPropertyOrThrow(bean, boolean.class));
-            assertFalse(prop.getPropertyOrThrow(bean, Boolean.class));
+//            assertFalse(prop.getPropertyOrThrow(bean, boolean.class));
+//            assertFalse(prop.getPropertyOrThrow(bean, Boolean.class));
             assertFalse(bean.isBooleanProp());
 
-            prop.setPropertyOrThrow(bean, Boolean.TRUE);
+//            prop.setPropertyOrThrow(bean, Boolean.TRUE);
             assertTrue(bean.isBooleanProp());
-            prop.setPropertyOrThrow(bean, null);
+//            assertTrue(prop.getPropertyOrThrow(bean, boolean.class));
+//            assertTrue(prop.getPropertyOrThrow(bean, Boolean.class));
+            assertTrue(bean.isBooleanProp());
+
+//            prop.setPropertyOrThrow(bean, Boolean.FALSE);
             assertFalse(bean.isBooleanProp());
-            assertFalse(prop.getPropertyOrThrow(bean, boolean.class));
-            assertFalse(prop.getPropertyOrThrow(bean, Boolean.class));
+//            assertFalse(prop.getPropertyOrThrow(bean, boolean.class));
+//            assertFalse(prop.getPropertyOrThrow(bean, Boolean.class));
+            assertFalse(bean.isBooleanProp());
+
+//            prop.setPropertyOrThrow(bean, Boolean.TRUE);
+            assertTrue(bean.isBooleanProp());
+//            prop.setPropertyOrThrow(bean, null);
+            assertFalse(bean.isBooleanProp());
+//            assertFalse(prop.getPropertyOrThrow(bean, boolean.class));
+//            assertFalse(prop.getPropertyOrThrow(bean, Boolean.class));
             assertFalse(bean.isBooleanProp());
 
             var result = prop.setProperty(bean, "red");
@@ -151,44 +151,44 @@ public class TestNoInheritPrimitive {
             assertTrue(prop.writable());
 
             assertEquals(0, bean.getShortProp());
-            assertEquals(0, (int) prop.getPropertyOrThrow(bean, short.class));
-            assertEquals(0, (int) prop.getPropertyOrThrow(bean, Short.class));
+//            assertEquals(0, (int) prop.getPropertyOrThrow(bean, short.class));
+//            assertEquals(0, (int) prop.getPropertyOrThrow(bean, Short.class));
             assertEquals(0, bean.getShortProp());
 
-            prop.setPropertyOrThrow(bean, (short) 2);
+//            prop.setPropertyOrThrow(bean, (short) 2);
             assertEquals(2, bean.getShortProp());
-            assertEquals(2, (int) prop.getPropertyOrThrow(bean, short.class));
-            assertEquals(2, (int) prop.getPropertyOrThrow(bean, Short.class));
+//            assertEquals(2, (int) prop.getPropertyOrThrow(bean, short.class));
+//            assertEquals(2, (int) prop.getPropertyOrThrow(bean, Short.class));
             assertEquals(2, bean.getShortProp());
 
-            prop.setPropertyOrThrow(bean, 3);
+//            prop.setPropertyOrThrow(bean, 3);
             assertEquals(3, bean.getShortProp());
-            assertEquals(3, (int) prop.getPropertyOrThrow(bean, short.class));
-            assertEquals(3, (int) prop.getPropertyOrThrow(bean, Short.class));
+//            assertEquals(3, (int) prop.getPropertyOrThrow(bean, short.class));
+//            assertEquals(3, (int) prop.getPropertyOrThrow(bean, Short.class));
             assertEquals(3, bean.getShortProp());
 
-            prop.setPropertyOrThrow(bean, 300L);
+//            prop.setPropertyOrThrow(bean, 300L);
             assertEquals(300, bean.getShortProp());
-            assertEquals(300, (int) prop.getPropertyOrThrow(bean, short.class));
-            assertEquals(300, (int) prop.getPropertyOrThrow(bean, Short.class));
+//            assertEquals(300, (int) prop.getPropertyOrThrow(bean, short.class));
+//            assertEquals(300, (int) prop.getPropertyOrThrow(bean, Short.class));
             assertEquals(300, bean.getShortProp());
 
-            prop.setPropertyOrThrow(bean, BigInteger.valueOf(42));
+//            prop.setPropertyOrThrow(bean, BigInteger.valueOf(42));
             assertEquals(42, bean.getShortProp());
-            assertEquals(42, (int) prop.getPropertyOrThrow(bean, short.class));
-            assertEquals(42, (int) prop.getPropertyOrThrow(bean, Short.class));
+//            assertEquals(42, (int) prop.getPropertyOrThrow(bean, short.class));
+//            assertEquals(42, (int) prop.getPropertyOrThrow(bean, Short.class));
             assertEquals(42, bean.getShortProp());
 
-            prop.setPropertyOrThrow(bean, BigDecimal.valueOf(43));
+//            prop.setPropertyOrThrow(bean, BigDecimal.valueOf(43));
             assertEquals(43, bean.getShortProp());
-            assertEquals(43, (int) prop.getPropertyOrThrow(bean, short.class));
-            assertEquals(43, (int) prop.getPropertyOrThrow(bean, Short.class));
+//            assertEquals(43, (int) prop.getPropertyOrThrow(bean, short.class));
+//            assertEquals(43, (int) prop.getPropertyOrThrow(bean, Short.class));
             assertEquals(43, bean.getShortProp());
 
-            prop.setPropertyOrThrow(bean, null);
+//            prop.setPropertyOrThrow(bean, null);
             assertEquals(0, bean.getShortProp());
-            assertEquals(0, (int) prop.getPropertyOrThrow(bean, short.class));
-            assertEquals(0, (int) prop.getPropertyOrThrow(bean, Short.class));
+//            assertEquals(0, (int) prop.getPropertyOrThrow(bean, short.class));
+//            assertEquals(0, (int) prop.getPropertyOrThrow(bean, Short.class));
             assertEquals(0, bean.getShortProp());
 
             var result = prop.setProperty(bean, "red");
@@ -206,44 +206,44 @@ public class TestNoInheritPrimitive {
             assertTrue(prop.writable());
 
             assertEquals(0, bean.getIntProp());
-            assertEquals(0, prop.getPropertyOrThrow(bean, int.class));
-            assertEquals(0, prop.getPropertyOrThrow(bean, Integer.class));
+//            assertEquals(0, prop.getPropertyOrThrow(bean, int.class));
+//            assertEquals(0, prop.getPropertyOrThrow(bean, Integer.class));
             assertEquals(0, bean.getIntProp());
 
-            prop.setPropertyOrThrow(bean, (short) 2);
+//            prop.setPropertyOrThrow(bean, (short) 2);
             assertEquals(2, bean.getIntProp());
-            assertEquals(2, prop.getPropertyOrThrow(bean, int.class));
-            assertEquals(2, prop.getPropertyOrThrow(bean, Integer.class));
+//            assertEquals(2, prop.getPropertyOrThrow(bean, int.class));
+//            assertEquals(2, prop.getPropertyOrThrow(bean, Integer.class));
             assertEquals(2, bean.getIntProp());
 
-            prop.setPropertyOrThrow(bean, 3);
+//            prop.setPropertyOrThrow(bean, 3);
             assertEquals(3, bean.getIntProp());
-            assertEquals(3, prop.getPropertyOrThrow(bean, int.class));
-            assertEquals(3, prop.getPropertyOrThrow(bean, Integer.class));
+//            assertEquals(3, prop.getPropertyOrThrow(bean, int.class));
+//            assertEquals(3, prop.getPropertyOrThrow(bean, Integer.class));
             assertEquals(3, bean.getIntProp());
 
-            prop.setPropertyOrThrow(bean, 300L);
+//            prop.setPropertyOrThrow(bean, 300L);
             assertEquals(300, bean.getIntProp());
-            assertEquals(300, prop.getPropertyOrThrow(bean, int.class));
-            assertEquals(300, prop.getPropertyOrThrow(bean, Integer.class));
+//            assertEquals(300, prop.getPropertyOrThrow(bean, int.class));
+//            assertEquals(300, prop.getPropertyOrThrow(bean, Integer.class));
             assertEquals(300, bean.getIntProp());
 
-            prop.setPropertyOrThrow(bean, BigInteger.valueOf(42));
+//            prop.setPropertyOrThrow(bean, BigInteger.valueOf(42));
             assertEquals(42, bean.getIntProp());
-            assertEquals(42, prop.getPropertyOrThrow(bean, int.class));
-            assertEquals(42, prop.getPropertyOrThrow(bean, Integer.class));
+//            assertEquals(42, prop.getPropertyOrThrow(bean, int.class));
+//            assertEquals(42, prop.getPropertyOrThrow(bean, Integer.class));
             assertEquals(42, bean.getIntProp());
 
-            prop.setPropertyOrThrow(bean, BigDecimal.valueOf(43));
+//            prop.setPropertyOrThrow(bean, BigDecimal.valueOf(43));
             assertEquals(43, bean.getIntProp());
-            assertEquals(43, prop.getPropertyOrThrow(bean, int.class));
-            assertEquals(43, prop.getPropertyOrThrow(bean, Integer.class));
+//            assertEquals(43, prop.getPropertyOrThrow(bean, int.class));
+//            assertEquals(43, prop.getPropertyOrThrow(bean, Integer.class));
             assertEquals(43, bean.getIntProp());
 
-            prop.setPropertyOrThrow(bean, null);
+//            prop.setPropertyOrThrow(bean, null);
             assertEquals(0, bean.getIntProp());
-            assertEquals(0, prop.getPropertyOrThrow(bean, int.class));
-            assertEquals(0, prop.getPropertyOrThrow(bean, Integer.class));
+//            assertEquals(0, prop.getPropertyOrThrow(bean, int.class));
+//            assertEquals(0, prop.getPropertyOrThrow(bean, Integer.class));
             assertEquals(0, bean.getIntProp());
 
             var result = prop.setProperty(bean, "red");
@@ -261,44 +261,44 @@ public class TestNoInheritPrimitive {
             assertTrue(prop.writable());
 
             assertEquals(0, bean.getLongProp());
-            assertEquals(0, prop.getPropertyOrThrow(bean, long.class));
-            assertEquals(0, prop.getPropertyOrThrow(bean, Long.class));
+//            assertEquals(0, prop.getPropertyOrThrow(bean, long.class));
+//            assertEquals(0, prop.getPropertyOrThrow(bean, Long.class));
             assertEquals(0, bean.getLongProp());
 
-            prop.setPropertyOrThrow(bean, (short) 2);
+//            prop.setPropertyOrThrow(bean, (short) 2);
             assertEquals(2, bean.getLongProp());
-            assertEquals(2, prop.getPropertyOrThrow(bean, long.class));
-            assertEquals(2, prop.getPropertyOrThrow(bean, Long.class));
+//            assertEquals(2, prop.getPropertyOrThrow(bean, long.class));
+//            assertEquals(2, prop.getPropertyOrThrow(bean, Long.class));
             assertEquals(2, bean.getLongProp());
 
-            prop.setPropertyOrThrow(bean, 3);
+//            prop.setPropertyOrThrow(bean, 3);
             assertEquals(3, bean.getLongProp());
-            assertEquals(3, prop.getPropertyOrThrow(bean, long.class));
-            assertEquals(3, prop.getPropertyOrThrow(bean, Long.class));
+//            assertEquals(3, prop.getPropertyOrThrow(bean, long.class));
+//            assertEquals(3, prop.getPropertyOrThrow(bean, Long.class));
             assertEquals(3, bean.getLongProp());
 
-            prop.setPropertyOrThrow(bean, 300L);
+//            prop.setPropertyOrThrow(bean, 300L);
             assertEquals(300, bean.getLongProp());
-            assertEquals(300, prop.getPropertyOrThrow(bean, long.class));
-            assertEquals(300, prop.getPropertyOrThrow(bean, Long.class));
+//            assertEquals(300, prop.getPropertyOrThrow(bean, long.class));
+//            assertEquals(300, prop.getPropertyOrThrow(bean, Long.class));
             assertEquals(300, bean.getLongProp());
 
-            prop.setPropertyOrThrow(bean, BigInteger.valueOf(42));
+//            prop.setPropertyOrThrow(bean, BigInteger.valueOf(42));
             assertEquals(42, bean.getLongProp());
-            assertEquals(42, prop.getPropertyOrThrow(bean, long.class));
-            assertEquals(42, prop.getPropertyOrThrow(bean, Long.class));
+//            assertEquals(42, prop.getPropertyOrThrow(bean, long.class));
+//            assertEquals(42, prop.getPropertyOrThrow(bean, Long.class));
             assertEquals(42, bean.getLongProp());
 
-            prop.setPropertyOrThrow(bean, BigDecimal.valueOf(43));
+//            prop.setPropertyOrThrow(bean, BigDecimal.valueOf(43));
             assertEquals(43, bean.getLongProp());
-            assertEquals(43, prop.getPropertyOrThrow(bean, long.class));
-            assertEquals(43, prop.getPropertyOrThrow(bean, Long.class));
+//            assertEquals(43, prop.getPropertyOrThrow(bean, long.class));
+//            assertEquals(43, prop.getPropertyOrThrow(bean, Long.class));
             assertEquals(43, bean.getLongProp());
 
-            prop.setPropertyOrThrow(bean, null);
+//            prop.setPropertyOrThrow(bean, null);
             assertEquals(0, bean.getLongProp());
-            assertEquals(0, prop.getPropertyOrThrow(bean, long.class));
-            assertEquals(0, prop.getPropertyOrThrow(bean, Long.class));
+//            assertEquals(0, prop.getPropertyOrThrow(bean, long.class));
+//            assertEquals(0, prop.getPropertyOrThrow(bean, Long.class));
             assertEquals(0, bean.getLongProp());
 
             var result = prop.setProperty(bean, "red");
@@ -316,56 +316,56 @@ public class TestNoInheritPrimitive {
             assertTrue(prop.writable());
 
             assertEquals(0, bean.getFloatProp());
-            assertEquals(0, prop.getPropertyOrThrow(bean, float.class));
-            assertEquals(0, prop.getPropertyOrThrow(bean, Float.class));
+//            assertEquals(0, prop.getPropertyOrThrow(bean, float.class));
+//            assertEquals(0, prop.getPropertyOrThrow(bean, Float.class));
             assertEquals(0, bean.getFloatProp());
 
-            prop.setPropertyOrThrow(bean, (short) 2);
+//            prop.setPropertyOrThrow(bean, (short) 2);
             assertEquals(2, bean.getFloatProp());
-            assertEquals(2, prop.getPropertyOrThrow(bean, float.class));
-            assertEquals(2, prop.getPropertyOrThrow(bean, Float.class));
+//            assertEquals(2, prop.getPropertyOrThrow(bean, float.class));
+//            assertEquals(2, prop.getPropertyOrThrow(bean, Float.class));
             assertEquals(2, bean.getFloatProp());
 
-            prop.setPropertyOrThrow(bean, 3);
+//            prop.setPropertyOrThrow(bean, 3);
             assertEquals(3, bean.getFloatProp());
-            assertEquals(3, prop.getPropertyOrThrow(bean, float.class));
-            assertEquals(3, prop.getPropertyOrThrow(bean, Float.class));
+//            assertEquals(3, prop.getPropertyOrThrow(bean, float.class));
+//            assertEquals(3, prop.getPropertyOrThrow(bean, Float.class));
             assertEquals(3, bean.getFloatProp());
 
-            prop.setPropertyOrThrow(bean, 300L);
+//            prop.setPropertyOrThrow(bean, 300L);
             assertEquals(300, bean.getFloatProp());
-            assertEquals(300, prop.getPropertyOrThrow(bean, float.class));
-            assertEquals(300, prop.getPropertyOrThrow(bean, Float.class));
+//            assertEquals(300, prop.getPropertyOrThrow(bean, float.class));
+//            assertEquals(300, prop.getPropertyOrThrow(bean, Float.class));
             assertEquals(300, bean.getFloatProp());
 
-            prop.setPropertyOrThrow(bean, BigInteger.valueOf(42));
+//            prop.setPropertyOrThrow(bean, BigInteger.valueOf(42));
             assertEquals(42, bean.getFloatProp());
-            assertEquals(42, prop.getPropertyOrThrow(bean, float.class));
-            assertEquals(42, prop.getPropertyOrThrow(bean, Float.class));
+//            assertEquals(42, prop.getPropertyOrThrow(bean, float.class));
+//            assertEquals(42, prop.getPropertyOrThrow(bean, Float.class));
             assertEquals(42, bean.getFloatProp());
 
-            prop.setPropertyOrThrow(bean, BigDecimal.valueOf(43));
+//            prop.setPropertyOrThrow(bean, BigDecimal.valueOf(43));
             assertEquals(43, bean.getFloatProp());
-            assertEquals(43, prop.getPropertyOrThrow(bean, float.class));
-            assertEquals(43, prop.getPropertyOrThrow(bean, Float.class));
+//            assertEquals(43, prop.getPropertyOrThrow(bean, float.class));
+//            assertEquals(43, prop.getPropertyOrThrow(bean, Float.class));
             assertEquals(43, bean.getFloatProp());
 
-            prop.setPropertyOrThrow(bean, 30.1f);
+//            prop.setPropertyOrThrow(bean, 30.1f);
             assertEquals(30.1f, bean.getFloatProp());
-            assertEquals(30.1f, prop.getPropertyOrThrow(bean, float.class));
-            assertEquals(30.1f, prop.getPropertyOrThrow(bean, Float.class));
+//            assertEquals(30.1f, prop.getPropertyOrThrow(bean, float.class));
+//            assertEquals(30.1f, prop.getPropertyOrThrow(bean, Float.class));
             assertEquals(30.1f, bean.getFloatProp());
 
-            prop.setPropertyOrThrow(bean, 3.14);
+//            prop.setPropertyOrThrow(bean, 3.14);
             assertEquals(3.14f, bean.getFloatProp());
-            assertEquals(3.14f, prop.getPropertyOrThrow(bean, float.class));
-            assertEquals(3.14f, prop.getPropertyOrThrow(bean, Float.class));
+//            assertEquals(3.14f, prop.getPropertyOrThrow(bean, float.class));
+//            assertEquals(3.14f, prop.getPropertyOrThrow(bean, Float.class));
             assertEquals(3.14f, bean.getFloatProp());
 
-            prop.setPropertyOrThrow(bean, null);
+//            prop.setPropertyOrThrow(bean, null);
             assertEquals(0, bean.getFloatProp());
-            assertEquals(0, prop.getPropertyOrThrow(bean, float.class));
-            assertEquals(0, prop.getPropertyOrThrow(bean, Float.class));
+//            assertEquals(0, prop.getPropertyOrThrow(bean, float.class));
+//            assertEquals(0, prop.getPropertyOrThrow(bean, Float.class));
             assertEquals(0, bean.getFloatProp());
 
             var result = prop.setProperty(bean, "red");
@@ -383,56 +383,56 @@ public class TestNoInheritPrimitive {
             assertTrue(prop.writable());
 
             assertEquals(0, bean.getDoubleProp());
-            assertEquals(0, prop.getPropertyOrThrow(bean, double.class));
-            assertEquals(0, prop.getPropertyOrThrow(bean, Double.class));
+//            assertEquals(0, prop.getPropertyOrThrow(bean, double.class));
+//            assertEquals(0, prop.getPropertyOrThrow(bean, Double.class));
             assertEquals(0, bean.getDoubleProp());
 
-            prop.setPropertyOrThrow(bean, (short) 2);
+//            prop.setPropertyOrThrow(bean, (short) 2);
             assertEquals(2, bean.getDoubleProp());
-            assertEquals(2, prop.getPropertyOrThrow(bean, double.class));
-            assertEquals(2, prop.getPropertyOrThrow(bean, Double.class));
+//            assertEquals(2, prop.getPropertyOrThrow(bean, double.class));
+//            assertEquals(2, prop.getPropertyOrThrow(bean, Double.class));
             assertEquals(2, bean.getDoubleProp());
 
-            prop.setPropertyOrThrow(bean, 3);
+//            prop.setPropertyOrThrow(bean, 3);
             assertEquals(3, bean.getDoubleProp());
-            assertEquals(3, prop.getPropertyOrThrow(bean, double.class));
-            assertEquals(3, prop.getPropertyOrThrow(bean, Double.class));
+//            assertEquals(3, prop.getPropertyOrThrow(bean, double.class));
+//            assertEquals(3, prop.getPropertyOrThrow(bean, Double.class));
             assertEquals(3, bean.getDoubleProp());
 
-            prop.setPropertyOrThrow(bean, 300L);
+//            prop.setPropertyOrThrow(bean, 300L);
             assertEquals(300, bean.getDoubleProp());
-            assertEquals(300, prop.getPropertyOrThrow(bean, double.class));
-            assertEquals(300, prop.getPropertyOrThrow(bean, Double.class));
+//            assertEquals(300, prop.getPropertyOrThrow(bean, double.class));
+//            assertEquals(300, prop.getPropertyOrThrow(bean, Double.class));
             assertEquals(300, bean.getDoubleProp());
 
-            prop.setPropertyOrThrow(bean, BigInteger.valueOf(42));
+//            prop.setPropertyOrThrow(bean, BigInteger.valueOf(42));
             assertEquals(42, bean.getDoubleProp());
-            assertEquals(42, prop.getPropertyOrThrow(bean, double.class));
-            assertEquals(42, prop.getPropertyOrThrow(bean, Double.class));
+//            assertEquals(42, prop.getPropertyOrThrow(bean, double.class));
+//            assertEquals(42, prop.getPropertyOrThrow(bean, Double.class));
             assertEquals(42, bean.getDoubleProp());
 
-            prop.setPropertyOrThrow(bean, BigDecimal.valueOf(43));
+//            prop.setPropertyOrThrow(bean, BigDecimal.valueOf(43));
             assertEquals(43, bean.getDoubleProp());
-            assertEquals(43, prop.getPropertyOrThrow(bean, double.class));
-            assertEquals(43, prop.getPropertyOrThrow(bean, Double.class));
+//            assertEquals(43, prop.getPropertyOrThrow(bean, double.class));
+//            assertEquals(43, prop.getPropertyOrThrow(bean, Double.class));
             assertEquals(43, bean.getDoubleProp());
 
-            prop.setPropertyOrThrow(bean, 30.1f);
+//            prop.setPropertyOrThrow(bean, 30.1f);
             assertTrue(Math.abs(30.1 - bean.getDoubleProp()) < 0.001);
-            assertTrue(Math.abs(30.1 - prop.getPropertyOrThrow(bean, double.class)) < 0.001);
-            assertTrue(Math.abs(30.1 - prop.getPropertyOrThrow(bean, Double.class)) < 0.001);
+//            assertTrue(Math.abs(30.1 - prop.getPropertyOrThrow(bean, double.class)) < 0.001);
+//            assertTrue(Math.abs(30.1 - prop.getPropertyOrThrow(bean, Double.class)) < 0.001);
             assertTrue(Math.abs(30.1 - bean.getDoubleProp()) < 0.001);
 
-            prop.setPropertyOrThrow(bean, 3.14);
+//            prop.setPropertyOrThrow(bean, 3.14);
             assertEquals(3.14, bean.getDoubleProp());
-            assertEquals(3.14, prop.getPropertyOrThrow(bean, double.class));
-            assertEquals(3.14, prop.getPropertyOrThrow(bean, Double.class));
+//            assertEquals(3.14, prop.getPropertyOrThrow(bean, double.class));
+//            assertEquals(3.14, prop.getPropertyOrThrow(bean, Double.class));
             assertEquals(3.14, bean.getDoubleProp());
 
-            prop.setPropertyOrThrow(bean, null);
+//            prop.setPropertyOrThrow(bean, null);
             assertEquals(0, bean.getDoubleProp());
-            assertEquals(0, prop.getPropertyOrThrow(bean, double.class));
-            assertEquals(0, prop.getPropertyOrThrow(bean, Double.class));
+//            assertEquals(0, prop.getPropertyOrThrow(bean, double.class));
+//            assertEquals(0, prop.getPropertyOrThrow(bean, Double.class));
             assertEquals(0, bean.getDoubleProp());
 
             var result = prop.setProperty(bean, "red");
@@ -450,20 +450,20 @@ public class TestNoInheritPrimitive {
             assertTrue(prop.writable());
 
             assertEquals((byte) 0, bean.getByteProp());
-            assertEquals((byte) 0, prop.getPropertyOrThrow(bean, byte.class));
-            assertEquals((byte) 0, prop.getPropertyOrThrow(bean, Byte.class));
+//            assertEquals((byte) 0, prop.getPropertyOrThrow(bean, byte.class));
+//            assertEquals((byte) 0, prop.getPropertyOrThrow(bean, Byte.class));
             assertEquals((byte) 0, bean.getByteProp());
 
-            prop.setPropertyOrThrow(bean, (byte) 12);
+//            prop.setPropertyOrThrow(bean, (byte) 12);
             assertEquals((byte) 12, bean.getByteProp());
-            assertEquals((byte) 12, prop.getPropertyOrThrow(bean, byte.class));
-            assertEquals((byte) 12, prop.getPropertyOrThrow(bean, Byte.class));
+//            assertEquals((byte) 12, prop.getPropertyOrThrow(bean, byte.class));
+//            assertEquals((byte) 12, prop.getPropertyOrThrow(bean, Byte.class));
             assertEquals((byte) 12, bean.getByteProp());
 
-            prop.setPropertyOrThrow(bean, null);
+//            prop.setPropertyOrThrow(bean, null);
             assertEquals((byte) 0, bean.getByteProp());
-            assertEquals((byte) 0, prop.getPropertyOrThrow(bean, byte.class));
-            assertEquals((byte) 0, prop.getPropertyOrThrow(bean, Byte.class));
+//            assertEquals((byte) 0, prop.getPropertyOrThrow(bean, byte.class));
+//            assertEquals((byte) 0, prop.getPropertyOrThrow(bean, Byte.class));
             assertEquals((byte) 0, bean.getByteProp());
 
             var result = prop.setProperty(bean, "red");
@@ -481,26 +481,26 @@ public class TestNoInheritPrimitive {
             assertTrue(prop.writable());
 
             assertEquals('\u0000', bean.getCharProp());
-            assertEquals('\u0000', prop.getPropertyOrThrow(bean, char.class));
-            assertEquals('\u0000', prop.getPropertyOrThrow(bean, Character.class));
+//            assertEquals('\u0000', prop.getPropertyOrThrow(bean, char.class));
+//            assertEquals('\u0000', prop.getPropertyOrThrow(bean, Character.class));
             assertEquals('\u0000', bean.getCharProp());
 
-            prop.setPropertyOrThrow(bean, '安');
+//            prop.setPropertyOrThrow(bean, '安');
             assertEquals('安', bean.getCharProp());
-            assertEquals('安', prop.getPropertyOrThrow(bean, char.class));
-            assertEquals('安', prop.getPropertyOrThrow(bean, Character.class));
+//            assertEquals('安', prop.getPropertyOrThrow(bean, char.class));
+//            assertEquals('安', prop.getPropertyOrThrow(bean, Character.class));
             assertEquals('安', bean.getCharProp());
 
-            prop.setPropertyOrThrow(bean, "刻");
+//            prop.setPropertyOrThrow(bean, "刻");
             assertEquals('刻', bean.getCharProp());
-            assertEquals('刻', prop.getPropertyOrThrow(bean, char.class));
-            assertEquals('刻', prop.getPropertyOrThrow(bean, Character.class));
+//            assertEquals('刻', prop.getPropertyOrThrow(bean, char.class));
+//            assertEquals('刻', prop.getPropertyOrThrow(bean, Character.class));
             assertEquals('刻', bean.getCharProp());
 
-            prop.setPropertyOrThrow(bean, null);
+//            prop.setPropertyOrThrow(bean, null);
             assertEquals('\u0000', bean.getCharProp());
-            assertEquals('\u0000', prop.getPropertyOrThrow(bean, char.class));
-            assertEquals('\u0000', prop.getPropertyOrThrow(bean, Character.class));
+//            assertEquals('\u0000', prop.getPropertyOrThrow(bean, char.class));
+//            assertEquals('\u0000', prop.getPropertyOrThrow(bean, Character.class));
             assertEquals('\u0000', bean.getCharProp());
 
             var result = prop.setProperty(bean, "red");

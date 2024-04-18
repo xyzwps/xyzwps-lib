@@ -1,46 +1,20 @@
 package com.xyzwps.lib.beans;
 
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 
-public sealed interface PropertyMethod {
+sealed interface PropertyMethod {
 
     PropertyMethod NONE = new None();
 
     record None() implements PropertyMethod {
     }
 
-    record SetPropertyMethod(Class<?> beanType,
-                             Method method,
-                             AccessLevel accessLevel,
-                             Type propertyType,
-                             String propertyName
-    ) implements PropertyMethod {
-
-        public SetResult setValue(Object object, Object value) {
-            try {
-                this.method.invoke(object, value);
-                return SetResult.OK;
-            } catch (InvocationTargetException | IllegalAccessException | IllegalArgumentException e) {
-                return SetResult.failed(e);
-            }
-        }
+    record SetPropertyMethod(Class<?> beanType, Type type, Method method,
+                             String propertyName) implements PropertyMethod {
     }
 
-    record GetPropertyMethod(Class<?> beanType,
-                             Method method,
-                             AccessLevel accessLevel,
-                             Type propertyType,
-                             String propertyName
-    ) implements PropertyMethod {
-
-        public GetResult getValue(Object object) {
-            try {
-                return GetResult.ok(this.method.invoke(object));
-            } catch (Exception e) {
-                return GetResult.failed(e);
-            }
-        }
+    record GetPropertyMethod(Class<?> beanType, Type type, Method method,
+                             String propertyName) implements PropertyMethod {
     }
 }

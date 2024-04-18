@@ -28,8 +28,8 @@ record ClassAnalyzer(Class<?> beanClass) implements BeanInfoAnalyser {
             forEach(sc.getDeclaredFields(), field -> collector.addSuperClassField(sc, field));
         }
 
-        var properties = collector.holders.values().stream()
-                .map(it -> it.toPropertyInfo().orElse(null))
+        var properties = collector.builders.values().stream()
+                .map(it -> it.build().orElse(null))
                 .filter(Objects::nonNull)
                 .toList();
         return new BeanInfo(this.beanClass, getConstructor(), properties, false);
@@ -45,7 +45,7 @@ record ClassAnalyzer(Class<?> beanClass) implements BeanInfoAnalyser {
 
     private static class PropertiesCollector {
         private final Class<?> beanType;
-        private final Map<String, PropertyInfo.Holder> holders = new HashMap<>();
+        private final Map<String, PropertyInfoBuilder> builders = new HashMap<>();
 
         PropertiesCollector(Class<?> beanType) {
             this.beanType = Objects.requireNonNull(beanType);
@@ -53,8 +53,8 @@ record ClassAnalyzer(Class<?> beanClass) implements BeanInfoAnalyser {
 
         void addMethod(Method method) {
             switch (PropertyMethodDecider.decide(beanType, method)) {
-                case PropertyMethod.GetPropertyMethod m -> createOrGetHolder(m.propertyName()).addGetter(m);
-                case PropertyMethod.SetPropertyMethod m -> createOrGetHolder(m.propertyName()).addSetter(m);
+                case PropertyMethod.GetPropertyMethod m -> createOrGetBuilder(m.propertyName()).addGetter(m);
+                case PropertyMethod.SetPropertyMethod m -> createOrGetBuilder(m.propertyName()).addSetter(m);
                 case PropertyMethod.None ignored -> {
                 }
             }
@@ -62,13 +62,13 @@ record ClassAnalyzer(Class<?> beanClass) implements BeanInfoAnalyser {
 
         void addField(Field field) {
             PropertyField.create(beanType, field)
-                    .ifPresent(info -> createOrGetHolder(info.getFieldName()).addField(info));
+                    .ifPresent(info -> createOrGetBuilder(info.getFieldName()).addField(info));
         }
 
         void addSuperClassMethod(Class<?> superClass, Method method) {
             switch (PropertyMethodDecider.decide(superClass, method)) {
-                case PropertyMethod.GetPropertyMethod m -> createOrGetHolder(m.propertyName()).addSuperGetter(m);
-                case PropertyMethod.SetPropertyMethod m -> createOrGetHolder(m.propertyName()).addSuperSetter(m);
+                case PropertyMethod.GetPropertyMethod m -> createOrGetBuilder(m.propertyName()).addSuperGetter(m);
+                case PropertyMethod.SetPropertyMethod m -> createOrGetBuilder(m.propertyName()).addSuperSetter(m);
                 case PropertyMethod.None ignored -> {
                 }
             }
@@ -76,18 +76,18 @@ record ClassAnalyzer(Class<?> beanClass) implements BeanInfoAnalyser {
 
         void addSuperClassField(Class<?> superClass, Field field) {
             PropertyField.create(superClass, field)
-                    .ifPresent(info -> createOrGetHolder(info.getFieldName()).addSuperField(info));
+                    .ifPresent(info -> createOrGetBuilder(info.getFieldName()).addSuperField(info));
         }
 
-        private PropertyInfo.Holder createOrGetHolder(String propertyName) {
-            var holder = holders.get(propertyName);
-            if (holder != null) {
-                return holder;
+        private PropertyInfoBuilder createOrGetBuilder(String propertyName) {
+            var builder = builders.get(propertyName);
+            if (builder != null) {
+                return builder;
             }
 
-            var newHolder = new PropertyInfo.Holder(beanType, propertyName);
-            holders.put(propertyName, newHolder);
-            return newHolder;
+            var newBuilder = new PropertyInfoBuilder(beanType, propertyName);
+            builders.put(propertyName, newBuilder);
+            return newBuilder;
         }
     }
 }

@@ -12,10 +12,8 @@ record RecordAnalyzer(Class<?> beanClass) implements BeanInfoAnalyser {
         var rcs = beanClass.getRecordComponents();
         var props = new ArrayList<PropertyInfo>(rcs.length);
         for (var rc : rcs) {
-            var getMethod = new PropertyMethod.GetPropertyMethod(beanClass,
-                    rc.getAccessor(), AccessLevel.PUBLIC, rc.getGenericType(), rc.getName());
-            var getter = PropertyGetter.create(getMethod, null);
-            var prop = new PropertyInfo(rc.getName(), rc.getGenericType(), getter, null, beanClass);
+            var getter = new ImplGetter(rc.getAccessor(), rc.getName(), beanClass);
+            var prop = new ImplPropertyInfo(rc.getName(), rc.getGenericType(), getter, null, true, false, beanClass);
             props.add(prop);
         }
         return new BeanInfo(beanClass, getConstructor(), props, true);

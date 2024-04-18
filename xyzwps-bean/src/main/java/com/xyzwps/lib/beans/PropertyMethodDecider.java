@@ -6,7 +6,7 @@ import java.util.regex.Pattern;
 
 import static com.xyzwps.lib.beans.PropertyMethod.*;
 
-public class PropertyMethodDecider {
+class PropertyMethodDecider {
 
     public static PropertyMethod decide(Class<?> beanType, Method method) {
         var modifiers = method.getModifiers();
@@ -15,14 +15,24 @@ public class PropertyMethodDecider {
         var methodName = method.getName();
         if ("getClass".equals(methodName)) return NONE;
 
-        var parameterCount = method.getParameterCount();
-        var returnType = method.getGenericReturnType();
         var methodAccessLevel = AccessLevel.fromModifiers(modifiers);
+        if (methodAccessLevel == AccessLevel.PRIVATE) return NONE;
+        if (methodAccessLevel == AccessLevel.PROTECTED) return NONE;
+
+        var parameterCount = method.getParameterCount();
+        if (setterPattern.matcher(methodName).matches()) {
+            if (parameterCount != 1) return NONE;
+            var type = method.getGenericParameterTypes()[0];
+            return new SetPropertyMethod(beanType, type, method, extractPropertyName(3, methodName));
+        }
+
+        var returnType = method.getGenericReturnType();
+
         if (getterPattern.matcher(methodName).matches()) {
             if (parameterCount > 0) return NONE;
             if (returnType == Void.class) return NONE;
-
-            return new GetPropertyMethod(beanType, method, methodAccessLevel, returnType, extractPropertyName(3, methodName));
+            var type = method.getGenericReturnType();
+            return new GetPropertyMethod(beanType, type, method, extractPropertyName(3, methodName));
         }
 
         if (isserPattern.matcher(methodName).matches()) {
@@ -30,14 +40,7 @@ public class PropertyMethodDecider {
             if (returnType == Void.class) return NONE;
             if (returnType != boolean.class) return NONE;
 
-            return new GetPropertyMethod(beanType, method, methodAccessLevel, returnType, extractPropertyName(2, methodName));
-        }
-
-        if (setterPattern.matcher(methodName).matches()) {
-            if (parameterCount != 1) return NONE;
-
-            var parameterType = method.getGenericParameterTypes()[0];
-            return new SetPropertyMethod(beanType, method, methodAccessLevel, parameterType, extractPropertyName(3, methodName));
+            return new GetPropertyMethod(beanType, boolean.class, method, extractPropertyName(2, methodName));
         }
 
         return NONE;

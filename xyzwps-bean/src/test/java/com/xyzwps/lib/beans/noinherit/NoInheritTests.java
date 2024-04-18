@@ -44,24 +44,24 @@ class NoInheritTests {
                 .orElseThrow(() -> new RuntimeException("No property name"));
         assertTrue(nameProperty.readable());
         assertTrue(nameProperty.writable());
-        assertEquals(String.class, nameProperty.propertyType());
-        assertEquals("name", nameProperty.propertyName());
+        assertEquals(String.class, nameProperty.type());
+        assertEquals("name", nameProperty.name());
 
         // primitive
         var heightProperty = beanInfo.getPropertyInfo("height")
                 .orElseThrow(() -> new RuntimeException("No property height"));
         assertTrue(heightProperty.readable());
         assertTrue(heightProperty.writable());
-        assertEquals(int.class, heightProperty.propertyType());
-        assertEquals("height", heightProperty.propertyName());
+        assertEquals(int.class, heightProperty.type());
+        assertEquals("height", heightProperty.name());
 
         // generic
         var habitsProperty = beanInfo.getPropertyInfo("habits")
                 .orElseThrow(() -> new RuntimeException("No property habits"));
         assertTrue(habitsProperty.readable());
         assertTrue(habitsProperty.writable());
-        assertEquals(List.class, habitsProperty.propertyType());
-        assertEquals("habits", habitsProperty.propertyName());
+        assertEquals(List.class, habitsProperty.type());
+        assertEquals("habits", habitsProperty.name());
     }
 
     @Test

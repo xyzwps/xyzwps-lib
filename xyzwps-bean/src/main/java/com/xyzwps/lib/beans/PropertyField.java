@@ -7,10 +7,10 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.regex.Pattern;
 
-public class PropertyField {
+class PropertyField {
 
     private final String fieldName;
-    private final Field field;
+    final Field field;
     private final AccessLevel accessLevel;
     private final Class<?> beanType;
     private final Type fieldType;
