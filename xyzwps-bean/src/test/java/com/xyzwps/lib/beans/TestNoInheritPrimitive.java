@@ -90,7 +90,7 @@ public class TestNoInheritPrimitive {
     public void testDefaultCase() {
         var bean = new DefaultCase();
 
-        var beanInfo = BeanUtils.getBeanInfo(bean);
+        var beanInfo = BeanUtils.getBeanInfoFromObject(bean);
         assertEquals(beanInfo.getBeanProperties().size(), 8);
 
         /* boolean */

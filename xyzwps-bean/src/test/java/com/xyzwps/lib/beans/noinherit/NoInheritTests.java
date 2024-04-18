@@ -37,7 +37,7 @@ class NoInheritTests {
     @Test
     void propertyInfo() {
         var person = new Person();
-        var beanInfo = BeanUtils.getBeanInfo(person);
+        var beanInfo = BeanUtils.getBeanInfoFromObject(person);
 
         // simple object
         var nameProperty = beanInfo.getPropertyInfo("name")
@@ -94,7 +94,7 @@ class NoInheritTests {
     @Test
     void noSuchProperty() {
         var person = new Person();
-        var beanInfo = BeanUtils.getBeanInfo(person);
+        var beanInfo = BeanUtils.getBeanInfoFromObject(person);
         var hahaProperty = beanInfo.getPropertyInfo("haha");
         assertTrue(hahaProperty.isEmpty());
 
@@ -112,7 +112,7 @@ class NoInheritTests {
     @Test
     void noClassProperty() {
         var person = new Person();
-        var beanInfo = BeanUtils.getBeanInfo(person);
+        var beanInfo = BeanUtils.getBeanInfoFromObject(person);
         var classProperty = beanInfo.getPropertyInfo("class");
         assertTrue(classProperty.isEmpty());
     }

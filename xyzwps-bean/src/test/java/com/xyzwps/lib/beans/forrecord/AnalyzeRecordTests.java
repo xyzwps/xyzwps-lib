@@ -10,6 +10,7 @@ import java.lang.reflect.GenericArrayType;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.WildcardType;
 import java.util.List;
+import java.util.Map;
 import java.util.function.IntFunction;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -18,7 +19,7 @@ class AnalyzeRecordTests {
 
     @Test
     void analyzeRecord() {
-        var bi = BeanUtils.getBeanInfo(RecordExample.class);
+        var bi = BeanUtils.getBeanInfoFromClass(RecordExample.class);
         var props = bi.getBeanProperties();
         assertEquals(14, props.size());
 
@@ -296,4 +297,61 @@ class AnalyzeRecordTests {
             assertArrayEquals(new Holder[]{new Holder<>("123"), new Holder<>("233")}, (Holder[]) ok.value());
         }
     }
+
+    @Test
+    void createRecord() {
+        var params = Map.ofEntries(
+                /*  1 */ Map.entry("byteValue", (byte) 12),
+                /*  2 */ Map.entry("shortValue", (short) 233),
+                /*  3 */ Map.entry("intValue", 114514),
+                /*  4 */ Map.entry("longValue", 12345678987654321L),
+                /*  5 */ Map.entry("charValue", 'H'),
+                /*  6 */ Map.entry("floatValue", 3.14F),
+                /*  7 */ Map.entry("doubleValue", 6.02e23),
+                /*  8 */ Map.entry("booleanValue", true),
+                /*  9 */ Map.entry("str", "Hello world"),
+                /* 10 */ Map.entry("strList", List.of("123", "233")),
+                /* 11 */ Map.entry("objList", List.of(1, "23")),
+                /* 12 */ Map.entry("intArr", new int[]{1, 2, 3}),
+                /* 13 */ Map.entry("strArr", new String[]{"123", "233"}),
+                /* 14 */ Map.entry("holderArr", new Holder[]{new Holder<>("123"), new Holder<>("233")})
+        );
+        var e = BeanUtils.getBeanInfoFromClass(RecordExample.class).create(params);
+        assertEquals((byte) 12, e.byteValue());         /*  1 */
+        assertEquals((short) 233, e.shortValue());      /*  2 */
+        assertEquals(114514, e.intValue());             /*  3 */
+        assertEquals(12345678987654321L, e.longValue());/*  4 */
+        assertEquals('H', e.charValue());               /*  5 */
+        assertEquals(3.14F, e.floatValue());            /*  6 */
+        assertEquals(6.02e23, e.doubleValue());         /*  7 */
+        assertTrue(e.booleanValue());                   /*  8 */
+        assertEquals("Hello world", e.str());           /*  9 */
+        assertIterableEquals(List.of("123", "233"), e.strList()); /* 10 */
+        assertIterableEquals(List.of(1, "23"), e.objList());      /* 11 */
+        assertArrayEquals(new int[]{1, 2, 3}, e.intArr());        /* 12 */
+        assertArrayEquals(new String[]{"123", "233"}, e.strArr());/* 13 */
+        assertArrayEquals(new Holder[]{new Holder<>("123"), new Holder<>("233")}, e.holderArr()); /* 14 */
+    }
+
+    @Test
+    void createRecordWithNothing() {
+        var e = BeanUtils.getBeanInfoFromClass(RecordExample.class).create(Map.of());
+        assertEquals((byte) 0, e.byteValue());    /*  1 */
+        assertEquals((short) 0, e.shortValue());  /*  2 */
+        assertEquals(0, e.intValue());            /*  3 */
+        assertEquals(0L, e.longValue());          /*  4 */
+        assertEquals('\0', e.charValue());        /*  5 */
+        assertEquals(0.0F, e.floatValue());       /*  6 */
+        assertEquals(0.0, e.doubleValue());       /*  7 */
+        assertFalse(e.booleanValue());            /*  8 */
+        assertNull(e.str());                      /*  9 */
+        assertNull(e.strList());                  /* 10 */
+        assertNull(e.objList());                  /* 11 */
+        assertNull(e.intArr());                   /* 12 */
+        assertNull(e.strArr());                   /* 13 */
+        assertNull(e.holderArr());                /* 14 */
+    }
+
+    // TODO: 反例
 }
+

@@ -14,7 +14,7 @@ class TestNoInheritObject {
     void test() {
         var bean = new ObjectProps();
 
-        var beanInfo = BeanUtils.getBeanInfo(bean);
+        var beanInfo = BeanUtils.getBeanInfoFromObject(bean);
         assertEquals(beanInfo.getBeanProperties().size(), 2);
 
 //        /* String */

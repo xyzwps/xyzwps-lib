@@ -7,49 +7,41 @@ import java.util.concurrent.ConcurrentMap;
 
 public final class BeanUtils {
 
-    public static BeanInfo getBeanInfo(Object object) {
-        if (object == null) throw new NullPointerException();
+    private static final ConcurrentMap<Class<?>, BeanInfo<?>> beanInfoCache = new ConcurrentHashMap<>();
 
-        return (object instanceof Class<?>)
-                ? getBeanInfoFromClass((Class<?>) object)
-                : getBeanInfoFromObject(object);
-    }
-
-    private static final ConcurrentMap<Class<?>, BeanInfo> beanInfoCache = new ConcurrentHashMap<>();
-
-    private static BeanInfo getBeanInfoFromClass(Class<?> beanClass) {
-        BeanInfo beanInfo = beanInfoCache.get(beanClass);
+    public static <T> BeanInfo<T> getBeanInfoFromClass(Class<T> beanClass) {
+        BeanInfo<?> beanInfo = beanInfoCache.get(beanClass);
         if (beanInfo != null) {
-            return beanInfo;
+            return (BeanInfo<T>) beanInfo;
         }
         beanInfo = BeanInfoAnalyser.create(beanClass).analyse();
         beanInfoCache.put(beanClass, beanInfo);
-        return beanInfo;
+        return (BeanInfo<T>) beanInfo;
     }
 
-    private static BeanInfo getBeanInfoFromObject(Object bean) {
-        return getBeanInfoFromClass(bean.getClass());
+    public static <T> BeanInfo<T> getBeanInfoFromObject(T bean) {
+        return (BeanInfo<T>) getBeanInfoFromClass(bean.getClass());
     }
 
 
     public static <T> T getPropertyOrNull(Object object, String propertyName) {
-        return getBeanInfo(object).getPropertyOrNull(object, propertyName);
+        return getBeanInfoFromObject(object).getPropertyOrNull(object, propertyName);
     }
 
     public static void setPropertyOrIgnore(Object object, String propertyName, Object value) {
-        getBeanInfo(object).setPropertyOrIgnore(object, propertyName, value);
+        getBeanInfoFromObject(object).setPropertyOrIgnore(object, propertyName, value);
     }
 
     public static SetResult setProperty(Object object, String propertyName, Object value) {
-        return getBeanInfo(object).setProperty(object, propertyName, value);
+        return getBeanInfoFromObject(object).setProperty(object, propertyName, value);
     }
 
     public static GetResult getProperty(Object object, String propertyName) {
-        return getBeanInfo(object).getProperty(object, propertyName);
+        return getBeanInfoFromObject(object).getProperty(object, propertyName);
     }
 
     public static Map<String, Object> getProperties(Object object) {
-        var beanInfo = getBeanInfo(object);
+        var beanInfo = getBeanInfoFromObject(object);
         var result = new HashMap<String, Object>();
         for (var property : beanInfo.getBeanProperties()) {
             if (property.readable()) {

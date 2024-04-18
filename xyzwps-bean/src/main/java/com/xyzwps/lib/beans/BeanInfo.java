@@ -1,12 +1,14 @@
 package com.xyzwps.lib.beans;
 
+import com.xyzwps.lib.bedrock.lang.DefaultValues;
+
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
-public final class BeanInfo {
+public final class BeanInfo<T> {
 
-    private final Class<?> beanClass;
+    private final Class<T> beanClass;
 
     private final List<PropertyInfo> properties;
 
@@ -16,7 +18,7 @@ public final class BeanInfo {
 
     private final Constructor<?> constructor;
 
-    BeanInfo(Class<?> beanClass, Constructor<?> constructor, List<PropertyInfo> properties, boolean isRecord) {
+    BeanInfo(Class<T> beanClass, Constructor<T> constructor, List<PropertyInfo> properties, boolean isRecord) {
         this.beanClass = Objects.requireNonNull(beanClass);
         this.properties = List.copyOf(Objects.requireNonNull(properties));
 
@@ -65,11 +67,15 @@ public final class BeanInfo {
         return propertyInfo == null ? SetResult.NoSuchProperty(propertyName) : propertyInfo.setProperty(object, value);
     }
 
-    public <T> T create(Map<String, Object> values) {
+    public T create(Map<String, Object> values) {
+        // TODO: 增加几种可选的策略 1) 默认交给反射 api 2) 手动尽可能处理
         Objects.requireNonNull(values);
         if (isRecord) {
             var args = this.properties.stream()
-                    .map(prop -> values.get(prop.name())) // TODO: 类型安全检查
+                    .map(prop -> {
+                        var value = values.get(prop.name());
+                        return value == null ? DefaultValues.get(prop.type()) : value;
+                    }) // TODO: 类型安全检查
                     .toArray(Object[]::new);
             try {
                 return (T) constructor.newInstance(args);
@@ -81,7 +87,8 @@ public final class BeanInfo {
                 var obj = constructor.newInstance();
                 this.properties.forEach(prop -> {
                     if (prop.writable()) {
-                        prop.setProperty(obj, values.get(prop.name())); // TODO: 类型安全检查
+                        var value = values.get(prop.name());
+                        prop.setProperty(obj, value == null ? DefaultValues.get(prop.type()) : value); // TODO: 类型安全检查
                     }
                 });
                 return (T) obj;
