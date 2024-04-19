@@ -12,6 +12,7 @@ public final class BeanUtils {
 
     private static final ConcurrentMap<Class<?>, BeanInfo<?>> beanInfoCache = new ConcurrentHashMap<>();
 
+    // TODO: 支持泛型类
     public static <T> BeanInfo<T> getBeanInfoFromClass(Class<T> beanClass) {
         var beanInfo = (BeanInfo<T>) beanInfoCache.get(beanClass);
         if (beanInfo != null) {

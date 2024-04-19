@@ -1,6 +1,6 @@
 package com.xyzwps.lib.beans.forsingleclass;
 
-import com.xyzwps.lib.beans.forold.Holder;
+import com.xyzwps.lib.beans.Holder;
 
 import java.util.List;
 
