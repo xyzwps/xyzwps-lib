@@ -1,4 +1,4 @@
-package com.xyzwps.lib.beans.forrecord;
+package com.xyzwps.lib.beans.forsingleclass;
 
 import com.xyzwps.lib.beans.BeanUtils;
 import com.xyzwps.lib.beans.GetResult;
@@ -12,91 +12,92 @@ import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.WildcardType;
 import java.util.List;
 import java.util.Map;
-import java.util.function.IntFunction;
+import java.util.function.Function;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
-class AnalyzeRecordTests {
+class AnalyzeSingleClassTests {
 
     @Test
     void analyzeRecord() {
-        var bi = BeanUtils.getBeanInfoFromClass(RecordExample.class);
+        var bi = BeanUtils.getBeanInfoFromClass(SingleClassExample.class);
         var props = bi.getBeanProperties();
         assertEquals(14, props.size());
 
         for (var prop : props) {
             assertTrue(prop.readable());
-            assertFalse(prop.writable());
+            assertTrue(prop.writable());
         }
 
-        IntFunction<PropertyInfo> getProp = (i) -> props.get(i - 1);
+        Function<String, PropertyInfo> getProp = (name) -> bi.getPropertyInfo(name).orElse(null);
 
         _1:
         {
-            var prop = getProp.apply(1);
+            var prop = getProp.apply("byteValue");
             assertEquals("byteValue", prop.name());
             assertEquals(byte.class, prop.type());
         }
 
         _2:
         {
-            var prop = getProp.apply(2);
+            var prop = getProp.apply("shortValue");
             assertEquals("shortValue", prop.name());
             assertEquals(short.class, prop.type());
         }
 
         _3:
         {
-            var prop = getProp.apply(3);
+            var prop = getProp.apply("intValue");
             assertEquals("intValue", prop.name());
             assertEquals(int.class, prop.type());
         }
 
         _4:
         {
-            var prop = getProp.apply(4);
+            var prop = getProp.apply("longValue");
             assertEquals("longValue", prop.name());
             assertEquals(long.class, prop.type());
         }
 
         _5:
         {
-            var prop = getProp.apply(5);
+            var prop = getProp.apply("charValue");
             assertEquals("charValue", prop.name());
             assertEquals(char.class, prop.type());
         }
 
         _6:
         {
-            var prop = getProp.apply(6);
+            var prop = getProp.apply("floatValue");
             assertEquals("floatValue", prop.name());
             assertEquals(float.class, prop.type());
         }
 
         _7:
         {
-            var prop = getProp.apply(7);
+            var prop = getProp.apply("doubleValue");
             assertEquals("doubleValue", prop.name());
             assertEquals(double.class, prop.type());
         }
 
         _8:
         {
-            var prop = getProp.apply(8);
+            var prop = getProp.apply("booleanValue");
             assertEquals("booleanValue", prop.name());
             assertEquals(boolean.class, prop.type());
         }
 
         _9:
         {
-            var prop = getProp.apply(9);
+            var prop = getProp.apply("str");
             assertEquals("str", prop.name());
             assertEquals(String.class, prop.type());
         }
 
         _10:
         {
-            var prop = getProp.apply(10);
+            var prop = getProp.apply("strList");
             assertEquals("strList", prop.name());
             assertTrue(Types.isParameterizedType(prop.type()));
 
@@ -107,7 +108,7 @@ class AnalyzeRecordTests {
 
         _11:
         {
-            var prop = getProp.apply(11);
+            var prop = getProp.apply("objList");
             assertEquals("objList", prop.name());
             assertTrue(Types.isParameterizedType(prop.type()));
 
@@ -121,7 +122,7 @@ class AnalyzeRecordTests {
 
         _12:
         {
-            var prop = getProp.apply(12);
+            var prop = getProp.apply("intArr");
             assertEquals("intArr", prop.name());
             assertTrue(Types.isClass(prop.type())); // array type is class
 
@@ -131,7 +132,7 @@ class AnalyzeRecordTests {
 
         _13:
         {
-            var prop = getProp.apply(13);
+            var prop = getProp.apply("strArr");
             assertEquals("strArr", prop.name());
             assertTrue(Types.isClass(prop.type())); // array type is class
 
@@ -141,7 +142,7 @@ class AnalyzeRecordTests {
 
         _14:
         {
-            var prop = getProp.apply(14);
+            var prop = getProp.apply("holderArr");
             assertEquals("holderArr", prop.name());
             assertTrue(Types.isGenericArrayType(prop.type())); // array type is class
 
@@ -153,22 +154,21 @@ class AnalyzeRecordTests {
 
     @Test
     void getRecordProperty() {
-        var example = new RecordExample(
-                /*  1  byte    */ (byte) 12,
-                /*  2  short   */ (short) 233,
-                /*  3  int     */ 114514,
-                /*  4  long    */ 12345678987654321L,
-                /*  5  char    */ 'H',
-                /*  6  float   */ 3.14F,
-                /*  7  double  */ 6.02e23,
-                /*  8  boolean */ true,
-                /*  9  String  */ "Hello world",
-                /* 10  List<String>     */ List.of("123", "233"),
-                /* 11  List<?>          */ List.of(1, "23"),
-                /* 12  int[]            */ new int[]{1, 2, 3},
-                /* 13  String[]         */ new String[]{"123", "233"},
-                /* 14  Holder<String>[] */ new Holder[]{new Holder<>("123"), new Holder<>("233")}
-        );
+        var example = new SingleClassExample();
+        example.setByteValue((byte) 12);              /*  1 */
+        example.setShortValue((short) 233);           /*  2 */
+        example.setIntValue(114514);                  /*  3 */
+        example.setLongValue(12345678987654321L);     /*  4 */
+        example.setCharValue('H');                    /*  5 */
+        example.setFloatValue(3.14F);                 /*  6 */
+        example.setDoubleValue(6.02e23);              /*  7 */
+        example.setBooleanValue(true);                /*  8 */
+        example.setStr("Hello world");                /*  9 */
+        example.setStrList(List.of("123", "233"));    /* 10 */
+        example.setObjList(List.of(1, "23"));         /* 11 */
+        example.setIntArr(new int[]{1, 2, 3});        /* 12 */
+        example.setStrArr(new String[]{"123", "233"});/* 13 */
+        example.setHolderArr(new Holder[]{new Holder<>("123"), new Holder<>("233")});/* 14 */
 
         var props = BeanUtils.getProperties(example);
 
@@ -317,40 +317,39 @@ class AnalyzeRecordTests {
                 /* 13 */ Map.entry("strArr", new String[]{"123", "233"}),
                 /* 14 */ Map.entry("holderArr", new Holder[]{new Holder<>("123"), new Holder<>("233")})
         );
-        var e = BeanUtils.getBeanInfoFromClass(RecordExample.class).create(params);
-        assertEquals((byte) 12, e.byteValue());         /*  1 */
-        assertEquals((short) 233, e.shortValue());      /*  2 */
-        assertEquals(114514, e.intValue());             /*  3 */
-        assertEquals(12345678987654321L, e.longValue());/*  4 */
-        assertEquals('H', e.charValue());               /*  5 */
-        assertEquals(3.14F, e.floatValue());            /*  6 */
-        assertEquals(6.02e23, e.doubleValue());         /*  7 */
-        assertTrue(e.booleanValue());                   /*  8 */
-        assertEquals("Hello world", e.str());           /*  9 */
-        assertIterableEquals(List.of("123", "233"), e.strList()); /* 10 */
-        assertIterableEquals(List.of(1, "23"), e.objList());      /* 11 */
-        assertArrayEquals(new int[]{1, 2, 3}, e.intArr());        /* 12 */
-        assertArrayEquals(new String[]{"123", "233"}, e.strArr());/* 13 */
-        assertArrayEquals(new Holder[]{new Holder<>("123"), new Holder<>("233")}, e.holderArr()); /* 14 */
+        var e = BeanUtils.getBeanInfoFromClass(SingleClassExample.class).create(params);
+        assertEquals((byte) 12, e.getByteValue());         /*  1 */
+        assertEquals((short) 233, e.getShortValue());      /*  2 */
+        assertEquals(114514, e.getIntValue());             /*  3 */
+        assertEquals(12345678987654321L, e.getLongValue());/*  4 */
+        assertEquals('H', e.getCharValue());               /*  5 */
+        assertEquals(3.14F, e.getFloatValue());            /*  6 */
+        assertEquals(6.02e23, e.getDoubleValue());         /*  7 */
+        assertTrue(e.isBooleanValue());                    /*  8 */
+        assertEquals("Hello world", e.getStr());           /*  9 */
+        assertIterableEquals(List.of("123", "233"), e.getStrList()); /* 10 */
+        assertIterableEquals(List.of(1, "23"), e.getObjList());      /* 11 */
+        assertArrayEquals(new int[]{1, 2, 3}, e.getIntArr());        /* 12 */
+        assertArrayEquals(new String[]{"123", "233"}, e.getStrArr());/* 13 */
+        assertArrayEquals(new Holder[]{new Holder<>("123"), new Holder<>("233")}, e.getHolderArr()); /* 14 */
     }
 
     @Test
     void createRecordWithNothing() {
-        var e = BeanUtils.getBeanInfoFromClass(RecordExample.class).create(Map.of());
-        assertEquals((byte) 0, e.byteValue());    /*  1 */
-        assertEquals((short) 0, e.shortValue());  /*  2 */
-        assertEquals(0, e.intValue());            /*  3 */
-        assertEquals(0L, e.longValue());          /*  4 */
-        assertEquals('\0', e.charValue());        /*  5 */
-        assertEquals(0.0F, e.floatValue());       /*  6 */
-        assertEquals(0.0, e.doubleValue());       /*  7 */
-        assertFalse(e.booleanValue());            /*  8 */
-        assertNull(e.str());                      /*  9 */
-        assertNull(e.strList());                  /* 10 */
-        assertNull(e.objList());                  /* 11 */
-        assertNull(e.intArr());                   /* 12 */
-        assertNull(e.strArr());                   /* 13 */
-        assertNull(e.holderArr());                /* 14 */
+        var e = BeanUtils.getBeanInfoFromClass(SingleClassExample.class).create(Map.of());
+        assertEquals((byte) 0, e.getByteValue());  /*  1 */
+        assertEquals((short) 0, e.getShortValue());/*  2 */
+        assertEquals(0, e.getIntValue());          /*  3 */
+        assertEquals(0L, e.getLongValue());        /*  4 */
+        assertEquals('\0', e.getCharValue());      /*  5 */
+        assertEquals(0.0F, e.getFloatValue());     /*  6 */
+        assertEquals(0.0, e.getDoubleValue());     /*  7 */
+        assertFalse(e.isBooleanValue());           /*  8 */
+        assertNull(e.getStr());                    /*  9 */
+        assertNull(e.getStrList());                /* 10 */
+        assertNull(e.getObjList());                /* 11 */
+        assertNull(e.getIntArr());                 /* 12 */
+        assertNull(e.getStrArr());                 /* 13 */
+        assertNull(e.getHolderArr());              /* 14 */
     }
 }
-

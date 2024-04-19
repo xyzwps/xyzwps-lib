@@ -1,5 +1,7 @@
 package com.xyzwps.lib.beans.forrecord;
 
+import com.xyzwps.lib.beans.Holder;
+
 import java.util.List;
 
 public record RecordExample(

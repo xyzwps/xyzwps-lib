@@ -3,11 +3,11 @@ package com.xyzwps.lib.beans;
 import java.lang.reflect.Modifier;
 import java.util.Objects;
 
-interface BeanInfoAnalyser {
+interface BeanInfoAnalyser<T> {
 
-    BeanInfo analyse();
+    BeanInfo<T> analyse();
 
-    static BeanInfoAnalyser create(Class<?> beanClass) {
+    static <T> BeanInfoAnalyser<T> create(Class<T> beanClass) {
         Objects.requireNonNull(beanClass);
 
         if (beanClass.isPrimitive()) {
@@ -23,7 +23,7 @@ interface BeanInfoAnalyser {
             throw new IllegalArgumentException("Enum cannot play a role of bean.");
         }
         if (beanClass.isRecord()) {
-            return new RecordAnalyzer(beanClass);
+            return new RecordAnalyzer<T>(beanClass);
         }
         if (Modifier.isAbstract(beanClass.getModifiers())) {
             throw new IllegalArgumentException("Abstract class cannot play a role of bean.");
@@ -32,7 +32,7 @@ interface BeanInfoAnalyser {
             throw new IllegalArgumentException("Object cannot play a role of bean.");
         }
 
-        return new ClassAnalyzer(beanClass);
+        return new ClassAnalyzer<T>(beanClass);
     }
 
 }

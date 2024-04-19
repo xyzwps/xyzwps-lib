@@ -9,10 +9,10 @@ import java.util.Objects;
 
 import static com.xyzwps.lib.beans.Utils.forEach;
 
-record ClassAnalyzer(Class<?> beanClass) implements BeanInfoAnalyser {
+record ClassAnalyzer<T>(Class<T> beanClass) implements BeanInfoAnalyser<T> {
 
     @Override
-    public BeanInfo analyse() {
+    public BeanInfo<T> analyse() {
         var collector = new PropertiesCollector(this.beanClass);
 
         forEach(beanClass.getDeclaredMethods(), collector::addMethod);
@@ -32,10 +32,10 @@ record ClassAnalyzer(Class<?> beanClass) implements BeanInfoAnalyser {
                 .map(it -> it.build().orElse(null))
                 .filter(Objects::nonNull)
                 .toList();
-        return new BeanInfo(this.beanClass, getConstructor(), properties, false);
+        return new BeanInfo<>(this.beanClass, getConstructor(), properties, false);
     }
 
-    private Constructor<?> getConstructor() {
+    private Constructor<T> getConstructor() {
         try {
             return beanClass.getConstructor();
         } catch (NoSuchMethodException e) {
@@ -53,30 +53,28 @@ record ClassAnalyzer(Class<?> beanClass) implements BeanInfoAnalyser {
 
         void addMethod(Method method) {
             switch (PropertyMethodDecider.decide(beanType, method)) {
-                case PropertyMethod.GetPropertyMethod m -> createOrGetBuilder(m.propertyName()).addGetter(m);
-                case PropertyMethod.SetPropertyMethod m -> createOrGetBuilder(m.propertyName()).addSetter(m);
+                case PropertyMethod.GetMethod m -> createOrGetBuilder(m.propertyName()).addGetter(m);
+                case PropertyMethod.SetMethod m -> createOrGetBuilder(m.propertyName()).addSetter(m);
                 case PropertyMethod.None ignored -> {
                 }
             }
         }
 
         void addField(Field field) {
-            PropertyField.create(beanType, field)
-                    .ifPresent(info -> createOrGetBuilder(info.getFieldName()).addField(info));
+            PropertyField.create(beanType, field).ifPresent(info -> createOrGetBuilder(info.getFieldName()).addField(info));
         }
 
         void addSuperClassMethod(Class<?> superClass, Method method) {
             switch (PropertyMethodDecider.decide(superClass, method)) {
-                case PropertyMethod.GetPropertyMethod m -> createOrGetBuilder(m.propertyName()).addSuperGetter(m);
-                case PropertyMethod.SetPropertyMethod m -> createOrGetBuilder(m.propertyName()).addSuperSetter(m);
+                case PropertyMethod.GetMethod m -> createOrGetBuilder(m.propertyName()).addSuperGetter(m);
+                case PropertyMethod.SetMethod m -> createOrGetBuilder(m.propertyName()).addSuperSetter(m);
                 case PropertyMethod.None ignored -> {
                 }
             }
         }
 
         void addSuperClassField(Class<?> superClass, Field field) {
-            PropertyField.create(superClass, field)
-                    .ifPresent(info -> createOrGetBuilder(info.getFieldName()).addSuperField(info));
+            PropertyField.create(superClass, field).ifPresent(info -> createOrGetBuilder(info.getFieldName()).addSuperField(info));
         }
 
         private PropertyInfoBuilder createOrGetBuilder(String propertyName) {

@@ -16,7 +16,7 @@ public final class BeanInfo<T> {
 
     private final boolean isRecord;
 
-    private final Constructor<?> constructor;
+    private final Constructor<T> constructor;
 
     BeanInfo(Class<T> beanClass, Constructor<T> constructor, List<PropertyInfo> properties, boolean isRecord) {
         this.beanClass = Objects.requireNonNull(beanClass);
@@ -37,11 +37,10 @@ public final class BeanInfo<T> {
         return properties;
     }
 
-    @SuppressWarnings("unchecked")
-    public <T> T getPropertyOrNull(Object object, String propertyName) {
+    public Object getPropertyOrNull(Object object, String propertyName) {
         var result = getProperty(object, propertyName);
         if (result instanceof GetResult.Ok it) {
-            return (T) it.value();
+            return it.value();
         }
         return null;
     }
@@ -68,19 +67,18 @@ public final class BeanInfo<T> {
     }
 
     public T create(Map<String, Object> values) {
-        // TODO: 增加几种可选的策略 1) 默认交给反射 api 2) 手动尽可能处理
         Objects.requireNonNull(values);
         if (isRecord) {
             var args = this.properties.stream()
                     .map(prop -> {
                         var value = values.get(prop.name());
                         return value == null ? DefaultValues.get(prop.type()) : value;
-                    }) // TODO: 类型安全检查
+                    })
                     .toArray(Object[]::new);
             try {
-                return (T) constructor.newInstance(args);
+                return constructor.newInstance(args);
             } catch (InvocationTargetException | InstantiationException | IllegalAccessException e) {
-                throw new IllegalStateException(e);
+                throw new BeanException("Create record failed", e);
             }
         } else {
             try {
@@ -88,12 +86,12 @@ public final class BeanInfo<T> {
                 this.properties.forEach(prop -> {
                     if (prop.writable()) {
                         var value = values.get(prop.name());
-                        prop.setProperty(obj, value == null ? DefaultValues.get(prop.type()) : value); // TODO: 类型安全检查
+                        prop.setProperty(obj, value == null ? DefaultValues.get(prop.type()) : value);
                     }
                 });
-                return (T) obj;
+                return obj;
             } catch (InvocationTargetException | InstantiationException | IllegalAccessException e) {
-                throw new IllegalStateException(e);
+                throw new BeanException("Create object failed", e);
             }
         }
     }

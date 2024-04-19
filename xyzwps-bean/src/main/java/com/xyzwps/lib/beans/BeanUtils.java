@@ -5,27 +5,30 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
+/**
+ * TODO: 搞成可实例化的
+ */
 public final class BeanUtils {
 
     private static final ConcurrentMap<Class<?>, BeanInfo<?>> beanInfoCache = new ConcurrentHashMap<>();
 
     public static <T> BeanInfo<T> getBeanInfoFromClass(Class<T> beanClass) {
-        BeanInfo<?> beanInfo = beanInfoCache.get(beanClass);
+        var beanInfo = (BeanInfo<T>) beanInfoCache.get(beanClass);
         if (beanInfo != null) {
-            return (BeanInfo<T>) beanInfo;
+            return beanInfo;
         }
         beanInfo = BeanInfoAnalyser.create(beanClass).analyse();
         beanInfoCache.put(beanClass, beanInfo);
-        return (BeanInfo<T>) beanInfo;
+        return beanInfo;
     }
 
     public static <T> BeanInfo<T> getBeanInfoFromObject(T bean) {
-        return (BeanInfo<T>) getBeanInfoFromClass(bean.getClass());
+        return getBeanInfoFromClass((Class<T>) bean.getClass());
     }
 
 
     public static <T> T getPropertyOrNull(Object object, String propertyName) {
-        return getBeanInfoFromObject(object).getPropertyOrNull(object, propertyName);
+        return (T) getBeanInfoFromObject(object).getPropertyOrNull(object, propertyName);
     }
 
     public static void setPropertyOrIgnore(Object object, String propertyName, Object value) {

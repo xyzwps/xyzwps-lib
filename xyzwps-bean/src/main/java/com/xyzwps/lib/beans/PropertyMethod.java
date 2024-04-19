@@ -10,11 +10,11 @@ sealed interface PropertyMethod {
     record None() implements PropertyMethod {
     }
 
-    record SetPropertyMethod(Class<?> beanType, Type type, Method method,
-                             String propertyName) implements PropertyMethod {
+    record SetMethod(Class<?> beanType, Type type, Method method,
+                     String propertyName) implements PropertyMethod {
     }
 
-    record GetPropertyMethod(Class<?> beanType, Type type, Method method,
-                             String propertyName) implements PropertyMethod {
+    record GetMethod(Class<?> beanType, Type type, Method method,
+                     String propertyName) implements PropertyMethod {
     }
 }

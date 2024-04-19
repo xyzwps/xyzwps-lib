@@ -5,10 +5,10 @@ import java.lang.reflect.RecordComponent;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-record RecordAnalyzer(Class<?> beanClass) implements BeanInfoAnalyser {
+record RecordAnalyzer<T>(Class<T> beanClass) implements BeanInfoAnalyser<T> {
 
     @Override
-    public BeanInfo analyse() {
+    public BeanInfo<T> analyse() {
         var rcs = beanClass.getRecordComponents();
         var props = new ArrayList<PropertyInfo>(rcs.length);
         for (var rc : rcs) {
@@ -16,10 +16,10 @@ record RecordAnalyzer(Class<?> beanClass) implements BeanInfoAnalyser {
             var prop = new ImplPropertyInfo(rc.getName(), rc.getGenericType(), getter, null, true, false, beanClass);
             props.add(prop);
         }
-        return new BeanInfo(beanClass, getConstructor(), props, true);
+        return new BeanInfo<T>(beanClass, getConstructor(), props, true);
     }
 
-    private Constructor<?> getConstructor() {
+    private Constructor<T> getConstructor() {
         var rcs = beanClass.getRecordComponents();
         Class<?>[] paramTypes = Arrays.stream(rcs).map(RecordComponent::getType).toArray(Class[]::new);
         try {

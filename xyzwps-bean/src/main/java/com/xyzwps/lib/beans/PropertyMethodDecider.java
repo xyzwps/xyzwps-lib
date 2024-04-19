@@ -8,7 +8,7 @@ import static com.xyzwps.lib.beans.PropertyMethod.*;
 
 class PropertyMethodDecider {
 
-    public static PropertyMethod decide(Class<?> beanType, Method method) {
+    static PropertyMethod decide(Class<?> beanType, Method method) {
         var modifiers = method.getModifiers();
         if (Modifier.isStatic(modifiers)) return NONE;
 
@@ -23,7 +23,7 @@ class PropertyMethodDecider {
         if (setterPattern.matcher(methodName).matches()) {
             if (parameterCount != 1) return NONE;
             var type = method.getGenericParameterTypes()[0];
-            return new SetPropertyMethod(beanType, type, method, extractPropertyName(3, methodName));
+            return new SetMethod(beanType, type, method, extractPropertyName(3, methodName));
         }
 
         var returnType = method.getGenericReturnType();
@@ -32,7 +32,7 @@ class PropertyMethodDecider {
             if (parameterCount > 0) return NONE;
             if (returnType == Void.class) return NONE;
             var type = method.getGenericReturnType();
-            return new GetPropertyMethod(beanType, type, method, extractPropertyName(3, methodName));
+            return new GetMethod(beanType, type, method, extractPropertyName(3, methodName));
         }
 
         if (isserPattern.matcher(methodName).matches()) {
@@ -40,7 +40,7 @@ class PropertyMethodDecider {
             if (returnType == Void.class) return NONE;
             if (returnType != boolean.class) return NONE;
 
-            return new GetPropertyMethod(beanType, boolean.class, method, extractPropertyName(2, methodName));
+            return new GetMethod(beanType, boolean.class, method, extractPropertyName(2, methodName));
         }
 
         return NONE;
