@@ -1,7 +1,5 @@
 package com.xyzwps.lib.beans;
 
-import com.xyzwps.lib.bedrock.lang.DefaultValues;
-
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
@@ -72,7 +70,7 @@ public final class BeanInfo<T> {
             var args = this.properties.stream()
                     .map(prop -> {
                         var value = values.get(prop.name());
-                        return value == null ? DefaultValues.get(prop.type()) : value;
+                        return PropertySetHelper.toSettableValue(value, prop.type());
                     })
                     .toArray(Object[]::new);
             try {
@@ -86,7 +84,7 @@ public final class BeanInfo<T> {
                 this.properties.forEach(prop -> {
                     if (prop.writable()) {
                         var value = values.get(prop.name());
-                        prop.set(obj, value == null ? DefaultValues.get(prop.type()) : value);
+                        prop.set(obj, PropertySetHelper.toSettableValue(value, prop.type()));
                     }
                 });
                 return obj;

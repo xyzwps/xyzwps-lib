@@ -2,6 +2,7 @@ package com.xyzwps.lib.json;
 
 import com.xyzwps.lib.beans.BeanUtils;
 import com.xyzwps.lib.bedrock.lang.DefaultValues;
+import com.xyzwps.lib.bedrock.lang.Types;
 import com.xyzwps.lib.json.element.*;
 
 import java.lang.reflect.Type;
@@ -125,15 +126,19 @@ public final class FromElement {
         }
 
         if (element instanceof JsonObject jo) {
-            var beanInfo = BeanUtils.getBeanInfo(type);
-            var parsedProps = new HashMap<String, Object>();
-            beanInfo.getBeanProperties().forEach(prop -> {
-                var propName = prop.propertyName();
-                var propElement = jo.get(propName);
-                var propValue = propElement == null ? DefaultValues.get(prop.propertyType()) : fromElement(propElement, prop.propertyType());
-                parsedProps.put(propName, propValue);
-            });
-            return beanInfo.create(parsedProps);
+            if (type instanceof Class<?> c) {
+                var beanInfo = BeanUtils.getBeanInfoFromClass(c);
+                var parsedProps = new HashMap<String, Object>();
+                beanInfo.getBeanProperties().forEach(prop -> {
+                    var propName = prop.name();
+                    var propElement = jo.get(propName);
+                    var propValue = propElement == null ? DefaultValues.get(prop.type()) : fromElement(propElement, prop.type());
+                    parsedProps.put(propName, propValue);
+                });
+                return (T) beanInfo.create(parsedProps);
+            } else {
+                throw new IllegalStateException("TODO: 暂支持泛型类");
+            }
         }
         throw new JsonException("Cannot convert to " + type.getTypeName() + " from " + element.getClass().getSimpleName());
     }

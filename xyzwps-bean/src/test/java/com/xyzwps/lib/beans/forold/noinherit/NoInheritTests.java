@@ -1,8 +1,10 @@
 package com.xyzwps.lib.beans.forold.noinherit;
 
 import com.xyzwps.lib.beans.*;
+import com.xyzwps.lib.bedrock.lang.Types;
 import org.junit.jupiter.api.Test;
 
+import java.lang.reflect.ParameterizedType;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -60,7 +62,9 @@ class NoInheritTests {
                 .orElseThrow(() -> new RuntimeException("No property habits"));
         assertTrue(habitsProperty.readable());
         assertTrue(habitsProperty.writable());
-        assertEquals(List.class, habitsProperty.type());
+        assertTrue(Types.isParameterizedType(habitsProperty.type()));
+        var ptype = (ParameterizedType) habitsProperty.type();
+        assertEquals(List.class, ptype.getRawType());
         assertEquals("habits", habitsProperty.name());
     }
 

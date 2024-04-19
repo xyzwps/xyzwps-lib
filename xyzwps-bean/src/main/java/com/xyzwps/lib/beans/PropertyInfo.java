@@ -39,7 +39,11 @@ public interface PropertyInfo {
      */
     default SetResult set(Object object, Object value) {
         if (writable()) {
-            return setter().set(object, value);
+            try {
+                return setter().set(object, PropertySetHelper.toSettableValue(value, type()));
+            } catch (Exception e) {
+                return SetResult.failed(e);
+            }
         }
         return SetResult.NOT_WRITABLE;
     }
