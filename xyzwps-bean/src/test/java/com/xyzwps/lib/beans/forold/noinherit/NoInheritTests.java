@@ -1,4 +1,4 @@
-package com.xyzwps.lib.beans.noinherit;
+package com.xyzwps.lib.beans.forold.noinherit;
 
 import com.xyzwps.lib.beans.*;
 import org.junit.jupiter.api.Test;

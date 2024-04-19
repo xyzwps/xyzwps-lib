@@ -1,4 +1,4 @@
-package com.xyzwps.lib.beans.noinherit;
+package com.xyzwps.lib.beans.forold.noinherit;
 
 import java.time.LocalDate;
 import java.util.List;

@@ -1,11 +1,10 @@
-package com.xyzwps.lib.beans;
+package com.xyzwps.lib.beans.forold;
 
+import com.xyzwps.lib.beans.BeanUtils;
 import org.junit.jupiter.api.Test;
 
-import java.time.LocalDateTime;
 import java.util.Date;
 
-import static com.xyzwps.lib.beans.UnexpectedException.unexpected;
 import static org.junit.jupiter.api.Assertions.*;
 
 class TestNoInheritObject {

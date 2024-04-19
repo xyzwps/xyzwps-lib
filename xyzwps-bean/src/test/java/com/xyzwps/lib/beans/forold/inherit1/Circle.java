@@ -1,6 +1,6 @@
-package com.xyzwps.lib.beans.inherit1;
+package com.xyzwps.lib.beans.forold.inherit1;
 
-import com.xyzwps.lib.beans.Point2D;
+import com.xyzwps.lib.beans.forold.Point2D;
 
 public class Circle extends Shape {
 

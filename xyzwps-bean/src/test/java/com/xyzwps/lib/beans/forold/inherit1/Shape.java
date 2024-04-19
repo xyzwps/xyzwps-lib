@@ -1,4 +1,4 @@
-package com.xyzwps.lib.beans.inherit1;
+package com.xyzwps.lib.beans.forold.inherit1;
 
 public class Shape {
 

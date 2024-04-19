@@ -2,7 +2,7 @@ package com.xyzwps.lib.beans.forrecord;
 
 import com.xyzwps.lib.beans.BeanUtils;
 import com.xyzwps.lib.beans.GetResult;
-import com.xyzwps.lib.beans.Holder;
+import com.xyzwps.lib.beans.forold.Holder;
 import com.xyzwps.lib.beans.PropertyInfo;
 import com.xyzwps.lib.bedrock.lang.Types;
 import org.junit.jupiter.api.Test;

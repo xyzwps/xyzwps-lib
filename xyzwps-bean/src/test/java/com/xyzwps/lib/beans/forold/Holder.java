@@ -1,4 +1,4 @@
-package com.xyzwps.lib.beans;
+package com.xyzwps.lib.beans.forold;
 
 public record Holder<T>(T value) {
 }

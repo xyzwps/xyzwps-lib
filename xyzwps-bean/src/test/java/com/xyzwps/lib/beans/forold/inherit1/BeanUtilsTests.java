@@ -1,12 +1,8 @@
-package com.xyzwps.lib.beans.inherit1;
+package com.xyzwps.lib.beans.forold.inherit1;
 
 import com.xyzwps.lib.beans.*;
-import com.xyzwps.lib.beans.inherit1.Circle;
-import org.junit.jupiter.api.Nested;
+import com.xyzwps.lib.beans.forold.Point2D;
 import org.junit.jupiter.api.Test;
-
-import java.time.LocalDate;
-import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 

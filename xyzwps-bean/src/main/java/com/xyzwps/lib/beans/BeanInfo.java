@@ -57,13 +57,13 @@ public final class BeanInfo<T> {
     public void setPropertyOrIgnore(Object object, String propertyName, Object value) {
         var propertyInfo = this.name2property.get(propertyName);
         if (propertyInfo != null) {
-            propertyInfo.setProperty(object, value);
+            propertyInfo.set(object, value);
         }
     }
 
     public SetResult setProperty(Object object, String propertyName, Object value) {
         var propertyInfo = this.name2property.get(propertyName);
-        return propertyInfo == null ? SetResult.NoSuchProperty(propertyName) : propertyInfo.setProperty(object, value);
+        return propertyInfo == null ? SetResult.NoSuchProperty(propertyName) : propertyInfo.set(object, value);
     }
 
     public T create(Map<String, Object> values) {
@@ -86,7 +86,7 @@ public final class BeanInfo<T> {
                 this.properties.forEach(prop -> {
                     if (prop.writable()) {
                         var value = values.get(prop.name());
-                        prop.setProperty(obj, value == null ? DefaultValues.get(prop.type()) : value);
+                        prop.set(obj, value == null ? DefaultValues.get(prop.type()) : value);
                     }
                 });
                 return obj;

@@ -1,11 +1,8 @@
-package com.xyzwps.lib.beans;
+package com.xyzwps.lib.beans.forold;
 
+import com.xyzwps.lib.beans.BeanUtils;
 import org.junit.jupiter.api.Test;
 
-import java.math.BigDecimal;
-import java.math.BigInteger;
-
-import static com.xyzwps.lib.beans.UnexpectedException.unexpected;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class TestNoInheritPrimitiveWrapper {

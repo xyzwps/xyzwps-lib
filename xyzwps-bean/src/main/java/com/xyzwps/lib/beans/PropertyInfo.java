@@ -37,7 +37,7 @@ public interface PropertyInfo {
     /**
      * Set property value through setter, not property field.
      */
-    default SetResult setProperty(Object object, Object value) {
+    default SetResult set(Object object, Object value) {
         if (writable()) {
             return setter().set(object, value);
         }

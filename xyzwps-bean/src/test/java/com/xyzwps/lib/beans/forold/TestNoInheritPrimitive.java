@@ -1,9 +1,8 @@
-package com.xyzwps.lib.beans;
+package com.xyzwps.lib.beans.forold;
 
+import com.xyzwps.lib.beans.BeanUtils;
+import com.xyzwps.lib.beans.SetResult;
 import org.junit.jupiter.api.Test;
-
-import java.math.BigDecimal;
-import java.math.BigInteger;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static com.xyzwps.lib.beans.UnexpectedException.*;
@@ -136,7 +135,7 @@ public class TestNoInheritPrimitive {
 //            assertFalse(prop.getPropertyOrThrow(bean, Boolean.class));
             assertFalse(bean.isBooleanProp());
 
-            var result = prop.setProperty(bean, "red");
+            var result = prop.set(bean, "red");
             assertTrue(result instanceof SetResult.Failed);
             var failed = (SetResult.Failed) result;
             assertTrue(failed.cause() instanceof IllegalArgumentException);
@@ -191,7 +190,7 @@ public class TestNoInheritPrimitive {
 //            assertEquals(0, (int) prop.getPropertyOrThrow(bean, Short.class));
             assertEquals(0, bean.getShortProp());
 
-            var result = prop.setProperty(bean, "red");
+            var result = prop.set(bean, "red");
             assertTrue(result instanceof SetResult.Failed);
             var failed = (SetResult.Failed) result;
             assertTrue(failed.cause() instanceof IllegalArgumentException);
@@ -246,7 +245,7 @@ public class TestNoInheritPrimitive {
 //            assertEquals(0, prop.getPropertyOrThrow(bean, Integer.class));
             assertEquals(0, bean.getIntProp());
 
-            var result = prop.setProperty(bean, "red");
+            var result = prop.set(bean, "red");
             assertTrue(result instanceof SetResult.Failed);
             var failed = (SetResult.Failed) result;
             assertTrue(failed.cause() instanceof IllegalArgumentException);
@@ -301,7 +300,7 @@ public class TestNoInheritPrimitive {
 //            assertEquals(0, prop.getPropertyOrThrow(bean, Long.class));
             assertEquals(0, bean.getLongProp());
 
-            var result = prop.setProperty(bean, "red");
+            var result = prop.set(bean, "red");
             assertTrue(result instanceof SetResult.Failed);
             var failed = (SetResult.Failed) result;
             assertTrue(failed.cause() instanceof IllegalArgumentException);
@@ -368,7 +367,7 @@ public class TestNoInheritPrimitive {
 //            assertEquals(0, prop.getPropertyOrThrow(bean, Float.class));
             assertEquals(0, bean.getFloatProp());
 
-            var result = prop.setProperty(bean, "red");
+            var result = prop.set(bean, "red");
             assertTrue(result instanceof SetResult.Failed);
             var failed = (SetResult.Failed) result;
             assertTrue(failed.cause() instanceof IllegalArgumentException);
@@ -435,7 +434,7 @@ public class TestNoInheritPrimitive {
 //            assertEquals(0, prop.getPropertyOrThrow(bean, Double.class));
             assertEquals(0, bean.getDoubleProp());
 
-            var result = prop.setProperty(bean, "red");
+            var result = prop.set(bean, "red");
             assertTrue(result instanceof SetResult.Failed);
             var failed = (SetResult.Failed) result;
             assertTrue(failed.cause() instanceof IllegalArgumentException);
@@ -466,7 +465,7 @@ public class TestNoInheritPrimitive {
 //            assertEquals((byte) 0, prop.getPropertyOrThrow(bean, Byte.class));
             assertEquals((byte) 0, bean.getByteProp());
 
-            var result = prop.setProperty(bean, "red");
+            var result = prop.set(bean, "red");
             assertTrue(result instanceof SetResult.Failed);
             var failed = (SetResult.Failed) result;
             assertTrue(failed.cause() instanceof IllegalArgumentException);
@@ -503,7 +502,7 @@ public class TestNoInheritPrimitive {
 //            assertEquals('\u0000', prop.getPropertyOrThrow(bean, Character.class));
             assertEquals('\u0000', bean.getCharProp());
 
-            var result = prop.setProperty(bean, "red");
+            var result = prop.set(bean, "red");
             assertTrue(result instanceof SetResult.Failed);
             var failed = (SetResult.Failed) result;
             assertTrue(failed.cause() instanceof IllegalArgumentException);
