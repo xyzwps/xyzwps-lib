@@ -1,5 +1,6 @@
 package com.xyzwps.lib.express;
 
+
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
@@ -40,6 +41,18 @@ public record RawRequest(StartLine startLine, List<HeaderLine> headerLines, Inpu
                 .groupBy(HeaderLine::name)
                 .mapValues((values, name) -> new HttpHeader(name, List.copyOf($.map(values, HeaderLine::value))))
                 .toMap();
-        return new SimpleHttpRequest<>(this.startLine.method, this.startLine.url, this.startLine.protocol, Map.copyOf(headers), this.in);
+
+        var contentLength = getContentLength(headers);
+
+        return new SimpleHttpRequest<>(this.startLine.method, this.startLine.url, this.startLine.protocol,
+                Map.copyOf(headers),
+                this.in
+//                new ContentLengthInputStream(this.in, contentLength)
+        );
+    }
+
+    private static long getContentLength(Map<String, HttpHeader> headers) {
+        // TODO:
+        return 0;
     }
 }
