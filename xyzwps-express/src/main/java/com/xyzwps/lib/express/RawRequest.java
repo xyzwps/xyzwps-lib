@@ -1,13 +1,12 @@
 package com.xyzwps.lib.express;
 
 
+import com.xyzwps.lib.express.common.ContentLengthInputStream;
+
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
-
-import static com.xyzwps.lib.dollar.Dollar.*;
 
 public record RawRequest(StartLine startLine, List<HeaderLine> headerLines, InputStream in) {
 
@@ -37,22 +36,15 @@ public record RawRequest(StartLine startLine, List<HeaderLine> headerLines, Inpu
     }
 
     public HttpRequest<InputStream> toHttpRequest() {
-        var headers = $(this.headerLines)
-                .groupBy(HeaderLine::name)
-                .mapValues((values, name) -> new HttpHeader(name, List.copyOf($.map(values, HeaderLine::value))))
-                .toMap();
-
-        var contentLength = getContentLength(headers);
-
+        var headers = new HttpHeaders();
+        for (var header : headerLines) {
+            headers.set(header.name(), header.value());
+        }
         return new SimpleHttpRequest<>(this.startLine.method, this.startLine.url, this.startLine.protocol,
-                Map.copyOf(headers),
-                this.in
-//                new ContentLengthInputStream(this.in, contentLength)
+                headers,
+                new ContentLengthInputStream(this.in, BUFFER_LEN, headers.contentLength())
         );
     }
 
-    private static long getContentLength(Map<String, HttpHeader> headers) {
-        // TODO:
-        return 0;
-    }
+    private static final int BUFFER_LEN = 2048;
 }

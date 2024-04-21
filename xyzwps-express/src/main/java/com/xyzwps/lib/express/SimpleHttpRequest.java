@@ -8,10 +8,10 @@ public class SimpleHttpRequest<BODY> implements HttpRequest<BODY> {
     private final HttpMethod method;
     private final String url;
     private final String protocol;
-    private final Map<String, HttpHeader> headers;
+    private final HttpHeaders headers;
     private final BODY body;
 
-    public SimpleHttpRequest(HttpMethod method, String url, String protocol, Map<String, HttpHeader> headers, BODY body) {
+    public SimpleHttpRequest(HttpMethod method, String url, String protocol, HttpHeaders headers, BODY body) {
         this.method = Objects.requireNonNull(method);
         this.url = Objects.requireNonNull(url);
         this.protocol = Objects.requireNonNull(protocol);
@@ -35,8 +35,8 @@ public class SimpleHttpRequest<BODY> implements HttpRequest<BODY> {
     }
 
     @Override
-    public Optional<HttpHeader> header(String name) {
-        return Optional.ofNullable(headers.get(name));
+    public Optional<String> header(String name) {
+        return headers.getFirst(name);
     }
 
     @Override

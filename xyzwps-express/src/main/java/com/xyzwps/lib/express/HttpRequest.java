@@ -19,7 +19,7 @@ public interface HttpRequest<BODY> {
      */
     String protocol();
 
-    Optional<HttpHeader> header(String name);
+    Optional<String> header(String name);
 
     /**
      * May return null.
