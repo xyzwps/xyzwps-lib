@@ -1,5 +1,6 @@
 package com.xyzwps.lib.express.middleware;
 
+import com.xyzwps.lib.express.Args;
 import com.xyzwps.lib.express.HttpMethod;
 import com.xyzwps.lib.express.HttpMiddleware;
 import com.xyzwps.lib.express.common.HPath;
@@ -15,12 +16,22 @@ public final class Router {
 
     private int matchStart = 0;
 
-    private Router handle(HttpMethod method, String url, HttpMiddleware mw0, HttpMiddleware... mws) {
+    /**
+     * @param method match all if it is null
+     */
+    public Router handle(HttpMethod method, String url, HttpMiddleware mw0, HttpMiddleware... mws) {
+        Args.notNull(mw0, "The first middleware cannot be null");
+        Args.allNotNull(mws, "Middlewares cannot be null");
+
         HttpMiddleware[] mergedMws = new HttpMiddleware[mws.length + 1];
         System.arraycopy(mws, 0, mergedMws, 1, mws.length);
         mergedMws[0] = mw0;
         items.add(new RouteItem.Handler(HPath.from(url), method, mergedMws));
         return this;
+    }
+
+    public Router all(String url, HttpMiddleware mw0, HttpMiddleware... mws) {
+        return handle(null, url, mw0, mws);
     }
 
     public Router get(String url, HttpMiddleware mw0, HttpMiddleware... mws) {
@@ -41,16 +52,26 @@ public final class Router {
     }
 
     public Router nest(String prefix, Router router) {
-        Objects.requireNonNull(router);
-        // TODO: prefix 不允许有 /**
+        Args.notNull(router, "Nested router cannot be null");
+        Args.notNull(prefix, "Prefix cannot be null");
+
+        if (prefix.contains("**")) {
+            throw new IllegalArgumentException("Prefix cannot contains '**'");
+        }
+
         var segmentedPrefix = HPath.from(prefix);
+        if (segmentedPrefix.length() == 0) {
+            throw new IllegalArgumentException("Prefix cannot be empty");
+        }
+
         router.setMatchStart(this.matchStart + segmentedPrefix.length());
         items.add(new RouteItem.Nest(segmentedPrefix, router));
         return this;
     }
 
     public Router use(HttpMiddleware mw) {
-        Objects.requireNonNull(mw);
+        Args.notNull(mw, "Middleware cannot be null");
+
         items.add(new RouteItem.Use(mw));
         return this;
     }
@@ -93,6 +114,11 @@ public final class Router {
     }
 
     sealed interface RouteItem {
+        /**
+         * @param url
+         * @param method      match any of methods if it is null
+         * @param middlewares
+         */
         record Handler(HPath url, HttpMethod method, HttpMiddleware[] middlewares) implements RouteItem {
         }
 

@@ -1,5 +1,6 @@
 package com.xyzwps.website;
 
+import com.xyzwps.lib.express.HttpHeaders;
 import com.xyzwps.lib.express.middleware.Router;
 
 import javax.inject.Inject;
@@ -17,6 +18,11 @@ public class IndexRouterBuilder {
                     resp.status(200).header("Content-Type", "application/json");
                     resp.send("[\"Hello\":\"World\"]".getBytes());
                 })
-                .nest("/users", userRouter.router);
+                .nest("/users", userRouter.router)
+                .all("/**", (req, resp, next) -> {
+                    resp.header(HttpHeaders.CONTENT_TYPE, "application/json");
+                    resp.status(404);
+                    resp.send("{\"status\":404}".getBytes());
+                });
     }
 }
