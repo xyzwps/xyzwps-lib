@@ -3,9 +3,13 @@ package com.xyzwps.lib.express.middleware;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.xyzwps.lib.bedrock.Args;
 import com.xyzwps.lib.express.HttpMiddleware;
+import com.xyzwps.lib.express.MimeType;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 
 public final class JsonParser {
 
@@ -17,10 +21,8 @@ public final class JsonParser {
 
     public <T> HttpMiddleware json(Class<T> tClass) {
         return (req, resp, next) -> {
-            var contentType = req.contentType().orElse("");
-            // TODO: 解析 media type https://github.com/jsdom/whatwg-mimetype/blob/main/lib/parser.js
-            // TODO: https://www.iana.org/assignments/media-types/media-types.xhtml
-            if (!contentType.startsWith("application/json")) {
+            var contentType = req.contentType().filter(MimeType::isApplicationJson).orElse(null);
+            if (contentType == null) {
                 next.call();
                 return;
             }
@@ -30,15 +32,17 @@ public final class JsonParser {
                 return;
             }
 
-            parseBody(tClass).call(req, resp, next);
+            parseBody(tClass, contentType).call(req, resp, next);
         };
     }
 
-    private <T> HttpMiddleware parseBody(Class<T> tClass) {
+    private <T> HttpMiddleware parseBody(Class<T> tClass, MimeType type) {
         return (req, resp, next) -> {
             InputStream is = (InputStream) req.body();
             try {
-                var t = om.readValue(is, tClass);
+                var charset = type.parameters.get("charset").map(Charset::forName).orElse(StandardCharsets.UTF_8);
+                var reader = new InputStreamReader(is, charset);
+                var t = om.readValue(reader, tClass);
                 req.body(t);
                 next.call();
             } catch (IOException e) {

@@ -18,7 +18,7 @@ class MimeTypeTests {
 
         @BeforeEach
         void beforeEach() {
-            mimeType = MimeType.parse("Text/HTML;Charset=\"utf-8\"").orElseThrow();
+            mimeType = MimeType.parse("Text/HTML;Charset=\"utf-8\"");
         }
 
         @Test
@@ -54,7 +54,7 @@ class MimeTypeTests {
 
         @BeforeEach
         void beforeEach() {
-            mimeType = MimeType.parse("Text/HTML;Charset=\"utf-8\";foo=\"bar\"").orElseThrow();
+            mimeType = MimeType.parse("Text/HTML;Charset=\"utf-8\";foo=\"bar\"");
         }
 
         @Test
@@ -100,7 +100,8 @@ class MimeTypeTests {
             var arg = "text/HTML";
             var mimeType = MimeType.parse(arg);
 
-            assertEquals(mimeType.orElseThrow().toString(), "text/html");
+            assertNotNull(mimeType);
+            assertEquals(mimeType.toString(), "text/html");
         }
 
         @Test

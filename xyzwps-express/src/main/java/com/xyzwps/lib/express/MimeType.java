@@ -40,6 +40,10 @@ public final class MimeType {
         this.essence = this.type + '/' + this.subtype;
     }
 
+    public boolean isApplicationJson() {
+        return "application/json".equals(essence);
+    }
+
 
     @Override
     public String toString() {
@@ -62,7 +66,7 @@ public final class MimeType {
         return sb.toString();
     }
 
-    public static Optional<MimeType> parse(String input) {
+    public static MimeType parse(String input) {
         Args.notNull(input, "Cannot parse null to " + MimeType.class.getSimpleName());
 
         input = removeLeadingAndTrailingHTTPWhitespace(input);
@@ -76,7 +80,7 @@ public final class MimeType {
 
         var type = typeBuilder.toString();
         if (type.isEmpty() || !solelyContainsHTTPTokenCodePoints(type)) {
-            return Optional.empty();
+            return null;
         }
 
         if (position >= input.length()) {
@@ -153,7 +157,7 @@ public final class MimeType {
                 mime.parameters.set(paramName, paramValue);
             }
         }
-        return Optional.of(mime);
+        return mime;
     }
 
     static String removeLeadingAndTrailingHTTPWhitespace(String str) {
