@@ -9,12 +9,12 @@ import java.util.Objects;
 
 public final class SimpleHttpResponse implements HttpResponse {
     private final OutputStream out;
-    private final HttpRequest<?> request;
+    private final HttpRequest request;
 
     private int status = 200;
     private List<HeaderLine> headers = new ArrayList<>(8);
 
-    public SimpleHttpResponse(OutputStream out, HttpRequest<?> request) {
+    public SimpleHttpResponse(OutputStream out, HttpRequest request) {
         this.out = Objects.requireNonNull(out);
         this.request = Objects.requireNonNull(request);
     }

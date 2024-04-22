@@ -8,10 +8,11 @@ public final class Args {
         }
     }
 
-    public static void notNull(Object object, String message) {
+    public static <T> T notNull(T object, String message) {
         if (object == null) {
             throw new IllegalArgumentException(message);
         }
+        return object;
     }
 
     public static <T> void allNotNull(T[] arr, String message) {

@@ -6,11 +6,14 @@ public final class HttpHeaders {
 
     private final Map<String, List<String>> headers = new HashMap<>();
 
+    // TODO: test
     public void set(String name, String value) {
         Args.notEmpty(name, "Header name cannot be empty");
         Args.notEmpty(value, "Header value cannot be empty");
 
-        if (!headers.containsKey(name.toLowerCase())) {
+        name = name.toLowerCase();
+
+        if (!headers.containsKey(name)) {
             headers.put(name, new LinkedList<>());
         }
         headers.get(name).add(value);
@@ -54,10 +57,13 @@ public final class HttpHeaders {
         return (int) length;
     }
 
+    public Optional<String> contentType() {
+        return getFirst(CONTENT_TYPE);
+    }
+
     private static final int CONTENT_LENGTH_LIMIT = 1024 * 1024 * 50;
 
     public static final String CONTENT_LENGTH = "Content-Length";
 
     public static final String CONTENT_TYPE = "Content-Type";
-
 }

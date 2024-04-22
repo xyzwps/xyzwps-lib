@@ -1,28 +1,48 @@
 package com.xyzwps.lib.express;
 
+import java.util.Objects;
 import java.util.Optional;
 
-public interface HttpRequest<BODY> {
+public class HttpRequest {
+    private final HttpMethod method;
+    private final String url;
+    private final String protocol;
+    private final HttpHeaders headers;
+    private Object body;
 
-    /**
-     * Never return null.
-     */
-    HttpMethod method();
+    public HttpRequest(HttpMethod method, String url, String protocol, HttpHeaders headers, Object body) {
+        this.method = Objects.requireNonNull(method);
+        this.url = Objects.requireNonNull(url);
+        this.protocol = Objects.requireNonNull(protocol);
+        this.headers = Objects.requireNonNull(headers);
+        this.body = body;
+    }
 
-    /**
-     * Never return null.
-     */
-    String url();
+    public HttpMethod method() {
+        return method;
+    }
 
-    /**
-     * Never return null.
-     */
-    String protocol();
+    public String url() {
+        return url;
+    }
 
-    Optional<String> header(String name);
+    public String protocol() {
+        return protocol;
+    }
 
-    /**
-     * May return null.
-     */
-    BODY body();
+    public Optional<String> header(String name) {
+        return headers.getFirst(name);
+    }
+
+    public Object body() {
+        return body;
+    }
+
+    public void body(Object body) {
+        this.body = body;
+    }
+
+    public Optional<String> contentType() {
+        return headers.contentType();
+    }
 }

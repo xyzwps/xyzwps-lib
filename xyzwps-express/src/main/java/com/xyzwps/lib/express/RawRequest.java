@@ -35,12 +35,12 @@ public record RawRequest(StartLine startLine, List<HeaderLine> headerLines, Inpu
         }
     }
 
-    public HttpRequest<InputStream> toHttpRequest() {
+    public HttpRequest toHttpRequest() {
         var headers = new HttpHeaders();
         for (var header : headerLines) {
             headers.set(header.name(), header.value());
         }
-        return new SimpleHttpRequest<>(this.startLine.method, this.startLine.url, this.startLine.protocol,
+        return new HttpRequest(this.startLine.method, this.startLine.url, this.startLine.protocol,
                 headers,
                 new ContentLengthInputStream(this.in, BUFFER_LEN, headers.contentLength())
         );
