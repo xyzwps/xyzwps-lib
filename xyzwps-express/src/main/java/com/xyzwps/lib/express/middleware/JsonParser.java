@@ -1,7 +1,7 @@
 package com.xyzwps.lib.express.middleware;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.xyzwps.lib.express.Args;
+import com.xyzwps.lib.bedrock.Args;
 import com.xyzwps.lib.express.HttpMiddleware;
 
 import java.io.IOException;

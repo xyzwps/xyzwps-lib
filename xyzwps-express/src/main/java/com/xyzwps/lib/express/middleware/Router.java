@@ -1,6 +1,6 @@
 package com.xyzwps.lib.express.middleware;
 
-import com.xyzwps.lib.express.Args;
+import com.xyzwps.lib.bedrock.Args;
 import com.xyzwps.lib.express.HttpMethod;
 import com.xyzwps.lib.express.HttpMiddleware;
 import com.xyzwps.lib.express.common.HPath;

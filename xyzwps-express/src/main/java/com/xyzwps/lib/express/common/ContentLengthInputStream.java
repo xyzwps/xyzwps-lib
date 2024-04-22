@@ -1,5 +1,6 @@
 package com.xyzwps.lib.express.common;
 
+import com.xyzwps.lib.bedrock.Args;
 import com.xyzwps.lib.bedrock.UnimplementedException;
 
 import java.io.*;
@@ -20,12 +21,12 @@ public class ContentLengthInputStream extends InputStream {
     private boolean closed;
 
     public ContentLengthInputStream(InputStream in, int bufferSize, int length) {
-        this.in = Objects.requireNonNull(in);
-        this.length = length; // TODO: length >= 0
+        this.in = Args.notNull(in, "InputStream cannot be null");
+        this.length = Args.ge(length, 0, "Content length cannot be negative");
         this.closed = false;
         this.pos = 0;
 
-        this.buffer = new byte[bufferSize]; // TODO: check
+        this.buffer = new byte[Args.gt(bufferSize, 0, "Buffer size should be positive")];
         this.bufferStart = 0;
         this.bufferEnd = 0;
         this.bufferReadPos = 0;

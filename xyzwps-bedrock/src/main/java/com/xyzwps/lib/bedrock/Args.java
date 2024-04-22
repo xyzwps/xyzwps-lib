@@ -1,6 +1,20 @@
-package com.xyzwps.lib.express;
+package com.xyzwps.lib.bedrock;
 
 public final class Args {
+
+    public static int gt(int value, int bound, String message) {
+        if (value <= bound) {
+            throw new IllegalArgumentException(message);
+        }
+        return value;
+    }
+
+    public static int ge(int value, int bound, String message) {
+        if (value < bound) {
+            throw new IllegalArgumentException(message);
+        }
+        return value;
+    }
 
     public static void notEmpty(String str, String message) {
         if (str == null || str.isEmpty()) {
