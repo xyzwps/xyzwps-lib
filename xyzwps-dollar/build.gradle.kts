@@ -1,7 +1,8 @@
 plugins {
-    java
-    `maven-publish`
     jacoco
+    java
+    `java-library`
+    `maven-publish`
     id("me.champeau.jmh") version "0.7.1"
 }
 
@@ -19,7 +20,7 @@ repositories {
 
 dependencies {
     testImplementation(platform(libs.junit.bom))
-    testImplementation("org.junit.jupiter:junit-jupiter")
+    testImplementation(libs.junit.jupiter)
 }
 
 tasks.test {

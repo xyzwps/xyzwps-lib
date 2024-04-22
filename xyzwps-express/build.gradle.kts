@@ -16,11 +16,10 @@ repositories {
 dependencies {
     implementation(project(":xyzwps-bedrock"))
     implementation(project(":xyzwps-dollar"))
-    api(libs.jackson.core)
-    api(libs.jackson.databind)
+    api(libs.bundles.jackson)
 
     testImplementation(platform(libs.junit.bom))
-    testImplementation("org.junit.jupiter:junit-jupiter")
+    testImplementation(libs.junit.jupiter)
 }
 
 tasks.test {

@@ -14,7 +14,7 @@ repositories {
 
 dependencies {
     testImplementation(platform(libs.junit.bom))
-    testImplementation("org.junit.jupiter:junit-jupiter")
+    testImplementation(libs.junit.jupiter)
 }
 
 tasks.test {

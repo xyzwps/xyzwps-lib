@@ -14,10 +14,10 @@ repositories {
 dependencies {
     implementation(project(":xyzwps-express"))
     implementation(libs.dagger)
-    annotationProcessor(libs.dagger.complier)
+    annotationProcessor(libs.dagger.compiler)
 
     testImplementation(platform(libs.junit.bom))
-    testImplementation("org.junit.jupiter:junit-jupiter")
+    testImplementation(libs.junit.jupiter)
 }
 
 tasks.test {
