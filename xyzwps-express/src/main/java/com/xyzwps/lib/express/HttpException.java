@@ -14,6 +14,11 @@ public final class HttpException extends RuntimeException {
         this.status = status; // TODO: check valid status
     }
 
+    public HttpException(String message, int status) {
+        this(message, status, null);
+    }
+
+
     public static HttpException badRequest(String message) {
         return new HttpException(message, BAD_REQUEST, null);
     }
