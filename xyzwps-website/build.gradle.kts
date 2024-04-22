@@ -13,10 +13,10 @@ repositories {
 
 dependencies {
     implementation(project(":xyzwps-express"))
-    implementation("com.google.dagger:dagger:2.51.1")
-    annotationProcessor("com.google.dagger:dagger-compiler:2.51.1")
+    implementation(libs.dagger)
+    annotationProcessor(libs.dagger.complier)
 
-    testImplementation(platform("org.junit:junit-bom:5.9.1"))
+    testImplementation(platform(libs.junit.bom))
     testImplementation("org.junit.jupiter:junit-jupiter")
 }
 

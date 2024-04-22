@@ -16,10 +16,10 @@ repositories {
 dependencies {
     implementation(project(":xyzwps-bedrock"))
     implementation(project(":xyzwps-dollar"))
-    api("com.fasterxml.jackson.core:jackson-core:2.17.0") // TODO: api 不能用了，得想个办法
-    api("com.fasterxml.jackson.core:jackson-databind:2.17.0")
+    api(libs.jackson.core)
+    api(libs.jackson.databind)
 
-    testImplementation(platform("org.junit:junit-bom:5.9.1"))
+    testImplementation(platform(libs.junit.bom))
     testImplementation("org.junit.jupiter:junit-jupiter")
 }
 
