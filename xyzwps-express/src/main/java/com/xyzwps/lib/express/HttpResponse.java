@@ -2,7 +2,7 @@ package com.xyzwps.lib.express;
 
 public interface HttpResponse {
 
-    HttpResponse status(int status);
+    HttpResponse status(HttpStatus status);
 
     HttpResponse header(String name, String value);
 

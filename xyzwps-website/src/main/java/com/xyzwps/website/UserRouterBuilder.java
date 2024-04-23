@@ -7,6 +7,8 @@ import com.xyzwps.lib.express.middleware.Router;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import static com.xyzwps.lib.express.HttpStatus.*;
+
 @Singleton
 public class UserRouterBuilder {
 
@@ -18,17 +20,17 @@ public class UserRouterBuilder {
 
         this.router = new Router()
                 .get("/{id}", (req, resp, next) -> {
-                    resp.status(200).header("Content-Type", "application/json");
+                    resp.status(OK).header("Content-Type", "application/json");
                     resp.send("{\"msg\":\"get user\"}".getBytes());
                 })
                 .post("/{id}", jsonParser.json(Person.class), (req, resp, next) -> {
                     var body = req.body();
                     if (body instanceof Person p) {
-                        resp.status(200);
+                        resp.status(OK);
                         resp.header(HttpHeaders.CONTENT_TYPE, "application/json");
                         resp.send(("{\"name\":\"" + p.name() + "\"}").getBytes());
                     } else {
-                        resp.status(500);
+                        resp.status(INTERNAL_SERVER_ERROR);
                         resp.header(HttpHeaders.CONTENT_TYPE, "application/json");
                         resp.send(("{\"error\":true}").getBytes());
                     }
@@ -38,7 +40,7 @@ public class UserRouterBuilder {
                     next.call();
                 })
                 .get("/{id}/posts", (req, resp, next) -> {
-                    resp.status(200).header("Content-Type", "application/json");
+                    resp.status(OK).header("Content-Type", "application/json");
                     System.out.println(" > posts gotten");
                     resp.send("{\"msg\":\"get user posts\"}".getBytes());
                 });

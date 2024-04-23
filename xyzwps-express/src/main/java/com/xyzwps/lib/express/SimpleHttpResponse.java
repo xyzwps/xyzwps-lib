@@ -1,5 +1,7 @@
 package com.xyzwps.lib.express;
 
+import com.xyzwps.lib.bedrock.Args;
+
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.UncheckedIOException;
@@ -11,7 +13,7 @@ public final class SimpleHttpResponse implements HttpResponse {
     private final OutputStream out;
     private final HttpRequest request;
 
-    private int status = 200;
+    private HttpStatus status = HttpStatus.OK;
     private List<HeaderLine> headers = new ArrayList<>(8);
 
     public SimpleHttpResponse(OutputStream out, HttpRequest request) {
@@ -21,11 +23,14 @@ public final class SimpleHttpResponse implements HttpResponse {
 
 
     @Override
-    public HttpResponse status(int status) {
-        this.status = status;
+    public HttpResponse status(HttpStatus status) {
+        this.status = Args.notNull(status, "HttpStatus cannot be null");
         return this;
     }
 
+    /**
+     * TODO: 如何理解这个语义
+     */
     @Override
     public HttpResponse header(String name, String value) {
         this.headers.add(new HeaderLine(name, value));
@@ -41,7 +46,7 @@ public final class SimpleHttpResponse implements HttpResponse {
         try {
             out.write(request.protocol().getBytes());
             out.write(' ');
-            out.write(Integer.toString(status).getBytes());
+            out.write(Integer.toString(status.code).getBytes());
             out.write('\r');
             out.write('\n');
 

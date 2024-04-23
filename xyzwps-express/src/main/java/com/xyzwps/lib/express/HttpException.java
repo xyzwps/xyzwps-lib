@@ -20,10 +20,10 @@ public final class HttpException extends RuntimeException {
 
 
     public static HttpException badRequest(String message) {
-        return new HttpException(message, BAD_REQUEST, null);
+        return new HttpException(message, BAD_REQUEST_CODE, null);
     }
 
     public static HttpException payloadTooLarge(String message, Object payload) {
-        return new HttpException(message, BAD_REQUEST, payload);
+        return new HttpException(message, PAYLOAD_TOO_LARGE_CODE, payload);
     }
 }
