@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.Optional;
 import java.util.function.IntConsumer;
 
-public class SimpleRawRequestParser implements RequestParser {
+class SimpleRawRequestParser implements RequestParser {
 
     @Override
     public RawRequest parse(InputStream in) throws IOException {

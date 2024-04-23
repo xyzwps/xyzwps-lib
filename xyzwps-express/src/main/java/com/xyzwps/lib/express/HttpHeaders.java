@@ -48,7 +48,7 @@ public final class HttpHeaders {
                     try {
                         return Long.parseLong(value);
                     } catch (NumberFormatException e) {
-                        throw HttpException.badRequest("Invalid content length of " + value);
+                        throw HttpException.badRequest("Invalid content length of %s", value);
                     }
                 })
                 .orElse(0L);

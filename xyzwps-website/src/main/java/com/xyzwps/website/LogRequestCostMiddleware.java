@@ -17,9 +17,9 @@ public class LogRequestCostMiddleware implements HttpMiddleware {
 
     @Override
     public void call(HttpRequest req, HttpResponse resp, Next next) {
-        System.out.printf("-> %s %s \n", req.method(), req.url());
+        System.out.printf("-> %s %s \n", req.method(), req.path());
         long startTs = System.currentTimeMillis();
         next.call();
-        System.out.printf(" > %s %s cost %dms \n", req.method(), req.url(), System.currentTimeMillis() - startTs);
+        System.out.printf(" > %s %s cost %dms \n", req.method(), req.path(), System.currentTimeMillis() - startTs);
     }
 }

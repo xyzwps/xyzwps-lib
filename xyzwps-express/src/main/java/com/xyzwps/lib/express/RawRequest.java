@@ -4,11 +4,14 @@ package com.xyzwps.lib.express;
 import com.xyzwps.lib.express.common.ContentLengthInputStream;
 
 import java.io.InputStream;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public record RawRequest(StartLine startLine, List<HeaderLine> headerLines, InputStream in) {
+record RawRequest(StartLine startLine, List<HeaderLine> headerLines, InputStream in) {
 
     @Override
     public String toString() {
@@ -40,11 +43,24 @@ public record RawRequest(StartLine startLine, List<HeaderLine> headerLines, Inpu
         for (var header : headerLines) {
             headers.set(header.name(), header.value());
         }
-        return new HttpRequest(this.startLine.method, this.startLine.url, this.startLine.protocol,
+
+        var uri = toURI(this.startLine.url);
+
+
+
+        return new HttpRequest(this.startLine.method, uri, this.startLine.protocol,
                 headers,
                 new ContentLengthInputStream(this.in, BUFFER_LEN, headers.contentLength())
         );
     }
 
     private static final int BUFFER_LEN = 2048;
+
+    private static URI toURI(String uri) {
+        try {
+            return new URI(uri);
+        } catch (URISyntaxException e) {
+            throw new RuntimeException("XXX"); // TODO: 真抛出了会怎样？
+        }
+    }
 }

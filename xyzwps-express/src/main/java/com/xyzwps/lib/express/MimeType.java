@@ -2,7 +2,6 @@ package com.xyzwps.lib.express;
 
 import com.xyzwps.lib.bedrock.Args;
 
-import java.util.Optional;
 import java.util.regex.Pattern;
 
 /**
@@ -19,20 +18,20 @@ public final class MimeType {
         {
             type = type.toLowerCase();
             if (type.isEmpty()) {
-                throw new HttpException("Invalid subtype: must be a non-empty string", 400);
+                throw HttpException.badRequest("Invalid subtype: must be a non-empty string");
             }
             if (!solelyContainsHTTPTokenCodePoints(type)) {
-                throw new HttpException(String.format("Invalid type %s: must contain only HTTP token code points", type), 400);
+                throw HttpException.badRequest("Invalid type %s: must contain only HTTP token code points", type);
             }
             this.type = type;
         }
         {
             subtype = subtype.toLowerCase();
             if (subtype.isEmpty()) {
-                throw new HttpException("Invalid subtype: must be a non-empty string", 400);
+                throw HttpException.badRequest("Invalid subtype: must be a non-empty string");
             }
             if (!solelyContainsHTTPTokenCodePoints(subtype)) {
-                throw new HttpException(String.format("Invalid type %s: must contain only HTTP token code points", subtype), 400);
+                throw HttpException.badRequest("Invalid type %s: must contain only HTTP token code points", subtype);
             }
             this.subtype = subtype;
         }
@@ -84,7 +83,7 @@ public final class MimeType {
         }
 
         if (position >= input.length()) {
-            throw new HttpException("Invalid mime type \"" + type + '"', 400);
+            throw HttpException.badRequest("Invalid mime type \"" + type + '"');
         }
 
         // Skips past "/"
@@ -98,7 +97,7 @@ public final class MimeType {
 
         var subType = removeTrailingHTTPWhitespace(subTypeBuilder.toString());
         if (subType.isEmpty() || !solelyContainsHTTPTokenCodePoints(subType)) {
-            throw new HttpException("Invalid mime subtype \"" + subType + '"', 400);
+            throw HttpException.badRequest("Invalid mime subtype \"" + subType + '"');
         }
 
         var mime = new MimeType(type, subType);

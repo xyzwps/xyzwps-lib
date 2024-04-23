@@ -29,10 +29,10 @@ public final class MimeTypeParameters {
         value = Args.notNull(value, "MIME type parameter value cannot be null");
 
         if (!MimeType.solelyContainsHTTPTokenCodePoints(name)) {
-            throw new HttpException(String.format("Invalid MIME type parameter name \"%s\": only HTTP token code points are valid.", name), 400);
+            throw HttpException.badRequest("Invalid MIME type parameter name \"%s\": only HTTP token code points are valid.", name);
         }
         if (!MimeType.soleyContainsHTTPQuotedStringTokenCodePoints(value)) {
-            throw new HttpException(String.format("Invalid MIME type parameter value \"%s\":only HTTP quoted - string token code points are valid.", value), 400);
+            throw HttpException.badRequest("Invalid MIME type parameter value \"%s\":only HTTP quoted - string token code points are valid.", value);
         }
         this.map.put(name, value);
     }

@@ -105,7 +105,7 @@ public final class Router {
 
     public HttpMiddleware routes() {
         return (req, resp, next) -> {
-            var path = HPath.pathToSegmentStrings(req.url());
+            var path = HPath.pathToSegmentStrings(req.path());
             var mws = this.match(req.method(), path);
             var composed = HttpMiddleware.compose(mws);
             composed.call(req, resp, next);
