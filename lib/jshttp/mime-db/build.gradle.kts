@@ -1,12 +1,11 @@
 plugins {
     java
-    jacoco
-    `java-library`
+    groovy
 }
 
 group = "com.xyzwps.lib"
 version = findProperty("lib.version")!!
-// TODO: 使用 properties 文件的写法太啰嗦了，想办法改成插件
+
 java.sourceCompatibility = JavaVersion.valueOf("VERSION_" + findProperty("lib.java.version"))
 
 repositories {
@@ -14,11 +13,6 @@ repositories {
 }
 
 dependencies {
-    implementation(project(":lib:jshttp:mime-db"))
-    implementation(project(":xyzwps-bedrock"))
-    implementation(project(":xyzwps-dollar"))
-    api(libs.bundles.jackson)
-
     testImplementation(platform(libs.junit.bom))
     testImplementation(libs.junit.jupiter)
 }

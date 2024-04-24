@@ -1,5 +1,7 @@
 package com.xyzwps.lib.express;
 
+import com.xyzwps.lib.bedrock.Args;
+
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
@@ -8,8 +10,8 @@ public final class HttpSearchParams {
 
     private final Map<String, List<String>> map;
 
-    private HttpSearchParams() {
-        this.map = new TreeMap<>();
+    private HttpSearchParams(Map<String, List<String>> map) {
+        this.map = Args.notNull(map, "Argument map cannot be null");
     }
 
     public Optional<String> getFirst(String name) {
@@ -21,13 +23,15 @@ public final class HttpSearchParams {
         return list == null ? List.of() : list;
     }
 
+    public static final HttpSearchParams EMPTY = new HttpSearchParams(Map.of());
+
     public static HttpSearchParams parse(String rawQuery) {
-        var sp = new HttpSearchParams();
 
         if (rawQuery == null || rawQuery.isEmpty()) {
-            return sp;
+            return EMPTY;
         }
 
+        var map = new TreeMap<String, List<String>>();
         var segments = rawQuery.split("&");
         for (var it : segments) {
             if (it.isBlank()) continue;
@@ -44,10 +48,10 @@ public final class HttpSearchParams {
                 name = decode(it.substring(0, i));
                 value = decode(it.substring(i + 1));
             }
-            sp.map.computeIfAbsent(name, (x) -> new LinkedList<>()).add(value);
+            map.computeIfAbsent(name, (x) -> new LinkedList<>()).add(value);
         }
-        sp.map.replaceAll((k, v) -> List.copyOf(sp.map.get(k)));
-        return sp;
+        map.replaceAll((k, v) -> List.copyOf(map.get(k)));
+        return new HttpSearchParams(Collections.unmodifiableMap(map));
     }
 
     private static String decode(String str) {

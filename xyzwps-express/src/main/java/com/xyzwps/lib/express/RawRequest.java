@@ -6,7 +6,6 @@ import com.xyzwps.lib.express.common.ContentLengthInputStream;
 import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -45,8 +44,6 @@ record RawRequest(StartLine startLine, List<HeaderLine> headerLines, InputStream
         }
 
         var uri = toURI(this.startLine.url);
-
-
 
         return new HttpRequest(this.startLine.method, uri, this.startLine.protocol,
                 headers,

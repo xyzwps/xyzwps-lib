@@ -65,6 +65,11 @@ public final class MimeType {
         return sb.toString();
     }
 
+    private MimeType param(String name, String value) {
+        this.parameters.set(name, value);
+        return this;
+    }
+
     public static MimeType parse(String input) {
         Args.notNull(input, "Cannot parse null to " + MimeType.class.getSimpleName());
 
@@ -220,4 +225,20 @@ public final class MimeType {
     private record CollectResult(String value, int position) {
     }
 
+
+    public static final MimeType APPLICATION_JSON = new MimeType("application", "json");
+    public static final MimeType APPLICATION_JSON_UTF8 = new MimeType("application", "json").param("charset", "utf-8");
+
+    public static final MimeType IMAGE_ICO = new MimeType("image", "x-ico");
+    public static final MimeType IMAGE_GIF = new MimeType("image", "gif");
+    public static final MimeType IMAGE_JPEG = new MimeType("image", "jpeg");
+    public static final MimeType IMAGE_PNG = new MimeType("image", "png");
+    public static final MimeType IMAGE_SVG_XML = new MimeType("image", "svg+xml");
+
+    public static final MimeType TEXT_CSS = new MimeType("text", "css");
+    public static final MimeType TEXT_CSS_UTF8 = new MimeType("text", "css").param("charset", "utf-8");
+    public static final MimeType TEXT_HTML = new MimeType("text", "html");
+    public static final MimeType TEXT_HTML_UTF8 = new MimeType("text", "html").param("charset", "utf-8");
+    public static final MimeType TEXT_JS = new MimeType("text", "javascript");
+    public static final MimeType TEXT_JS_UTF8 = new MimeType("text", "javascript").param("charset", "utf-8");
 }

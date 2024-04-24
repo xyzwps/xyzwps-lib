@@ -16,7 +16,7 @@ public class HttpServerLayer {
                            LogRequestCostMiddleware logRequestCostMiddleware) {
         this.server = new Server()
                 .use(logRequestCostMiddleware)
-                .use(new Static("/").serve())
+                .use(new Static("/Users/weiliangyu").serve())
                 .use(routerBuilder.router.routes());
     }
 
