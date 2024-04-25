@@ -3,7 +3,7 @@ plugins {
     groovy
 }
 
-group = "lib.jshttp"
+group = "lib.jsdom"
 version = "0.0.1"
 
 java.sourceCompatibility = JavaVersion.valueOf("VERSION_" + findProperty("lib.java.version"))

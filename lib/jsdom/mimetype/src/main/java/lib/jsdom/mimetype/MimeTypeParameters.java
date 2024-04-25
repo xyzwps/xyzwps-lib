@@ -1,9 +1,9 @@
-package com.xyzwps.lib.express;
+package lib.jsdom.mimetype;
 
-import com.xyzwps.lib.bedrock.Args;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.function.BiConsumer;
 
@@ -15,24 +15,26 @@ public final class MimeTypeParameters {
     }
 
     public Optional<String> get(String name) {
-        name = Args.notNull(name, "MIME type parameter name cannot be null").toLowerCase();
+        name = Objects.requireNonNull(name, "MIME type parameter name cannot be null").toLowerCase();
         return Optional.ofNullable(this.map.get(name));
     }
 
     public boolean has(String name) {
-        name = Args.notNull(name, "MIME type parameter name cannot be null").toLowerCase();
+        name = Objects.requireNonNull(name, "MIME type parameter name cannot be null").toLowerCase();
         return this.map.containsKey(name);
     }
 
     public void set(String name, String value) {
-        name = Args.notNull(name, "MIME type parameter name cannot be null").toLowerCase();
-        value = Args.notNull(value, "MIME type parameter value cannot be null");
+        name = Objects.requireNonNull(name, "MIME type parameter name cannot be null").toLowerCase();
+        value = Objects.requireNonNull(value, "MIME type parameter value cannot be null");
 
         if (!MimeType.solelyContainsHTTPTokenCodePoints(name)) {
-            throw HttpException.badRequest("Invalid MIME type parameter name \"%s\": only HTTP token code points are valid.", name);
+            throw new IllegalArgumentException("Invalid MIME type parameter name \"" + name +
+                                               "\": only HTTP token code points are valid.");
         }
         if (!MimeType.soleyContainsHTTPQuotedStringTokenCodePoints(value)) {
-            throw HttpException.badRequest("Invalid MIME type parameter value \"%s\":only HTTP quoted - string token code points are valid.", value);
+            throw new IllegalArgumentException("Invalid MIME type parameter value \"" + value
+                                               + "\":only HTTP quoted - string token code points are valid.");
         }
         this.map.put(name, value);
     }
@@ -42,7 +44,7 @@ public final class MimeTypeParameters {
     }
 
     public void delete(String name) {
-        name = Args.notNull(name, "Parameter name cannot be null").toLowerCase();
+        name = Objects.requireNonNull(name, "Parameter name cannot be null").toLowerCase();
         this.map.remove(name);
     }
 

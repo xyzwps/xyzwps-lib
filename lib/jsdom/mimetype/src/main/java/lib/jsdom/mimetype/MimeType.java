@@ -1,6 +1,4 @@
-package com.xyzwps.lib.express;
-
-import com.xyzwps.lib.bedrock.Args;
+package lib.jsdom.mimetype;
 
 import java.util.regex.Pattern;
 
@@ -18,20 +16,20 @@ public final class MimeType {
         {
             type = type.toLowerCase();
             if (type.isEmpty()) {
-                throw HttpException.badRequest("Invalid subtype: must be a non-empty string");
+                throw new IllegalArgumentException("Invalid subtype: must be a non-empty string");
             }
             if (!solelyContainsHTTPTokenCodePoints(type)) {
-                throw HttpException.badRequest("Invalid type %s: must contain only HTTP token code points", type);
+                throw new IllegalArgumentException("Invalid type " + type + ": must contain only HTTP token code points");
             }
             this.type = type;
         }
         {
             subtype = subtype.toLowerCase();
             if (subtype.isEmpty()) {
-                throw HttpException.badRequest("Invalid subtype: must be a non-empty string");
+                throw new IllegalArgumentException("Invalid subtype: must be a non-empty string");
             }
             if (!solelyContainsHTTPTokenCodePoints(subtype)) {
-                throw HttpException.badRequest("Invalid type %s: must contain only HTTP token code points", subtype);
+                throw new IllegalArgumentException("Invalid type " + subtype + ": must contain only HTTP token code points");
             }
             this.subtype = subtype;
         }
@@ -71,7 +69,9 @@ public final class MimeType {
     }
 
     public static MimeType parse(String input) {
-        Args.notNull(input, "Cannot parse null to " + MimeType.class.getSimpleName());
+        if (input == null) {
+            throw new IllegalArgumentException("Cannot parse null to " + MimeType.class.getSimpleName());
+        }
 
         input = removeLeadingAndTrailingHTTPWhitespace(input);
 
@@ -88,7 +88,7 @@ public final class MimeType {
         }
 
         if (position >= input.length()) {
-            throw HttpException.badRequest("Invalid mime type \"" + type + '"');
+            throw new IllegalArgumentException("Invalid mime type \"" + type + '"');
         }
 
         // Skips past "/"
@@ -102,7 +102,7 @@ public final class MimeType {
 
         var subType = removeTrailingHTTPWhitespace(subTypeBuilder.toString());
         if (subType.isEmpty() || !solelyContainsHTTPTokenCodePoints(subType)) {
-            throw HttpException.badRequest("Invalid mime subtype \"" + subType + '"');
+            throw new IllegalArgumentException("Invalid mime subtype \"" + subType + '"');
         }
 
         var mime = new MimeType(type, subType);
@@ -225,20 +225,4 @@ public final class MimeType {
     private record CollectResult(String value, int position) {
     }
 
-
-    public static final MimeType APPLICATION_JSON = new MimeType("application", "json");
-    public static final MimeType APPLICATION_JSON_UTF8 = new MimeType("application", "json").param("charset", "utf-8");
-
-    public static final MimeType IMAGE_ICO = new MimeType("image", "x-ico");
-    public static final MimeType IMAGE_GIF = new MimeType("image", "gif");
-    public static final MimeType IMAGE_JPEG = new MimeType("image", "jpeg");
-    public static final MimeType IMAGE_PNG = new MimeType("image", "png");
-    public static final MimeType IMAGE_SVG_XML = new MimeType("image", "svg+xml");
-
-    public static final MimeType TEXT_CSS = new MimeType("text", "css");
-    public static final MimeType TEXT_CSS_UTF8 = new MimeType("text", "css").param("charset", "utf-8");
-    public static final MimeType TEXT_HTML = new MimeType("text", "html");
-    public static final MimeType TEXT_HTML_UTF8 = new MimeType("text", "html").param("charset", "utf-8");
-    public static final MimeType TEXT_JS = new MimeType("text", "javascript");
-    public static final MimeType TEXT_JS_UTF8 = new MimeType("text", "javascript").param("charset", "utf-8");
 }

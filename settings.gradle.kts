@@ -20,7 +20,6 @@ dependencyResolutionManagement {
     }
 }
 
-
 include("xyzwps-bean")
 include("xyzwps-bedrock")
 include("xyzwps-collection")
@@ -28,4 +27,5 @@ include("xyzwps-dollar")
 include("xyzwps-express")
 include("xyzwps-json")
 include("xyzwps-website")
+include("lib:jsdom:mimetype")
 include("lib:jshttp:mime-db")

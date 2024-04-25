@@ -1,5 +1,7 @@
 package com.xyzwps.lib.express;
 
+import lib.jsdom.mimetype.MimeType;
+
 import java.net.URI;
 import java.util.Objects;
 import java.util.Optional;

@@ -14,6 +14,7 @@ repositories {
 }
 
 dependencies {
+    implementation(project(":lib:jsdom:mimetype"))
     implementation(project(":lib:jshttp:mime-db"))
     implementation(project(":xyzwps-bedrock"))
     implementation(project(":xyzwps-dollar"))
