@@ -6,12 +6,21 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+/**
+ * Size-fixed ordered int array.
+ */
 public class FixedSizeOrderedIntArray {
     private final int cap;
     private final Direction direction;
     private int count;
     private final int[] array;
 
+    /**
+     * Constructor.
+     *
+     * @param cap       array size
+     * @param direction order direction
+     */
     public FixedSizeOrderedIntArray(final int cap, Direction direction) {
         if (cap < 1) {
             throw new IllegalArgumentException("cap cannot be less than 1");
@@ -22,6 +31,11 @@ public class FixedSizeOrderedIntArray {
         this.array = new int[cap];
     }
 
+    /**
+     * Add an int value in-order.
+     *
+     * @param v to be added
+     */
     public void add(int v) {
         int at = findInsertAt(v);
         if (count < cap) {
@@ -58,10 +72,14 @@ public class FixedSizeOrderedIntArray {
             default -> throw new IllegalStateException("Impossible");
         }
 
-
         return count;
     }
 
+    /**
+     * Create a new list containing all array elements
+     *
+     * @return new list containing all array elements
+     */
     public List<Integer> toList() {
         var list = new ArrayList<Integer>();
         for (int i = 0; i < count; i++) {

@@ -3,6 +3,9 @@ package com.xyzwps.lib.dollar.util;
 import java.util.Comparator;
 import java.util.function.Function;
 
+/**
+ * Utilities for create {@link Comparator}.
+ */
 public final class Comparators {
 
     /**
@@ -28,5 +31,9 @@ public final class Comparators {
      */
     public static <E, K extends Comparable<K>> Comparator<E> descComparator(Function<E, K> toKey) {
         return (o1, o2) -> toKey.apply(o2).compareTo(toKey.apply(o1));
+    }
+
+    private Comparators() throws IllegalAccessException {
+        throw new IllegalAccessException();
     }
 }

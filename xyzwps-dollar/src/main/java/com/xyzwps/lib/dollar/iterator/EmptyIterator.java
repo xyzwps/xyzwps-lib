@@ -7,6 +7,9 @@ import java.util.NoSuchElementException;
  * An empty iterator. You can get nothing here.
  */
 public enum EmptyIterator implements Iterator<Object> {
+    /**
+     * Singleton.
+     */
     INSTANCE;
 
     @Override

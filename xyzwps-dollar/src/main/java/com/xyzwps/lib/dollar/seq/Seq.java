@@ -14,7 +14,7 @@ import static com.xyzwps.lib.dollar.util.Comparators.*;
 /**
  * The sequential handlers of elements.
  *
- * @param <T>
+ * @param <T> seq element type
  */
 public interface Seq<T> {
 

@@ -10,7 +10,7 @@ import java.util.function.Function;
  *  <li><a href="https://benlesh.com/posts/learning-observable-by-building-observable/">Learning Observable By Building Observable</a></li>
  *  <li><a href="https://benlesh.medium.com/learning-observable-by-building-observable-d5da57405d87">Learning Observable By Building Observable</a></li>
  * </ul>
- * @param <T>
+ * @param <T> observable element type
  */
 public class Observable<T> {
 

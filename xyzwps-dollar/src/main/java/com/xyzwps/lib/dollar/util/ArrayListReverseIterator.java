@@ -16,6 +16,11 @@ public final class ArrayListReverseIterator<T> implements Iterator<T> {
 
     private int index;
 
+    /**
+     * Constructor.
+     *
+     * @param list not null
+     */
     public ArrayListReverseIterator(ArrayList<T> list) {
         this.list = Objects.requireNonNull(list);
         this.index = list.size();

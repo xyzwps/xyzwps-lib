@@ -19,6 +19,7 @@ import static com.xyzwps.lib.dollar.util.Comparators.*;
  * TODO: optimize for RandomAccess
  * TODO: 写中文文档
  * TODO: add examples
+ * TODO: all apis should be null tolerant
  */
 public final class Dollar {
 
@@ -105,12 +106,12 @@ public final class Dollar {
          */
         public static boolean isFalsey(Object value) {
             return value == null
-                    || Objects.equals(value, false)
-                    || "".equals(value)
-                    || Objects.equals(value, 0)
-                    || Objects.equals(value, 0L)
-                    || Objects.equals(value, 0.0)
-                    || Objects.equals(value, 0.0f);
+                   || Objects.equals(value, false)
+                   || "".equals(value)
+                   || Objects.equals(value, 0)
+                   || Objects.equals(value, 0L)
+                   || Objects.equals(value, 0.0)
+                   || Objects.equals(value, 0.0f);
         }
 
         /**
