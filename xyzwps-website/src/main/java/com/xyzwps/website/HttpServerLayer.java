@@ -2,6 +2,8 @@ package com.xyzwps.website;
 
 import com.xyzwps.lib.express.Server;
 import com.xyzwps.lib.express.middleware.Static;
+import com.xyzwps.website.middleware.LogRequestCostMiddleware;
+import com.xyzwps.website.modules.IndexRouterBuilder;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;

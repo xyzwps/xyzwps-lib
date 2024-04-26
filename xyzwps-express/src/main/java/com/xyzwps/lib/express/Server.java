@@ -2,6 +2,8 @@ package com.xyzwps.lib.express;
 
 import com.xyzwps.lib.express.common.Middleware2Composer;
 import com.xyzwps.lib.express.common.Next;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
@@ -9,6 +11,8 @@ import java.net.ServerSocket;
 import java.net.Socket;
 
 public class Server {
+
+    private static final Logger log = LoggerFactory.getLogger(Server.class);
 
     private HttpMiddleware middleware = HttpMiddleware.DO_NOTHING;
 
@@ -24,6 +28,7 @@ public class Server {
                 var socket = serverSocket.accept();
                 this.handleSocket(socket);
             } catch (IOException e) {
+                log.error("Socket handling failed with uncatched error", e);
                 throw new UncheckedIOException("Accept server socket failed", e);
             }
         }
@@ -33,6 +38,7 @@ public class Server {
         try {
             return new ServerSocket(port);
         } catch (IOException e) {
+            log.error("Create server socket failed", e);
             throw new UncheckedIOException("Create server socket failed", e);
         }
     }
@@ -48,7 +54,7 @@ public class Server {
 
                 this.middleware.call(request, response, Next.EMPTY);
 
-//                socket.shutdownOutput(); // TODO: keep-alive
+                socket.close(); // TODO: keep-alive
             } catch (IOException e) {
                 System.out.println(e); // TODO: handle exception
             } catch (Exception e) {

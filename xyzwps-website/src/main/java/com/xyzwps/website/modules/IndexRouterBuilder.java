@@ -1,8 +1,9 @@
-package com.xyzwps.website;
+package com.xyzwps.website.modules;
 
 import com.xyzwps.lib.express.HttpHeaders;
 import com.xyzwps.lib.express.HttpStatus;
 import com.xyzwps.lib.express.middleware.Router;
+import com.xyzwps.website.modules.user.UserRouterBuilder;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;

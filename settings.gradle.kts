@@ -16,6 +16,10 @@ dependencyResolutionManagement {
             version("junit", "5.10.2")
             library("junit-bom", "org.junit", "junit-bom").versionRef("junit")
             library("junit-jupiter", "org.junit.jupiter", "junit-jupiter").versionRef("junit")
+
+            version("slf4j", "2.0.13")
+            library("slf4j-api", "org.slf4j", "slf4j-api").versionRef("slf4j")
+            library("slf4j-simple", "org.slf4j", "slf4j-simple").versionRef("slf4j")
         }
     }
 }

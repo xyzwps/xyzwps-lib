@@ -127,7 +127,7 @@ class SimpleRawRequestParser implements RequestParser {
         void read(IntConsumer consumer) throws IOException {
             while (true) {
                 int b = in.read();
-                if (b < 0) throw new IOException("Unexpected byte.");
+                if (b < 0) throw new IOException("Unexpected byte " + b);
 
                 switch (state) {
                     case 0 -> {

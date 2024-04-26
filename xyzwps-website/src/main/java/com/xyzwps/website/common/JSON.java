@@ -1,4 +1,4 @@
-package com.xyzwps.website;
+package com.xyzwps.website.common;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 

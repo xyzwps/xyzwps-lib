@@ -1,6 +1,5 @@
 package com.xyzwps.lib.dollar;
 
-import com.xyzwps.lib.dollar.seq.Seq;
 import com.xyzwps.lib.dollar.util.Counter;
 import com.xyzwps.lib.dollar.util.ObjIntFunction;
 import com.xyzwps.lib.dollar.util.ObjIntPredicate;

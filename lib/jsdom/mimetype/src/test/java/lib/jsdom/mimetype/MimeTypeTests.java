@@ -1,4 +1,4 @@
-package com.xyzwps.lib.express;
+package lib.jsdom.mimetype;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
@@ -59,12 +59,12 @@ class MimeTypeTests {
 
         @Test
         void rejects_setting_only_HTTP_token_code_points_in_the_name() {
-            assertThrows(HttpException.class, () -> mimeType.parameters.set("@", "a"));
+            assertThrows(IllegalArgumentException.class, () -> mimeType.parameters.set("@", "a"));
         }
 
         @Test
         void rejects_setting_only_HTTP_quoted_string_token_code_points_in_the_value() {
-            assertThrows(HttpException.class, () -> mimeType.parameters.set("a", "\u0019"));
+            assertThrows(IllegalArgumentException.class, () -> mimeType.parameters.set("a", "\u0019"));
         }
 
         @Test
@@ -106,8 +106,8 @@ class MimeTypeTests {
 
         @Test
         void throws_on_unparseable_MIME_types() {
-            assertThrows(HttpException.class, () -> MimeType.parse("asdf"));
-            assertThrows(HttpException.class, () -> MimeType.parse("text/html™"));
+            assertThrows(IllegalArgumentException.class, () -> MimeType.parse("asdf"));
+            assertThrows(IllegalArgumentException.class, () -> MimeType.parse("text/html™"));
         }
     }
 }
