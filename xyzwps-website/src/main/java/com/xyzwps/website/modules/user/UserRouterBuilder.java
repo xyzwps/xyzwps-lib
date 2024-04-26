@@ -1,6 +1,6 @@
 package com.xyzwps.website.modules.user;
 
-import com.xyzwps.lib.express.HttpHeaders;
+import com.xyzwps.lib.express.server.HttpHeaders;
 import com.xyzwps.lib.express.middleware.JsonParser;
 import com.xyzwps.lib.express.middleware.Router;
 import com.xyzwps.website.common.JSON;
@@ -9,7 +9,7 @@ import com.xyzwps.website.Person;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import static com.xyzwps.lib.express.HttpStatus.*;
+import static com.xyzwps.lib.express.core.HttpStatus.*;
 
 @Singleton
 public class UserRouterBuilder {

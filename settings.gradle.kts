@@ -20,6 +20,9 @@ dependencyResolutionManagement {
             version("slf4j", "2.0.13")
             library("slf4j-api", "org.slf4j", "slf4j-api").versionRef("slf4j")
             library("slf4j-simple", "org.slf4j", "slf4j-simple").versionRef("slf4j")
+
+            version("undertow", "2.3.13.Final")
+            library("undertow-core", "io.undertow", "undertow-core").versionRef("undertow")
         }
     }
 }
@@ -28,7 +31,9 @@ include("xyzwps-bean")
 include("xyzwps-bedrock")
 include("xyzwps-collection")
 include("xyzwps-dollar")
-include("xyzwps-express")
+include("xyzwps-express:server")
+include("xyzwps-express:server-core")
+include("xyzwps-express:server-undertow")
 include("xyzwps-json")
 include("xyzwps-website")
 include("lib:jsdom:mimetype")
