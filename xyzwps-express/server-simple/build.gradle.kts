@@ -19,7 +19,6 @@ dependencies {
     implementation(project(":xyzwps-bedrock"))
     implementation(project(":xyzwps-dollar"))
     implementation(project(":xyzwps-express"))
-    api(libs.bundles.jackson)
     api(libs.slf4j.api)
     api(libs.slf4j.simple)
 

@@ -1,4 +1,4 @@
-package com.xyzwps.lib.express.common;
+package com.xyzwps.lib.express.server.common;
 
 import com.xyzwps.lib.bedrock.Args;
 import com.xyzwps.lib.bedrock.UnimplementedException;

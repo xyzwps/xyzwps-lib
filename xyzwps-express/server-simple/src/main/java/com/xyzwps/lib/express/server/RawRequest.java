@@ -1,7 +1,8 @@
 package com.xyzwps.lib.express.server;
 
 
-import com.xyzwps.lib.express.common.ContentLengthInputStream;
+import com.xyzwps.lib.express.HttpHeaders;
+import com.xyzwps.lib.express.server.common.ContentLengthInputStream;
 import com.xyzwps.lib.express.HttpMethod;
 
 import java.io.InputStream;

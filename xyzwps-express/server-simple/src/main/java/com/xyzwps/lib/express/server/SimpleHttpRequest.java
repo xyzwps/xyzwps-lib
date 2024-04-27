@@ -1,5 +1,6 @@
 package com.xyzwps.lib.express.server;
 
+import com.xyzwps.lib.express.HttpHeaders;
 import com.xyzwps.lib.express.HttpMethod;
 import com.xyzwps.lib.express.HttpRequest;
 import lib.jsdom.mimetype.MimeType;

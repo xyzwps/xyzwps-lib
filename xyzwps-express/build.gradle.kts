@@ -14,9 +14,11 @@ repositories {
 }
 
 dependencies {
+    implementation(project(":lib:jsdom:mimetype"))
+    implementation(project(":lib:jshttp:mime-db"))
     implementation(project(":xyzwps-bedrock"))
     implementation(project(":xyzwps-dollar"))
-    implementation(project(":lib:jsdom:mimetype"))
+    api(libs.bundles.jackson)
 
     testImplementation(platform(libs.junit.bom))
     testImplementation(libs.junit.jupiter)

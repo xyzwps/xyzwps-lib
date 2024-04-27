@@ -1,6 +1,6 @@
 package com.xyzwps.website.modules.user;
 
-import com.xyzwps.lib.express.server.HttpHeaders;
+import com.xyzwps.lib.express.HttpHeaders;
 import com.xyzwps.lib.express.middleware.JsonParser;
 import com.xyzwps.lib.express.middleware.Router;
 import com.xyzwps.website.common.JSON;
