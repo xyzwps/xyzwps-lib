@@ -1,12 +1,12 @@
 package com.xyzwps.lib.express.server;
 
-import com.xyzwps.lib.express.core.HttpMethod;
-import com.xyzwps.lib.express.core.HttpRequest;
+import com.xyzwps.lib.express.HttpMethod;
+import com.xyzwps.lib.express.HttpRequest;
 import lib.jsdom.mimetype.MimeType;
 
 import java.net.URI;
+import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 
 public final class SimpleHttpRequest implements HttpRequest {
     private final HttpMethod method;
@@ -18,8 +18,7 @@ public final class SimpleHttpRequest implements HttpRequest {
 
     // TODO: attribute
 
-    @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
-    private final Optional<MimeType> contentType;
+    private final MimeType contentType;
 
     public SimpleHttpRequest(HttpMethod method, URI uri, String protocol, HttpHeaders headers, Object body) {
         this.path = Objects.requireNonNull(uri).getPath();
@@ -29,7 +28,9 @@ public final class SimpleHttpRequest implements HttpRequest {
         this.protocol = Objects.requireNonNull(protocol);
         this.headers = Objects.requireNonNull(headers);
         this.body = body;
-        this.contentType = headers.contentType().map(MimeType::parse);
+
+        var contentTypeStr = headers.contentType();
+        this.contentType = contentTypeStr == null ? null : MimeType.parse(contentTypeStr);
     }
 
     @Override
@@ -48,8 +49,13 @@ public final class SimpleHttpRequest implements HttpRequest {
     }
 
     @Override
-    public Optional<String> header(String name) {
+    public String header(String name) {
         return headers.getFirst(name);
+    }
+
+    @Override
+    public List<String> headers(String name) {
+        return headers.getAll(name);
     }
 
     @Override
@@ -63,7 +69,7 @@ public final class SimpleHttpRequest implements HttpRequest {
     }
 
     @Override
-    public Optional<MimeType> contentType() {
+    public MimeType contentType() {
         return contentType;
     }
 }

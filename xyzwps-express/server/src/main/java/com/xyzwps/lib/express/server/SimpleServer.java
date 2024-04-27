@@ -1,8 +1,8 @@
 package com.xyzwps.lib.express.server;
 
-import com.xyzwps.lib.express.core.HttpMiddleware;
-import com.xyzwps.lib.express.core.Middleware2Composer;
-import com.xyzwps.lib.express.core.Next;
+import com.xyzwps.lib.express.HttpMiddleware;
+import com.xyzwps.lib.express.util.Middleware2Composer;
+import com.xyzwps.lib.express.Next;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

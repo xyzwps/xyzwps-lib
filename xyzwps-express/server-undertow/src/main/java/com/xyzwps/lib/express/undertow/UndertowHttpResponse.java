@@ -1,8 +1,8 @@
 package com.xyzwps.lib.express.undertow;
 
 import com.xyzwps.lib.bedrock.Args;
-import com.xyzwps.lib.express.core.HttpResponse;
-import com.xyzwps.lib.express.core.HttpStatus;
+import com.xyzwps.lib.express.HttpResponse;
+import com.xyzwps.lib.express.HttpStatus;
 import io.undertow.server.HttpServerExchange;
 import io.undertow.util.HttpString;
 

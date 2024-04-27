@@ -1,8 +1,6 @@
-package com.xyzwps.lib.express.core;
+package com.xyzwps.lib.express;
 
 import com.xyzwps.lib.bedrock.Args;
-
-import static com.xyzwps.lib.express.core.HttpStatus.*;
 
 public final class HttpException extends RuntimeException {
 

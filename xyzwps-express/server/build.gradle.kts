@@ -18,7 +18,7 @@ dependencies {
     implementation(project(":lib:jshttp:mime-db"))
     implementation(project(":xyzwps-bedrock"))
     implementation(project(":xyzwps-dollar"))
-    implementation(project(":xyzwps-express:server-core"))
+    implementation(project(":xyzwps-express"))
     api(libs.bundles.jackson)
     api(libs.slf4j.api)
     api(libs.slf4j.simple)

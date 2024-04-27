@@ -1,4 +1,4 @@
-package com.xyzwps.lib.express.core;
+package com.xyzwps.lib.express;
 
 import java.util.Objects;
 

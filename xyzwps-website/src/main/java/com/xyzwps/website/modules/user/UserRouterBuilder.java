@@ -9,7 +9,7 @@ import com.xyzwps.website.Person;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import static com.xyzwps.lib.express.core.HttpStatus.*;
+import static com.xyzwps.lib.express.HttpStatus.*;
 
 @Singleton
 public class UserRouterBuilder {

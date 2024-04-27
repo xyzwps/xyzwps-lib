@@ -1,5 +1,6 @@
-package com.xyzwps.lib.express.core;
+package com.xyzwps.lib.express.util;
 
+import com.xyzwps.lib.express.Next;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
@@ -8,7 +9,7 @@ import java.util.Collections;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static com.xyzwps.lib.express.core.Middleware2Composer.compose;
+import static com.xyzwps.lib.express.util.Middleware2Composer.compose;
 
 class Middleware2ComposerTests {
 

@@ -1,6 +1,6 @@
 package com.xyzwps.lib.express.server;
 
-import com.xyzwps.lib.express.core.HttpMethod;
+import com.xyzwps.lib.express.HttpMethod;
 
 import java.io.*;
 import java.util.ArrayList;

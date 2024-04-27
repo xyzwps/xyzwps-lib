@@ -1,9 +1,9 @@
 package com.xyzwps.lib.express.middleware;
 
 import com.xyzwps.lib.express.server.HttpHeaders;
-import com.xyzwps.lib.express.core.HttpMethod;
-import com.xyzwps.lib.express.core.HttpMiddleware;
-import com.xyzwps.lib.express.core.HttpStatus;
+import com.xyzwps.lib.express.HttpMethod;
+import com.xyzwps.lib.express.HttpMiddleware;
+import com.xyzwps.lib.express.HttpStatus;
 import lib.jshttp.mimedb.MimeDb;
 
 import java.io.BufferedInputStream;

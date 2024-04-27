@@ -1,9 +1,9 @@
 package com.xyzwps.lib.express.middleware;
 
 import com.xyzwps.lib.bedrock.Args;
-import com.xyzwps.lib.express.core.HttpMethod;
-import com.xyzwps.lib.express.core.HttpMiddleware;
-import com.xyzwps.lib.express.core.HPath;
+import com.xyzwps.lib.express.HttpMethod;
+import com.xyzwps.lib.express.HttpMiddleware;
+import com.xyzwps.lib.express.HPath;
 
 import java.util.ArrayList;
 import java.util.Arrays;

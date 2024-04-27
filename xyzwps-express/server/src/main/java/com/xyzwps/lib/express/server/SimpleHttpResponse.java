@@ -1,8 +1,8 @@
 package com.xyzwps.lib.express.server;
 
 import com.xyzwps.lib.bedrock.Args;
-import com.xyzwps.lib.express.core.HttpResponse;
-import com.xyzwps.lib.express.core.HttpStatus;
+import com.xyzwps.lib.express.HttpResponse;
+import com.xyzwps.lib.express.HttpStatus;
 
 import java.io.IOException;
 import java.io.OutputStream;

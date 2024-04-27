@@ -2,7 +2,7 @@ package com.xyzwps.lib.express.server;
 
 
 import com.xyzwps.lib.express.common.ContentLengthInputStream;
-import com.xyzwps.lib.express.core.HttpMethod;
+import com.xyzwps.lib.express.HttpMethod;
 
 import java.io.InputStream;
 import java.net.URI;

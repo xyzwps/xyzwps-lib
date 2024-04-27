@@ -2,7 +2,7 @@ package com.xyzwps.lib.express.middleware;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.xyzwps.lib.bedrock.Args;
-import com.xyzwps.lib.express.core.HttpMiddleware;
+import com.xyzwps.lib.express.HttpMiddleware;
 import lib.jsdom.mimetype.MimeType;
 
 import java.io.IOException;
@@ -21,8 +21,14 @@ public final class JsonParser {
 
     public <T> HttpMiddleware json(Class<T> tClass) {
         return (req, resp, next) -> {
-            var contentType = req.contentType().filter(MimeType::isApplicationJson).orElse(null);
+            var contentType = req.contentType();
+
             if (contentType == null) {
+                next.call();
+                return;
+            }
+
+            if (!contentType.isApplicationJson()) {
                 next.call();
                 return;
             }

@@ -1,6 +1,6 @@
 package com.xyzwps.website;
 
-import com.xyzwps.lib.express.core.Server;
+import com.xyzwps.lib.express.Server;
 import com.xyzwps.lib.express.middleware.Static;
 import com.xyzwps.lib.express.undertow.UndertowServer;
 import com.xyzwps.website.middleware.LogRequestCostMiddleware;
@@ -23,8 +23,8 @@ public class HttpServerLayer {
                 .use(routerBuilder.router.routes());
     }
 
-    public void listen(int port) {
+    public void start(int port) {
         System.out.printf("=====> server is listening at %d <=====\n", port);
-        server.listen(port);
+        server.listen(port).start();
     }
 }

@@ -1,12 +1,12 @@
 package com.xyzwps.lib.express.undertow;
 
 import com.xyzwps.lib.bedrock.Args;
-import com.xyzwps.lib.express.core.HttpMethod;
-import com.xyzwps.lib.express.core.HttpRequest;
+import com.xyzwps.lib.express.HttpMethod;
+import com.xyzwps.lib.express.HttpRequest;
 import io.undertow.server.HttpServerExchange;
 import lib.jsdom.mimetype.MimeType;
 
-import java.util.Optional;
+import java.util.List;
 
 class UndertowHttpRequest implements HttpRequest {
 
@@ -19,7 +19,7 @@ class UndertowHttpRequest implements HttpRequest {
     UndertowHttpRequest(HttpServerExchange exchange) {
         this.exchange = Args.notNull(exchange, "Exchange cannot be null. Maybe a bug.");
         this.method = HttpMethod.valueOf(exchange.getRequestMethod().toString()); // TODO: 处理错误
-        exchange.startBlocking();
+        exchange.startBlocking(); // TODO: wrap start blocking with lazy input stream
         this.body = exchange.getInputStream();
     }
 
@@ -39,13 +39,22 @@ class UndertowHttpRequest implements HttpRequest {
     }
 
     @Override
-    public Optional<String> header(String name) {
-        return exchange.getRequestHeaders().get(name).stream().findFirst();
+    public String header(String name) {
+        return exchange.getRequestHeaders()
+                .get(Args.notNull(name, "Header name cannot be null"))
+                .stream().findFirst().orElse(null);
     }
 
     @Override
-    public Optional<MimeType> contentType() {
-        return exchange.getRequestHeaders().get("Content-Type").stream().findFirst().map(MimeType::parse);
+    public List<String> headers(String name) {
+        return List.copyOf(exchange.getRequestHeaders()
+                .get(Args.notNull(name, "Header name cannot be null")));
+    }
+
+    @Override
+    public MimeType contentType() {
+        return exchange.getRequestHeaders().get("Content-Type")
+                .stream().findFirst().map(MimeType::parse).orElse(null);
         // TODO: http headers
     }
 

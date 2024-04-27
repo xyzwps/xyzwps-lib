@@ -17,7 +17,7 @@ dependencies {
     api(libs.undertow.core)
     implementation(project(":lib:jsdom:mimetype"))
     implementation(project(":xyzwps-bedrock"))
-    implementation(project(":xyzwps-express:server-core"))
+    implementation(project(":xyzwps-express"))
 
     testImplementation(platform(libs.junit.bom))
     testImplementation(libs.junit.jupiter)

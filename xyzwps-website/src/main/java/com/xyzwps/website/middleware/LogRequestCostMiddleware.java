@@ -1,9 +1,9 @@
 package com.xyzwps.website.middleware;
 
-import com.xyzwps.lib.express.core.HttpMiddleware;
-import com.xyzwps.lib.express.core.HttpRequest;
-import com.xyzwps.lib.express.core.HttpResponse;
-import com.xyzwps.lib.express.core.Next;
+import com.xyzwps.lib.express.HttpMiddleware;
+import com.xyzwps.lib.express.HttpRequest;
+import com.xyzwps.lib.express.HttpResponse;
+import com.xyzwps.lib.express.Next;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;

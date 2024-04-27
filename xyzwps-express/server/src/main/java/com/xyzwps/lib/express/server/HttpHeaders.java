@@ -1,7 +1,7 @@
 package com.xyzwps.lib.express.server;
 
 import com.xyzwps.lib.bedrock.Args;
-import com.xyzwps.lib.express.core.HttpException;
+import com.xyzwps.lib.express.HttpException;
 
 import java.util.*;
 
@@ -22,8 +22,16 @@ public final class HttpHeaders {
         headers.get(name).add(value);
     }
 
+    /**
+     * Get all header values by name.
+     * <p>
+     * An immutable list should be returned.
+     *
+     * @param name cannot be null
+     * @return empty list if header does not exist
+     */
     public List<String> getAll(String name) {
-        Args.notEmpty(name, "Header name cannot be empty");
+        Args.notNull(name, "Header name cannot be null");
 
         var values = headers.get(name.toLowerCase());
         if (values == null || values.isEmpty()) {
@@ -32,35 +40,45 @@ public final class HttpHeaders {
         return List.copyOf(values);
     }
 
-    public Optional<String> getFirst(String name) {
-        Args.notEmpty(name, "Header name cannot be empty");
+    /**
+     * Get the first header value by name.
+     *
+     * @param name cannot be null
+     * @return null if header does not exist
+     */
+    public String getFirst(String name) {
+        Args.notNull(name, "Header name cannot be empty");
 
         var values = headers.get(name.toLowerCase());
         if (values == null || values.isEmpty()) {
-            return Optional.empty();
+            return null;
         }
-        return Optional.ofNullable(values.getFirst());
+        return values.getFirst();
     }
 
 
     public int contentLength() {
-        long length = getFirst(CONTENT_LENGTH)
-                .map(value -> {
-                    try {
-                        return Long.parseLong(value);
-                    } catch (NumberFormatException e) {
-                        throw HttpException.badRequest("Invalid content length of %s", value);
-                    }
-                })
-                .orElse(0L);
-        if (length > CONTENT_LENGTH_LIMIT) {
-            throw HttpException.payloadTooLarge("Payload too large",
-                    Map.of("Content-Length", length, "contentLengthLimit", CONTENT_LENGTH_LIMIT));
+        var lengthStr = getFirst(CONTENT_LENGTH);
+        if (lengthStr == null || lengthStr.isEmpty()) {
+            return 0;
         }
-        return (int) length;
+
+
+        try {
+            var length = Long.parseLong(lengthStr);
+            if (length > CONTENT_LENGTH_LIMIT) {
+                throw HttpException.payloadTooLarge("Payload too large",
+                        Map.of("Content-Length", length, "contentLengthLimit", CONTENT_LENGTH_LIMIT));
+            }
+            return (int) length;
+        } catch (NumberFormatException e) {
+            throw HttpException.badRequest("Invalid content length of %s", lengthStr);
+        }
+
+
     }
 
-    public Optional<String> contentType() {
+    public String contentType() {
         return getFirst(CONTENT_TYPE);
     }
 
