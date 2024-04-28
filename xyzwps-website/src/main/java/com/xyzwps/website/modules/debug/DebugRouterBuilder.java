@@ -20,6 +20,8 @@ public class DebugRouterBuilder {
     DebugRouterBuilder() {
         this.router = new Router()
                 .get("", (req, resp, next) -> {
+                    req.attribute("haha", "haha");
+
                     resp.status(OK).header(HttpHeaders.CONTENT_TYPE, "application/json");
 
                     var map = new HashMap<String, Object>();
@@ -28,6 +30,7 @@ public class DebugRouterBuilder {
                     map.put("path", req.path());
                     map.put("headers", req.headers());
                     map.put("searchParams", req.searchParams());
+                    map.put("attributes", req.attributes());
 
                     resp.send(JSON.stringify(map, true).getBytes());
                 });
