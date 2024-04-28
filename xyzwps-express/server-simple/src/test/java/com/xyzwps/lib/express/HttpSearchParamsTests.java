@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Test;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static com.xyzwps.lib.express.server.HttpSearchParams.parse;
+import static com.xyzwps.lib.express.HttpSearchParams.parse;
 
 class HttpSearchParamsTests {
 

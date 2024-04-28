@@ -3,6 +3,7 @@ package com.xyzwps.lib.express.server;
 import com.xyzwps.lib.express.HttpHeaders;
 import com.xyzwps.lib.express.HttpMethod;
 import com.xyzwps.lib.express.HttpRequest;
+import com.xyzwps.lib.express.HttpSearchParams;
 import lib.jsdom.mimetype.MimeType;
 
 import java.net.URI;
@@ -51,12 +52,17 @@ public final class SimpleHttpRequest implements HttpRequest {
 
     @Override
     public String header(String name) {
-        return headers.getFirst(name);
+        return headers.get(name);
     }
 
     @Override
     public List<String> headers(String name) {
         return headers.getAll(name);
+    }
+
+    @Override
+    public HttpHeaders headers() {
+        return headers;
     }
 
     @Override
@@ -67,6 +73,11 @@ public final class SimpleHttpRequest implements HttpRequest {
     @Override
     public void body(Object body) {
         this.body = body;
+    }
+
+    @Override
+    public HttpSearchParams searchParams() {
+        return searchParams;
     }
 
     @Override

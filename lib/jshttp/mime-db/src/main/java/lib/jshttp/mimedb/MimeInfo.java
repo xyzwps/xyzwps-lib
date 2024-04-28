@@ -1,7 +1,6 @@
 package lib.jshttp.mimedb;
 
 import java.util.List;
-import java.util.Set;
 
 /**
  * @param essence      not null

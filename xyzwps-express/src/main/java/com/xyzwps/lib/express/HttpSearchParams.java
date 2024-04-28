@@ -1,37 +1,24 @@
-package com.xyzwps.lib.express.server;
+package com.xyzwps.lib.express;
 
-import com.xyzwps.lib.bedrock.Args;
+import com.xyzwps.lib.express.util.SimpleMultiValuesMap;
 
 import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
-import java.util.*;
 
-public final class HttpSearchParams {
+public final class HttpSearchParams extends SimpleMultiValuesMap {
 
-    private final Map<String, List<String>> map;
-
-    private HttpSearchParams(Map<String, List<String>> map) {
-        this.map = Args.notNull(map, "Argument map cannot be null");
+    public HttpSearchParams() {
+        super(false);
     }
-
-    public Optional<String> getFirst(String name) {
-        return map.get(name).stream().findFirst();
-    }
-
-    public List<String> getAll(String name) {
-        var list = map.get(name);
-        return list == null ? List.of() : list;
-    }
-
-    public static final HttpSearchParams EMPTY = new HttpSearchParams(Map.of());
 
     public static HttpSearchParams parse(String rawQuery) {
+        var params = new HttpSearchParams();
 
         if (rawQuery == null || rawQuery.isEmpty()) {
-            return EMPTY;
+            return params;
         }
 
-        var map = new TreeMap<String, List<String>>();
         var segments = rawQuery.split("&");
         for (var it : segments) {
             if (it.isBlank()) continue;
@@ -48,25 +35,29 @@ public final class HttpSearchParams {
                 name = decode(it.substring(0, i));
                 value = decode(it.substring(i + 1));
             }
-            map.computeIfAbsent(name, (x) -> new LinkedList<>()).add(value);
+            params.append(name, value);
         }
-        map.replaceAll((k, v) -> List.copyOf(map.get(k)));
-        return new HttpSearchParams(Collections.unmodifiableMap(map));
+        return params;
     }
 
     private static String decode(String str) {
         return URLDecoder.decode(str, StandardCharsets.UTF_8);
     }
 
+    private static String encode(String str) {
+        return URLEncoder.encode(str, StandardCharsets.UTF_8);
+    }
+
+
     public String toHString() {
         var sb = new StringBuilder();
         var env = new Env();
-        map.forEach((name, values) -> {
+        this.forEach((name, values) -> {
             for (var value : values) {
                 if (env.first) env.first = false;
                 else sb.append('&');
 
-                sb.append(name).append('=').append(value);
+                sb.append(encode(name)).append('=').append(encode(value));
             }
         });
         return sb.toString();

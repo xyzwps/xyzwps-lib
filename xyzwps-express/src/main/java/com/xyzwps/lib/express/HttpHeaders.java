@@ -1,67 +1,22 @@
 package com.xyzwps.lib.express;
 
-import com.xyzwps.lib.bedrock.Args;
+import com.xyzwps.lib.express.util.SimpleMultiValuesMap;
 
 import java.util.*;
 
-public final class HttpHeaders {
+// TODO: test
+// TODO: 不要 implement Map，同时实现 JSONSerializer
+public final class HttpHeaders extends SimpleMultiValuesMap {
 
-    private final Map<String, List<String>> headers = new HashMap<>();
-
-    // TODO: test
-    public void set(String name, String value) {
-        Args.notEmpty(name, "Header name cannot be empty");
-        Args.notEmpty(value, "Header value cannot be empty");
-
-        name = name.toLowerCase();
-
-        if (!headers.containsKey(name)) {
-            headers.put(name, new LinkedList<>());
-        }
-        headers.get(name).add(value);
+    public HttpHeaders() {
+        super(true);
     }
-
-    /**
-     * Get all header values by name.
-     * <p>
-     * An immutable list should be returned.
-     *
-     * @param name cannot be null
-     * @return empty list if header does not exist
-     */
-    public List<String> getAll(String name) {
-        Args.notNull(name, "Header name cannot be null");
-
-        var values = headers.get(name.toLowerCase());
-        if (values == null || values.isEmpty()) {
-            return List.of();
-        }
-        return List.copyOf(values);
-    }
-
-    /**
-     * Get the first header value by name.
-     *
-     * @param name cannot be null
-     * @return null if header does not exist
-     */
-    public String getFirst(String name) {
-        Args.notNull(name, "Header name cannot be empty");
-
-        var values = headers.get(name.toLowerCase());
-        if (values == null || values.isEmpty()) {
-            return null;
-        }
-        return values.getFirst();
-    }
-
 
     public int contentLength() {
-        var lengthStr = getFirst(CONTENT_LENGTH);
+        var lengthStr = get(CONTENT_LENGTH);
         if (lengthStr == null || lengthStr.isEmpty()) {
             return 0;
         }
-
 
         try {
             var length = Long.parseLong(lengthStr);
@@ -78,7 +33,7 @@ public final class HttpHeaders {
     }
 
     public String contentType() {
-        return getFirst(CONTENT_TYPE);
+        return get(CONTENT_TYPE);
     }
 
     private static final int CONTENT_LENGTH_LIMIT = 1024 * 1024 * 50;

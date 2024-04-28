@@ -40,13 +40,18 @@ public interface HttpRequest {
 
     /**
      * Get all header values by name.
-     * <p>
-     * An immutable list should be returned.
      *
      * @param name cannot be null
      * @return empty list if header does not exist
      */
     List<String> headers(String name);
+
+    /**
+     * Get all headers.
+     *
+     * @return all headers
+     */
+    HttpHeaders headers();
 
     /**
      * Get request content type.
@@ -69,6 +74,13 @@ public interface HttpRequest {
      */
     void body(Object body);
 
-    // TODO: search params
+    /**
+     * Get all search params.
+     *
+     * @return all search params
+     */
+    HttpSearchParams searchParams();
+
     // TODO: path variables
+    // TODO: attributes
 }

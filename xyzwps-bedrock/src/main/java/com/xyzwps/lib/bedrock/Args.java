@@ -1,5 +1,7 @@
 package com.xyzwps.lib.bedrock;
 
+import java.util.Collection;
+
 public final class Args {
 
     public static int gt(int value, int bound, String message) {
@@ -18,6 +20,12 @@ public final class Args {
 
     public static void notEmpty(String str, String message) {
         if (str == null || str.isEmpty()) {
+            throw new IllegalArgumentException(message);
+        }
+    }
+
+    public static void notEmpty(Collection<?> c, String message) {
+        if (c == null || c.isEmpty()) {
             throw new IllegalArgumentException(message);
         }
     }

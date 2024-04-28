@@ -63,6 +63,10 @@ public final class HPath {
     }
 
     public boolean match(String[] path, int matchStart) {
+        if (segments.length == 0 && matchStart == path.length) {
+            return true;
+        }
+
         if (segments[segments.length - 1] instanceof HSegment.Star2Segment) {
             /*
              * 0) this      /user/{id}/**
