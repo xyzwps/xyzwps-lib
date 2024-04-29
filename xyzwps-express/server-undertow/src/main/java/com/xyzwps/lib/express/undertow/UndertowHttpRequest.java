@@ -51,9 +51,13 @@ class UndertowHttpRequest implements HttpRequest {
 
     @Override
     public String header(String name) {
-        return exchange.getRequestHeaders()
-                .get(Args.notNull(name, "Header name cannot be null"))
-                .stream().findFirst().orElse(null);
+        var headerValue = exchange.getRequestHeaders()
+                .get(Args.notNull(name, "Header name cannot be null"));
+        if (headerValue == null) {
+            return null;
+        }
+
+        return headerValue.stream().findFirst().orElse(null);
     }
 
     @Override

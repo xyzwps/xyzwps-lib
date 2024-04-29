@@ -23,6 +23,10 @@ public final class HttpException extends RuntimeException {
         return new HttpException(String.format(message, args), HttpStatus.BAD_REQUEST, null);
     }
 
+    public static HttpException unauthorized(String message) {
+        return new HttpException(message, HttpStatus.UNAUTHORIZED, null);
+    }
+
     public static HttpException payloadTooLarge(String message, Object payload) {
         return new HttpException(message, HttpStatus.PAYLOAD_TOO_LARGE, payload);
     }

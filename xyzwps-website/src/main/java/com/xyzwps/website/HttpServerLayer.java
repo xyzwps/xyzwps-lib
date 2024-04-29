@@ -19,7 +19,7 @@ public class HttpServerLayer {
                            LogRequestCostMiddleware logRequestCostMiddleware) {
         this.server = new UndertowServer()
                 .use(logRequestCostMiddleware)
-                .use(new Static("/Users/weiliangyu").serve())
+                .use(new Static("/Users/weiliangyu").serve()) // TODO: xxx
                 .use(routerBuilder.router.routes());
     }
 

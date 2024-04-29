@@ -1,5 +1,6 @@
 package com.xyzwps.website;
 
+import com.xyzwps.website.middleware.MiddlewareModule;
 import dagger.Component;
 
 import javax.inject.Singleton;
@@ -7,7 +8,7 @@ import javax.inject.Singleton;
 public class Main {
 
     @Singleton
-    @Component
+    @Component(modules = MiddlewareModule.class)
     interface Entry {
         HttpServerLayer server();
     }

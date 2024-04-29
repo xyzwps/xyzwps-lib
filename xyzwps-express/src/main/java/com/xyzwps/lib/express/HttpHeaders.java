@@ -38,6 +38,8 @@ public final class HttpHeaders extends SimpleMultiValuesMap {
 
     private static final int CONTENT_LENGTH_LIMIT = 1024 * 1024 * 50;
 
+    public static final String AUTHORIZATION = "Authorization";
+
     public static final String CONTENT_LENGTH = "Content-Length";
 
     public static final String CONTENT_TYPE = "Content-Type";
