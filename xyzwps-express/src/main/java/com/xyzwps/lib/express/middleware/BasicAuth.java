@@ -41,6 +41,6 @@ public final class BasicAuth implements HttpMiddleware {
     }
 
     private static void unauthorized(HttpResponse resp) {
-        resp.status(HttpStatus.UNAUTHORIZED).header("WWW-Authenticate", "Basic realm=\"Invalid credential.\"");
+        resp.status(HttpStatus.UNAUTHORIZED).headers().set("WWW-Authenticate", "Basic realm=\"Invalid credential.\"");
     }
 }

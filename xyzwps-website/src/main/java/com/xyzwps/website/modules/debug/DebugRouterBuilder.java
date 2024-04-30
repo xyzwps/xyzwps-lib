@@ -24,7 +24,8 @@ public class DebugRouterBuilder {
                 .get("", (req, resp, next) -> {
                     req.attribute("haha", "haha");
 
-                    resp.ok().header(HttpHeaders.CONTENT_TYPE, "application/json");
+                    resp.ok();
+                    resp.headers().set(HttpHeaders.CONTENT_TYPE, "application/json");
 
                     var map = new HashMap<String, Object>();
                     map.put("protocol", req.protocol());
@@ -37,7 +38,8 @@ public class DebugRouterBuilder {
                     resp.send(JSON.stringify(map, true).getBytes());
                 })
                 .get("/auth", basicAuth, (req, resp, next) -> {
-                    resp.ok().header(HttpHeaders.CONTENT_TYPE, "application/json");
+                    resp.ok();
+                    resp.headers().set(HttpHeaders.CONTENT_TYPE, "application/json");
                     resp.send(JSON.stringify(Map.of("ok", true), true).getBytes());
                 });
     }

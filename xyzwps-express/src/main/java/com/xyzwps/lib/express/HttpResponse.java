@@ -1,12 +1,12 @@
 package com.xyzwps.lib.express;
 
-/**
- * TODO: 做规定
- */
 public interface HttpResponse {
 
     /**
-     * return this
+     * Set response status.
+     *
+     * @param status cannot be null
+     * @return this
      */
     HttpResponse status(HttpStatus status);
 
@@ -15,11 +15,16 @@ public interface HttpResponse {
     }
 
     /**
-     * Set value for specified header. TODO: 多个值怎么搞
+     * Get all headers to response.
      *
-     * @return this
+     * @return all response headers
      */
-    HttpResponse header(String name, String value);
+    HttpHeaders headers();
 
+    /**
+     * Send bytes and headers to client and set header <code>Content-Type</code> value with <code>bytes.length.</code>
+     *
+     * @param bytes cannot be null
+     */
     void send(byte[] bytes);
 }

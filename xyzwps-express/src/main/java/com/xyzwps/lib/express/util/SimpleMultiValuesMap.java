@@ -73,7 +73,7 @@ public class SimpleMultiValuesMap implements MultiValuesMap {
     }
 
     @Override
-    public Set<String> keys() {
+    public Set<String> names() {
         return map.keySet();
     }
 

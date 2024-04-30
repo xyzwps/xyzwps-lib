@@ -49,9 +49,9 @@ public final class Static {
                 var inputStream = Files.newInputStream(filePath);
                 var buffer = new BufferedInputStream(inputStream);
                 var allbytes = buffer.readAllBytes(); // TODO: 优化 getAllBBytes
-                resp.ok()
-                        .header(HttpHeaders.CONTENT_TYPE, mime.essence())
-                        .send(allbytes);
+                resp.ok();
+                resp.headers().set(HttpHeaders.CONTENT_TYPE, mime.essence());
+                resp.send(allbytes);
             } catch (Exception e) {
                 // TODO: 处理错误
                 next.call();

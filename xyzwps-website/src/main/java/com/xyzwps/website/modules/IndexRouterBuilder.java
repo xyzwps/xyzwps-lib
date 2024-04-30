@@ -18,13 +18,14 @@ public class IndexRouterBuilder {
     public IndexRouterBuilder(DebugRouterBuilder debugRouter, UserRouterBuilder userRouter) {
         this.router = new Router()
                 .get("/hello/world", (req, resp, next) -> {
-                    resp.ok().header("Content-Type", "application/json");
+                    resp.ok();
+                    resp.headers().set("Content-Type", "application/json");
                     resp.send("[\"Hello\":\"World\"]".getBytes());
                 })
                 .nest("/debug", debugRouter.router)
                 .nest("/users", userRouter.router)
                 .all("/**", (req, resp, next) -> {
-                    resp.header(HttpHeaders.CONTENT_TYPE, "application/json");
+                    resp.headers().set(HttpHeaders.CONTENT_TYPE, "application/json");
                     resp.status(HttpStatus.NOT_FOUND);
                     resp.send("{\"status\":404}".getBytes());
                 });

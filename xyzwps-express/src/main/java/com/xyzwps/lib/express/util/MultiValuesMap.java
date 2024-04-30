@@ -58,11 +58,11 @@ public interface MultiValuesMap {
     boolean has(String name);
 
     /**
-     * Return a set containing all keys already been added.
+     * Return a set containing all names already been added.
      *
      * @return never be null
      */
-    Set<String> keys();
+    Set<String> names();
 
     /**
      * Set a value to a specified name.

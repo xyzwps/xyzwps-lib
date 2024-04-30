@@ -53,6 +53,5 @@ public final class SimpleServer implements Server {
         }
         this.serverConfigs.forEach(config -> config.accept(this.httpServer));
         this.httpServer.start();
-        ;
     }
 }
