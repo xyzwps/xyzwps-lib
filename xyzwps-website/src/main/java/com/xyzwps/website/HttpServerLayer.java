@@ -1,9 +1,8 @@
 package com.xyzwps.website;
 
-import com.xyzwps.lib.express.Server;
+import com.xyzwps.lib.express.ServerConfig;
 import com.xyzwps.lib.express.middleware.Static;
 import com.xyzwps.lib.express.server.simple.SimpleServer;
-import com.xyzwps.lib.express.server.undertow.UndertowServer;
 import com.xyzwps.website.middleware.LogRequestCostMiddleware;
 import com.xyzwps.website.modules.IndexRouterBuilder;
 
@@ -13,19 +12,20 @@ import javax.inject.Singleton;
 @Singleton
 public class HttpServerLayer {
 
-    private final Server server;
+    private final ServerConfig config;
 
     @Inject
     public HttpServerLayer(IndexRouterBuilder routerBuilder,
                            LogRequestCostMiddleware logRequestCostMiddleware) {
-        this.server = new SimpleServer()
+        this.config = ServerConfig.create()
+                .port(3000)
                 .use(logRequestCostMiddleware)
                 .use(new Static("/Users/weiliangyu").serve()) // TODO: xxx
                 .use(routerBuilder.router.routes());
     }
 
-    public void start(int port) {
-        System.out.printf("=====> server is listening at %d <=====\n", port);
-        server.listen(port).start();
+    public void start() {
+        System.out.printf("=====> server is listening at %d <=====\n", config.port);
+        new SimpleServer().start(this.config);
     }
 }

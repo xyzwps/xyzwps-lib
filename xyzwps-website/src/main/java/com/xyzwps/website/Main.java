@@ -15,6 +15,6 @@ public class Main {
 
     public static void main(String[] args) {
         Entry entry = DaggerMain_Entry.create();
-        entry.server().start(3000);
+        entry.server().start();
     }
 }

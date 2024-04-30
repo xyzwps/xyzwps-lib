@@ -1,7 +1,9 @@
 package com.xyzwps.lib.express.server.craft;
 
+import com.xyzwps.lib.bedrock.Args;
 import com.xyzwps.lib.express.HttpMiddleware;
-import com.xyzwps.lib.express.util.Middleware2Composer;
+import com.xyzwps.lib.express.Server;
+import com.xyzwps.lib.express.ServerConfig;
 import com.xyzwps.lib.express.Next;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,23 +13,20 @@ import java.io.UncheckedIOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 
-public class CraftServer {
+public final class CraftServer implements Server {
 
     private static final Logger log = LoggerFactory.getLogger(CraftServer.class);
 
-    private HttpMiddleware middleware = HttpMiddleware.DO_NOTHING;
 
-    public CraftServer use(HttpMiddleware mw) {
-        this.middleware = Middleware2Composer.compose2(middleware, mw)::call;
-        return this;
-    }
+    @Override
+    public void start(ServerConfig config) {
+        Args.notNull(config, "ServerConfig cannot be null");
 
-    public void listen(int port) {
-        var serverSocket = createServerSocket(port);
+        var serverSocket = createServerSocket(config.port);
         while (true) {
             try {
                 var socket = serverSocket.accept();
-                this.handleSocket(socket);
+                this.handleSocket(socket, config.middleware);
             } catch (IOException e) {
                 log.error("Socket handling failed with uncatched error", e);
                 throw new UncheckedIOException("Accept server socket failed", e);
@@ -44,7 +43,7 @@ public class CraftServer {
         }
     }
 
-    void handleSocket(Socket socket) {
+    void handleSocket(Socket socket, HttpMiddleware middleware) {
         Thread.ofVirtual().start(() -> {
             try {
                 var in = socket.getInputStream();
@@ -53,7 +52,7 @@ public class CraftServer {
                 var request = new RawRequestParser().parse(in).toHttpRequest();
                 var response = new CraftHttpResponse(out, request);
 
-                this.middleware.call(request, response, Next.EMPTY);
+                middleware.call(request, response, Next.EMPTY);
 
                 socket.close(); // TODO: keep-alive
             } catch (IOException e) {
