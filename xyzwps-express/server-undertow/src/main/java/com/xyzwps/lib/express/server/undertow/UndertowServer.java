@@ -61,9 +61,14 @@ public final class UndertowServer implements Server {
 
         this.builder
                 .setHandler((exchange -> {
-                    var req = new UndertowHttpRequest(exchange);
-                    var resp = new UndertowHttpResponse(exchange);
-                    this.middleware.call(req, resp, Next.EMPTY);
+                    // TODO: ab -n 20000 -c 10 http://127.0.0.1:3000/debug 在请求超过 14000 个之后会突然变慢
+                    try (var ignored = exchange.startBlocking()) {
+                        try (var in = exchange.getInputStream()) {
+                            var req = new UndertowHttpRequest(exchange, in);
+                            var resp = new UndertowHttpResponse(exchange);
+                            this.middleware.call(req, resp, Next.EMPTY);
+                        }
+                    }
                 }))
                 .build()
                 .start();

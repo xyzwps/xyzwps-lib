@@ -2,6 +2,7 @@ package com.xyzwps.website;
 
 import com.xyzwps.lib.express.Server;
 import com.xyzwps.lib.express.middleware.Static;
+import com.xyzwps.lib.express.server.simple.SimpleServer;
 import com.xyzwps.lib.express.server.undertow.UndertowServer;
 import com.xyzwps.website.middleware.LogRequestCostMiddleware;
 import com.xyzwps.website.modules.IndexRouterBuilder;
@@ -17,7 +18,7 @@ public class HttpServerLayer {
     @Inject
     public HttpServerLayer(IndexRouterBuilder routerBuilder,
                            LogRequestCostMiddleware logRequestCostMiddleware) {
-        this.server = new UndertowServer()
+        this.server = new SimpleServer()
                 .use(logRequestCostMiddleware)
                 .use(new Static("/Users/weiliangyu").serve()) // TODO: xxx
                 .use(routerBuilder.router.routes());

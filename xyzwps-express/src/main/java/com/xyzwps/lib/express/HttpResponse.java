@@ -19,7 +19,7 @@ public interface HttpResponse {
      *
      * @return this
      */
-    HttpResponse set(String name, String value);
+    HttpResponse header(String name, String value);
 
     void send(byte[] bytes);
 }

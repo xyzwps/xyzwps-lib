@@ -8,6 +8,7 @@ import com.xyzwps.lib.express.HttpSearchParams;
 import io.undertow.server.HttpServerExchange;
 import lib.jsdom.mimetype.MimeType;
 
+import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -24,14 +25,12 @@ class UndertowHttpRequest implements HttpRequest {
 
     private Object body;
 
-    UndertowHttpRequest(HttpServerExchange exchange) {
+    UndertowHttpRequest(HttpServerExchange exchange, InputStream in) {
         this.exchange = Args.notNull(exchange, "Exchange cannot be null. Maybe a bug.");
         this.method = HttpMethod.valueOf(exchange.getRequestMethod().toString()); // TODO: 处理错误
         this.searchParams = HttpSearchParams.parse(exchange.getQueryString());
         this.attributes = new TreeMap<>();
-
-        exchange.startBlocking(); // TODO: wrap start blocking with lazy input stream
-        this.body = exchange.getInputStream();
+        this.body = in;
     }
 
     @Override
