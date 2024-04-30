@@ -1,4 +1,4 @@
-package com.xyzwps.lib.express.server;
+package com.xyzwps.lib.express.server.craft;
 
 import com.xyzwps.lib.bedrock.Args;
 import com.xyzwps.lib.express.HttpResponse;
@@ -11,14 +11,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public final class SimpleHttpResponse implements HttpResponse {
+public final class CraftHttpResponse implements HttpResponse {
     private final OutputStream out;
-    private final SimpleHttpRequest request;
+    private final CraftHttpRequest request;
 
     private HttpStatus status = HttpStatus.OK;
     private List<HeaderLine> headers = new ArrayList<>(8);
 
-    public SimpleHttpResponse(OutputStream out, SimpleHttpRequest request) {
+    public CraftHttpResponse(OutputStream out, CraftHttpRequest request) {
         this.out = Objects.requireNonNull(out);
         this.request = Objects.requireNonNull(request);
     }

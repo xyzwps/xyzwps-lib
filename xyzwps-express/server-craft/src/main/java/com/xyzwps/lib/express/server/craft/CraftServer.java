@@ -1,4 +1,4 @@
-package com.xyzwps.lib.express.server;
+package com.xyzwps.lib.express.server.craft;
 
 import com.xyzwps.lib.express.HttpMiddleware;
 import com.xyzwps.lib.express.util.Middleware2Composer;
@@ -11,13 +11,13 @@ import java.io.UncheckedIOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 
-public class SimpleServer {
+public class CraftServer {
 
-    private static final Logger log = LoggerFactory.getLogger(SimpleServer.class);
+    private static final Logger log = LoggerFactory.getLogger(CraftServer.class);
 
     private HttpMiddleware middleware = HttpMiddleware.DO_NOTHING;
 
-    public SimpleServer use(HttpMiddleware mw) {
+    public CraftServer use(HttpMiddleware mw) {
         this.middleware = Middleware2Composer.compose2(middleware, mw)::call;
         return this;
     }
@@ -50,8 +50,8 @@ public class SimpleServer {
                 var in = socket.getInputStream();
                 var out = socket.getOutputStream();
 
-                var request = new SimpleRawRequestParser().parse(in).toHttpRequest();
-                var response = new SimpleHttpResponse(out, request);
+                var request = new RawRequestParser().parse(in).toHttpRequest();
+                var response = new CraftHttpResponse(out, request);
 
                 this.middleware.call(request, response, Next.EMPTY);
 

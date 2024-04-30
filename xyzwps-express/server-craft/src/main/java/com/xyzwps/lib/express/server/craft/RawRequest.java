@@ -1,8 +1,8 @@
-package com.xyzwps.lib.express.server;
+package com.xyzwps.lib.express.server.craft;
 
 
 import com.xyzwps.lib.express.HttpHeaders;
-import com.xyzwps.lib.express.server.common.ContentLengthInputStream;
+import com.xyzwps.lib.express.server.craft.common.ContentLengthInputStream;
 import com.xyzwps.lib.express.HttpMethod;
 
 import java.io.InputStream;
@@ -39,7 +39,7 @@ record RawRequest(StartLine startLine, List<HeaderLine> headerLines, InputStream
         }
     }
 
-    public SimpleHttpRequest toHttpRequest() {
+    public CraftHttpRequest toHttpRequest() {
         var headers = new HttpHeaders();
         for (var header : headerLines) {
             headers.set(header.name(), header.value());
@@ -47,7 +47,7 @@ record RawRequest(StartLine startLine, List<HeaderLine> headerLines, InputStream
 
         var uri = toURI(this.startLine.url);
 
-        return new SimpleHttpRequest(this.startLine.method, uri, this.startLine.protocol,
+        return new CraftHttpRequest(this.startLine.method, uri, this.startLine.protocol,
                 headers,
                 new ContentLengthInputStream(this.in, BUFFER_LEN, headers.contentLength())
         );

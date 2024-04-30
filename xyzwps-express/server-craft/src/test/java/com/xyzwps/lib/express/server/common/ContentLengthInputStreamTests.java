@@ -1,6 +1,6 @@
 package com.xyzwps.lib.express.server.common;
 
-import com.xyzwps.lib.express.server.common.ContentLengthInputStream;
+import com.xyzwps.lib.express.server.craft.common.ContentLengthInputStream;
 import org.junit.jupiter.api.Test;
 
 import java.io.ByteArrayInputStream;

@@ -18,7 +18,7 @@ public class IndexRouterBuilder {
     public IndexRouterBuilder(DebugRouterBuilder debugRouter, UserRouterBuilder userRouter) {
         this.router = new Router()
                 .get("/hello/world", (req, resp, next) -> {
-                    resp.status(HttpStatus.OK).header("Content-Type", "application/json");
+                    resp.ok().header("Content-Type", "application/json");
                     resp.send("[\"Hello\":\"World\"]".getBytes());
                 })
                 .nest("/debug", debugRouter.router)

@@ -1,4 +1,4 @@
-package com.xyzwps.lib.express.server;
+package com.xyzwps.lib.express.server.craft;
 
 import com.xyzwps.lib.bedrock.Args;
 import com.xyzwps.lib.express.HttpHeaders;
@@ -13,7 +13,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.TreeMap;
 
-public final class SimpleHttpRequest implements HttpRequest {
+public final class CraftHttpRequest implements HttpRequest {
     private final HttpMethod method;
     private final String path;
     private final String protocol;
@@ -22,11 +22,9 @@ public final class SimpleHttpRequest implements HttpRequest {
     private final Map<String, Object> attributes;
     private Object body;
 
-    // TODO: attribute
-
     private final MimeType contentType;
 
-    public SimpleHttpRequest(HttpMethod method, URI uri, String protocol, HttpHeaders headers, Object body) {
+    public CraftHttpRequest(HttpMethod method, URI uri, String protocol, HttpHeaders headers, Object body) {
         this.path = Objects.requireNonNull(uri).getPath();
         this.searchParams = HttpSearchParams.parse(uri.getRawQuery());
 
@@ -108,4 +106,7 @@ public final class SimpleHttpRequest implements HttpRequest {
     public MimeType contentType() {
         return contentType;
     }
+
+
+
 }

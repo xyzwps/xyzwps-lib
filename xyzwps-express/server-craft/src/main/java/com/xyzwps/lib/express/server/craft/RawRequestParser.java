@@ -1,4 +1,4 @@
-package com.xyzwps.lib.express.server;
+package com.xyzwps.lib.express.server.craft;
 
 import com.xyzwps.lib.express.HttpMethod;
 
@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.Optional;
 import java.util.function.IntConsumer;
 
-class SimpleRawRequestParser implements RequestParser {
+class RawRequestParser implements RequestParser {
 
     @Override
     public RawRequest parse(InputStream in) throws IOException {

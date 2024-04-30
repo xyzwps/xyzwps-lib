@@ -50,7 +50,7 @@ public final class Static {
                 var inputStream = Files.newInputStream(filePath);
                 var buffer = new BufferedInputStream(inputStream);
                 var allbytes = buffer.readAllBytes(); // TODO: 优化 getAllBBytes
-                resp.status(HttpStatus.OK)
+                resp.ok()
                         .header(HttpHeaders.CONTENT_TYPE, mime.essence())
                         .send(allbytes);
             } catch (Exception e) {

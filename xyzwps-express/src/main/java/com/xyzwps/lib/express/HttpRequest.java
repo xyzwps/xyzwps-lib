@@ -101,9 +101,24 @@ public interface HttpRequest {
      * Add or change the attribute value associated with a specified name.
      *
      * @param name  cannot be null
-     * @param value could bu null
+     * @param value could be null
      */
     void attribute(String name, Object value);
 
-    // TODO: path variables
+    // TODO: path variable
+
+//    /**
+//     * Get path variable value by specified name.
+//     *
+//     * @param name cannot be null
+//     * @return null if not matched
+//     */
+//    String pathVariable(String name);
+//
+//    /**
+//     * Get all path variables.
+//     *
+//     * @return all path variables
+//     */
+//    Map<String, String> pathVariables();
 }

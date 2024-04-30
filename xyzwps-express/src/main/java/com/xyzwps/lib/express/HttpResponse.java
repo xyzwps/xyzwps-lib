@@ -10,12 +10,16 @@ public interface HttpResponse {
      */
     HttpResponse status(HttpStatus status);
 
+    default HttpResponse ok() {
+        return this.status(HttpStatus.OK);
+    }
+
     /**
-     * TODO: 如何理解这个语义
+     * Set value for specified header. TODO: 多个值怎么搞
      *
-     * return this
+     * @return this
      */
-    HttpResponse header(String name, String value);
+    HttpResponse set(String name, String value);
 
     void send(byte[] bytes);
 }

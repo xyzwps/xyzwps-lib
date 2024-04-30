@@ -22,13 +22,13 @@ public class UserRouterBuilder {
 
         this.router = new Router()
                 .get("/{id}", (req, resp, next) -> {
-                    resp.status(OK).header("Content-Type", "application/json");
+                    resp.ok().header("Content-Type", "application/json");
                     resp.send("{\"msg\":\"get user\"}".getBytes());
                 })
                 .post("/{id}", jsonParser.json(Person.class), (req, resp, next) -> {
                     var body = req.body();
                     if (body instanceof Person p) {
-                        resp.status(OK);
+                        resp.ok();
                         resp.header(HttpHeaders.CONTENT_TYPE, "application/json");
                         resp.send(("{\"name\":\"" + p.name() + "\"}").getBytes());
                     } else {
@@ -42,7 +42,7 @@ public class UserRouterBuilder {
                     next.call();
                 })
                 .get("/{id}/posts", (req, resp, next) -> {
-                    resp.status(OK).header("Content-Type", "application/json");
+                    resp.ok().header("Content-Type", "application/json");
                     System.out.println(" > posts gotten");
                     resp.send("{\"msg\":\"get user posts\"}".getBytes());
                 });
