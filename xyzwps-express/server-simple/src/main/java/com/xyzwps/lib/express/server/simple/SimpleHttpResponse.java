@@ -22,9 +22,8 @@ class SimpleHttpResponse implements HttpResponse {
     }
 
     @Override
-    public HttpResponse status(HttpStatus status) {
+    public void status(HttpStatus status) {
         this.status = Args.notNull(status, "HttpStatus cannot be null");
-        return this;
     }
 
     @Override

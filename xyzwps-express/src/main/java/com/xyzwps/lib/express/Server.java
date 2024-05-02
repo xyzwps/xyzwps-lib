@@ -10,5 +10,5 @@ public interface Server {
      *
      * @param config cannot be null
      */
-    void start(ServerConfig config);
+    void start(ServerConfig config); // TODO: server start succeed callback
 }

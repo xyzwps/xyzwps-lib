@@ -20,9 +20,8 @@ class UndertowHttpResponse implements HttpResponse {
     }
 
     @Override
-    public HttpResponse status(HttpStatus status) {
+    public void status(HttpStatus status) {
         exchange.setStatusCode(status.code);
-        return this;
     }
 
     @Override

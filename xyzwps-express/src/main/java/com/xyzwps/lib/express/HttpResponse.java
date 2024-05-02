@@ -6,12 +6,11 @@ public interface HttpResponse {
      * Set response status.
      *
      * @param status cannot be null
-     * @return this
      */
-    HttpResponse status(HttpStatus status);
+    void status(HttpStatus status);
 
-    default HttpResponse ok() {
-        return this.status(HttpStatus.OK);
+    default void ok() {
+        this.status(HttpStatus.OK);
     }
 
     /**
