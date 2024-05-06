@@ -3,7 +3,6 @@ package com.xyzwps.lib.express;
 import lib.jsdom.mimetype.MimeType;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * An http request.
@@ -81,29 +80,6 @@ public interface HttpRequest {
      * @return never be null
      */
     HttpSearchParams searchParams();
-
-    /**
-     * Get all attributes.
-     *
-     * @return never be null
-     */
-    Map<String, Object> attributes();
-
-    /**
-     * Get an attribute value associated with a specified name.
-     *
-     * @param name cannot be null
-     * @return attribute value
-     */
-    Object attribute(String name);
-
-    /**
-     * Add or change the attribute value associated with a specified name.
-     *
-     * @param name  cannot be null
-     * @param value could be null
-     */
-    void attribute(String name, Object value);
 
     // TODO: path variable
 

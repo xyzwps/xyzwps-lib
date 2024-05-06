@@ -23,7 +23,7 @@ public class DebugRouterBuilder {
                     var req = ctx.request();
                     var resp = ctx.response();
 
-                    req.attribute("haha", "haha");
+                    ctx.attribute("haha", "haha");
 
                     resp.ok();
                     resp.headers().set(HttpHeaders.CONTENT_TYPE, "application/json");
@@ -34,7 +34,7 @@ public class DebugRouterBuilder {
                     map.put("path", req.path());
                     map.put("headers", req.headers());
                     map.put("searchParams", req.searchParams());
-                    map.put("attributes", req.attributes());
+                    map.put("attributes", ctx.attributes());
 
                     resp.send(JSON.stringify(map, true).getBytes());
                 })

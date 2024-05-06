@@ -3,6 +3,9 @@ package com.xyzwps.lib.express;
 import com.xyzwps.lib.bedrock.Args;
 import com.xyzwps.lib.express.util.Middleware;
 
+import java.util.Map;
+import java.util.TreeMap;
+
 public final class HttpContext implements Middleware.Context<HttpContext> {
 
     private final HttpMiddleware mw;
@@ -22,7 +25,8 @@ public final class HttpContext implements Middleware.Context<HttpContext> {
         this.ctx = null;
         this.internal = new ContextInternal(
                 Args.notNull(request, "request cannot be null"),
-                Args.notNull(response, "response cannot be null")
+                Args.notNull(response, "response cannot be null"),
+                new TreeMap<>()
         );
     }
 
@@ -38,11 +42,27 @@ public final class HttpContext implements Middleware.Context<HttpContext> {
         return internal.response();
     }
 
+    public Map<String, Object> attributes() {
+        return internal.attributes;
+    }
+
+    public Object attribute(String name) {
+        Args.notNull(name, "Name cannot be null");
+
+        return internal.attributes.get(name);
+    }
+
+    public void attribute(String name, Object value) {
+        Args.notNull(name, "Name cannot be null");
+
+        internal.attributes.put(name, value);
+    }
+
     @Override
     public void next() {
         if (mw != null) mw.call(ctx);
     }
 
-    private record ContextInternal(HttpRequest request, HttpResponse response) {
+    private record ContextInternal(HttpRequest request, HttpResponse response, Map<String, Object> attributes) {
     }
 }

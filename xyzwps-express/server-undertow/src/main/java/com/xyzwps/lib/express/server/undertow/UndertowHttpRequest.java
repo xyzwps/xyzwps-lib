@@ -10,8 +10,6 @@ import lib.jsdom.mimetype.MimeType;
 
 import java.io.InputStream;
 import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
 
 class UndertowHttpRequest implements HttpRequest {
 
@@ -20,8 +18,6 @@ class UndertowHttpRequest implements HttpRequest {
     private final HttpMethod method;
 
     private final HttpSearchParams searchParams;
-
-    private final Map<String, Object> attributes;
 
     private final HttpHeaders headers;
 
@@ -32,7 +28,6 @@ class UndertowHttpRequest implements HttpRequest {
         this.method = HttpMethod.valueOf(exchange.getRequestMethod().toString()); // TODO: 处理错误
         this.searchParams = HttpSearchParams.parse(exchange.getQueryString());
         this.headers = new UndertowHttpHeaders(exchange.getRequestHeaders());
-        this.attributes = new TreeMap<>();
         this.body = in;
     }
 
@@ -88,25 +83,6 @@ class UndertowHttpRequest implements HttpRequest {
     @Override
     public void body(Object body) {
         this.body = body;
-    }
-
-    @Override
-    public Map<String, Object> attributes() {
-        return attributes;
-    }
-
-    @Override
-    public Object attribute(String name) {
-        Args.notNull(name, "Name cannot be null");
-
-        return attributes.get(name);
-    }
-
-    @Override
-    public void attribute(String name, Object value) {
-        Args.notNull(name, "Name cannot be null");
-
-        attributes.put(name, value);
     }
 
     @Override

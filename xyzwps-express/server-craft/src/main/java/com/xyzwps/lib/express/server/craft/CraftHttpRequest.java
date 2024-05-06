@@ -1,6 +1,5 @@
 package com.xyzwps.lib.express.server.craft;
 
-import com.xyzwps.lib.bedrock.Args;
 import com.xyzwps.lib.express.HttpHeaders;
 import com.xyzwps.lib.express.HttpMethod;
 import com.xyzwps.lib.express.HttpRequest;
@@ -9,9 +8,7 @@ import lib.jsdom.mimetype.MimeType;
 
 import java.net.URI;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
-import java.util.TreeMap;
 
 public final class CraftHttpRequest implements HttpRequest {
     private final HttpMethod method;
@@ -19,7 +16,6 @@ public final class CraftHttpRequest implements HttpRequest {
     private final String protocol;
     private final HttpHeaders headers;
     private final HttpSearchParams searchParams;
-    private final Map<String, Object> attributes;
     private Object body;
 
     private final MimeType contentType;
@@ -32,7 +28,6 @@ public final class CraftHttpRequest implements HttpRequest {
         this.protocol = Objects.requireNonNull(protocol);
         this.headers = Objects.requireNonNull(headers);
         this.body = body;
-        this.attributes = new TreeMap<>();
 
         var contentTypeStr = headers.contentType();
         this.contentType = contentTypeStr == null ? null : MimeType.parse(contentTypeStr);
@@ -81,25 +76,6 @@ public final class CraftHttpRequest implements HttpRequest {
     @Override
     public HttpSearchParams searchParams() {
         return searchParams;
-    }
-
-    @Override
-    public Map<String, Object> attributes() {
-        return attributes;
-    }
-
-    @Override
-    public Object attribute(String name) {
-        Args.notNull(name, "Name cannot be null");
-
-        return attributes.get(name);
-    }
-
-    @Override
-    public void attribute(String name, Object value) {
-        Args.notNull(name, "Name cannot be null");
-
-        attributes.put(name, value);
     }
 
     @Override
