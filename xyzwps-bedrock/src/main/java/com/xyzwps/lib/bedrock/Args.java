@@ -1,6 +1,8 @@
 package com.xyzwps.lib.bedrock;
 
 import java.util.Collection;
+import java.util.List;
+import java.util.function.IntFunction;
 
 public final class Args {
 
@@ -37,6 +39,27 @@ public final class Args {
         return object;
     }
 
+    /**
+     * @param list      you should make sure that it is not null
+     * @param toMessage generate message
+     * @param <T>       item type
+     * @return argument list
+     */
+    public static <T> List<T> itemsNotNull(List<T> list, IntFunction<String> toMessage) {
+        Args.notNull(list, "Argument list CANNOT be null");
+        Args.notNull(toMessage, "Argument toMessage CANNOT be null");
+        int i = 0;
+        for (var it : list) {
+            if (it == null) {
+                throw new IllegalArgumentException(toMessage.apply(i));
+            }
+            i++;
+        }
+        return list;
+    }
+
+    // TODO: 修正
+    @Deprecated
     public static <T> void allNotNull(T[] arr, String message) {
         if (arr == null) {
             throw new IllegalArgumentException(message);
