@@ -1,18 +1,72 @@
 package com.xyzwps.lib.express;
 
-import com.xyzwps.lib.express.util.SimpleMultiValuesMap;
-
-import java.util.*;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.function.BiConsumer;
 
 // TODO: test
 // TODO: 不要 implement Map，同时实现 JSONSerializer
-public final class HttpHeaders extends SimpleMultiValuesMap {
+public interface HttpHeaders {
 
-    public HttpHeaders() {
-        super(true);
-    }
+    /**
+     * Append a value to a specified header name.
+     *
+     * @param name  cannot be null
+     * @param value cannot be null
+     */
+    void append(String name, String value);
 
-    public int contentLength() {
+    /**
+     * Delete header values associated with a specific name.
+     *
+     * @param name cannot be null
+     */
+    void delete(String name);
+
+    /**
+     * Iterator over all headers.
+     *
+     * @param callback cannot be null
+     */
+    void forEach(BiConsumer<String, List<String>> callback);
+
+    /**
+     * Get the first value associated with a specific name.
+     *
+     * @param name cannot be null
+     * @return null if header name does not exist
+     */
+    String get(String name);
+
+    /**
+     * Get all values  associated with a specific name.
+     *
+     * @param name cannot be null
+     * @return null or an empty list if header name does not exist
+     */
+    List<String> getAll(String name);
+
+    /**
+     * Check if the header name would exist or not
+     *
+     * @param name cannot be null
+     * @return false if header name does not exist; or else true
+     */
+    boolean has(String name);
+
+    /**
+     * Get all header names.
+     *
+     * @return never returns a null
+     */
+    Set<String> names();
+
+    void set(String name, String value);
+
+
+    // TODO: content-length 到底有没有用
+    default int contentLength() {
         var lengthStr = get(CONTENT_LENGTH);
         if (lengthStr == null || lengthStr.isEmpty()) {
             return 0;
@@ -28,19 +82,17 @@ public final class HttpHeaders extends SimpleMultiValuesMap {
         } catch (NumberFormatException e) {
             throw HttpException.badRequest("Invalid content length of %s", lengthStr);
         }
-
-
     }
 
-    public String contentType() {
+    default String contentType() {
         return get(CONTENT_TYPE);
     }
 
-    private static final int CONTENT_LENGTH_LIMIT = 1024 * 1024 * 50;
+    int CONTENT_LENGTH_LIMIT = 1024 * 1024 * 50;
 
-    public static final String AUTHORIZATION = "Authorization";
+    String AUTHORIZATION = "Authorization";
 
-    public static final String CONTENT_LENGTH = "Content-Length";
+    String CONTENT_LENGTH = "Content-Length";
 
-    public static final String CONTENT_TYPE = "Content-Type";
+    String CONTENT_TYPE = "Content-Type";
 }

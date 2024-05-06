@@ -20,9 +20,8 @@ public final class CraftHttpResponse implements HttpResponse {
     public CraftHttpResponse(OutputStream out, CraftHttpRequest request) {
         this.out = Objects.requireNonNull(out);
         this.request = Objects.requireNonNull(request);
-        this.headers = new HttpHeaders();
+        this.headers = new CraftHttpHeaders();
     }
-
 
     @Override
     public void status(HttpStatus status) {

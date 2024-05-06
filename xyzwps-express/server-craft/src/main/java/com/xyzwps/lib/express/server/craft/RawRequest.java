@@ -1,7 +1,5 @@
 package com.xyzwps.lib.express.server.craft;
 
-
-import com.xyzwps.lib.express.HttpHeaders;
 import com.xyzwps.lib.express.server.craft.common.ContentLengthInputStream;
 import com.xyzwps.lib.express.HttpMethod;
 
@@ -40,7 +38,7 @@ record RawRequest(StartLine startLine, List<HeaderLine> headerLines, InputStream
     }
 
     public CraftHttpRequest toHttpRequest() {
-        var headers = new HttpHeaders();
+        var headers = new CraftHttpHeaders();
         for (var header : headerLines) {
             headers.set(header.name(), header.value());
         }

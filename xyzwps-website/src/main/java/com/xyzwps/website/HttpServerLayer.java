@@ -28,6 +28,6 @@ public class HttpServerLayer {
 
     public void start() {
         System.out.printf("=====> server is listening at %d <=====\n", config.port);
-        new CraftServer().start(this.config);
+        new SimpleServer().start(this.config);
     }
 }

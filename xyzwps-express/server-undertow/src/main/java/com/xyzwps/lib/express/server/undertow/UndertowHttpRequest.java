@@ -23,12 +23,15 @@ class UndertowHttpRequest implements HttpRequest {
 
     private final Map<String, Object> attributes;
 
+    private final HttpHeaders headers;
+
     private Object body;
 
     UndertowHttpRequest(HttpServerExchange exchange, InputStream in) {
         this.exchange = Args.notNull(exchange, "Exchange cannot be null. Maybe a bug.");
         this.method = HttpMethod.valueOf(exchange.getRequestMethod().toString()); // TODO: 处理错误
         this.searchParams = HttpSearchParams.parse(exchange.getQueryString());
+        this.headers = new UndertowHttpHeaders(exchange.getRequestHeaders());
         this.attributes = new TreeMap<>();
         this.body = in;
     }
@@ -67,18 +70,7 @@ class UndertowHttpRequest implements HttpRequest {
 
     @Override
     public HttpHeaders headers() {
-        var headers = new HttpHeaders();
-        var rawHeaders = exchange.getRequestHeaders();
-        for (var name : rawHeaders.getHeaderNames()) {
-            var values = rawHeaders.get(name);
-            if (values == null) {
-                continue;
-            }
-            for (var value : values) {
-                headers.append(name.toString(), value);
-            }
-        }
-        return headers;
+        return this.headers;
     }
 
     @Override

@@ -18,7 +18,7 @@ class SimpleHttpResponse implements HttpResponse {
 
     SimpleHttpResponse(HttpExchange exchange) {
         this.exchange = Args.notNull(exchange, "HttpExchange cannot be null");
-        this.headers = new HttpHeaders();
+        this.headers = new SimpleHttpHeaders(exchange.getResponseHeaders());
     }
 
     @Override

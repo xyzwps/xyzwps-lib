@@ -23,6 +23,6 @@ public class LogRequestCostMiddleware implements HttpMiddleware {
         System.out.printf("-> %s %s \n", req.method(), req.path());
         long startTs = System.currentTimeMillis();
         next.call();
-        System.out.printf(" > [%d] %s %s cost %dms \n", COUNTER.getAndIncrement(), req.method(), req.path(), System.currentTimeMillis() - startTs);
+        System.out.printf(" > [%d] [%d] %s %s cost %dms \n", Thread.currentThread().threadId(), COUNTER.getAndIncrement(), req.method(), req.path(), System.currentTimeMillis() - startTs);
     }
 }

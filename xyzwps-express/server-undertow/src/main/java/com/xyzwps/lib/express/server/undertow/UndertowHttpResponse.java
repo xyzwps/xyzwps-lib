@@ -16,7 +16,7 @@ class UndertowHttpResponse implements HttpResponse {
 
     UndertowHttpResponse(HttpServerExchange exchange) {
         this.exchange = Args.notNull(exchange, "Exchange cannot be null. Maybe a bug.");
-        this.headers = new HttpHeaders();
+        this.headers = new UndertowHttpHeaders(exchange.getResponseHeaders());
     }
 
     @Override

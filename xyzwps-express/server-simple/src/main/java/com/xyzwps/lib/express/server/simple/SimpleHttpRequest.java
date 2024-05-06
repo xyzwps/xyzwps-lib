@@ -16,11 +16,13 @@ class SimpleHttpRequest implements HttpRequest {
 
     private final HttpExchange exchange;
     private final Map<String, Object> attributes;
+    private final HttpHeaders headers;
 
     private Object body;
 
     SimpleHttpRequest(HttpExchange exchange) {
         this.exchange = Args.notNull(exchange, "HttpExchange cannot be null");
+        this.headers = new SimpleHttpHeaders(exchange.getRequestHeaders());
         this.attributes = new TreeMap<>();
 
         this.body = exchange.getRequestBody();
@@ -53,7 +55,7 @@ class SimpleHttpRequest implements HttpRequest {
 
     @Override
     public HttpHeaders headers() {
-        return null; // TODO: 搞一下
+        return headers;
     }
 
     @Override

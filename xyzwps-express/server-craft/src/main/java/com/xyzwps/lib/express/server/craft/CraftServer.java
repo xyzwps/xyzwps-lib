@@ -10,8 +10,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
-import java.net.ServerSocket;
-import java.net.Socket;
+import java.net.*;
 
 public final class CraftServer implements Server {
 
@@ -28,7 +27,7 @@ public final class CraftServer implements Server {
                 var socket = serverSocket.accept();
                 this.handleSocket(socket, config.middleware);
             } catch (IOException e) {
-                log.error("Socket handling failed with uncatched error", e);
+                log.error("Socket handling failed with uncaught error", e);
                 throw new UncheckedIOException("Accept server socket failed", e);
             }
         }
@@ -36,7 +35,10 @@ public final class CraftServer implements Server {
 
     private static ServerSocket createServerSocket(int port) {
         try {
-            return new ServerSocket(port);
+            var server = new ServerSocket();
+            server.setReuseAddress(true);
+            server.bind(new InetSocketAddress((InetAddress) null, port), 50);
+            return server;
         } catch (IOException e) {
             log.error("Create server socket failed", e);
             throw new UncheckedIOException("Create server socket failed", e);
@@ -45,20 +47,23 @@ public final class CraftServer implements Server {
 
     void handleSocket(Socket socket, HttpMiddleware middleware) {
         Thread.ofVirtual().start(() -> {
-            try {
-                var in = socket.getInputStream();
-                var out = socket.getOutputStream();
+            // TODO: 先深入学习下 socket，看看怎么处理 ab 压不上去的问题
 
+            try (socket; var in = socket.getInputStream(); var out = socket.getOutputStream()) {
                 var request = new RawRequestParser().parse(in).toHttpRequest();
                 var response = new CraftHttpResponse(out, request);
-
                 middleware.call(request, response, Next.EMPTY);
+                socket.shutdownInput();
+                socket.shutdownOutput();
 
-                socket.close(); // TODO: keep-alive
             } catch (IOException e) {
-                System.out.println(e); // TODO: handle exception
+                log.error("Handle socket error", e); // TODO: handle exception
             } catch (Exception e) {
-                System.out.println(e); // TODO: handle exception
+                log.error("Unhandled error", e); // TODO: handle exception
+//            } finally {
+//                log.info(" socket closed : {}", socket.isClosed());
+//                log.info(" socket bound  : {}", socket.isBound());
+//                log.info(" socket id     : {}", System.identityHashCode(socket));
             }
         });
     }
