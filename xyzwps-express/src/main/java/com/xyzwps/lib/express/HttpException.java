@@ -18,7 +18,6 @@ public final class HttpException extends RuntimeException {
         this(message, status, null);
     }
 
-
     public static HttpException badRequest(String message, Object... args) {
         return new HttpException(String.format(message, args), HttpStatus.BAD_REQUEST, null);
     }

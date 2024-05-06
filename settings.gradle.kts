@@ -20,6 +20,7 @@ dependencyResolutionManagement {
             version("slf4j", "2.0.13")
             library("slf4j-api", "org.slf4j", "slf4j-api").versionRef("slf4j")
             library("slf4j-simple", "org.slf4j", "slf4j-simple").versionRef("slf4j")
+            bundle("slf4j", listOf("slf4j-api", "slf4j-simple"))
 
             version("undertow", "2.3.13.Final")
             library("undertow-core", "io.undertow", "undertow-core").versionRef("undertow")

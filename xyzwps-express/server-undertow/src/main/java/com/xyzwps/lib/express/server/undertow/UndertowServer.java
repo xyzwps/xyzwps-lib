@@ -2,7 +2,6 @@ package com.xyzwps.lib.express.server.undertow;
 
 import com.xyzwps.lib.bedrock.Args;
 import com.xyzwps.lib.express.HttpContext;
-import com.xyzwps.lib.express.RequestExecutors;
 import com.xyzwps.lib.express.ServerConfig;
 import com.xyzwps.lib.express.Server;
 import io.undertow.Undertow;
@@ -18,7 +17,8 @@ public final class UndertowServer implements Server {
 
         Undertow.builder()
                 .addHttpListener(config.port, "localhost")
-                .setHandler((exchange -> RequestExecutors.runOnVirtualThread(() -> {
+                .setHandler((exchange -> {
+                    // TODO: 怎么跑到 virtual thread 上？
                     try (var ignored = exchange.startBlocking()) {
                         try (var in = exchange.getInputStream()) {
                             var req = new UndertowHttpRequest(exchange, in);
@@ -29,7 +29,7 @@ public final class UndertowServer implements Server {
                         // TODO: 处理错误
                         throw new UncheckedIOException(e);
                     }
-                })))
+                }))
                 .build()
                 .start();
     }

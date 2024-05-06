@@ -46,6 +46,7 @@ public final class HttpContext implements Middleware.Context<HttpContext> {
         return internal.attributes;
     }
 
+    // TODO: 指定类型
     public Object attribute(String name) {
         Args.notNull(name, "Name cannot be null");
 

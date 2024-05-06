@@ -20,7 +20,8 @@ public final class Router {
      */
     public Router handle(HttpMethod method, String url, HttpMiddleware mw0, HttpMiddleware... mws) {
         Args.notNull(mw0, "The first middleware cannot be null");
-        Args.allNotNull(mws, "Middlewares cannot be null");
+        Args.notNull(mws, "mws cannot be null");
+        Args.itemsNotNull(mws, i -> "mws[" + i + "] cannot be null");
 
         HttpMiddleware[] mergedMws = new HttpMiddleware[mws.length + 1];
         System.arraycopy(mws, 0, mergedMws, 1, mws.length);
@@ -37,8 +38,40 @@ public final class Router {
         return this.handle(HttpMethod.GET, url, mw0, mws);
     }
 
+    public Router head(String url, HttpMiddleware mw0, HttpMiddleware... mws) {
+        // TODO: 实现 head
+        return this.handle(HttpMethod.HEAD, url, mw0, mws);
+    }
+
     public Router post(String url, HttpMiddleware mw0, HttpMiddleware... mws) {
         return this.handle(HttpMethod.POST, url, mw0, mws);
+    }
+
+    public Router put(String url, HttpMiddleware mw0, HttpMiddleware... mws) {
+        return this.handle(HttpMethod.PUT, url, mw0, mws);
+    }
+
+    public Router delete(String url, HttpMiddleware mw0, HttpMiddleware... mws) {
+        return this.handle(HttpMethod.DELETE, url, mw0, mws);
+    }
+
+    public Router connect(String url, HttpMiddleware mw0, HttpMiddleware... mws) {
+        // TODO: 啥意思
+        return this.handle(HttpMethod.CONNECT, url, mw0, mws);
+    }
+
+    public Router options(String url, HttpMiddleware mw0, HttpMiddleware... mws) {
+        // TODO: 啥意思
+        return this.handle(HttpMethod.OPTIONS, url, mw0, mws);
+    }
+
+    public Router trace(String url, HttpMiddleware mw0, HttpMiddleware... mws) {
+        // TODO: 啥意思
+        return this.handle(HttpMethod.TRACE, url, mw0, mws);
+    }
+
+    public Router patch(String url, HttpMiddleware mw0, HttpMiddleware... mws) {
+        return this.handle(HttpMethod.PATCH, url, mw0, mws);
     }
 
     private void setMatchStart(int matchStart) {

@@ -48,7 +48,6 @@ public final class HttpSearchParams extends SimpleMultiValuesMap {
         return URLEncoder.encode(str, StandardCharsets.UTF_8);
     }
 
-
     public String toHString() {
         var sb = new StringBuilder();
         var env = new Env();

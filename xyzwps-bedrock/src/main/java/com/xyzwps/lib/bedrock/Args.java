@@ -58,17 +58,22 @@ public final class Args {
         return list;
     }
 
-    // TODO: 修正
-    @Deprecated
-    public static <T> void allNotNull(T[] arr, String message) {
-        if (arr == null) {
-            throw new IllegalArgumentException(message);
-        }
+    /**
+     * @param arr       you should make sure that it is not null
+     * @param toMessage generate message
+     * @param <T>       item type
+     * @return argument arr
+     */
+    public static <T> T[] itemsNotNull(T[] arr, IntFunction<String> toMessage) {
+        Args.notNull(arr, "Argument arr CANNOT be null");
+        int i = 0;
         for (var it : arr) {
             if (it == null) {
-                throw new IllegalArgumentException(message);
+                throw new IllegalArgumentException(toMessage.apply(i));
             }
+            i++;
         }
+        return arr;
     }
 
 

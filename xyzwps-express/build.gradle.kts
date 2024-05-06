@@ -19,6 +19,7 @@ dependencies {
     api(project(":xyzwps-bedrock"))
     api(project(":xyzwps-dollar"))
     api(libs.bundles.jackson)
+    api(libs.bundles.slf4j)
 
     testImplementation(platform(libs.junit.bom))
     testImplementation(libs.junit.jupiter)

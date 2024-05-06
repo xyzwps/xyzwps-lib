@@ -5,8 +5,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.function.BiConsumer;
 
-// TODO: test
-// TODO: 不要 implement Map，同时实现 JSONSerializer
+// TODO: 同时实现 JSONSerializer
 public interface HttpHeaders {
 
     /**

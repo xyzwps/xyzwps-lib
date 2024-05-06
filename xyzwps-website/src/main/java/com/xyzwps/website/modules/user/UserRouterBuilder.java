@@ -5,6 +5,8 @@ import com.xyzwps.lib.express.middleware.JsonParser;
 import com.xyzwps.lib.express.middleware.Router;
 import com.xyzwps.website.common.JSON;
 import com.xyzwps.website.Person;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -13,6 +15,8 @@ import static com.xyzwps.lib.express.HttpStatus.*;
 
 @Singleton
 public class UserRouterBuilder {
+
+    private static final Logger log = LoggerFactory.getLogger(UserRouterBuilder.class);
 
     public final Router router;
 
@@ -43,14 +47,14 @@ public class UserRouterBuilder {
                     }
                 })
                 .use((ctx) -> {
-                    System.out.println(" > ready to get posts");
+                    log.info(" > ready to get posts");
                     ctx.next();
                 })
                 .get("/{id}/posts", (ctx) -> {
                     var resp = ctx.response();
                     resp.ok();
                     resp.headers().set("Content-Type", "application/json");
-                    System.out.println(" > posts gotten");
+                    log.info(" > posts gotten");
                     resp.send("{\"msg\":\"get user posts\"}".getBytes());
                 });
     }

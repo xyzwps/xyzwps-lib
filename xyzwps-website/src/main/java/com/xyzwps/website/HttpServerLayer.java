@@ -6,12 +6,16 @@ import com.xyzwps.lib.express.server.craft.CraftServer;
 import com.xyzwps.lib.express.server.undertow.UndertowServer;
 import com.xyzwps.website.middleware.LogRequestCostMiddleware;
 import com.xyzwps.website.modules.IndexRouterBuilder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
 @Singleton
 public class HttpServerLayer {
+
+    private static final Logger log = LoggerFactory.getLogger(HttpServerLayer.class);
 
     private final ServerConfig config;
 
@@ -26,7 +30,7 @@ public class HttpServerLayer {
     }
 
     public void start() {
-        System.out.printf("=====> server is listening at %d <=====\n", config.port);
+        log.info("=====> server is listening at {} <=====\n", config.port);
         new UndertowServer().start(this.config);
     }
 }

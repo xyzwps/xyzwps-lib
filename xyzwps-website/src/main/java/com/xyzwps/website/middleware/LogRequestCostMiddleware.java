@@ -1,6 +1,8 @@
 package com.xyzwps.website.middleware;
 
 import com.xyzwps.lib.express.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -8,6 +10,8 @@ import java.util.concurrent.atomic.AtomicLong;
 
 @Singleton
 public class LogRequestCostMiddleware implements HttpMiddleware {
+
+    private static final Logger log = LoggerFactory.getLogger(LogRequestCostMiddleware.class);
 
     private static final AtomicLong COUNTER = new AtomicLong(0);
 
@@ -18,9 +22,9 @@ public class LogRequestCostMiddleware implements HttpMiddleware {
     @Override
     public void call(HttpContext ctx) {
         var req = ctx.request();
-        System.out.printf("-> %s %s \n", req.method(), req.path());
+        log.info("-> {} {}", req.method(), req.path());
         long startTs = System.currentTimeMillis();
         ctx.next();
-        System.out.printf(" > [%d] [%d] %s %s cost %dms \n", Thread.currentThread().threadId(), COUNTER.getAndIncrement(), req.method(), req.path(), System.currentTimeMillis() - startTs);
+        log.info(" > [{}] [{}] {} {} cost {}ms ", Thread.currentThread().threadId(), COUNTER.getAndIncrement(), req.method(), req.path(), System.currentTimeMillis() - startTs);
     }
 }
