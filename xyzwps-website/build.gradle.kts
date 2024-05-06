@@ -14,7 +14,6 @@ repositories {
 dependencies {
     implementation(project(":xyzwps-express"))
     implementation(project(":xyzwps-express:server-craft"))
-    implementation(project(":xyzwps-express:server-simple"))
     implementation(project(":xyzwps-express:server-undertow"))
     implementation(libs.dagger)
     annotationProcessor(libs.dagger.compiler)
