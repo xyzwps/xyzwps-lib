@@ -17,14 +17,16 @@ public class IndexRouterBuilder {
     @Inject
     public IndexRouterBuilder(DebugRouterBuilder debugRouter, UserRouterBuilder userRouter) {
         this.router = new Router()
-                .get("/hello/world", (req, resp, next) -> {
+                .get("/hello/world", (ctx) -> {
+                    var resp = ctx.response();
                     resp.ok();
                     resp.headers().set("Content-Type", "application/json");
                     resp.send("[\"Hello\":\"World\"]".getBytes());
                 })
                 .nest("/debug", debugRouter.router)
                 .nest("/users", userRouter.router)
-                .all("/**", (req, resp, next) -> {
+                .all("/**", (ctx) -> { // TODO: 实现 404
+                    var resp = ctx.response();
                     resp.headers().set(HttpHeaders.CONTENT_TYPE, "application/json");
                     resp.status(HttpStatus.NOT_FOUND);
                     resp.send("{\"status\":404}".getBytes());

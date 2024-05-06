@@ -1,8 +1,8 @@
 package com.xyzwps.lib.express.server.undertow;
 
 import com.xyzwps.lib.bedrock.Args;
+import com.xyzwps.lib.express.HttpContext;
 import com.xyzwps.lib.express.ServerConfig;
-import com.xyzwps.lib.express.Next;
 import com.xyzwps.lib.express.Server;
 import io.undertow.Undertow;
 
@@ -20,7 +20,7 @@ public final class UndertowServer implements Server {
                         try (var in = exchange.getInputStream()) {
                             var req = new UndertowHttpRequest(exchange, in);
                             var resp = new UndertowHttpResponse(exchange);
-                            config.middleware.call(req, resp, Next.EMPTY);
+                            config.middleware.call(HttpContext.start(req, resp));
                         }
                     }
                 }))

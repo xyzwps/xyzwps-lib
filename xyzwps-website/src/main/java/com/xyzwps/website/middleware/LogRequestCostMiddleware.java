@@ -1,9 +1,6 @@
 package com.xyzwps.website.middleware;
 
-import com.xyzwps.lib.express.HttpMiddleware;
-import com.xyzwps.lib.express.HttpRequest;
-import com.xyzwps.lib.express.HttpResponse;
-import com.xyzwps.lib.express.Next;
+import com.xyzwps.lib.express.*;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -19,10 +16,11 @@ public class LogRequestCostMiddleware implements HttpMiddleware {
     }
 
     @Override
-    public void call(HttpRequest req, HttpResponse resp, Next next) {
+    public void call(HttpContext ctx) {
+        var req = ctx.request();
         System.out.printf("-> %s %s \n", req.method(), req.path());
         long startTs = System.currentTimeMillis();
-        next.call();
+        ctx.next();
         System.out.printf(" > [%d] [%d] %s %s cost %dms \n", Thread.currentThread().threadId(), COUNTER.getAndIncrement(), req.method(), req.path(), System.currentTimeMillis() - startTs);
     }
 }

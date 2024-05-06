@@ -15,7 +15,10 @@ public final class BasicAuth implements HttpMiddleware {
     }
 
     @Override
-    public void call(HttpRequest req, HttpResponse resp, Next next) {
+    public void call(HttpContext context) {
+        var req = context.request();
+        var resp = context.response();
+
         var value = req.header(HttpHeaders.AUTHORIZATION);
         if (value == null) {
             unauthorized(resp);
@@ -32,7 +35,7 @@ public final class BasicAuth implements HttpMiddleware {
 
             String username = segments[0], password = segments[1];
             if (usernamePasswordChecker.test(username, password)) {
-                next.call(); // pass
+                context.next(); // pass
                 return;
             }
         }

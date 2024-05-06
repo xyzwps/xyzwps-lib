@@ -22,9 +22,12 @@ public final class Static {
     }
 
     public HttpMiddleware serve() {
-        return (req, resp, next) -> {
+        return (ctx) -> {
+            var req = ctx.request();
+            var resp = ctx.response();
+
             if (req.method() != HttpMethod.GET) {
-                next.call();
+                ctx.next();
                 return;
             }
 
@@ -34,14 +37,14 @@ public final class Static {
 
             var $matchedMime = MimeDb.findFirstByExtension(ext);
             if ($matchedMime.isEmpty()) {
-                next.call(); // no mime type matched
+                ctx.next(); // no mime type matched
                 return;
             }
             var mime = $matchedMime.get();
 
             var filePath = Path.of(root, req.path());
             if (!Files.exists(filePath)) {
-                next.call();
+                ctx.next();
                 return;
             }
 
@@ -54,7 +57,7 @@ public final class Static {
                 resp.send(allbytes);
             } catch (Exception e) {
                 // TODO: 处理错误
-                next.call();
+                ctx.next();
             }
         };
     }

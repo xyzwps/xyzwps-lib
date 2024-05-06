@@ -1,10 +1,7 @@
 package com.xyzwps.lib.express.server.craft;
 
 import com.xyzwps.lib.bedrock.Args;
-import com.xyzwps.lib.express.HttpMiddleware;
-import com.xyzwps.lib.express.Server;
-import com.xyzwps.lib.express.ServerConfig;
-import com.xyzwps.lib.express.Next;
+import com.xyzwps.lib.express.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -52,7 +49,7 @@ public final class CraftServer implements Server {
             try (socket; var in = socket.getInputStream(); var out = socket.getOutputStream()) {
                 var request = new RawRequestParser().parse(in).toHttpRequest();
                 var response = new CraftHttpResponse(out, request);
-                middleware.call(request, response, Next.EMPTY);
+                middleware.call(HttpContext.start(request, response));
                 socket.shutdownInput();
                 socket.shutdownOutput();
 

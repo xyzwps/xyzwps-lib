@@ -21,12 +21,16 @@ public class UserRouterBuilder {
         var jsonParser = new JsonParser(JSON.OM);
 
         this.router = new Router()
-                .get("/{id}", (req, resp, next) -> {
+                .get("/{id}", (ctx) -> {
+                    var resp = ctx.response();
                     resp.ok();
                     resp.headers().set("Content-Type", "application/json");
                     resp.send("{\"msg\":\"get user\"}".getBytes());
                 })
-                .post("/{id}", jsonParser.json(Person.class), (req, resp, next) -> {
+                .post("/{id}", jsonParser.json(Person.class), (ctx) -> {
+                    var req = ctx.request();
+                    var resp = ctx.response();
+
                     var body = req.body();
                     if (body instanceof Person p) {
                         resp.ok();
@@ -38,11 +42,12 @@ public class UserRouterBuilder {
                         resp.send(("{\"error\":true}").getBytes());
                     }
                 })
-                .use((req, resp, next) -> {
+                .use((ctx) -> {
                     System.out.println(" > ready to get posts");
-                    next.call();
+                    ctx.next();
                 })
-                .get("/{id}/posts", (req, resp, next) -> {
+                .get("/{id}/posts", (ctx) -> {
+                    var resp = ctx.response();
                     resp.ok();
                     resp.headers().set("Content-Type", "application/json");
                     System.out.println(" > posts gotten");

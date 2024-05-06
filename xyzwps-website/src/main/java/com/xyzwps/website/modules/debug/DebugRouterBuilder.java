@@ -19,7 +19,10 @@ public class DebugRouterBuilder {
     @Inject
     DebugRouterBuilder(BasicAuth basicAuth) {
         this.router = new Router()
-                .get("", (req, resp, next) -> {
+                .get("", (ctx) -> {
+                    var req = ctx.request();
+                    var resp = ctx.response();
+
                     req.attribute("haha", "haha");
 
                     resp.ok();
@@ -35,7 +38,9 @@ public class DebugRouterBuilder {
 
                     resp.send(JSON.stringify(map, true).getBytes());
                 })
-                .get("/auth", basicAuth, (req, resp, next) -> {
+                .get("/auth", basicAuth, (ctx) -> {
+                    var resp = ctx.response();
+
                     resp.ok();
                     resp.headers().set(HttpHeaders.CONTENT_TYPE, "application/json");
                     resp.send(JSON.stringify(Map.of("ok", true), true).getBytes());

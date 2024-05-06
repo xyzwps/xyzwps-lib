@@ -1,23 +1,18 @@
 package com.xyzwps.lib.express;
 
-import com.xyzwps.lib.express.util.Middleware2;
-import com.xyzwps.lib.express.util.Middleware2Composer;
+import com.xyzwps.lib.express.util.Middleware;
 
 import java.util.List;
 
-import static com.xyzwps.lib.dollar.Dollar.*;
+public interface HttpMiddleware extends Middleware<HttpContext> {
 
-public interface HttpMiddleware extends Middleware2<HttpRequest, HttpResponse> {
-
-    HttpMiddleware DO_NOTHING = (req, resp, next) -> next.call();
+    HttpMiddleware DO_NOTHING = HttpContext::next;
 
     static HttpMiddleware compose(List<HttpMiddleware> mws) {
-        if ($.isEmpty(mws)) {
-            throw new IllegalArgumentException("Nothing to compose");
-        }
+        return Middleware.compose(HttpMiddleware::compose2, mws);
+    }
 
-        Middleware2<HttpRequest, HttpResponse>[] arr = mws.toArray(new HttpMiddleware[0]);
-        var composed = Middleware2Composer.compose(arr);
-        return composed::call;
+    static HttpMiddleware compose2(HttpMiddleware m1, HttpMiddleware m2) {
+        return context -> m1.call(new HttpContext(m2, context));
     }
 }

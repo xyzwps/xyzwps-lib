@@ -3,7 +3,6 @@ package com.xyzwps.lib.express.util;
 import com.xyzwps.lib.bedrock.Args;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.function.BiFunction;
 
 public interface Middleware<C extends Middleware.Context<C>> {

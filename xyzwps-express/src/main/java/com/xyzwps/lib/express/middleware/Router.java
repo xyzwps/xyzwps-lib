@@ -104,11 +104,12 @@ public final class Router {
     }
 
     public HttpMiddleware routes() {
-        return (req, resp, next) -> {
+        return (context) -> {
+            var req = context.request();
             var path = HPath.pathToSegmentStrings(req.path());
             var mws = this.match(req.method(), path);
             var composed = HttpMiddleware.compose(mws);
-            composed.call(req, resp, next);
+            composed.call(context);
         };
     }
 

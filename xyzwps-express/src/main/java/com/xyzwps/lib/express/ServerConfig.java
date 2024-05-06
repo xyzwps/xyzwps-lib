@@ -1,7 +1,6 @@
 package com.xyzwps.lib.express;
 
 import com.xyzwps.lib.bedrock.Args;
-import com.xyzwps.lib.express.util.Middleware2Composer;
 
 public final class ServerConfig {
 
@@ -25,7 +24,7 @@ public final class ServerConfig {
      */
     public ServerConfig use(HttpMiddleware mw) {
         Args.notNull(mw, "Middleware cannot be null");
-        return new ServerConfig(Middleware2Composer.compose2(middleware, mw)::call, this.port);
+        return new ServerConfig(HttpMiddleware.compose2(middleware, mw), this.port);
     }
 
     /**
