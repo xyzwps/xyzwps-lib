@@ -2,9 +2,13 @@ package com.xyzwps.lib.express.server.undertow;
 
 import com.xyzwps.lib.bedrock.Args;
 import com.xyzwps.lib.express.HttpContext;
+import com.xyzwps.lib.express.RequestExecutors;
 import com.xyzwps.lib.express.ServerConfig;
 import com.xyzwps.lib.express.Server;
 import io.undertow.Undertow;
+
+import java.io.IOException;
+import java.io.UncheckedIOException;
 
 public final class UndertowServer implements Server {
 
@@ -14,16 +18,18 @@ public final class UndertowServer implements Server {
 
         Undertow.builder()
                 .addHttpListener(config.port, "localhost")
-                .setHandler((exchange -> {
-                    // TODO: ab -n 20000 -c 10 http://127.0.0.1:3000/debug 在请求超过 14000 个之后会突然变慢
+                .setHandler((exchange -> RequestExecutors.runOnVirtualThread(() -> {
                     try (var ignored = exchange.startBlocking()) {
                         try (var in = exchange.getInputStream()) {
                             var req = new UndertowHttpRequest(exchange, in);
                             var resp = new UndertowHttpResponse(exchange);
                             config.middleware.call(HttpContext.start(req, resp));
                         }
+                    } catch (IOException e) {
+                        // TODO: 处理错误
+                        throw new UncheckedIOException(e);
                     }
-                }))
+                })))
                 .build()
                 .start();
     }

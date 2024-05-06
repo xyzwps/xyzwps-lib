@@ -43,7 +43,7 @@ public final class CraftServer implements Server {
     }
 
     void handleSocket(Socket socket, HttpMiddleware middleware) {
-        Thread.ofVirtual().start(() -> {
+        RequestExecutors.runOnVirtualThread(() -> {
             // TODO: 先深入学习下 socket，看看怎么处理 ab 压不上去的问题
 
             try (socket; var in = socket.getInputStream(); var out = socket.getOutputStream()) {
