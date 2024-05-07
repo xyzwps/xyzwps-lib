@@ -71,7 +71,5 @@ public final class CraftHttpResponse implements HttpResponse {
         } catch (IOException e) {
             throw new UncheckedIOException(e);
         }
-
-
     }
 }

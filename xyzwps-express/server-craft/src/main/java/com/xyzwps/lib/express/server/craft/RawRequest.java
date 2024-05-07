@@ -1,5 +1,7 @@
 package com.xyzwps.lib.express.server.craft;
 
+import com.xyzwps.lib.express.BadProtocolException;
+import com.xyzwps.lib.express.HttpException;
 import com.xyzwps.lib.express.server.craft.common.ContentLengthInputStream;
 import com.xyzwps.lib.express.HttpMethod;
 
@@ -57,7 +59,7 @@ record RawRequest(StartLine startLine, List<HeaderLine> headerLines, InputStream
         try {
             return new URI(uri);
         } catch (URISyntaxException e) {
-            throw new RuntimeException("XXX"); // TODO: 真抛出了会怎样？
+            throw new BadProtocolException("Invalid url");
         }
     }
 }

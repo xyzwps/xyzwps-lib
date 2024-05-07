@@ -13,7 +13,6 @@ public final class CraftServer implements Server {
 
     private static final Logger log = LoggerFactory.getLogger(CraftServer.class);
 
-
     @Override
     public void start(ServerConfig config) {
         Args.notNull(config, "ServerConfig cannot be null");
@@ -44,23 +43,18 @@ public final class CraftServer implements Server {
 
     void handleSocket(Socket socket, HttpMiddleware middleware) {
         RequestExecutors.runOnVirtualThread(() -> {
-            // TODO: 先深入学习下 socket，看看怎么处理 ab 压不上去的问题
-
             try (socket; var in = socket.getInputStream(); var out = socket.getOutputStream()) {
                 var request = new RawRequestParser().parse(in).toHttpRequest();
                 var response = new CraftHttpResponse(out, request);
                 middleware.call(HttpContext.start(request, response));
                 socket.shutdownInput();
                 socket.shutdownOutput();
-
             } catch (IOException e) {
-                log.error("Handle socket error", e); // TODO: handle exception
+                log.error("Handle socket error", e);
+            } catch (BadProtocolException e) {
+                log.error("Bad protocol error", e);
             } catch (Exception e) {
-                log.error("Unhandled error", e); // TODO: handle exception
-//            } finally {
-//                log.info(" socket closed : {}", socket.isClosed());
-//                log.info(" socket bound  : {}", socket.isBound());
-//                log.info(" socket id     : {}", System.identityHashCode(socket));
+                log.error("Unhandled error", e);
             }
         });
     }
