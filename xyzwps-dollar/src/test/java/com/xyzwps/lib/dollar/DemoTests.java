@@ -79,7 +79,7 @@ class DemoTests {
     @Test
     void readMeDemo() {
         assertIterableEquals(
-                $.listOf(28, 24, 20, 16),
+                $.arrayList(28, 24, 20, 16),
                 $.just(2, 3, 4, 5, 6)
                         .map(i -> i * 2)
                         .flatMap(i -> $.just(i, i + 2).toList())

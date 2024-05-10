@@ -32,10 +32,20 @@ include("doc")
 include("xyzwps-bean")
 include("xyzwps-bedrock")
 include("xyzwps-collection")
-include("xyzwps-dollar")
-include("xyzwps-express")
-include("xyzwps-express:server-craft")
-include("xyzwps-express:server-undertow")
+include(
+    "xyzwps-dollar", //
+    "xyzwps-dollar:api",
+    "xyzwps-dollar:generator",
+    "xyzwps-dollar:iterator",
+    "xyzwps-dollar:performance",
+    "xyzwps-dollar:seq",
+    "xyzwps-dollar:test-cases"
+)
+include(
+    "xyzwps-express",  //
+    "xyzwps-express:server-craft",
+    "xyzwps-express:server-undertow"
+)
 include("xyzwps-json")
 include("xyzwps-website")
 include("lib:jsdom:mimetype")

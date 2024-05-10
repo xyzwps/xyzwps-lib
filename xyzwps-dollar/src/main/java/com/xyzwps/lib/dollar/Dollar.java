@@ -2,11 +2,7 @@ package com.xyzwps.lib.dollar;
 
 import com.xyzwps.lib.dollar.seq.SeqChainFactory;
 import com.xyzwps.lib.dollar.seq.SeqMapEntryChainFactory;
-import com.xyzwps.lib.dollar.util.Function3;
-import com.xyzwps.lib.dollar.util.ObjIntFunction;
-import com.xyzwps.lib.dollar.iterator.EmptyIterator;
-import com.xyzwps.lib.dollar.util.Pair;
-import com.xyzwps.lib.dollar.util.Unreachable;
+import com.xyzwps.lib.dollar.util.*;
 
 import java.util.*;
 import java.util.function.*;
@@ -54,7 +50,6 @@ public final class Dollar {
 
     public static final class $ {
 
-
         /**
          * Count the elements of a <code>collection</code>.
          * Return 0 if <code>collection</code> is <code>null</code>.
@@ -80,183 +75,39 @@ public final class Dollar {
             return map == null ? 0 : map.size();
         }
 
-
-        /**
-         * Checks <code>value</code> to determine whether a public static value
-         * should be returned in its place. The <code>defaultValue</code>
-         * is returned when <code>value</code> is <code>null</code>.
-         *
-         * @param value        The value to check
-         * @param defaultValue The public static value
-         * @param <T>          value type
-         * @return resolved value
-         */
         public static <T> T defaultTo(T value, T defaultValue) {
-            return value == null ? defaultValue : value;
+            return ObjectUtils.defaultTo(value, defaultValue);
         }
 
-
-        /**
-         * Check value which is falsey or not. The values <code>null</code>, <code>false</code>,
-         * <code>0(.0)</code> and <code>""</code> are falsey.
-         *
-         * @param value value to be checked
-         * @return true if the value is falsey
-         * @see #compact
-         */
         public static boolean isFalsey(Object value) {
-            return value == null
-                   || Objects.equals(value, false)
-                   || "".equals(value)
-                   || Objects.equals(value, 0)
-                   || Objects.equals(value, 0L)
-                   || Objects.equals(value, 0.0)
-                   || Objects.equals(value, 0.0f);
+            return ObjectUtils.isFalsey(value);
         }
 
-        /**
-         * Creates a list of elements split into groups the length of size.
-         * If list can't be split evenly, the final chunk will be the remaining elements.
-         *
-         * @param list The list to handle
-         * @param size Chunk size which should be greater than 0.
-         * @param <T>  Element type
-         * @return new list of chunks
-         */
         public static <T> List<List<T>> chunk(List<T> list, int size) {
-            if (size < 1) {
-                throw new IllegalArgumentException("Chunk size should be greater than 0.");
-            }
-
-            if (isEmpty(list)) {
-                return new ArrayList<>();
-            }
-
-            int listSize = list.size();
-            int chunksCapacity = listSize / size + 1;
-            List<List<T>> chunks = new ArrayList<>(chunksCapacity);
-            List<T> chunk = null;
-            int counter = 0;
-            int i = 0;
-            for (T element : list) {
-                if (counter == 0) {
-                    chunk = new ArrayList<>(size);
-                }
-
-                chunk.add(element);
-                counter++;
-                i++;
-
-                if (counter == size || i == listSize) {
-                    chunks.add(chunk);
-                    chunk = null;
-                    counter = 0;
-                }
-            }
-
-            return chunks;
+            return CollectionUtils.chunk(list, size);
         }
 
-
-        /**
-         * Filter list with the elements which are not falsey.
-         * <p>
-         * The definition of falsey can be seen at {@link #isFalsey}
-         *
-         * @param list The list to filter. Null is acceptable.
-         * @param <T>  List element type
-         * @return new compacted list
-         * @see #isFalsey
-         */
         public static <T> List<T> compact(List<T> list) {
-            return filter(list, it -> !isFalsey(it));
+            return CollectionUtils.compact(list);
         }
 
-
-        /**
-         * Creates a new list which concatenating all lists in order.
-         *
-         * @param lists The lists to concatenate
-         * @param <T>   Element type
-         * @return concatenated new list
-         */
         @SafeVarargs
         public static <T> List<T> concat(List<T>... lists) {
-            if (lists.length == 0) {
-                return new ArrayList<>();
-            }
-
-            int capacity = 0;
-            for (List<T> list : lists) {
-                if (isNotEmpty(list)) {
-                    capacity += list.size();
-                }
-            }
-
-            if (capacity == 0) {
-                return new ArrayList<>();
-            }
-
-            ArrayList<T> result = new ArrayList<>(capacity);
-            for (List<T> list : lists) {
-                if (isNotEmpty(list)) {
-                    result.addAll(list);
-                }
-            }
-            return result;
+            return CollectionUtils.concat(lists);
         }
 
-        /**
-         * Iterate over the list and retaining the elements which are predicated true.
-         *
-         * @param list      The list to iterate. Null is acceptable.
-         * @param predicate Predicate function. Cannot be null.
-         * @param <T>       Element type
-         * @return new filtered list
-         */
         public static <T> List<T> filter(List<T> list, Predicate<T> predicate) {
-            Objects.requireNonNull(predicate);
-            return filter(list, (e, i) -> predicate.test(e));
+            return CollectionUtils.filter(list, predicate);
         }
 
-
-        /**
-         * Iterate over the list and retaining the elements which are predicated true.
-         *
-         * @param list      The list to iterate. Null is acceptable.
-         * @param predicate Predicate function with element index. Cannot be null.
-         * @param <T>       Element type
-         * @return new filtered list
-         */
         public static <T> List<T> filter(List<T> list, BiPredicate<T, Integer> predicate) {
-            Objects.requireNonNull(predicate);
-            if (list == null) {
-                return new ArrayList<>();
-            }
-
-            List<T> result = new ArrayList<>();
-            int i = 0;
-            for (T element : list) {
-                if (predicate.test(element, i++)) {
-                    result.add(element);
-                }
-            }
-            return result;
+            return CollectionUtils.filter(list, predicate);
         }
 
-        /**
-         * Create a list.
-         *
-         * @param args elements of list
-         * @param <T>  type of elements
-         * @return new list
-         */
         @SafeVarargs
-        public static <T> List<T> listOf(T... args) {
-            List<T> list = Arrays.asList(args);
-            return list instanceof ArrayList ? (ArrayList<T>) list : new ArrayList<>(list);
+        public static <T> ArrayList<T> arrayList(T... args) {
+            return ListFactory.arrayList(args);
         }
-
 
         /**
          * Create a list from an {@link Iterator}.
@@ -306,6 +157,10 @@ public final class Dollar {
                     : Optional.ofNullable(list.getLast());
         }
 
+        public static int length(String str) {
+            return StringUtils.length(str);
+        }
+
         /**
          * Alias of {@link #last(List)}.
          */
@@ -343,320 +198,52 @@ public final class Dollar {
         }
 
 
-        /**
-         * Create a {@link Map} with key-value pairs.
-         *
-         * @param <K> key type
-         * @param <V> value type
-         * @return new HashMap
-         */
-        public static <K, V> Map<K, V> mapOf() {
-            return new HashMap<>();
+        public static <K, V> HashMap<K, V> hashMap() {
+            return MapFactory.hashMap();
         }
 
-
-        /**
-         * Create a {@link Map} with key-value pairs.
-         *
-         * @param k1  the first key
-         * @param v1  the first value
-         * @param <K> key type
-         * @param <V> value type
-         * @return new HashMap
-         */
-        public static <K, V> Map<K, V> mapOf(K k1, V v1) {
-            Map<K, V> map = new HashMap<>();
-            map.put(k1, v1);
-            return map;
+        public static <K, V> HashMap<K, V> hashMap(K k1, V v1) {
+            return MapFactory.hashMap(k1, v1);
         }
 
-
-        /**
-         * Create a {@link Map} with key-value pairs.
-         *
-         * @param k1  the first key
-         * @param v1  the first value
-         * @param k2  the second key
-         * @param v2  the second value
-         * @param <K> key type
-         * @param <V> value type
-         * @return new HashMap
-         */
-        public static <K, V> Map<K, V> mapOf(K k1, V v1, K k2, V v2) {
-            Map<K, V> map = new HashMap<>();
-            map.put(k1, v1);
-            map.put(k2, v2);
-            return map;
+        public static <K, V> HashMap<K, V> hashMap(K k1, V v1, K k2, V v2) {
+            return MapFactory.hashMap(k1, v1, k2, v2);
         }
 
-
-        /**
-         * Create a {@link Map} with key-value pairs.
-         *
-         * @param k1  the first key
-         * @param v1  the first value
-         * @param k2  the second key
-         * @param v2  the second value
-         * @param k3  the third key
-         * @param v3  the third value
-         * @param <K> key type
-         * @param <V> value type
-         * @return new HashMap
-         */
-        public static <K, V> Map<K, V> mapOf(K k1, V v1, K k2, V v2, K k3, V v3) {
-            Map<K, V> map = new HashMap<>();
-            map.put(k1, v1);
-            map.put(k2, v2);
-            map.put(k3, v3);
-            return map;
+        public static <K, V> HashMap<K, V> hashMap(K k1, V v1, K k2, V v2, K k3, V v3) {
+            return MapFactory.hashMap(k1, v1, k2, v2, k3, v3);
         }
 
-
-        /**
-         * Create a {@link Map} with key-value pairs.
-         *
-         * @param k1  the first key
-         * @param v1  the first value
-         * @param k2  the second key
-         * @param v2  the second value
-         * @param k3  the third key
-         * @param v3  the third value
-         * @param k4  the fourth key
-         * @param v4  the fourth value
-         * @param <K> key type
-         * @param <V> value type
-         * @return new HashMap
-         */
-        public static <K, V> Map<K, V> mapOf(K k1, V v1, K k2, V v2, K k3, V v3, K k4, V v4) {
-            Map<K, V> map = new HashMap<>();
-            map.put(k1, v1);
-            map.put(k2, v2);
-            map.put(k3, v3);
-            map.put(k4, v4);
-            return map;
+        public static <K, V> HashMap<K, V> hashMap(K k1, V v1, K k2, V v2, K k3, V v3, K k4, V v4) {
+            return MapFactory.hashMap(k1, v1, k2, v2, k3, v3, k4, v4);
         }
 
-
-        /**
-         * Create a {@link Map} with key-value pairs.
-         *
-         * @param k1  the first key
-         * @param v1  the first value
-         * @param k2  the second key
-         * @param v2  the second value
-         * @param k3  the third key
-         * @param v3  the third value
-         * @param k4  the fourth key
-         * @param v4  the fourth value
-         * @param k5  the fifth key
-         * @param v5  the fifth value
-         * @param <K> key type
-         * @param <V> value type
-         * @return new HashMap
-         */
-        public static <K, V> Map<K, V> mapOf(K k1, V v1, K k2, V v2, K k3, V v3, K k4, V v4, K k5, V v5) {
-            Map<K, V> map = new HashMap<>();
-            map.put(k1, v1);
-            map.put(k2, v2);
-            map.put(k3, v3);
-            map.put(k4, v4);
-            map.put(k5, v5);
-            return map;
+        public static <K, V> HashMap<K, V> hashMap(K k1, V v1, K k2, V v2, K k3, V v3, K k4, V v4, K k5, V v5) {
+            return MapFactory.hashMap(k1, v1, k2, v2, k3, v3, k4, v4, k5, v5);
         }
 
-
-        /**
-         * Create a {@link Map} with key-value pairs.
-         *
-         * @param k1  the first key
-         * @param v1  the first value
-         * @param k2  the second key
-         * @param v2  the second value
-         * @param k3  the third key
-         * @param v3  the third value
-         * @param k4  the fourth key
-         * @param v4  the fourth value
-         * @param k5  the fifth key
-         * @param v5  the fifth value
-         * @param k6  the sixth key
-         * @param v6  the sixth value
-         * @param <K> key type
-         * @param <V> value type
-         * @return new HashMap
-         */
-        public static <K, V> Map<K, V> mapOf(K k1, V v1, K k2, V v2, K k3, V v3, K k4, V v4, K k5, V v5, K k6, V v6) {
-            Map<K, V> map = new HashMap<>();
-            map.put(k1, v1);
-            map.put(k2, v2);
-            map.put(k3, v3);
-            map.put(k4, v4);
-            map.put(k5, v5);
-            map.put(k6, v6);
-            return map;
+        public static <K, V> HashMap<K, V> hashMap(K k1, V v1, K k2, V v2, K k3, V v3, K k4, V v4, K k5, V v5, K k6, V v6) {
+            return MapFactory.hashMap(k1, v1, k2, v2, k3, v3, k4, v4, k5, v5, k6, v6);
         }
 
-
-        /**
-         * Create a {@link Map} with key-value pairs.
-         *
-         * @param k1  the first key
-         * @param v1  the first value
-         * @param k2  the second key
-         * @param v2  the second value
-         * @param k3  the third key
-         * @param v3  the third value
-         * @param k4  the fourth key
-         * @param v4  the fourth value
-         * @param k5  the fifth key
-         * @param v5  the fifth value
-         * @param k6  the sixth key
-         * @param v6  the sixth value
-         * @param k7  the seventh key
-         * @param v7  the seventh value
-         * @param <K> key type
-         * @param <V> value type
-         * @return new HashMap
-         */
-        public static <K, V> Map<K, V> mapOf(K k1, V v1, K k2, V v2, K k3, V v3, K k4, V v4, K k5, V v5, K k6, V v6, K k7, V v7) {
-            Map<K, V> map = new HashMap<>();
-            map.put(k1, v1);
-            map.put(k2, v2);
-            map.put(k3, v3);
-            map.put(k4, v4);
-            map.put(k5, v5);
-            map.put(k6, v6);
-            map.put(k7, v7);
-            return map;
+        public static <K, V> HashMap<K, V> hashMap(K k1, V v1, K k2, V v2, K k3, V v3, K k4, V v4, K k5, V v5, K k6, V v6, K k7, V v7) {
+            return MapFactory.hashMap(k1, v1, k2, v2, k3, v3, k4, v4, k5, v5, k6, v6, k7, v7);
         }
 
-
-        /**
-         * Create a {@link Map} with key-value pairs.
-         *
-         * @param k1  the first key
-         * @param v1  the first value
-         * @param k2  the second key
-         * @param v2  the second value
-         * @param k3  the third key
-         * @param v3  the third value
-         * @param k4  the fourth key
-         * @param v4  the fourth value
-         * @param k5  the fifth key
-         * @param v5  the fifth value
-         * @param k6  the sixth key
-         * @param v6  the sixth value
-         * @param k7  the seventh key
-         * @param v7  the seventh value
-         * @param k8  the eighth key
-         * @param v8  the eighth value
-         * @param <K> key type
-         * @param <V> value type
-         * @return new HashMap
-         */
-        public static <K, V> Map<K, V> mapOf(K k1, V v1, K k2, V v2, K k3, V v3, K k4, V v4, K k5, V v5, K k6, V v6, K k7, V v7, K k8, V v8) {
-            Map<K, V> map = new HashMap<>();
-            map.put(k1, v1);
-            map.put(k2, v2);
-            map.put(k3, v3);
-            map.put(k4, v4);
-            map.put(k5, v5);
-            map.put(k6, v6);
-            map.put(k7, v7);
-            map.put(k8, v8);
-            return map;
+        public static <K, V> HashMap<K, V> hashMap(K k1, V v1, K k2, V v2, K k3, V v3, K k4, V v4, K k5, V v5, K k6, V v6, K k7, V v7, K k8, V v8) {
+            return MapFactory.hashMap(k1, v1, k2, v2, k3, v3, k4, v4, k5, v5, k6, v6, k7, v7, k8, v8);
         }
 
-
-        /**
-         * Create a {@link Map} with key-value pairs.
-         *
-         * @param k1  the first key
-         * @param v1  the first value
-         * @param k2  the second key
-         * @param v2  the second value
-         * @param k3  the third key
-         * @param v3  the third value
-         * @param k4  the fourth key
-         * @param v4  the fourth value
-         * @param k5  the fifth key
-         * @param v5  the fifth value
-         * @param k6  the sixth key
-         * @param v6  the sixth value
-         * @param k7  the seventh key
-         * @param v7  the seventh value
-         * @param k8  the eighth key
-         * @param v8  the eighth value
-         * @param k9  the ninth key
-         * @param v9  the ninth value
-         * @param <K> key type
-         * @param <V> value type
-         * @return new HashMap
-         */
-        public static <K, V> Map<K, V> mapOf(K k1, V v1, K k2, V v2, K k3, V v3, K k4, V v4, K k5, V v5, K k6, V v6, K k7, V v7, K k8, V v8, K k9, V v9) {
-            Map<K, V> map = new HashMap<>();
-            map.put(k1, v1);
-            map.put(k2, v2);
-            map.put(k3, v3);
-            map.put(k4, v4);
-            map.put(k5, v5);
-            map.put(k6, v6);
-            map.put(k7, v7);
-            map.put(k8, v8);
-            map.put(k9, v9);
-            return map;
+        public static <K, V> HashMap<K, V> hashMap(K k1, V v1, K k2, V v2, K k3, V v3, K k4, V v4, K k5, V v5, K k6, V v6, K k7, V v7, K k8, V v8, K k9, V v9) {
+            return MapFactory.hashMap(k1, v1, k2, v2, k3, v3, k4, v4, k5, v5, k6, v6, k7, v7, k8, v8, k9, v9);
         }
 
-
-        /**
-         * Create a {@link Map} with key-value pairs.
-         *
-         * @param k1  the first key
-         * @param v1  the first value
-         * @param k2  the second key
-         * @param v2  the second value
-         * @param k3  the third key
-         * @param v3  the third value
-         * @param k4  the fourth key
-         * @param v4  the fourth value
-         * @param k5  the fifth key
-         * @param v5  the fifth value
-         * @param k6  the sixth key
-         * @param v6  the sixth value
-         * @param k7  the seventh key
-         * @param v7  the seventh value
-         * @param k8  the eighth key
-         * @param v8  the eighth value
-         * @param k9  the ninth key
-         * @param v9  the ninth value
-         * @param k10 the tenth key
-         * @param v10 the tenth value
-         * @param <K> key type
-         * @param <V> value type
-         * @return new HashMap
-         */
-        public static <K, V> Map<K, V> mapOf(K k1, V v1, K k2, V v2, K k3, V v3, K k4, V v4, K k5, V v5, K k6, V v6, K k7, V v7, K k8, V v8, K k9, V v9, K k10, V v10) {
-            Map<K, V> map = new HashMap<>();
-            map.put(k1, v1);
-            map.put(k2, v2);
-            map.put(k3, v3);
-            map.put(k4, v4);
-            map.put(k5, v5);
-            map.put(k6, v6);
-            map.put(k7, v7);
-            map.put(k8, v8);
-            map.put(k9, v9);
-            map.put(k10, v10);
-            return map;
+        public static <K, V> HashMap<K, V> hashMap(K k1, V v1, K k2, V v2, K k3, V v3, K k4, V v4, K k5, V v5, K k6, V v6, K k7, V v7, K k8, V v8, K k9, V v9, K k10, V v10) {
+            return MapFactory.hashMap(k1, v1, k2, v2, k3, v3, k4, v4, k5, v5, k6, v6, k7, v7, k8, v8, k9, v9, k10, v10);
         }
 
-        /**
-         * Check if a string is empty or not.
-         *
-         * @param string to be checked
-         * @return true if string is null, or it's length is 0
-         */
         public static boolean isEmpty(String string) {
-            return string == null || string.isEmpty();
+            return StringUtils.isEmpty(string);
         }
 
         /**
@@ -700,107 +287,20 @@ public final class Dollar {
             return !isEmpty(map);
         }
 
-
-        /**
-         * Check if the string is not empty.
-         *
-         * @param string to be checked
-         * @return true if string {@link #isEmpty(String)} is false
-         */
         public static boolean isNotEmpty(String string) {
-            return !isEmpty(string);
+            return StringUtils.isNotEmpty(string);
         }
 
-
-        /**
-         * Pads <code>string</code> on the left and right sides if it's shorter than <code>length</code>.
-         * Padding characters are truncated if they can't be evenly divided by <code>length</code>.
-         *
-         * @param string The string to pad
-         * @param length The padding length
-         * @param chars  The string used as padding
-         * @return Padded string
-         */
         public static String pad(String string, int length, String chars) {
-            if (length < 0) {
-                throw new IllegalArgumentException("Argument length cannot be less than 0");
-            }
-
-            string = defaultTo(string, "");
-            if (string.length() >= length) {
-                return string;
-            }
-
-            char[] padChars = (isEmpty(chars) ? " " : chars).toCharArray();
-            StringBuilder sb = new StringBuilder();
-            int padLength = length - string.length();
-            int padHalf = padLength / 2;
-            for (int i = 0; i < padHalf; i++) {
-                sb.append(padChars[i % padChars.length]);
-            }
-            sb.append(string);
-            for (int i = padHalf; i < padLength; i++) {
-                sb.append(padChars[i % padChars.length]);
-            }
-            return sb.toString();
-
+            return StringUtils.pad(string, length, chars);
         }
 
-        /**
-         * Pads <code>string</code> on the right side if it's shorter than <code>length</code>.
-         * Padding characters are truncated if they exceed <code>length</code>.
-         *
-         * @param string The string to pad
-         * @param length The padding length
-         * @param chars  The string used as padding
-         * @return Padded string
-         */
         public static String padEnd(String string, int length, String chars) {
-            if (length < 0) {
-                throw new IllegalArgumentException("Argument length cannot be less than 0");
-            }
-
-            string = defaultTo(string, "");
-            if (string.length() >= length) {
-                return string;
-            }
-
-            char[] padChars = (isEmpty(chars) ? " " : chars).toCharArray();
-            StringBuilder sb = new StringBuilder(string);
-            int padLength = length - string.length();
-            for (int i = 0; i < padLength; i++) {
-                sb.append(padChars[i % padChars.length]);
-            }
-            return sb.toString();
+            return StringUtils.padEnd(string, length, chars);
         }
 
-        /**
-         * Pads <code>string</code> on the left side if it's shorter than <code>length</code>.
-         * Padding characters are truncated if they exceed <code>length</code>.
-         *
-         * @param string The string to pad
-         * @param length The padding length
-         * @param chars  The string used as padding
-         * @return Padded string
-         */
         public static String padStart(String string, int length, String chars) {
-            if (length < 0) {
-                throw new IllegalArgumentException("Argument length cannot be less than 0");
-            }
-
-            string = defaultTo(string, "");
-            if (string.length() >= length) {
-                return string;
-            }
-
-            char[] padChars = (isEmpty(chars) ? " " : chars).toCharArray();
-            StringBuilder sb = new StringBuilder();
-            int padLength = length - string.length();
-            for (int i = 0; i < padLength; i++) {
-                sb.append(padChars[i % padChars.length]);
-            }
-            sb.append(string);
-            return sb.toString();
+            return StringUtils.padStart(string, length, chars);
         }
 
         /**
@@ -838,34 +338,10 @@ public final class Dollar {
             return cf.range(start, end);
         }
 
-        /**
-         * Get the first element from {@link Iterable}.
-         * <p>
-         * Warning: When {@link Optional#empty()} is returned, uou cannot recognize
-         * that the <code>iterable</code> is empty, or it's first element is null.
-         *
-         * @param iterable to be handled
-         * @param <T>      type of the first element
-         * @return {@link Optional} of the first element
-         */
         public static <T> Optional<T> first(Iterable<T> iterable) {
-            if (iterable == null) {
-                return Optional.empty();
-            }
-            if (iterable instanceof List<T> list) {
-                return list.isEmpty() ? Optional.empty() : Optional.ofNullable(list.getFirst());
-            }
-            Iterator<T> itr = iterable.iterator();
-            return itr.hasNext() ? Optional.ofNullable(itr.next()) : Optional.empty();
+            return CollectionUtils.first(iterable);
         }
 
-        /**
-         * Alias for {@link #first(Iterable)}.
-         *
-         * @param iterable to be handled
-         * @param <T>      type of the first element
-         * @return {@link Optional} of the first element
-         */
         public static <T> Optional<T> head(Iterable<T> iterable) {
             return first(iterable);
         }
@@ -1176,43 +652,12 @@ public final class Dollar {
 
         public static final String EMPTY_STRING = "";
 
-        /**
-         * Take the substring made up of the first <tt>n</tt> characters.
-         *
-         * @param str the string to take
-         * @param n   substring length
-         * @return the substring made up of the first <tt>n</tt> characters.
-         */
         public static String take(final String str, final int n) {
-            if (n < 0) {
-                throw new IllegalArgumentException("n should be greater than or equal to 0");
-            }
-
-            if (str == null || n == 0) {
-                return EMPTY_STRING;
-            }
-
-            return str.length() < n ? str : str.substring(0, n);
+            return StringUtils.take(str, n);
         }
 
-        /**
-         * Take the substring made up of the last <tt>n</tt> characters.
-         *
-         * @param str the string to take
-         * @param n   substring length
-         * @return the substring made up of the last <tt>n</tt> characters.
-         */
         public static String takeRight(final String str, final int n) {
-            if (n < 0) {
-                throw new IllegalArgumentException("n should be greater than or equal to 0");
-            }
-
-            if (str == null || n == 0) {
-                return EMPTY_STRING;
-            }
-
-            var len = str.length();
-            return len < n ? str : str.substring(len - n, len);
+            return StringUtils.takeRight(str, n);
         }
 
         /**

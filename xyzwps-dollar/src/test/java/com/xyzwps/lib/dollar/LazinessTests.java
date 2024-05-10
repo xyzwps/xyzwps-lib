@@ -1,6 +1,5 @@
 package com.xyzwps.lib.dollar;
 
-import com.xyzwps.lib.dollar.seq.Seq;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -12,7 +11,7 @@ class LazinessTests {
 
     @Test
     void forTake() {
-        List<String> trace = $.listOf();
+        List<String> trace = $.arrayList();
 
         Chain<Integer> stages = $.just(1, 2, 3, 4, 5, 6, 7)
                 .map(i -> {
@@ -31,9 +30,9 @@ class LazinessTests {
 
         assertTrue(trace.isEmpty());
 
-        assertIterableEquals($.listOf(1, 3, 5), stages.toList());
+        assertIterableEquals($.arrayList(1, 3, 5), stages.toList());
         assertIterableEquals(
-                $.listOf(
+                $.arrayList(
                         "map 1 to 3",
                         "filter 3 \\ 2 == 1",
                         "map 3 to 1",

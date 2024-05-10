@@ -1,20 +1,5 @@
 package com.xyzwps.lib.dollar.chain;
 
-import com.xyzwps.lib.dollar.util.Counter;
-import com.xyzwps.lib.dollar.util.ObjIntPredicate;
-import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Test;
-
-import java.util.*;
-import java.util.function.BiFunction;
-import java.util.function.Function;
-import java.util.function.Predicate;
-
-import static com.xyzwps.lib.dollar.Direction.ASC;
-import static com.xyzwps.lib.dollar.Direction.DESC;
-import static com.xyzwps.lib.dollar.Dollar.$.*;
-import static org.junit.jupiter.api.Assertions.*;
-
 class ChainTests {
 
     /*

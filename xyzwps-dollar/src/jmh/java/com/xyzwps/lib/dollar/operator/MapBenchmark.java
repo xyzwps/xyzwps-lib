@@ -1,7 +1,5 @@
 package com.xyzwps.lib.dollar.operator;
 
-import com.xyzwps.lib.dollar.generator.GeneratorChainFactory;
-import com.xyzwps.lib.dollar.iterator.IteratorChainFactory;
 import com.xyzwps.lib.dollar.seq.SeqChainFactory;
 import org.openjdk.jmh.annotations.*;
 import org.openjdk.jmh.infra.Blackhole;
@@ -35,6 +33,8 @@ public class MapBenchmark {
         blackhole.consume(seq.map(i -> i * 2 + 1).filter(i -> i % 3 == 0).size());
     }
 
+    /*
+
     @Benchmark
     @Warmup(iterations = WARM_UP_ITR)
     @Measurement(iterations = MEASURE_ITR)
@@ -50,6 +50,7 @@ public class MapBenchmark {
         var itr = IteratorChainFactory.INSTANCE.from(ARRAY_LIST);
         blackhole.consume(itr.map(i -> i * 2 + 1).filter(i -> i % 3 == 0).size());
     }
+    */
 
     @Benchmark
     @Warmup(iterations = WARM_UP_ITR)
