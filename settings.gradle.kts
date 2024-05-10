@@ -28,6 +28,7 @@ dependencyResolutionManagement {
     }
 }
 
+include("doc")
 include("xyzwps-bean")
 include("xyzwps-bedrock")
 include("xyzwps-collection")

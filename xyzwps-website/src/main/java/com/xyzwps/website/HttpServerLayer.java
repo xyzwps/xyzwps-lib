@@ -31,6 +31,6 @@ public class HttpServerLayer {
 
     public void start() {
         log.info("=====> server is listening at {} <=====\n", config.port);
-        new UndertowServer().start(this.config);
+        new CraftServer().start(this.config);
     }
 }

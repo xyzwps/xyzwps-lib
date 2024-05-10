@@ -24,7 +24,7 @@ class HttpSearchParamsTests {
         assertEquals("刻晴=aaa", parse("%E5%88%BB%E6%99%B4=aaa").toHString());
 
         assertEquals("刻晴=====aaa", parse("%E5%88%BB%E6%99%B4=====aaa").toHString());
-        assertEquals("====aaa", parse("%E5%88%BB%E6%99%B4=====aaa").getFirst("刻晴").orElseThrow());
+        assertEquals("====aaa", parse("%E5%88%BB%E6%99%B4=====aaa").get("刻晴"));
 
         assertEquals("aaa=刻晴&aaa=123", parse("aaa=%E5%88%BB%E6%99%B4&aaa=123").toHString());
         assertIterableEquals(List.of("刻晴", "123"), parse("aaa=%E5%88%BB%E6%99%B4&aaa=123").getAll("aaa"));

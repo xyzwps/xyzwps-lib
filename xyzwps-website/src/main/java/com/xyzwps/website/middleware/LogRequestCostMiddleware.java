@@ -23,8 +23,10 @@ public class LogRequestCostMiddleware implements HttpMiddleware {
     public void call(HttpContext ctx) {
         var req = ctx.request();
         log.info("-> {} {}", req.method(), req.path());
+        var t = Thread.currentThread();
+        log.info(" > Thread id:{} name:{} virtual:{}", t.threadId(), t.getName(), t.isVirtual());
         long startTs = System.currentTimeMillis();
         ctx.next();
-        log.info(" > [{}] [{}] {} {} cost {}ms ", Thread.currentThread().threadId(), COUNTER.getAndIncrement(), req.method(), req.path(), System.currentTimeMillis() - startTs);
+        log.info(" > [{}] [{}] {} {} cost {}ms ", t.threadId(), COUNTER.getAndIncrement(), req.method(), req.path(), System.currentTimeMillis() - startTs);
     }
 }

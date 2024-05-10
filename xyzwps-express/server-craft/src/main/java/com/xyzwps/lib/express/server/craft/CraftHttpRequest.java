@@ -82,7 +82,4 @@ public final class CraftHttpRequest implements HttpRequest {
     public MimeType contentType() {
         return contentType;
     }
-
-
-
 }
