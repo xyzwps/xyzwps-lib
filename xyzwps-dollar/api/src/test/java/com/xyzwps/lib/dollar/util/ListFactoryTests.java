@@ -37,4 +37,16 @@ public class ListFactoryTests {
         }
     }
 
+    @Test
+    void testListFromIterator() {
+        {
+            List<Integer> list = arrayListFrom(null);
+            assertEquals(0, list.size());
+        }
+        {
+            List<Integer> list = arrayListFrom(arrayList(1, 2, 3).iterator());
+            assertEquals("[1, 2, 3]", list.toString());
+        }
+    }
+
 }
