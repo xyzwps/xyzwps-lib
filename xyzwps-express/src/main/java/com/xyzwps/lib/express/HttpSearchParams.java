@@ -48,7 +48,7 @@ public final class HttpSearchParams extends SimpleMultiValuesMap {
         return URLEncoder.encode(str, StandardCharsets.UTF_8);
     }
 
-    public String toHString() {
+    public String toHumanReadableString() {
         var sb = new StringBuilder();
         var env = new Env();
         this.forEach((name, values) -> {
@@ -56,7 +56,7 @@ public final class HttpSearchParams extends SimpleMultiValuesMap {
                 if (env.first) env.first = false;
                 else sb.append('&');
 
-                sb.append(encode(name)).append('=').append(encode(value));
+                sb.append(name).append('=').append(value);
             }
         });
         return sb.toString();

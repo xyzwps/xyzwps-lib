@@ -11,25 +11,25 @@ class HttpSearchParamsTests {
 
     @Test
     void test() {
-        assertEquals("", parse(null).toHString());
-        assertEquals("", parse("").toHString());
-        assertEquals("a=", parse("a").toHString());
-        assertEquals("a=&a=", parse("a&a").toHString());
+        assertEquals("", parse(null).toHumanReadableString());
+        assertEquals("", parse("").toHumanReadableString());
+        assertEquals("a=", parse("a").toHumanReadableString());
+        assertEquals("a=&a=", parse("a&a").toHumanReadableString());
 
-        assertEquals("=1", parse("=1").toHString());
-        assertEquals("=", parse("=").toHString());
-        assertEquals(" =1", parse(" =1").toHString());
+        assertEquals("=1", parse("=1").toHumanReadableString());
+        assertEquals("=", parse("=").toHumanReadableString());
+        assertEquals(" =1", parse(" =1").toHumanReadableString());
 
-        assertEquals("aaa=刻晴", parse("aaa=%E5%88%BB%E6%99%B4").toHString());
-        assertEquals("刻晴=aaa", parse("%E5%88%BB%E6%99%B4=aaa").toHString());
+        assertEquals("aaa=刻晴", parse("aaa=%E5%88%BB%E6%99%B4").toHumanReadableString());
+        assertEquals("刻晴=aaa", parse("%E5%88%BB%E6%99%B4=aaa").toHumanReadableString());
 
-        assertEquals("刻晴=====aaa", parse("%E5%88%BB%E6%99%B4=====aaa").toHString());
+        assertEquals("刻晴=====aaa", parse("%E5%88%BB%E6%99%B4=====aaa").toHumanReadableString());
         assertEquals("====aaa", parse("%E5%88%BB%E6%99%B4=====aaa").get("刻晴"));
 
-        assertEquals("aaa=刻晴&aaa=123", parse("aaa=%E5%88%BB%E6%99%B4&aaa=123").toHString());
+        assertEquals("aaa=刻晴&aaa=123", parse("aaa=%E5%88%BB%E6%99%B4&aaa=123").toHumanReadableString());
         assertIterableEquals(List.of("刻晴", "123"), parse("aaa=%E5%88%BB%E6%99%B4&aaa=123").getAll("aaa"));
         assertIterableEquals(List.of(), parse("aaa=%E5%88%BB%E6%99%B4&aaa=123").getAll("bbb"));
-        assertEquals("aaa=刻晴&bbb=123", parse("aaa=%E5%88%BB%E6%99%B4&bbb=123").toHString());
+        assertEquals("aaa=刻晴&bbb=123", parse("aaa=%E5%88%BB%E6%99%B4&bbb=123").toHumanReadableString());
     }
 
 }
