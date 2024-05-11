@@ -15,6 +15,7 @@ import java.util.function.*;
  * TODO: 写中文文档
  * TODO: add examples
  * TODO: all apis should be null tolerant
+ * TODO: 探索怎么能把这东西搞优雅了
  */
 public final class Dollar {
 
@@ -58,18 +59,22 @@ public final class Dollar {
             return ObjectUtils.isFalsey(value);
         }
 
+
         public static <T> List<List<T>> chunk(List<T> list, int size) {
             return CollectionUtils.chunk(list, size);
         }
+
 
         public static <T> List<T> compact(List<T> list) {
             return CollectionUtils.compact(list);
         }
 
+
         @SafeVarargs
         public static <T> List<T> concat(List<T>... lists) {
             return CollectionUtils.concat(lists);
         }
+
 
         public static <T> List<T> filter(List<T> list, Predicate<T> predicate) {
             return CollectionUtils.filter(list, predicate);
@@ -79,18 +84,26 @@ public final class Dollar {
             return CollectionUtils.filter(list, predicate);
         }
 
+
         @SafeVarargs
         public static <T> ArrayList<T> arrayList(T... args) {
             return ListFactory.arrayList(args);
         }
 
+
         public static <T> List<T> listFrom(Iterator<T> itr) {
             return ListFactory.arrayListFrom(itr);
         }
 
+
         public static <T, R> List<R> map(Iterable<T> iterable, Function<T, R> mapFn) {
             return CollectionUtils.map(iterable, mapFn);
         }
+
+        public static <T, R> List<R> map(Iterable<T> iterable, ObjIntFunction<T, R> mapFn) {
+            return CollectionUtils.map(iterable, mapFn);
+        }
+
 
         public static <T> Optional<T> last(List<T> list) {
             return CollectionUtils.last(list);
@@ -104,14 +117,10 @@ public final class Dollar {
             return CollectionUtils.last(list);
         }
 
-        public static <T, R> List<R> map(Iterable<T> iterable, ObjIntFunction<T, R> mapFn) {
-            return CollectionUtils.map(iterable, mapFn);
-        }
-
-
         public static <K, V> HashMap<K, V> hashMap() {
             return MapFactory.hashMap();
         }
+
 
         public static <K, V> HashMap<K, V> hashMap(K k1, V v1) {
             return MapFactory.hashMap(k1, v1);
@@ -153,6 +162,7 @@ public final class Dollar {
             return MapFactory.hashMap(k1, v1, k2, v2, k3, v3, k4, v4, k5, v5, k6, v6, k7, v7, k8, v8, k9, v9, k10, v10);
         }
 
+
         public static boolean isEmpty(String string) {
             return StringUtils.isEmpty(string);
         }
@@ -161,6 +171,7 @@ public final class Dollar {
         public static boolean isEmpty(Map<?, ?> map) {
             return MapUtils.isEmpty(map);
         }
+
 
         public static <T> boolean isNotEmpty(Collection<T> collection) {
             return CollectionUtils.isNotEmpty(collection);
@@ -178,6 +189,7 @@ public final class Dollar {
             return StringUtils.isNotEmpty(string);
         }
 
+
         public static String pad(String string, int length, String chars) {
             return StringUtils.pad(string, length, chars);
         }
@@ -189,6 +201,7 @@ public final class Dollar {
         public static String padStart(String string, int length, String chars) {
             return StringUtils.padStart(string, length, chars);
         }
+
 
         /**
          * Create an empty list stage.
@@ -225,17 +238,21 @@ public final class Dollar {
             return cf.range(start, end);
         }
 
+
         public static <T> Optional<T> first(Iterable<T> iterable) {
             return CollectionUtils.first(iterable);
         }
+
 
         public static <T> Optional<T> head(Iterable<T> iterable) {
             return CollectionUtils.first(iterable);
         }
 
+
         public static <T, R> List<R> flatMap(Iterable<T> iterable, Function<T, Iterable<R>> flatMapFn) {
             return CollectionUtils.flatMap(iterable, flatMapFn);
         }
+
 
         public static <K, V, V2> Map<K, V2> mapValues(Map<K, V> map, Function<V, V2> mapFn) {
             return MapUtils.mapValues(map, mapFn);
@@ -253,6 +270,7 @@ public final class Dollar {
             return MapUtils.mapKeys(map, mapFn);
         }
 
+
         public static <T, K> Map<K, T> keyBy(Iterable<T> iterable, Function<T, K> toKey) {
             return CollectionUtils.keyBy(iterable, toKey);
         }
@@ -262,6 +280,7 @@ public final class Dollar {
             return CollectionUtils.groupBy(iterable, toKey);
         }
 
+
         public static <T, K extends Comparable<K>> List<T> orderBy(Iterable<T> iterable, Function<T, K> toKey, Direction direction) {
             return CollectionUtils.orderBy(iterable, toKey, direction);
         }
@@ -270,13 +289,16 @@ public final class Dollar {
             return CollectionUtils.reduce(iterable, initValue, reducer);
         }
 
+
         public static <K, V, R> R reduce(Map<K, V> map, R initValue, Function3<R, K, V, R> reducer) {
             return MapUtils.reduce(map, initValue, reducer);
         }
 
+
         public static <T> List<T> reverse(Iterable<T> iterable) {
             return CollectionUtils.reverse(iterable);
         }
+
 
         public static <E> int size(Collection<E> collection) {
             return CollectionUtils.size(collection);
@@ -285,6 +307,7 @@ public final class Dollar {
         public static <K, V> int size(Map<K, V> map) {
             return MapUtils.size(map);
         }
+
 
         public static <T> List<T> take(Iterable<T> iterable, int n) {
             return CollectionUtils.take(iterable, n);
@@ -300,13 +323,16 @@ public final class Dollar {
             return StringUtils.takeRight(str, n);
         }
 
+
         public static <T> List<T> takeWhile(Iterable<T> iterable, Predicate<T> predicate) {
             return CollectionUtils.takeWhile(iterable, predicate);
         }
 
+
         public static <T> Set<T> toSet(Iterable<T> iterable) {
             return CollectionUtils.toSet(iterable);
         }
+
 
         public static <T> void forEach(Iterable<T> iterable, Consumer<T> handler) {
             CollectionUtils.forEach(iterable, handler);
@@ -315,6 +341,7 @@ public final class Dollar {
         public static <T> void forEach(Iterable<T> iterable, ObjIntConsumer<T> handler) {
             CollectionUtils.forEach(iterable, handler);
         }
+
 
         public static <T> List<T> unique(Iterable<T> iterable) {
             return CollectionUtils.unique(iterable);
@@ -327,6 +354,7 @@ public final class Dollar {
         public static <T, K> List<T> uniqueBy(Iterable<T> iterable, ObjIntFunction<T, K> toKey) {
             return CollectionUtils.uniqueBy(iterable, toKey);
         }
+
 
         public static <T, R> List<Pair<T, R>> zip(Iterable<T> left, Iterable<R> right) {
             return CollectionUtils.zip(left, right);
