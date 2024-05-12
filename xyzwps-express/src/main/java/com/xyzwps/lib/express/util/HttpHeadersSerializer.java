@@ -3,18 +3,19 @@ package com.xyzwps.lib.express.util;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.ser.std.StdSerializer;
+import com.xyzwps.lib.express.HttpHeaders;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
 
-public class MultiValuesMapSerializer extends StdSerializer<MultiValuesMap> {
+public class HttpHeadersSerializer extends StdSerializer<HttpHeaders> {
 
-    public MultiValuesMapSerializer() {
-        super(MultiValuesMap.class);
+    public HttpHeadersSerializer() {
+        super(HttpHeaders.class);
     }
 
     @Override
-    public void serialize(MultiValuesMap it, JsonGenerator g, SerializerProvider serializerProvider) throws IOException {
+    public void serialize(HttpHeaders it, JsonGenerator g, SerializerProvider serializerProvider) throws IOException {
         if (it == null) {
             g.writeNull();
             return;

@@ -6,11 +6,7 @@ import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 
-public final class HttpSearchParams extends SimpleMultiValuesMap {
-
-    public HttpSearchParams() {
-        super(false);
-    }
+public final class HttpSearchParams extends SimpleMultiValuesMap<String, String> {
 
     public static HttpSearchParams parse(String rawQuery) {
         var params = new HttpSearchParams();

@@ -20,10 +20,11 @@ public final class Args {
         return value;
     }
 
-    public static void notEmpty(String str, String message) {
+    public static String notEmpty(String str, String message) {
         if (str == null || str.isEmpty()) {
             throw new IllegalArgumentException(message);
         }
+        return str;
     }
 
     public static void notEmpty(Collection<?> c, String message) {

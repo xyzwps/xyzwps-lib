@@ -63,8 +63,6 @@ public interface HttpHeaders {
 
     void set(String name, String value);
 
-
-    // TODO: content-length 到底有没有用
     default int contentLength() {
         var lengthStr = get(CONTENT_LENGTH);
         if (lengthStr == null || lengthStr.isEmpty()) {
@@ -94,4 +92,8 @@ public interface HttpHeaders {
     String CONTENT_LENGTH = "Content-Length";
 
     String CONTENT_TYPE = "Content-Type";
+
+    String CONNECTION = "Connection";
+
+    String KEEP_ALIVE = "Keep-Alive";
 }

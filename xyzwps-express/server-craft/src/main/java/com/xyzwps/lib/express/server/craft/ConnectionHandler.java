@@ -3,6 +3,7 @@ package com.xyzwps.lib.express.server.craft;
 import com.xyzwps.lib.bedrock.Args;
 import com.xyzwps.lib.express.BadProtocolException;
 import com.xyzwps.lib.express.HttpContext;
+import com.xyzwps.lib.express.HttpHeaders;
 import com.xyzwps.lib.express.HttpMiddleware;
 import com.xyzwps.lib.express.server.craft.common.ContentLengthInputStream;
 import org.slf4j.Logger;
@@ -13,17 +14,22 @@ import java.io.InputStream;
 import java.io.PushbackInputStream;
 import java.io.UncheckedIOException;
 import java.net.Socket;
+import java.util.concurrent.atomic.AtomicInteger;
 
-public class SocketHandler implements Runnable {
+public class ConnectionHandler implements Runnable {
 
-    private static final Logger log = LoggerFactory.getLogger(SocketHandler.class);
+    private static final Logger log = LoggerFactory.getLogger(ConnectionHandler.class);
 
     private final Socket socket;
     private final HttpMiddleware middleware;
+    private boolean keepAlive;
+    private final KeepAliveConfig keepAliveConfig = new KeepAliveConfig(30, 1000);
+    private final AtomicInteger keepAliveCounter = new AtomicInteger(0);
 
-    SocketHandler(Socket socket, HttpMiddleware middleware) {
+    ConnectionHandler(Socket socket, HttpMiddleware middleware) {
         this.socket = Args.notNull(socket, "Socket cannot be null");
         this.middleware = Args.notNull(middleware, "HttpMiddleware cannot be null");
+        this.keepAlive = false;
     }
 
     @Override
@@ -40,17 +46,39 @@ public class SocketHandler implements Runnable {
 
                 var startLine = requestParser.startLine();
                 var headers = requestParser.headers(); // TODO: 处理 BadProtocolException
+
+                // region check keep alive
+                if (isKeepAlive(headers)) {
+                    this.keepAlive = true;
+                }
+                // endregion
+
                 var contentLength = headers.contentLength();
-
-                // TODO: 处理 keep-alive header
-
-                InputStream requestBody = contentLength == 0 ? InputStream.nullInputStream() : new ContentLengthInputStream(in, 2048, contentLength);
+                InputStream requestBody = contentLength == 0
+                        ? InputStream.nullInputStream()
+                        : new ContentLengthInputStream(in, 2048, contentLength);
 
                 var request = new CraftHttpRequest(startLine.method(), startLine.toURI(), startLine.protocol(), headers, requestBody);
                 var response = new CraftHttpResponse(out, request);
+
+                // region set keep alive header
+                int usedCount = keepAliveCounter.incrementAndGet();
+                if (usedCount < keepAliveConfig.max()) {
+                    response.headers().append(HttpHeaders.KEEP_ALIVE, keepAliveConfig.toHeaderValue(usedCount));
+                }
+                // endregion
+
                 middleware.call(HttpContext.start(request, response));
 
                 exhaust(requestBody);
+
+                // region check connection should keep alive
+                if (!keepAlive || usedCount >= keepAliveConfig.max()) {
+                    break;
+                } else {
+                    socket.setSoTimeout(keepAliveConfig.timeout() * 1000);
+                }
+                // endregion
             }
         } catch (IOException | UncheckedIOException e) {
             log.error("Handle socket error", e);
@@ -68,5 +96,11 @@ public class SocketHandler implements Runnable {
         } catch (IOException e) {
             throw new UncheckedIOException(e);
         }
+    }
+
+
+    private static boolean isKeepAlive(HttpHeaders headers) {
+        return headers.getAll(HttpHeaders.CONNECTION).stream()
+                .anyMatch(it -> it.equalsIgnoreCase("Keep-Alive"));
     }
 }

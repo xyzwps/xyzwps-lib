@@ -6,7 +6,9 @@ import com.xyzwps.lib.bedrock.UnimplementedException;
 import java.io.*;
 import java.util.Objects;
 
-// TODO: content-length 有啥用
+/**
+ * @see <a href="https://www.rfc-editor.org/rfc/rfc9110#name-content-length">RFC-9110</a>
+ */
 // TODO: 好好测试
 public class ContentLengthInputStream extends InputStream {
 

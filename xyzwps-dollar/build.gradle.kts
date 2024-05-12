@@ -19,7 +19,7 @@ repositories {
 }
 
 dependencies {
-    implementation(project(":xyzwps-dollar:api"))
+    api(project(":xyzwps-dollar:api"))
     implementation(project(":xyzwps-dollar:seq"))
     testImplementation(platform(libs.junit.bom))
     testImplementation(libs.junit.jupiter)

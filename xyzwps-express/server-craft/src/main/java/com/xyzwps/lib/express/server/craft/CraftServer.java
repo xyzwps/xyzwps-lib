@@ -42,7 +42,7 @@ public final class CraftServer implements Server {
     }
 
     void handleSocket(Socket socket, HttpMiddleware middleware) {
-        RequestExecutors.runOnVirtualThread(new SocketHandler(socket, middleware));
+        RequestExecutors.runOnVirtualThread(new ConnectionHandler(socket, middleware));
     }
 
 }

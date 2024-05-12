@@ -6,85 +6,67 @@ import java.util.*;
 import java.util.function.BiConsumer;
 
 // TODO: test
-public class SimpleMultiValuesMap implements MultiValuesMap {
+public class SimpleMultiValuesMap<K, V> implements MultiValuesMap<K, V> {
 
-    private final Map<String, LinkedList<String>> map = new TreeMap<>();
-    private final boolean casesOfNameIgored;
+    private final Map<K, LinkedList<V>> map = new HashMap<>();
 
-    public SimpleMultiValuesMap(boolean casesOfNameIgored) {
-        this.casesOfNameIgored = casesOfNameIgored;
-    }
-
-    private String iname(String name) {
-        return casesOfNameIgored ? name.toLowerCase() : name;
+    public SimpleMultiValuesMap() {
     }
 
     @Override
-    public void append(String name, String value) {
+    public void append(K name, V value) {
         Args.notNull(name, "Name cannot be null");
         Args.notNull(value, "Value cannot be null");
-
-        name = iname(name);
 
         map.computeIfAbsent(name, n -> new LinkedList<>()).add(value);
     }
 
     @Override
-    public void delete(String name) {
+    public void delete(K name) {
         Args.notNull(name, "Name cannot be null");
-
-        name = iname(name);
 
         map.remove(name);
     }
 
     @Override
-    public void forEach(BiConsumer<String, List<String>> callback) {
+    public void forEach(BiConsumer<K, List<V>> callback) {
         map.forEach(Args.notNull(callback, "Callback function cannot be null"));
     }
 
     @Override
-    public String get(String name) {
+    public V get(K name) {
         Args.notNull(name, "Name cannot be null");
-
-        name = iname(name);
 
         var li = map.get(name);
         return li == null || li.isEmpty() ? null : li.getFirst();
     }
 
     @Override
-    public List<String> getAll(String name) {
+    public List<V> getAll(K name) {
         Args.notNull(name, "Name cannot be null");
-
-        name = iname(name);
 
         var li = map.get(name);
         return li == null ? List.of() : li;
     }
 
     @Override
-    public boolean has(String name) {
+    public boolean has(K name) {
         Args.notNull(name, "Name cannot be null");
-
-        name = iname(name);
 
         return map.containsKey(name);
     }
 
     @Override
-    public Set<String> names() {
+    public Set<K> names() {
         return map.keySet();
     }
 
     @Override
-    public void set(String name, String value) {
+    public void set(K name, V value) {
         Args.notNull(name, "Name cannot be null");
         Args.notNull(value, "Value cannot be null");
 
-        name = iname(name);
-
-        var li = new LinkedList<String>();
+        var li = new LinkedList<V>();
         li.add(value);
         map.put(name, li);
     }

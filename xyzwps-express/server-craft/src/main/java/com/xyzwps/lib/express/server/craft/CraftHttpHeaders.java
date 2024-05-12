@@ -1,48 +1,75 @@
 package com.xyzwps.lib.express.server.craft;
 
-import com.xyzwps.lib.express.HttpException;
+import com.xyzwps.lib.bedrock.Args;
 import com.xyzwps.lib.express.HttpHeaders;
+import com.xyzwps.lib.express.util.MultiValuesMap;
 import com.xyzwps.lib.express.util.SimpleMultiValuesMap;
 
-import java.util.Map;
+import java.util.List;
+import java.util.Set;
+import java.util.function.BiConsumer;
+
+import static com.xyzwps.lib.dollar.Dollar.*;
 
 // TODO: test
 // TODO: 不要 implement Map，同时实现 JSONSerializer
-final class CraftHttpHeaders extends SimpleMultiValuesMap implements HttpHeaders {
+final class CraftHttpHeaders implements HttpHeaders {
 
-    public CraftHttpHeaders() {
-        super(true);
+    private final MultiValuesMap<HttpHeaderName, String> map = new SimpleMultiValuesMap<>();
+
+    @Override
+    public void append(String name, String value) {
+        Args.notNull(name, "Name cannot be null");
+        Args.notNull(value, "Value cannot be null");
+
+        this.map.append(new HttpHeaderName(name), value);
     }
 
-    public int contentLength() {
-        var lengthStr = get(CONTENT_LENGTH);
-        if (lengthStr == null || lengthStr.isEmpty()) {
-            return 0;
-        }
+    @Override
+    public void delete(String name) {
+        Args.notNull(name, "Name cannot be null");
 
-        try {
-            var length = Long.parseLong(lengthStr);
-            if (length > CONTENT_LENGTH_LIMIT) {
-                throw HttpException.payloadTooLarge("Payload too large",
-                        Map.of("Content-Length", length, "contentLengthLimit", CONTENT_LENGTH_LIMIT));
-            }
-            return (int) length;
-        } catch (NumberFormatException e) {
-            throw HttpException.badRequest("Invalid content length of %s", lengthStr);
-        }
-
-
+        this.map.delete(new HttpHeaderName(name));
     }
 
-    public String contentType() {
-        return get(CONTENT_TYPE);
+    @Override
+    public void forEach(BiConsumer<String, List<String>> callback) {
+        Args.notNull(callback, "Callback function cannot be null");
+
+        this.map.forEach((name, value) -> callback.accept(name.name, value));
     }
 
-    private static final int CONTENT_LENGTH_LIMIT = 1024 * 1024 * 50;
+    @Override
+    public String get(String name) {
+        Args.notNull(name, "Name cannot be null");
 
-    public static final String AUTHORIZATION = "Authorization";
+        return this.map.get(new HttpHeaderName(name));
+    }
 
-    public static final String CONTENT_LENGTH = "Content-Length";
+    @Override
+    public List<String> getAll(String name) {
+        Args.notNull(name, "Name cannot be null");
 
-    public static final String CONTENT_TYPE = "Content-Type";
+        return this.map.getAll(new HttpHeaderName(name));
+    }
+
+    @Override
+    public boolean has(String name) {
+        Args.notNull(name, "Name cannot be null");
+
+        return this.map.has(new HttpHeaderName(name));
+    }
+
+    @Override
+    public Set<String> names() {
+        return $(this.map.names()).map(it -> it.name).toSet();
+    }
+
+    @Override
+    public void set(String name, String value) {
+        Args.notNull(name, "Name cannot be null");
+        Args.notNull(value, "Value cannot be null");
+
+        this.map.set(new HttpHeaderName(name), value);
+    }
 }
