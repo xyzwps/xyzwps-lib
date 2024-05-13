@@ -7,10 +7,8 @@ import java.util.*;
 import java.util.function.*;
 
 import static com.xyzwps.lib.dollar.util.Comparators.*;
-import static com.xyzwps.lib.dollar.util.ObjectUtils.*;
-import static com.xyzwps.lib.dollar.util.ListFactory.*;
 
-public final class CollectionUtils {
+public interface CollectionUtils {
 
     /**
      * Creates a list of elements split into groups the length of size.
@@ -21,7 +19,7 @@ public final class CollectionUtils {
      * @param <T>  Element type
      * @return new list of chunks
      */
-    public static <T> List<List<T>> chunk(List<T> list, int size) {
+    default <T> List<List<T>> chunk(List<T> list, int size) {
         if (size < 1) {
             throw new IllegalArgumentException("Chunk size should be greater than 0.");
         }
@@ -65,8 +63,8 @@ public final class CollectionUtils {
      * @return new compacted list
      * @see ObjectUtils#isFalsey(Object)
      */
-    public static <T> List<T> compact(List<T> list) {
-        return filter(list, it -> !isFalsey(it));
+    default <T> List<T> compact(List<T> list) {
+        return filter(list, it -> !SharedUtils.isFalsey(it));
     }
 
     /**
@@ -76,8 +74,8 @@ public final class CollectionUtils {
      * @param <T>   Element type
      * @return concatenated new list
      */
-    @SafeVarargs
-    public static <T> List<T> concat(List<T>... lists) {
+    @SuppressWarnings("unchecked")
+    default <T> List<T> concat(List<T>... lists) {
         if (lists.length == 0) {
             return new ArrayList<>();
         }
@@ -110,7 +108,7 @@ public final class CollectionUtils {
      * @param <T>       Element type
      * @return new filtered list
      */
-    public static <T> List<T> filter(List<T> list, Predicate<T> predicate) {
+    default <T> List<T> filter(List<T> list, Predicate<T> predicate) {
         Objects.requireNonNull(predicate);
         return filter(list, (e, i) -> predicate.test(e));
     }
@@ -124,7 +122,7 @@ public final class CollectionUtils {
      * @param <T>       Element type
      * @return new filtered list
      */
-    public static <T> List<T> filter(List<T> list, BiPredicate<T, Integer> predicate) {
+    default <T> List<T> filter(List<T> list, BiPredicate<T, Integer> predicate) {
         Objects.requireNonNull(predicate);
         if (list == null) {
             return new ArrayList<>();
@@ -150,7 +148,7 @@ public final class CollectionUtils {
      * @param <T>      type of the first element
      * @return {@link Optional} of the first element
      */
-    public static <T> Optional<T> first(Iterable<T> iterable) {
+    default <T> Optional<T> first(Iterable<T> iterable) {
         if (iterable == null) {
             return Optional.empty();
         }
@@ -168,7 +166,7 @@ public final class CollectionUtils {
      * @param <R>       flatten elements type
      * @return next stage
      */
-    public static <T, R> List<R> flatMap(Iterable<T> iterable, Function<T, Iterable<R>> flatMapFn) {
+    default <T, R> List<R> flatMap(Iterable<T> iterable, Function<T, Iterable<R>> flatMapFn) {
         Objects.requireNonNull(flatMapFn);
 
         if (iterable == null) {
@@ -199,7 +197,7 @@ public final class CollectionUtils {
      *                 <br/>
      *                 Type of elements.
      */
-    public static <T> void forEach(Iterable<T> iterable, Consumer<T> handler) {
+    default <T> void forEach(Iterable<T> iterable, Consumer<T> handler) {
         if (iterable == null) {
             return;
         }
@@ -221,7 +219,7 @@ public final class CollectionUtils {
      *                 <br/>
      *                 Type of elements.
      */
-    public static <T> void forEach(Iterable<T> iterable, ObjIntConsumer<T> handler) {
+    default <T> void forEach(Iterable<T> iterable, ObjIntConsumer<T> handler) {
         if (iterable == null) {
             return;
         }
@@ -243,7 +241,7 @@ public final class CollectionUtils {
      * @param <K>      type of key
      * @return new {@link Map}
      */
-    public static <T, K> Map<K, List<T>> groupBy(Iterable<T> iterable, Function<T, K> toKey) {
+    default <T, K> Map<K, List<T>> groupBy(Iterable<T> iterable, Function<T, K> toKey) {
         Objects.requireNonNull(toKey);
 
         if (iterable == null) {
@@ -253,6 +251,17 @@ public final class CollectionUtils {
         Map<K, List<T>> result = new HashMap<>();
         iterable.forEach(it -> result.computeIfAbsent(toKey.apply(it), k -> new ArrayList<>()).add(it));
         return result;
+    }
+
+    /**
+     * Alias of {@link #first(Iterable)}.
+     *
+     * @param iterable to be handled
+     * @param <T>      type of the first element
+     * @return {@link Optional} of the first element
+     */
+    default <T> Optional<T> head(Iterable<T> iterable) {
+        return this.first(iterable);
     }
 
     /**
@@ -267,7 +276,7 @@ public final class CollectionUtils {
      * @param <K>      type of key
      * @return new {@link Map}
      */
-    public static <T, K> Map<K, T> keyBy(Iterable<T> iterable, Function<T, K> toKey) {
+    default <T, K> Map<K, T> keyBy(Iterable<T> iterable, Function<T, K> toKey) {
         Objects.requireNonNull(toKey);
 
         if (iterable == null) {
@@ -286,7 +295,7 @@ public final class CollectionUtils {
      * @param <T>  the element type of list
      * @return empty if list is empty or the last element of list is null.
      */
-    public static <T> Optional<T> last(List<T> list) {
+    default <T> Optional<T> last(List<T> list) {
         return isEmpty(list)
                 ? Optional.empty()
                 : Optional.ofNullable(list.getLast());
@@ -298,7 +307,7 @@ public final class CollectionUtils {
      * @param c to be checked
      * @return true if map is null, or it has no any entries.
      */
-    public static boolean isEmpty(Collection<?> c) {
+    default boolean isEmpty(Collection<?> c) {
         return c == null || c.isEmpty();
     }
 
@@ -309,7 +318,7 @@ public final class CollectionUtils {
      * @param <T>        type of elements
      * @return true if collection {@link #isEmpty(Collection)} is false
      */
-    public static <T> boolean isNotEmpty(Collection<T> collection) {
+    default <T> boolean isNotEmpty(Collection<T> collection) {
         return !isEmpty(collection);
     }
 
@@ -322,7 +331,7 @@ public final class CollectionUtils {
      * @param <R>      type of elements returned by mapping function
      * @return mapping result
      */
-    public static <T, R> List<R> map(Iterable<T> iterable, Function<T, R> mapFn) {
+    default <T, R> List<R> map(Iterable<T> iterable, Function<T, R> mapFn) {
         Objects.requireNonNull(mapFn);
 
         if (iterable == null) {
@@ -351,7 +360,7 @@ public final class CollectionUtils {
      * @param <R>      type of elements returned by mapping function
      * @return mapping result
      */
-    public static <T, R> List<R> map(Iterable<T> iterable, ObjIntFunction<T, R> mapFn) {
+    default <T, R> List<R> map(Iterable<T> iterable, ObjIntFunction<T, R> mapFn) {
         Objects.requireNonNull(mapFn);
 
         if (iterable == null) {
@@ -381,7 +390,7 @@ public final class CollectionUtils {
      * @param <K>       type of element keys
      * @return a list with sorted elements
      */
-    public static <T, K extends Comparable<K>> List<T> orderBy(Iterable<T> iterable, Function<T, K> toKey, Direction direction) {
+    default <T, K extends Comparable<K>> List<T> orderBy(Iterable<T> iterable, Function<T, K> toKey, Direction direction) {
         Objects.requireNonNull(toKey);
         Objects.requireNonNull(direction);
 
@@ -389,7 +398,8 @@ public final class CollectionUtils {
             return new ArrayList<>();
         }
 
-        List<T> list = arrayListFrom(iterable.iterator());
+
+        List<T> list = SharedUtils.arrayListFrom(iterable.iterator());
         Comparator<T> comparator = direction == Direction.DESC ? descComparator(toKey) : ascComparator(toKey);
         list.sort(comparator);
         return list;
@@ -406,7 +416,7 @@ public final class CollectionUtils {
      * @param <R>       type of result
      * @return reducing result
      */
-    public static <T, R> R reduce(Iterable<T> iterable, R initValue, BiFunction<R, T, R> reducer) {
+    default <T, R> R reduce(Iterable<T> iterable, R initValue, BiFunction<R, T, R> reducer) {
         Objects.requireNonNull(reducer);
 
         if (iterable == null) {
@@ -427,7 +437,7 @@ public final class CollectionUtils {
      * @param <T>      type of elements
      * @return a set of elements from iterable
      */
-    public static <T> Set<T> toSet(Iterable<T> iterable) {
+    default <T> Set<T> toSet(Iterable<T> iterable) {
         if (iterable == null) {
             return new HashSet<>();
         }
@@ -444,7 +454,7 @@ public final class CollectionUtils {
      * @param <T>      type of elements
      * @return a list of elements in reversed order
      */
-    public static <T> List<T> reverse(Iterable<T> iterable) {
+    default <T> List<T> reverse(Iterable<T> iterable) {
         ArrayList<T> list = reduce(iterable, new ArrayList<>(), (li, it) -> {
             li.add(it);
             return li;
@@ -469,10 +479,20 @@ public final class CollectionUtils {
      * @param <E>        collection element type
      * @return count of elements in collection
      */
-    public static <E> int size(Collection<E> collection) {
+    default <E> int size(Collection<E> collection) {
         return collection == null ? 0 : collection.size();
     }
 
+    /**
+     * Alias of {@link #last(List)}
+     *
+     * @param list to be handled
+     * @param <T>  the element type of list
+     * @return empty if list is empty or the last element of list is null.
+     */
+    default <T> Optional<T> tail(List<T> list) {
+        return this.last(list);
+    }
 
     /**
      * Take the first <code>n</code> elements.
@@ -482,7 +502,7 @@ public final class CollectionUtils {
      * @param <T>      type of elements
      * @return a list of elements to be taken
      */
-    public static <T> List<T> take(Iterable<T> iterable, int n) {
+    default <T> List<T> take(Iterable<T> iterable, int n) {
         if (n < 1) {
             throw new IllegalArgumentException("You should take at least one element.");
         }
@@ -512,7 +532,7 @@ public final class CollectionUtils {
      * @param <T>       type of elements
      * @return a list of elements to be taken
      */
-    public static <T> List<T> takeWhile(Iterable<T> iterable, Predicate<T> predicate) {
+    default <T> List<T> takeWhile(Iterable<T> iterable, Predicate<T> predicate) {
         Objects.requireNonNull(predicate);
 
         if (iterable == null) {
@@ -537,7 +557,7 @@ public final class CollectionUtils {
      * @param <T>      type of elements
      * @return new {@link List} with unique elements
      */
-    public static <T> List<T> unique(Iterable<T> iterable) {
+    default <T> List<T> unique(Iterable<T> iterable) {
         if (iterable == null) {
             return new ArrayList<>();
         }
@@ -560,7 +580,7 @@ public final class CollectionUtils {
      * @param <T>      type of elements
      * @return new {@link List} with unique elements
      */
-    public static <T, K> List<T> uniqueBy(Iterable<T> iterable, Function<T, K> toKey) {
+    default <T, K> List<T> uniqueBy(Iterable<T> iterable, Function<T, K> toKey) {
         Objects.requireNonNull(toKey);
 
         if (iterable == null) {
@@ -587,7 +607,7 @@ public final class CollectionUtils {
      * @param <T>      type of elements
      * @return new {@link List} with unique elements
      */
-    public static <T, K> List<T> uniqueBy(Iterable<T> iterable, ObjIntFunction<T, K> toKey) {
+    default <T, K> List<T> uniqueBy(Iterable<T> iterable, ObjIntFunction<T, K> toKey) {
         Objects.requireNonNull(toKey);
 
         if (iterable == null) {
@@ -617,7 +637,7 @@ public final class CollectionUtils {
      * @param <R>   element type of the second list
      * @return a list of pairs
      */
-    public static <T, R> List<Pair<T, R>> zip(Iterable<T> left, Iterable<R> right) {
+    default <T, R> List<Pair<T, R>> zip(Iterable<T> left, Iterable<R> right) {
         return zip(left, right, Pair::of);
     }
 
@@ -632,7 +652,7 @@ public final class CollectionUtils {
      * @param <R>       element type of the second list
      * @return a list of combined
      */
-    public static <T, R, S> List<S> zip(Iterable<T> left, Iterable<R> right, BiFunction<T, R, S> combineFn) {
+    default <T, R, S> List<S> zip(Iterable<T> left, Iterable<R> right, BiFunction<T, R, S> combineFn) {
         Objects.requireNonNull(combineFn);
 
         List<S> result = new ArrayList<>();
@@ -658,9 +678,5 @@ public final class CollectionUtils {
                     throw new Unreachable();
             }
         }
-    }
-
-    private CollectionUtils() throws IllegalAccessException {
-        throw new IllegalAccessException("???");
     }
 }

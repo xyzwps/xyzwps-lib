@@ -1,5 +1,7 @@
 package com.xyzwps.lib.dollar.iterator;
 
+import com.xyzwps.lib.dollar.util.SharedUtils;
+
 import java.util.Iterator;
 import java.util.Objects;
 import java.util.function.Supplier;
@@ -19,7 +21,7 @@ public class LazyIterable<T> implements Iterable<T> {
     @Override
     public Iterator<T> iterator() {
         if (iterable == null) {
-            iterable = defaultTo(supplier.get(), EmptyIterable.create());
+            iterable = SharedUtils.defaultTo(supplier.get(), EmptyIterable.create());
         }
         return iterable.iterator();
     }

@@ -4,11 +4,9 @@ import org.junit.jupiter.api.Test;
 
 
 import static org.junit.jupiter.api.Assertions.*;
-import static com.xyzwps.lib.dollar.util.StringUtils.*;
 
-public class StringUtilsTests {
+class StringUtilsTests implements StringUtils {
 
-    @SuppressWarnings("ConstantValue")
     @Test
     void testIsEmpty() {
         assertTrue(isEmpty(null));

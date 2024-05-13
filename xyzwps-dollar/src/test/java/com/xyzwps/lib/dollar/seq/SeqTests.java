@@ -11,23 +11,23 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 
 import static com.xyzwps.lib.dollar.Direction.*;
-import static com.xyzwps.lib.dollar.Dollar.$.*;
+import static com.xyzwps.lib.dollar.Dollar.$;
 import static org.junit.jupiter.api.Assertions.*;
 
 class SeqTests {
 
     @Test
     void zip() {
-        assertEquals("[(1, 1), (2, 2), (3, null)]", Seq.just(1, 2, 3).zip(arrayList(1, 2)).value().toString());
-        assertEquals("[(1, 1), (2, 2), (3, 3)]", Seq.just(1, 2, 3).zip(arrayList(1, 2, 3)).value().toString());
-        assertEquals("[(1, 1), (2, 2), (3, 3), (null, 4), (null, 5)]", Seq.just(1, 2, 3).zip(arrayList(1, 2, 3, 4, 5)).value().toString());
+        assertEquals("[(1, 1), (2, 2), (3, null)]", Seq.just(1, 2, 3).zip($.arrayList(1, 2)).value().toString());
+        assertEquals("[(1, 1), (2, 2), (3, 3)]", Seq.just(1, 2, 3).zip($.arrayList(1, 2, 3)).value().toString());
+        assertEquals("[(1, 1), (2, 2), (3, 3), (null, 4), (null, 5)]", Seq.just(1, 2, 3).zip($.arrayList(1, 2, 3, 4, 5)).value().toString());
 
-        assertEquals("[(1, null), (2, null), (3, null)]", Seq.just(1, 2, 3).zip(arrayList()).value().toString());
+        assertEquals("[(1, null), (2, null), (3, null)]", Seq.just(1, 2, 3).zip($.arrayList()).value().toString());
         assertEquals("[(1, null), (2, null), (3, null)]", Seq.just(1, 2, 3).zip(null).value().toString());
 
-        assertEquals("[2, 4, 3]", Seq.just(1, 2, 3).zip(arrayList(1, 2), (l, r) -> (l == null ? 0 : l) + (r == null ? 0 : r)).value().toString());
+        assertEquals("[2, 4, 3]", Seq.just(1, 2, 3).zip($.arrayList(1, 2), (l, r) -> (l == null ? 0 : l) + (r == null ? 0 : r)).value().toString());
 
-        assertThrows(NullPointerException.class, () -> Seq.from(arrayList(1)).zip(arrayList(2), null));
+        assertThrows(NullPointerException.class, () -> Seq.from($.arrayList(1)).zip($.arrayList(2), null));
 
         assertEquals(Seq.from((List<Integer>) null).zip(null).value().size(), 0);
     }
@@ -260,7 +260,7 @@ class SeqTests {
 //                .concat(listOf())
 //                .concat(listOf(null, "b"))
 //                .value().toString());
-        assertEquals("[1, 2, 3, 4]", Seq.just(1, 2).concat(arrayList(3, 4)).value().toString());
+        assertEquals("[1, 2, 3, 4]", Seq.just(1, 2).concat($.arrayList(3, 4)).value().toString());
 //        assertEquals("[1, 2, 3, 4]", Seq.just(1, 2).concat(null).concat(listOf(3, 4)).value().toString());
     }
 
@@ -286,7 +286,7 @@ class SeqTests {
                 "[[1, 2, 3, 4, 5, 6]]",
                 "[[1, 2, 3, 4, 5, 6]]"
         };
-        List<Integer> list = arrayList(1, 2, 3, 4, 5, 6);
+        List<Integer> list = $.arrayList(1, 2, 3, 4, 5, 6);
         for (int i = 1; i < cases.length; i++) {
             assertEquals(cases[i], Seq.from(list).chunk(i).value().toString());
         }

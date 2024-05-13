@@ -3,18 +3,17 @@ package com.xyzwps.lib.dollar;
 import com.xyzwps.lib.dollar.util.Counter;
 import com.xyzwps.lib.dollar.util.ObjIntFunction;
 import com.xyzwps.lib.dollar.util.ObjIntPredicate;
+import com.xyzwps.lib.dollar.util.SharedUtils;
 
 import java.util.*;
 import java.util.function.*;
-
-import static com.xyzwps.lib.dollar.util.ObjectUtils.*;
 
 public interface Chain<T> {
 
     Chain<List<T>> chunk(int chunkSize);
 
     default Chain<T> compact() {
-        return this.filter(it -> !isFalsey(it));
+        return this.filter(it -> !SharedUtils.isFalsey(it));
     }
 
     Chain<T> concat(Iterable<T> iterable);

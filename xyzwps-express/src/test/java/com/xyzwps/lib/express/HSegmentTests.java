@@ -3,7 +3,7 @@ package com.xyzwps.lib.express;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static com.xyzwps.lib.express.HSegment.*;
+import static com.xyzwps.lib.express.PathSegment.*;
 
 class HSegmentTests {
 

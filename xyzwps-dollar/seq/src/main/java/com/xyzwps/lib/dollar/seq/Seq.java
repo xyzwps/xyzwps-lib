@@ -52,7 +52,7 @@ public interface Seq<T> {
     }
 
     default Seq<T> compact() {
-        return this.filter(t -> !isFalsey(t));
+        return this.filter(t -> !SharedUtils.isFalsey(t));
     }
 
     default Seq<T> concat(Iterable<T> seq2) {
@@ -139,7 +139,7 @@ public interface Seq<T> {
     }
 
     default String join(String sep) {
-        return this.reduce(new StringJoiner(defaultTo(sep, "null")), (t, joiner) -> {
+        return this.reduce(new StringJoiner(SharedUtils.defaultTo(sep, "null")), (t, joiner) -> {
             joiner.add(t == null ? null : t.toString());
             return joiner;
         }).toString();

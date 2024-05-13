@@ -2,6 +2,7 @@ package com.xyzwps.lib.dollar.seq;
 
 import com.xyzwps.lib.dollar.MapEntryChain;
 import com.xyzwps.lib.dollar.MapEntryChainFactory;
+import com.xyzwps.lib.dollar.util.SharedUtils;
 
 import java.util.Collections;
 import java.util.Map;
@@ -28,7 +29,7 @@ public enum SeqMapEntryChainFactory implements MapEntryChainFactory {
     public <K, V> MapEntryChain<K, V> from(Supplier<Map<K, V>> supplier) {
         Objects.requireNonNull(supplier);
         return new SeqMapEntryChain<>(Seq.create(() -> {
-            Map<K, V> map = defaultTo(supplier.get(), Collections.emptyMap());
+            Map<K, V> map = SharedUtils.defaultTo(supplier.get(), Collections.emptyMap());
             return map.entrySet();
         }));
     }

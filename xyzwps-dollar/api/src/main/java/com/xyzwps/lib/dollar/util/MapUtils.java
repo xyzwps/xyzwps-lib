@@ -6,7 +6,7 @@ import java.util.Objects;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
-public final class MapUtils {
+public interface MapUtils {
 
     /**
      * Check if a {@link Map} is empty of not.
@@ -14,7 +14,7 @@ public final class MapUtils {
      * @param map to be checked
      * @return true if map is null, or it has no any entries.
      */
-    public static boolean isEmpty(Map<?, ?> map) {
+    default boolean isEmpty(Map<?, ?> map) {
         return map == null || map.isEmpty();
     }
 
@@ -24,7 +24,7 @@ public final class MapUtils {
      * @param map to be checked
      * @return true if map {@link #isEmpty(Map)} is false
      */
-    public static boolean isNotEmpty(Map<?, ?> map) {
+    default boolean isNotEmpty(Map<?, ?> map) {
         return !isEmpty(map);
     }
 
@@ -39,7 +39,7 @@ public final class MapUtils {
      * @param <K2>  type of mapped keys
      * @return new {@link Map}
      */
-    public static <K, V, K2> Map<K2, V> mapKeys(Map<K, V> map, Function<K, K2> mapFn) {
+    default <K, V, K2> Map<K2, V> mapKeys(Map<K, V> map, Function<K, K2> mapFn) {
         Objects.requireNonNull(mapFn);
 
         if (isEmpty(map)) {
@@ -67,7 +67,7 @@ public final class MapUtils {
      * @param <K2>  type of mapped keys
      * @return new {@link Map}
      */
-    public static <K, V, K2> Map<K2, V> mapKeys(Map<K, V> map, BiFunction<K, V, K2> mapFn) {
+    default <K, V, K2> Map<K2, V> mapKeys(Map<K, V> map, BiFunction<K, V, K2> mapFn) {
         Objects.requireNonNull(mapFn);
 
         if (isEmpty(map)) {
@@ -94,7 +94,7 @@ public final class MapUtils {
      * @param <V2>  type of mapping result
      * @return a new map
      */
-    public static <K, V, V2> Map<K, V2> mapValues(Map<K, V> map, Function<V, V2> mapFn) {
+    default <K, V, V2> Map<K, V2> mapValues(Map<K, V> map, Function<V, V2> mapFn) {
         Objects.requireNonNull(mapFn);
 
         if (isEmpty(map)) {
@@ -116,7 +116,7 @@ public final class MapUtils {
      * @param <V2>  type of mapping result
      * @return a new map
      */
-    public static <K, V, V2> Map<K, V2> mapValues(Map<K, V> map, BiFunction<V, K, V2> mapFn) {
+    default <K, V, V2> Map<K, V2> mapValues(Map<K, V> map, BiFunction<V, K, V2> mapFn) {
         Objects.requireNonNull(mapFn);
 
         if (isEmpty(map)) {
@@ -141,7 +141,7 @@ public final class MapUtils {
      * @param <R>       type of result
      * @return reducing result
      */
-    public static <K, V, R> R reduce(Map<K, V> map, R initValue, Function3<R, K, V, R> reducer) {
+    default <K, V, R> R reduce(Map<K, V> map, R initValue, Function3<R, K, V, R> reducer) {
         Objects.requireNonNull(reducer);
 
         if (map == null) {
@@ -149,13 +149,13 @@ public final class MapUtils {
         }
 
         final Env1<R> env = new Env1<>();
-        env.t = initValue;
-        map.forEach((k, v) -> env.t = reducer.apply(env.t, k, v));
-        return env.t;
+        env.v1 = initValue;
+        map.forEach((k, v) -> env.v1 = reducer.apply(env.v1, k, v));
+        return env.v1;
     }
 
-    private static class Env1<T> {
-        T t;
+    class Env1<T> {
+       public T v1;
     }
 
     /**
@@ -167,12 +167,7 @@ public final class MapUtils {
      * @param <V> type of values
      * @return count of entries in map
      */
-    public static <K, V> int size(Map<K, V> map) {
+    default <K, V> int size(Map<K, V> map) {
         return map == null ? 0 : map.size();
-    }
-
-
-    private MapUtils() throws IllegalAccessException {
-        throw new IllegalAccessException("???");
     }
 }

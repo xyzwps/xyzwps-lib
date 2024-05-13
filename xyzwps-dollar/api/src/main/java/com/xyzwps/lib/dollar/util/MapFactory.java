@@ -2,7 +2,7 @@ package com.xyzwps.lib.dollar.util;
 
 import java.util.HashMap;
 
-public final class MapFactory {
+public interface MapFactory {
 
 
     /**
@@ -12,7 +12,7 @@ public final class MapFactory {
      * @param <V> value type
      * @return new HashMap
      */
-    public static <K, V> HashMap<K, V> hashMap() {
+    default <K, V> HashMap<K, V> hashMap() {
         return new HashMap<>();
     }
 
@@ -26,7 +26,7 @@ public final class MapFactory {
      * @param <V> value type
      * @return new HashMap
      */
-    public static <K, V> HashMap<K, V> hashMap(K k1, V v1) {
+    default <K, V> HashMap<K, V> hashMap(K k1, V v1) {
         var map = new HashMap<K, V>();
         map.put(k1, v1);
         return map;
@@ -44,7 +44,7 @@ public final class MapFactory {
      * @param <V> value type
      * @return new HashMap
      */
-    public static <K, V> HashMap<K, V> hashMap(K k1, V v1, K k2, V v2) {
+    default <K, V> HashMap<K, V> hashMap(K k1, V v1, K k2, V v2) {
         var map = new HashMap<K, V>();
         map.put(k1, v1);
         map.put(k2, v2);
@@ -65,7 +65,7 @@ public final class MapFactory {
      * @param <V> value type
      * @return new HashMap
      */
-    public static <K, V> HashMap<K, V> hashMap(K k1, V v1, K k2, V v2, K k3, V v3) {
+    default <K, V> HashMap<K, V> hashMap(K k1, V v1, K k2, V v2, K k3, V v3) {
         var map = new HashMap<K, V>();
         map.put(k1, v1);
         map.put(k2, v2);
@@ -89,7 +89,7 @@ public final class MapFactory {
      * @param <V> value type
      * @return new HashMap
      */
-    public static <K, V> HashMap<K, V> hashMap(K k1, V v1, K k2, V v2, K k3, V v3, K k4, V v4) {
+    default <K, V> HashMap<K, V> hashMap(K k1, V v1, K k2, V v2, K k3, V v3, K k4, V v4) {
         var map = new HashMap<K, V>();
         map.put(k1, v1);
         map.put(k2, v2);
@@ -116,7 +116,7 @@ public final class MapFactory {
      * @param <V> value type
      * @return new HashMap
      */
-    public static <K, V> HashMap<K, V> hashMap(K k1, V v1, K k2, V v2, K k3, V v3, K k4, V v4, K k5, V v5) {
+    default <K, V> HashMap<K, V> hashMap(K k1, V v1, K k2, V v2, K k3, V v3, K k4, V v4, K k5, V v5) {
         var map = new HashMap<K, V>();
         map.put(k1, v1);
         map.put(k2, v2);
@@ -146,7 +146,7 @@ public final class MapFactory {
      * @param <V> value type
      * @return new HashMap
      */
-    public static <K, V> HashMap<K, V> hashMap(K k1, V v1, K k2, V v2, K k3, V v3, K k4, V v4, K k5, V v5, K k6, V v6) {
+    default <K, V> HashMap<K, V> hashMap(K k1, V v1, K k2, V v2, K k3, V v3, K k4, V v4, K k5, V v5, K k6, V v6) {
         var map = new HashMap<K, V>();
         map.put(k1, v1);
         map.put(k2, v2);
@@ -179,7 +179,7 @@ public final class MapFactory {
      * @param <V> value type
      * @return new HashMap
      */
-    public static <K, V> HashMap<K, V> hashMap(K k1, V v1, K k2, V v2, K k3, V v3, K k4, V v4, K k5, V v5, K k6, V v6, K k7, V v7) {
+    default <K, V> HashMap<K, V> hashMap(K k1, V v1, K k2, V v2, K k3, V v3, K k4, V v4, K k5, V v5, K k6, V v6, K k7, V v7) {
         var map = new HashMap<K, V>();
         map.put(k1, v1);
         map.put(k2, v2);
@@ -215,7 +215,7 @@ public final class MapFactory {
      * @param <V> value type
      * @return new HashMap
      */
-    public static <K, V> HashMap<K, V> hashMap(K k1, V v1, K k2, V v2, K k3, V v3, K k4, V v4, K k5, V v5, K k6, V v6, K k7, V v7, K k8, V v8) {
+    default <K, V> HashMap<K, V> hashMap(K k1, V v1, K k2, V v2, K k3, V v3, K k4, V v4, K k5, V v5, K k6, V v6, K k7, V v7, K k8, V v8) {
         var map = new HashMap<K, V>();
         map.put(k1, v1);
         map.put(k2, v2);
@@ -254,7 +254,7 @@ public final class MapFactory {
      * @param <V> value type
      * @return new HashMap
      */
-    public static <K, V> HashMap<K, V> hashMap(K k1, V v1, K k2, V v2, K k3, V v3, K k4, V v4, K k5, V v5, K k6, V v6, K k7, V v7, K k8, V v8, K k9, V v9) {
+    default <K, V> HashMap<K, V> hashMap(K k1, V v1, K k2, V v2, K k3, V v3, K k4, V v4, K k5, V v5, K k6, V v6, K k7, V v7, K k8, V v8, K k9, V v9) {
         var map = new HashMap<K, V>();
         map.put(k1, v1);
         map.put(k2, v2);
@@ -296,7 +296,7 @@ public final class MapFactory {
      * @param <V> value type
      * @return new HashMap
      */
-    public static <K, V> HashMap<K, V> hashMap(K k1, V v1, K k2, V v2, K k3, V v3, K k4, V v4, K k5, V v5, K k6, V v6, K k7, V v7, K k8, V v8, K k9, V v9, K k10, V v10) {
+    default <K, V> HashMap<K, V> hashMap(K k1, V v1, K k2, V v2, K k3, V v3, K k4, V v4, K k5, V v5, K k6, V v6, K k7, V v7, K k8, V v8, K k9, V v9, K k10, V v10) {
         var map = new HashMap<K, V>();
         map.put(k1, v1);
         map.put(k2, v2);
@@ -311,8 +311,4 @@ public final class MapFactory {
         return map;
     }
 
-
-    private MapFactory() throws IllegalAccessException {
-        throw new IllegalAccessException("???");
-    }
 }

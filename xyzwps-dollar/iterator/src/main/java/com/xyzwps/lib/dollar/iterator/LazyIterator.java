@@ -1,10 +1,10 @@
 package com.xyzwps.lib.dollar.iterator;
 
+import com.xyzwps.lib.dollar.util.SharedUtils;
+
 import java.util.Iterator;
 import java.util.Objects;
 import java.util.function.Supplier;
-
-import static com.xyzwps.lib.dollar.util.ObjectUtils.defaultTo;
 
 public class LazyIterator<T> implements Iterator<T> {
 
@@ -18,7 +18,7 @@ public class LazyIterator<T> implements Iterator<T> {
 
     void useIterator() {
         if (iterator == null) {
-            iterator = defaultTo(supplier.get(), EmptyIterator.create());
+            iterator = SharedUtils.defaultTo(supplier.get(), EmptyIterator.create());
         }
     }
 

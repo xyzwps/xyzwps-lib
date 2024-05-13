@@ -2,18 +2,26 @@ package com.xyzwps.lib.dollar.util;
 
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static com.xyzwps.lib.dollar.util.ObjectUtils.*;
+import static org.junit.jupiter.api.Assertions.*;
 
-public class ObjectUtilsTests {
+public class ObjectUtilsTests implements ObjectUtils {
 
     @Test
     void testDefaultTo() {
         assertEquals(1, defaultTo(null, 1));
         assertEquals(2, defaultTo(2, 1));
-        //noinspection ConstantValue
         assertNull(defaultTo(null, null));
+    }
+
+    @Test
+    void testIsFalsey() {
+        assertTrue(isFalsey(null));
+        assertTrue(isFalsey(false));
+        assertTrue(isFalsey(""));
+        assertTrue(isFalsey(0));
+        assertTrue(isFalsey(0L));
+        assertTrue(isFalsey(0.0F));
+        assertTrue(isFalsey(0.0));
     }
 
 }

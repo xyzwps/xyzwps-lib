@@ -8,24 +8,24 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static com.xyzwps.lib.dollar.util.MapUtils.*;
-import static com.xyzwps.lib.dollar.util.MapFactory.*;
 
-public class MapUtilsTests {
+class MapUtilsTests implements MapUtils {
 
-    @SuppressWarnings("ConstantValue")
+    private static final MapFactory $ = new MapFactory() {
+    };
+
     @Test
     void testIsEmpty() {
         assertTrue(isEmpty(null));
-        assertTrue(isEmpty(hashMap()));
+        assertTrue(isEmpty($.hashMap()));
 
         assertFalse(isNotEmpty(null));
-        assertFalse(isNotEmpty(hashMap()));
+        assertFalse(isNotEmpty($.hashMap()));
     }
 
     @Test
     void testMapKeys1() {
-        assertThrows(NullPointerException.class, () -> mapKeys(hashMap(1, 1), (Function<Integer, Object>) null));
+        assertThrows(NullPointerException.class, () -> mapKeys($.hashMap(1, 1), (Function<Integer, Object>) null));
 
         {
             TreeMap<Integer, Integer> treeMap = new TreeMap<>();
@@ -45,7 +45,7 @@ public class MapUtilsTests {
 
     @Test
     void testMapKeys2() {
-        assertThrows(NullPointerException.class, () -> mapKeys(hashMap(1, 1), (BiFunction<Integer, Integer, Object>) null));
+        assertThrows(NullPointerException.class, () -> mapKeys($.hashMap(1, 1), (BiFunction<Integer, Integer, Object>) null));
 
         {
             TreeMap<Integer, Integer> treeMap = new TreeMap<>();
@@ -68,10 +68,10 @@ public class MapUtilsTests {
 
     @Test
     void testMapValues1() {
-        assertThrows(NullPointerException.class, () -> mapValues(hashMap(1, 1), (Function<Integer, Object>) null));
+        assertThrows(NullPointerException.class, () -> mapValues($.hashMap(1, 1), (Function<Integer, Object>) null));
 
         {
-            Map<Integer, Integer> map = mapValues(hashMap(0, "", 1, "1", 2, "11", 3, "111"), String::length);
+            Map<Integer, Integer> map = mapValues($.hashMap(0, "", 1, "1", 2, "11", 3, "111"), String::length);
             assertEquals(4, map.size());
             assertEquals(0, map.get(0));
             assertEquals(1, map.get(1));
@@ -82,11 +82,11 @@ public class MapUtilsTests {
 
     @Test
     void testMapValues2() {
-        assertThrows(NullPointerException.class, () -> mapValues(hashMap(1, 1), (BiFunction<Integer, Integer, Object>) null));
+        assertThrows(NullPointerException.class, () -> mapValues($.hashMap(1, 1), (BiFunction<Integer, Integer, Object>) null));
 
         {
             Map<Integer, String> map = mapValues(
-                    hashMap(0, "", 1, "1", 2, "11", 3, "111"),
+                    $.hashMap(0, "", 1, "1", 2, "11", 3, "111"),
                     (value, key) -> String.format("%d: %s", key, value));
             assertEquals(4, map.size());
             assertEquals("0: ", map.get(0));
@@ -110,15 +110,15 @@ public class MapUtilsTests {
 
         assertEquals(100, reduce((Map<Integer, Integer>) null, 100, (sum, k, v) -> sum + k * 10 + v));
 
-        assertThrows(NullPointerException.class, () -> reduce(hashMap(1, 1), 100, null));
+        assertThrows(NullPointerException.class, () -> reduce($.hashMap(1, 1), 100, null));
     }
 
 
     @Test
     void testSize() {
         assertEquals(0, size(null));
-        assertEquals(0, size(hashMap()));
-        assertEquals(1, size(hashMap(1, 1)));
+        assertEquals(0, size($.hashMap()));
+        assertEquals(1, size($.hashMap(1, 1)));
     }
 
 }

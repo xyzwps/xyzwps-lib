@@ -15,6 +15,7 @@ class DollarTests {
 
 
         assertEquals($.arrayList(1, 2, 3).toString(), "[1, 2, 3]");
+        assertEquals($.arrayListFrom($.range(1, 4).iterator()).toString(), "[1, 2, 3]");
         assertEquals($.chunk($.arrayList(1, 2, 3), 2).toString(), "[[1, 2], [3]]");
         assertEquals($.compact($.arrayList(null, 0)).toString(), "[]");
         assertEquals($.concat($.arrayList(1, 2), $.arrayList(3)).toString(), "[1, 2, 3]");
@@ -25,7 +26,6 @@ class DollarTests {
         assertEquals($.first($.arrayList(1, 2)).orElseThrow(), 1);
         assertEquals($.flatMap($.arrayList(1), it -> $.arrayList(it, it + 1)).toString(), "[1, 2]");
 //        assertEquals($.flatMap($.arrayList(1), (it, i) -> $.arrayList(it, it + 1)).toString(), "[1, 2]");
-
         assertEquals($.groupBy($.arrayList(1), Function.identity()).toString(), "{1=[1]}");
         assertEquals($.head($.arrayList(1, 2)).orElseThrow(), 1);
         assertEquals($.hashMap().size(), 0);
@@ -43,7 +43,6 @@ class DollarTests {
         assertEquals($.keyBy($.arrayList(1), Function.identity()).toString(), "{1=1}");
         assertEquals($.last($.arrayList(1, 2, 3)).orElseThrow(), 3);
         assertEquals($.length("123"), 3);
-        assertEquals($.listFrom($.range(1, 4).iterator()).toString(), "[1, 2, 3]");
         assertEquals($.map($.arrayList(1, 2, 3), it -> it + 1).toString(), "[2, 3, 4]");
         assertEquals($.map($.arrayList(1, 2, 3), Integer::sum).toString(), "[1, 3, 5]");
         assertEquals($.mapKeys($.hashMap(1, 1), k -> k + 1).toString(), "{2=1}");

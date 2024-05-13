@@ -10,7 +10,7 @@ import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
-import static com.xyzwps.lib.dollar.Dollar.$.*;
+import static com.xyzwps.lib.dollar.Dollar.$;
 import static org.junit.jupiter.api.Assertions.*;
 
 class MESeqTests {
@@ -23,7 +23,7 @@ class MESeqTests {
 
     @Test
     void mapValues1() {
-        Map<Integer, Integer> map = MapEntrySeq.from(hashMap(0, "", 1, "1", 2, "11", 3, "111"))
+        Map<Integer, Integer> map = MapEntrySeq.from($.hashMap(0, "", 1, "1", 2, "11", 3, "111"))
                 .mapValues(String::length)
                 .value();
         assertEquals(4, map.size());
@@ -32,12 +32,12 @@ class MESeqTests {
         assertEquals(2, map.get(2));
         assertEquals(3, map.get(3));
 
-        assertThrows(NullPointerException.class, () -> MapEntrySeq.from(hashMap()).mapValues((Function<Object, Object>) null));
+        assertThrows(NullPointerException.class, () -> MapEntrySeq.from($.hashMap()).mapValues((Function<Object, Object>) null));
     }
 
     @Test
     void mapValues2() {
-        Map<Integer, String> map = MapEntrySeq.from(hashMap(0, "", 1, "1", 2, "11", 3, "111"))
+        Map<Integer, String> map = MapEntrySeq.from($.hashMap(0, "", 1, "1", 2, "11", 3, "111"))
                 .mapValues((value, key) -> String.format("%d: %s", key, value))
                 .value();
         assertEquals(4, map.size());
@@ -46,7 +46,7 @@ class MESeqTests {
         assertEquals("2: 11", map.get(2));
         assertEquals("3: 111", map.get(3));
 
-        assertThrows(NullPointerException.class, () -> MapEntrySeq.from(hashMap()).mapValues((BiFunction<Object, Object, Object>) null));
+        assertThrows(NullPointerException.class, () -> MapEntrySeq.from($.hashMap()).mapValues((BiFunction<Object, Object, Object>) null));
     }
 
     @Test
@@ -65,7 +65,7 @@ class MESeqTests {
         assertEquals(2, map.get(2));
         assertEquals(3, map.get(0));
 
-        assertThrows(NullPointerException.class, () -> MapEntrySeq.from(hashMap()).mapKeys((Function<Object, Object>) null));
+        assertThrows(NullPointerException.class, () -> MapEntrySeq.from($.hashMap()).mapKeys((Function<Object, Object>) null));
     }
 
     @Test
@@ -87,7 +87,7 @@ class MESeqTests {
         assertEquals(4, map.get(3));
         assertEquals(5, map.get(0));
 
-        assertThrows(NullPointerException.class, () -> MapEntrySeq.from(hashMap()).mapKeys((BiFunction<Object, Object, Object>) null));
+        assertThrows(NullPointerException.class, () -> MapEntrySeq.from($.hashMap()).mapKeys((BiFunction<Object, Object, Object>) null));
     }
 
 
@@ -108,7 +108,7 @@ class MESeqTests {
         assertEquals(6, map.get(6));
         assertEquals(3, map.size());
 
-        assertThrows(NullPointerException.class, () -> MapEntrySeq.from(hashMap()).filter(null));
+        assertThrows(NullPointerException.class, () -> MapEntrySeq.from($.hashMap()).filter(null));
     }
 
     @Test
@@ -121,12 +121,12 @@ class MESeqTests {
         treeMap.put(5, 5);
         treeMap.put(6, 6);
         List<Integer> list = MapEntrySeq.from(treeMap).values().value();
-        assertIterableEquals(arrayList(1, 2, 3, 4, 5, 6), list);
+        assertIterableEquals($.arrayList(1, 2, 3, 4, 5, 6), list);
     }
 
     @Test
     void value() {
-        Map<Integer, Integer> map = MapEntrySeq.from(hashMap(1, 1, 2, 2, 3, 3)).value();
+        Map<Integer, Integer> map = MapEntrySeq.from($.hashMap(1, 1, 2, 2, 3, 3)).value();
         assertTrue(map instanceof HashMap); // HashMap preferred
     }
 
@@ -154,7 +154,7 @@ class MESeqTests {
         treeMap.put(5, 5);
         treeMap.put(6, 6);
         List<Integer> list = MapEntrySeq.from(treeMap).keys().value();
-        assertIterableEquals(arrayList(1, 2, 3, 4, 5, 6), list);
+        assertIterableEquals($.arrayList(1, 2, 3, 4, 5, 6), list);
     }
 
     @Test
@@ -166,7 +166,7 @@ class MESeqTests {
         treeMap.put(4, 4);
         treeMap.put(5, 5);
         treeMap.put(6, 6);
-        List<Boolean> list = arrayList(false, false, false, false, false, false, false);
+        List<Boolean> list = $.arrayList(false, false, false, false, false, false, false);
         MapEntrySeq.from(treeMap).forEach((key, value) -> {
             switch (key) {
                 case 1, 2, 3, 4, 5, 6 -> {
@@ -176,7 +176,7 @@ class MESeqTests {
                 default -> throw new IllegalStateException();
             }
         });
-        assertIterableEquals(arrayList(false, true, true, true, true, true, true), list);
+        assertIterableEquals($.arrayList(false, true, true, true, true, true, true), list);
 
         assertThrows(NullPointerException.class, () -> MapEntrySeq.from(treeMap).forEach((BiConsumer<Integer, Integer>) null));
     }

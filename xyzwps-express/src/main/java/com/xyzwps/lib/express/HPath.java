@@ -11,9 +11,9 @@ import static com.xyzwps.lib.dollar.Dollar.*;
  */
 public final class HPath {
 
-    private final HSegment[] segments;
+    private final PathSegment[] segments;
 
-    private HPath(HSegment[] segments) {
+    private HPath(PathSegment[] segments) {
         this.segments = Objects.requireNonNull(segments);
     }
 
@@ -26,7 +26,7 @@ public final class HPath {
         return "/" + Arrays.stream(segments).map(Object::toString).collect(Collectors.joining("/"));
     }
 
-    private static final HSegment[] EMPTY_SEGMENT_ARR = new HSegment[0];
+    private static final PathSegment[] EMPTY_SEGMENT_ARR = new PathSegment[0];
 
     private static final HPath ROOT = new HPath(EMPTY_SEGMENT_ARR);
 
@@ -37,13 +37,13 @@ public final class HPath {
 
         var segments = Arrays.stream(path.split("/"))
                 .filter($::isNotEmpty)
-                .map(HSegment::from)
-                .toArray(HSegment[]::new);
+                .map(PathSegment::from)
+                .toArray(PathSegment[]::new);
 
         for (int i = 0; i < segments.length - 1; i++) {
             var seg = segments[i];
-            if (seg instanceof HSegment.Star2Segment) {
-                throw new IllegalArgumentException("Only the last segment can be " + HSegment.Star2Segment.class.getSimpleName());
+            if (seg instanceof PathSegment.Star2Segment) {
+                throw new IllegalArgumentException("Only the last segment can be " + PathSegment.Star2Segment.class.getSimpleName());
             }
         }
 
@@ -69,7 +69,7 @@ public final class HPath {
             return matchStart == path.length;
         }
 
-        if (segments[segments.length - 1] instanceof HSegment.Star2Segment) {
+        if (segments[segments.length - 1] instanceof PathSegment.Star2Segment) {
             /*
              * 0) this      /user/{id}/**
              * 1) path  /aaa/user/1234     (1) match
@@ -83,7 +83,7 @@ public final class HPath {
 
             for (int i = 0; i < segments.length - 1; i++) {
                 var str = path[i + matchStart];
-                if (segments[i] instanceof HSegment.PlainSegment plain && plain.notMatch(str)) {
+                if (segments[i] instanceof PathSegment.PlainSegment plain && plain.notMatch(str)) {
                     return false;
                 }
             }
@@ -101,7 +101,7 @@ public final class HPath {
 
             for (int i = 0; i < segments.length; i++) {
                 var str = path[i + matchStart];
-                if (segments[i] instanceof HSegment.PlainSegment plain && plain.notMatch(str)) {
+                if (segments[i] instanceof PathSegment.PlainSegment plain && plain.notMatch(str)) {
                     return false;
                 }
             }
@@ -110,7 +110,7 @@ public final class HPath {
     }
 
     public boolean isPrefixOf(String[] path, int matchStart) {
-        if (segments[segments.length - 1] instanceof HSegment.Star2Segment) {
+        if (segments[segments.length - 1] instanceof PathSegment.Star2Segment) {
             /*
              * 0) this      /user/{id}/**
              * 1) path  /aaa/user/123    (1) true
@@ -123,7 +123,7 @@ public final class HPath {
 
             for (int i = 0; i < segments.length - 1; i++) {
                 var str = path[i + matchStart];
-                if (segments[i] instanceof HSegment.PlainSegment plain && plain.notMatch(str)) {
+                if (segments[i] instanceof PathSegment.PlainSegment plain && plain.notMatch(str)) {
                     return false;
                 }
             }
@@ -141,7 +141,7 @@ public final class HPath {
 
             for (int i = 0; i < segments.length; i++) {
                 var str = path[i + matchStart];
-                if (segments[i] instanceof HSegment.PlainSegment plain && plain.notMatch(str)) {
+                if (segments[i] instanceof PathSegment.PlainSegment plain && plain.notMatch(str)) {
                     return false;
                 }
             }

@@ -2,13 +2,11 @@ package com.xyzwps.lib.dollar.util;
 
 import org.junit.jupiter.api.Test;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static com.xyzwps.lib.dollar.util.MapFactory.*;
 
-public class MapFactoryTests {
+class MapFactoryTests implements MapFactory {
 
     @Test
     void testHashMap() {
