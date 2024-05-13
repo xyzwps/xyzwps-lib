@@ -118,11 +118,11 @@ public interface StringUtils {
 
 
     /**
-     * Take the substring made up of the first <tt>n</tt> characters.
+     * Take the substring made up of the first <code>n</code> characters.
      *
      * @param str the string to take
      * @param n   substring length
-     * @return the substring made up of the first <tt>n</tt> characters.
+     * @return the substring made up of the first <code>n</code> characters.
      */
     default String take(final String str, final int n) {
         if (n < 0) {
@@ -137,11 +137,11 @@ public interface StringUtils {
     }
 
     /**
-     * Take the substring made up of the last <tt>n</tt> characters.
+     * Take the substring made up of the last <code>n</code> characters.
      *
      * @param str the string to take
      * @param n   substring length
-     * @return the substring made up of the last <tt>n</tt> characters.
+     * @return the substring made up of the last <code>n</code> characters.
      */
     default String takeRight(final String str, final int n) {
         if (n < 0) {

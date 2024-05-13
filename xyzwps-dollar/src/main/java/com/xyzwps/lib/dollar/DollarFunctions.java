@@ -4,6 +4,9 @@ import com.xyzwps.lib.dollar.util.*;
 
 import java.util.Objects;
 
+/**
+ * Common used functions.
+ */
 public final class DollarFunctions implements ObjectUtils, CollectionUtils, MapUtils, StringUtils, ListFactory, MapFactory {
 
     private final ChainFactory cf;
