@@ -8,6 +8,8 @@ dependencyResolutionManagement {
             library("dagger", "com.google.dagger", "dagger").versionRef("dagger")
             library("dagger-compiler", "com.google.dagger", "dagger-compiler").versionRef("dagger")
 
+            library("hocon", "com.typesafe:config:1.4.3")
+
             version("jackson", "2.17.0")
             library("jackson-core", "com.fasterxml.jackson.core", "jackson-core").versionRef("jackson")
             library("jackson-databind", "com.fasterxml.jackson.core", "jackson-databind").versionRef("jackson")

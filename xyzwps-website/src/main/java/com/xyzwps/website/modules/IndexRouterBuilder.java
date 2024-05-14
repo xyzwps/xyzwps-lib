@@ -17,15 +17,15 @@ public class IndexRouterBuilder {
     @Inject
     public IndexRouterBuilder(DebugRouterBuilder debugRouter, UserRouterBuilder userRouter) {
         this.router = new Router()
-                .get("/hello/world", (ctx) -> {
+                .get("/api/hello/world", (ctx) -> {
                     var resp = ctx.response();
                     resp.ok();
                     resp.headers().set("Content-Type", "application/json");
                     resp.send("[\"Hello\":\"World\"]".getBytes());
                 })
-                .nest("/debug", debugRouter.router)
-                .nest("/users", userRouter.router)
-                .all("/**", (ctx) -> { // TODO: 实现 404
+                .nest("/api/debug", debugRouter.router)
+                .nest("/api/users", userRouter.router)
+                .all("/api/**", (ctx) -> { // TODO: 实现 404
                     var resp = ctx.response();
                     resp.headers().set(HttpHeaders.CONTENT_TYPE, "application/json");
                     resp.status(HttpStatus.NOT_FOUND);
