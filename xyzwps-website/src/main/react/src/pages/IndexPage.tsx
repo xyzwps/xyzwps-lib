@@ -1,9 +1,20 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import reactLogo from '../assets/react.svg';
 import viteLogo from '/vite.svg';
+import { getConf } from '../apis/conf';
 
 export default function IndexPage() {
   const [count, setCount] = useState(0);
+  const [conf, setConf] = useState<Conf | null>(null);
+  useEffect(() => {
+    getConf().then((confe) => {
+      if (confe.type === 'right') {
+        setConf(confe.value);
+      } else {
+        alert(confe.value.message);
+      }
+    });
+  }, []);
   return (
     <div className="p-2">
       <div>
@@ -22,6 +33,7 @@ export default function IndexPage() {
         </p>
       </div>
       <p className="read-the-docs">Click on the Vite and React logos to learn more</p>
+      <p>Name: {conf?.name}</p>
     </div>
   );
 }

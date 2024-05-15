@@ -3,6 +3,7 @@ package com.xyzwps.website.modules;
 import com.xyzwps.lib.express.HttpHeaders;
 import com.xyzwps.lib.express.HttpStatus;
 import com.xyzwps.lib.express.middleware.Router;
+import com.xyzwps.website.modules.conf.ConfRouterBuilder;
 import com.xyzwps.website.modules.debug.DebugRouterBuilder;
 import com.xyzwps.website.modules.user.UserRouterBuilder;
 
@@ -15,7 +16,9 @@ public class IndexRouterBuilder {
     public final Router router;
 
     @Inject
-    public IndexRouterBuilder(DebugRouterBuilder debugRouter, UserRouterBuilder userRouter) {
+    public IndexRouterBuilder(ConfRouterBuilder confBuilder,
+                              DebugRouterBuilder debugRouter,
+                              UserRouterBuilder userRouter) {
         this.router = new Router()
                 .get("/api/hello/world", (ctx) -> {
                     var resp = ctx.response();
@@ -23,6 +26,7 @@ public class IndexRouterBuilder {
                     resp.headers().set("Content-Type", "application/json");
                     resp.send("[\"Hello\":\"World\"]".getBytes());
                 })
+                .nest("/api/conf", confBuilder.router)
                 .nest("/api/debug", debugRouter.router)
                 .nest("/api/users", userRouter.router)
                 .all("/api/**", (ctx) -> { // TODO: 实现 404

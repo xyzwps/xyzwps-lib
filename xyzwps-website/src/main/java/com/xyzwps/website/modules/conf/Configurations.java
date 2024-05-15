@@ -16,6 +16,10 @@ public class Configurations {
         this.config = ConfigFactory.load("app");
     }
 
+    public String getAppName() {
+        return config.getString("app.name");
+    }
+
     public String getRouterStaticDirectory() {
         return config.getString("app.router.static.dir");
     }
@@ -23,4 +27,6 @@ public class Configurations {
     public int getServerPort() {
         return config.getInt("app.server.port");
     }
+
+
 }
