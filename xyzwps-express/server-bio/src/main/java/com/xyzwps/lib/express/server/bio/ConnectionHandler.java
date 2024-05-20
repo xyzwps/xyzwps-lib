@@ -10,6 +10,7 @@ import java.io.*;
 import java.net.Socket;
 import java.util.concurrent.atomic.AtomicInteger;
 
+// TODO: connection manager
 public class ConnectionHandler implements Runnable {
 
     private static final Logger log = LoggerFactory.getLogger(ConnectionHandler.class);
@@ -58,8 +59,8 @@ public class ConnectionHandler implements Runnable {
                         ? InputStream.nullInputStream()
                         : new ContentLengthInputStream(in, 2048, contentLength);
 
-                var request = new CraftHttpRequest(startLine.method(), startLine.toURI(), startLine.protocol(), headers, requestBody);
-                var response = new CraftHttpResponse(out, request.protocol());
+                var request = new BioHttpRequest(startLine.method(), startLine.toURI(), startLine.protocol(), headers, requestBody);
+                var response = new BioHttpResponse(out, request.protocol());
 
                 // region set keep alive header
                 int usedCount = keepAliveCounter.incrementAndGet();

@@ -11,17 +11,17 @@ import java.io.OutputStream;
 import java.io.UncheckedIOException;
 import java.util.Objects;
 
-public final class CraftHttpResponse implements HttpResponse {
+public final class BioHttpResponse implements HttpResponse {
     private final OutputStream out;
     private final HttpProtocol protocol;
     private final HttpHeaders headers;
 
     private HttpStatus status = HttpStatus.OK;
 
-    public CraftHttpResponse(OutputStream out, HttpProtocol protocol) {
+    public BioHttpResponse(OutputStream out, HttpProtocol protocol) {
         this.out = Objects.requireNonNull(out);
         this.protocol = Objects.requireNonNull(protocol);
-        this.headers = new CraftHttpHeaders();
+        this.headers = new BioHttpHeaders();
     }
 
     @Override

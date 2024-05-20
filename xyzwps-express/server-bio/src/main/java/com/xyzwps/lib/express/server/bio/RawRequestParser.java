@@ -18,7 +18,7 @@ class RawRequestParser {
     }
 
     Either<String, HttpHeaders> headers() {
-        var headers = new CraftHttpHeaders();
+        var headers = new BioHttpHeaders();
         for (; ; ) {
             var text = lineReader.readLine(StandardCharsets.ISO_8859_1);
             if (text == null) {

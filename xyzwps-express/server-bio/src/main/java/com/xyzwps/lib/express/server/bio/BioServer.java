@@ -9,9 +9,9 @@ import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.net.*;
 
-public final class CraftServer implements Server {
+public final class BioServer implements Server {
 
-    private static final Logger log = LoggerFactory.getLogger(CraftServer.class);
+    private static final Logger log = LoggerFactory.getLogger(BioServer.class);
 
     @Override
     public void start(ServerConfig config) {

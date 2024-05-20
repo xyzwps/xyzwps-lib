@@ -2,7 +2,7 @@ package com.xyzwps.website;
 
 import com.xyzwps.lib.express.ServerConfig;
 import com.xyzwps.lib.express.middleware.Static;
-import com.xyzwps.lib.express.server.bio.CraftServer;
+import com.xyzwps.lib.express.server.bio.BioServer;
 import com.xyzwps.website.middleware.LogRequestCostMiddleware;
 import com.xyzwps.website.middleware.SpaFallbackMiddleware;
 import com.xyzwps.website.modules.IndexRouterBuilder;
@@ -35,6 +35,6 @@ public class HttpServerLayer {
 
     public void start() {
         log.info("=====> server is listening at {} <=====\n", serverConfig.port);
-        new CraftServer().start(this.serverConfig);
+        new BioServer().start(this.serverConfig);
     }
 }

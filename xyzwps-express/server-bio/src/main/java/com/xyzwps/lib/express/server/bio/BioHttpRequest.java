@@ -7,7 +7,7 @@ import java.net.URI;
 import java.util.List;
 import java.util.Objects;
 
-public final class CraftHttpRequest implements HttpRequest {
+public final class BioHttpRequest implements HttpRequest {
     private final HttpMethod method;
     private final String path;
     private final HttpProtocol protocol;
@@ -17,7 +17,7 @@ public final class CraftHttpRequest implements HttpRequest {
 
     private final MimeType contentType;
 
-    public CraftHttpRequest(HttpMethod method, URI uri, HttpProtocol protocol, HttpHeaders headers, Object body) {
+    public BioHttpRequest(HttpMethod method, URI uri, HttpProtocol protocol, HttpHeaders headers, Object body) {
         this.path = Objects.requireNonNull(uri).getPath();
         this.searchParams = HttpSearchParams.parse(uri.getRawQuery());
 
