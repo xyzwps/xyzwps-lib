@@ -1,6 +1,6 @@
 package com.xyzwps.lib.express;
 
-import java.util.Objects;
+import com.xyzwps.lib.dollar.Either;
 
 public enum HttpMethod {
     GET,
@@ -13,7 +13,17 @@ public enum HttpMethod {
     TRACE,
     PATCH;
 
-    public static HttpMethod from(String str) {
-        return HttpMethod.valueOf(Objects.requireNonNull(str).toUpperCase());
+    public static Either<String, HttpMethod> from(String str) {
+        if (str == null || str.isBlank()) {
+            return ERR_EMPTY;
+        }
+
+        try {
+            return Either.right(HttpMethod.valueOf(str.toUpperCase()));
+        } catch (Exception e) {
+            return Either.left("Invalid http method: " + str);
+        }
     }
+
+    private static final Either<String, HttpMethod> ERR_EMPTY = Either.left("Invalid http method: empty");
 }

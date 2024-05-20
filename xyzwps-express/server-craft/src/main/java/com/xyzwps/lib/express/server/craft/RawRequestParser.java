@@ -1,8 +1,9 @@
 package com.xyzwps.lib.express.server.craft;
 
-import com.xyzwps.lib.express.BadProtocolException;
+import com.xyzwps.lib.dollar.Either;
 import com.xyzwps.lib.express.HttpHeaders;
 import com.xyzwps.lib.express.HttpMethod;
+import com.xyzwps.lib.express.HttpProtocol;
 import com.xyzwps.lib.express.server.craft.util.CRLFLineCallbackReader;
 
 import java.io.*;
@@ -16,44 +17,57 @@ class RawRequestParser {
         this.lineReader = new CRLFLineCallbackReader(in);
     }
 
-    HttpHeaders headers() {
+    Either<String, HttpHeaders> headers() {
         var headers = new CraftHttpHeaders();
         for (; ; ) {
             var text = lineReader.readLine(StandardCharsets.ISO_8859_1);
             if (text == null) {
-                throw new BadProtocolException("Invalid header line");
+                return ERR_INVALID_HEADER_LINE;
             }
+
             if (text.isEmpty()) {
-                return headers;
+                return Either.right(headers);
             }
 
             var segments = text.split(":", 2);
             if (segments.length != 2) {
-                throw new BadProtocolException("Invalid header line");
+                return ERR_INVALID_HEADER_LINE;
             }
 
             headers.append(segments[0], segments[1].trim());
         }
     }
 
-    StartLine startLine() {
+    private static final Either<String, HttpHeaders> ERR_INVALID_HEADER_LINE = Either.left("Invalid header line");
+
+    Either<String, StartLine> startLine() {
         var text = lineReader.readLine(StandardCharsets.ISO_8859_1);
         if (text == null) {
-            throw new BadProtocolException("Invalid start line");
+            return Either.left("Invalid start line");
         }
 
         var segments = text.split(" ", 3);
         if (segments.length != 3) {
-            throw new BadProtocolException("Invalid start line");
+            return Either.left("Invalid start line");
+        }
+
+        var $method = HttpMethod.from(segments[0]);
+        if ($method.isLeft()) {
+            return Either.left("Invalid start line: " + $method.left());
+        }
+
+        var method = $method.right();
+        var path = segments[1];
+
+        var $protocol = HttpProtocol.from(segments[2]);
+        if ($protocol.isLeft()) {
+            return Either.left("Invalid start line: " + $protocol.left());
         }
 
         try {
-            var method = HttpMethod.from(segments[0]);
-            var path = segments[1];
-            var protocol = segments[2];
-            return new StartLine(method, path, protocol);
+            return Either.right(new StartLine(method, path, $protocol.right()));
         } catch (Exception e) {
-            throw new BadProtocolException("Invalid start line");
+            return Either.left(e.getMessage());
         }
     }
 

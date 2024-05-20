@@ -1,18 +1,12 @@
 package com.xyzwps.lib.express.server.craft;
 
 import com.xyzwps.lib.bedrock.Args;
-import com.xyzwps.lib.express.BadProtocolException;
-import com.xyzwps.lib.express.HttpContext;
-import com.xyzwps.lib.express.HttpHeaders;
-import com.xyzwps.lib.express.HttpMiddleware;
+import com.xyzwps.lib.express.*;
 import com.xyzwps.lib.express.server.craft.common.ContentLengthInputStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.PushbackInputStream;
-import java.io.UncheckedIOException;
+import java.io.*;
 import java.net.Socket;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -44,8 +38,14 @@ public class ConnectionHandler implements Runnable {
 
                 var requestParser = new RawRequestParser(in);
 
-                var startLine = requestParser.startLine();
-                var headers = requestParser.headers(); // TODO: 处理 BadProtocolException
+                var startLine = requestParser.startLine()
+                        .peekLeft(log::error)
+                        .rightOrThrow(BadProtocolException::new);
+
+
+                var headers = requestParser.headers()
+                        .peekLeft(log::error)
+                        .rightOrThrow(BadProtocolException::new);
 
                 // region check keep alive
                 if (isKeepAlive(headers)) {
@@ -59,7 +59,7 @@ public class ConnectionHandler implements Runnable {
                         : new ContentLengthInputStream(in, 2048, contentLength);
 
                 var request = new CraftHttpRequest(startLine.method(), startLine.toURI(), startLine.protocol(), headers, requestBody);
-                var response = new CraftHttpResponse(out, request);
+                var response = new CraftHttpResponse(out, request.protocol());
 
                 // region set keep alive header
                 int usedCount = keepAliveCounter.incrementAndGet();
@@ -92,7 +92,7 @@ public class ConnectionHandler implements Runnable {
     @SuppressWarnings("StatementWithEmptyBody")
     private static void exhaust(InputStream in) {
         try (in) {
-            while (in.read() >= 0) ;
+            while (in.read() >= 0) ; // TODO: 可能需要优化
         } catch (IOException e) {
             throw new UncheckedIOException(e);
         }

@@ -28,7 +28,7 @@ public interface HttpRequest {
      *
      * @return http protocol. Never be null.
      */
-    String protocol();
+    HttpProtocol protocol();
 
     /**
      * Get the first header value by name.

@@ -1,17 +1,18 @@
 package com.xyzwps.lib.express.server.undertow;
 
 import com.xyzwps.lib.bedrock.Args;
-import com.xyzwps.lib.express.HttpHeaders;
-import com.xyzwps.lib.express.HttpMethod;
-import com.xyzwps.lib.express.HttpRequest;
-import com.xyzwps.lib.express.HttpSearchParams;
+import com.xyzwps.lib.express.*;
 import io.undertow.server.HttpServerExchange;
 import lib.jsdom.mimetype.MimeType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.InputStream;
 import java.util.List;
 
 class UndertowHttpRequest implements HttpRequest {
+
+    private static final Logger log = LoggerFactory.getLogger(UndertowHttpRequest.class);
 
     private final HttpServerExchange exchange;
 
@@ -21,6 +22,8 @@ class UndertowHttpRequest implements HttpRequest {
 
     private final HttpHeaders headers;
 
+    private final HttpProtocol protocol;
+
     private Object body;
 
     UndertowHttpRequest(HttpServerExchange exchange, InputStream in) {
@@ -28,6 +31,9 @@ class UndertowHttpRequest implements HttpRequest {
         this.method = HttpMethod.valueOf(exchange.getRequestMethod().toString()); // TODO: 处理错误
         this.searchParams = HttpSearchParams.parse(exchange.getQueryString());
         this.headers = new UndertowHttpHeaders(exchange.getRequestHeaders());
+        this.protocol = HttpProtocol.from(exchange.getProtocol().toString())
+                .peekLeft(log::error)
+                .rightOrThrow(BadProtocolException::new);
         this.body = in;
     }
 
@@ -42,8 +48,8 @@ class UndertowHttpRequest implements HttpRequest {
     }
 
     @Override
-    public String protocol() {
-        return exchange.getProtocol().toString(); // TODO: 测试
+    public HttpProtocol protocol() {
+        return protocol;
     }
 
     @Override

@@ -2,6 +2,7 @@ package com.xyzwps.lib.express.server.craft;
 
 import com.xyzwps.lib.bedrock.Args;
 import com.xyzwps.lib.express.HttpHeaders;
+import com.xyzwps.lib.express.HttpProtocol;
 import com.xyzwps.lib.express.HttpResponse;
 import com.xyzwps.lib.express.HttpStatus;
 
@@ -12,14 +13,14 @@ import java.util.Objects;
 
 public final class CraftHttpResponse implements HttpResponse {
     private final OutputStream out;
-    private final CraftHttpRequest request;
+    private final HttpProtocol protocol;
     private final HttpHeaders headers;
 
     private HttpStatus status = HttpStatus.OK;
 
-    public CraftHttpResponse(OutputStream out, CraftHttpRequest request) {
+    public CraftHttpResponse(OutputStream out, HttpProtocol protocol) {
         this.out = Objects.requireNonNull(out);
-        this.request = Objects.requireNonNull(request);
+        this.protocol = Objects.requireNonNull(protocol);
         this.headers = new CraftHttpHeaders();
     }
 
@@ -38,7 +39,7 @@ public final class CraftHttpResponse implements HttpResponse {
         this.headers.set("Connection", "keep-alive");
 
         try {
-            out.write(request.protocol().getBytes());
+            out.write(protocol.value.getBytes());
             out.write(' ');
             out.write(Integer.toString(status.code).getBytes());
             out.write('\r');

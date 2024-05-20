@@ -2,7 +2,7 @@ package com.xyzwps.website.common;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.xyzwps.lib.express.util.ServerJacksonModule;
+import com.xyzwps.lib.express.jackson.ServerJacksonModule;
 
 public class JSON {
 

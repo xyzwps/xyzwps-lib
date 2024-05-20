@@ -1,9 +1,6 @@
 package com.xyzwps.lib.express.server.craft;
 
-import com.xyzwps.lib.express.HttpHeaders;
-import com.xyzwps.lib.express.HttpMethod;
-import com.xyzwps.lib.express.HttpRequest;
-import com.xyzwps.lib.express.HttpSearchParams;
+import com.xyzwps.lib.express.*;
 import lib.jsdom.mimetype.MimeType;
 
 import java.net.URI;
@@ -13,14 +10,14 @@ import java.util.Objects;
 public final class CraftHttpRequest implements HttpRequest {
     private final HttpMethod method;
     private final String path;
-    private final String protocol;
+    private final HttpProtocol protocol;
     private final HttpHeaders headers;
     private final HttpSearchParams searchParams;
     private Object body;
 
     private final MimeType contentType;
 
-    public CraftHttpRequest(HttpMethod method, URI uri, String protocol, HttpHeaders headers, Object body) {
+    public CraftHttpRequest(HttpMethod method, URI uri, HttpProtocol protocol, HttpHeaders headers, Object body) {
         this.path = Objects.requireNonNull(uri).getPath();
         this.searchParams = HttpSearchParams.parse(uri.getRawQuery());
 
@@ -44,7 +41,7 @@ public final class CraftHttpRequest implements HttpRequest {
     }
 
     @Override
-    public String protocol() {
+    public HttpProtocol protocol() {
         return protocol;
     }
 
