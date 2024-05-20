@@ -44,7 +44,7 @@ include(
 )
 include(
     "xyzwps-express",  //
-    "xyzwps-express:server-craft",
+    "xyzwps-express:server-bio",
     "xyzwps-express:server-undertow"
 )
 include("xyzwps-json")
