@@ -2,7 +2,7 @@ package com.xyzwps.website.modules.debug;
 
 import com.xyzwps.lib.express.HttpHeaders;
 import com.xyzwps.lib.express.middleware.BasicAuth;
-import com.xyzwps.lib.express.middleware.Router;
+import com.xyzwps.lib.express.middleware.router.NestRouter;
 import com.xyzwps.website.common.JSON;
 
 import javax.inject.Inject;
@@ -10,16 +10,22 @@ import javax.inject.Singleton;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Consumer;
 
 @Singleton
-public class DebugRouterBuilder {
+public class DebugRouter implements Consumer<NestRouter> {
 
-    public final Router router;
+    public final BasicAuth basicAuth;
 
     @Inject
-    DebugRouterBuilder(BasicAuth basicAuth) {
-        this.router = new Router()
-                .get("", (ctx) -> {
+    DebugRouter(BasicAuth basicAuth) {
+        this.basicAuth = basicAuth;
+    }
+
+    @Override
+    public void accept(NestRouter nestRouter) {
+        nestRouter
+                .get("/{id}", (ctx) -> {
                     var req = ctx.request();
                     var resp = ctx.response();
 
@@ -35,6 +41,7 @@ public class DebugRouterBuilder {
                     map.put("headers", req.headers());
                     map.put("searchParams", req.searchParams());
                     map.put("attributes", ctx.attributes());
+                    map.put("pathVars", req.pathVariables());
 
                     resp.send(JSON.stringify(map, true).getBytes());
                 })

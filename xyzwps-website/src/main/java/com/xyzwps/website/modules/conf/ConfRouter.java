@@ -1,23 +1,28 @@
 package com.xyzwps.website.modules.conf;
 
 import com.xyzwps.lib.express.HttpHeaders;
-import com.xyzwps.lib.express.middleware.BasicAuth;
-import com.xyzwps.lib.express.middleware.Router;
+import com.xyzwps.lib.express.middleware.router.NestRouter;
 import com.xyzwps.website.common.JSON;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import java.util.HashMap;
-import java.util.Map;
+import java.util.function.Consumer;
 
 @Singleton
-public class ConfRouterBuilder {
+public class ConfRouter implements Consumer<NestRouter> {
 
-    public final Router router;
+    public final Configurations conf;
 
     @Inject
-    ConfRouterBuilder(Configurations conf) {
-        this.router = new Router()
+    ConfRouter(Configurations conf) {
+        this.conf = conf;
+    }
+
+
+    @Override
+    public void accept(NestRouter nestRouter) {
+        nestRouter
                 .get("", (ctx) -> {
                     var resp = ctx.response();
                     resp.ok();

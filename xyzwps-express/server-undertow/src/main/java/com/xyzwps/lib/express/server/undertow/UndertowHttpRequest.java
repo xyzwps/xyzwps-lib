@@ -24,6 +24,8 @@ class UndertowHttpRequest implements HttpRequest {
 
     private final HttpProtocol protocol;
 
+    private final HttpPathVariables pathVariables;
+
     private Object body;
 
     UndertowHttpRequest(HttpServerExchange exchange, InputStream in) {
@@ -35,6 +37,7 @@ class UndertowHttpRequest implements HttpRequest {
                 .peekLeft(log::error)
                 .rightOrThrow(BadProtocolException::new);
         this.body = in;
+        this.pathVariables = new HttpPathVariables();
     }
 
     @Override
@@ -94,5 +97,10 @@ class UndertowHttpRequest implements HttpRequest {
     @Override
     public HttpSearchParams searchParams() {
         return searchParams;
+    }
+
+    @Override
+    public HttpPathVariables pathVariables() {
+        return pathVariables;
     }
 }

@@ -30,7 +30,7 @@ public class HttpServerLayer {
                 .use(logRequestCostMiddleware)
                 .use(new Static(conf.getRouterStaticDirectory()).serve())
                 .use(spaFallbackMiddleware)
-                .use(routerBuilder.router.routes());
+                .use(routerBuilder.router);
     }
 
     public void start() {

@@ -92,8 +92,7 @@ public final class Pair<F, S> {
     public boolean equals(Object obj) {
         if (obj == null) return false;
 
-        if (obj instanceof Pair) {
-            Pair<?, ?> p = (Pair<?, ?>) obj;
+        if (obj instanceof Pair<?, ?> p) {
             return Objects.equals(this.first, p.first) && Objects.equals(this.second, p.second);
         } else {
             return false;

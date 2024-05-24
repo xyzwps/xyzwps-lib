@@ -1,11 +1,9 @@
 package com.xyzwps.website.modules;
 
-import com.xyzwps.lib.express.HttpHeaders;
-import com.xyzwps.lib.express.HttpStatus;
-import com.xyzwps.lib.express.middleware.Router;
-import com.xyzwps.website.modules.conf.ConfRouterBuilder;
-import com.xyzwps.website.modules.debug.DebugRouterBuilder;
-import com.xyzwps.website.modules.user.UserRouterBuilder;
+import com.xyzwps.lib.express.middleware.router.RouterMiddleware;
+import com.xyzwps.website.modules.conf.ConfRouter;
+import com.xyzwps.website.modules.debug.DebugRouter;
+import com.xyzwps.website.modules.user.UserRouter;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -13,27 +11,21 @@ import javax.inject.Singleton;
 @Singleton
 public class IndexRouterBuilder {
 
-    public final Router router;
+    public final RouterMiddleware router;
 
     @Inject
-    public IndexRouterBuilder(ConfRouterBuilder confBuilder,
-                              DebugRouterBuilder debugRouter,
-                              UserRouterBuilder userRouter) {
-        this.router = new Router()
+    public IndexRouterBuilder(ConfRouter confBuilder,
+                              DebugRouter debugRouter,
+                              UserRouter userRouter) {
+        this.router = new RouterMiddleware()
                 .get("/api/hello/world", (ctx) -> {
                     var resp = ctx.response();
                     resp.ok();
                     resp.headers().set("Content-Type", "application/json");
                     resp.send("[\"Hello\":\"World\"]".getBytes());
                 })
-                .nest("/api/conf", confBuilder.router)
-                .nest("/api/debug", debugRouter.router)
-                .nest("/api/users", userRouter.router)
-                .all("/api/**", (ctx) -> { // TODO: 实现 404
-                    var resp = ctx.response();
-                    resp.headers().set(HttpHeaders.CONTENT_TYPE, "application/json");
-                    resp.status(HttpStatus.NOT_FOUND);
-                    resp.send("{\"status\":404}".getBytes());
-                });
+                .nest("/api/conf", confBuilder)
+                .nest("/api/debug", debugRouter)
+                .nest("/api/users", userRouter);
     }
 }

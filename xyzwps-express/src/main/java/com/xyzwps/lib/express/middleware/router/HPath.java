@@ -1,6 +1,10 @@
-package com.xyzwps.lib.express;
+package com.xyzwps.lib.express.middleware.router;
+
+import com.xyzwps.lib.dollar.Pair;
 
 import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -42,8 +46,8 @@ public final class HPath {
 
         for (int i = 0; i < segments.length - 1; i++) {
             var seg = segments[i];
-            if (seg instanceof PathSegment.Star2Segment) {
-                throw new IllegalArgumentException("Only the last segment can be " + PathSegment.Star2Segment.class.getSimpleName());
+            if (seg instanceof PathSegment.DoubleStarSegment) {
+                throw new IllegalArgumentException("Only the last segment can be " + PathSegment.DoubleStarSegment.class.getSimpleName());
             }
         }
 
@@ -62,14 +66,31 @@ public final class HPath {
                 .toArray(String[]::new);
     }
 
+    /**
+     * Extract path variables from path. You should make sure that the path is matched first.
+     *
+     * @param path       which would be used for extracting path variable values
+     * @param matchStart match start index
+     * @return matched path variables
+     */
+    public List<Pair<String, String>> pathVars(String[] path, int matchStart) {
+        var list = new LinkedList<Pair<String, String>>();
+        final int len = Math.min(segments.length, path.length);
+        for (int i = 0; i < len; i++) {
+            if (segments[i] instanceof PathSegment.VariableSegment variableSegment) {
+                list.add(Pair.of(variableSegment.variableName(), path[i + matchStart]));
+            }
+        }
+        return list;
+    }
 
-    // TODO: 好好测试
+
     public boolean match(String[] path, int matchStart) {
         if (segments.length == 0) {
             return matchStart == path.length;
         }
 
-        if (segments[segments.length - 1] instanceof PathSegment.Star2Segment) {
+        if (segments[segments.length - 1] instanceof PathSegment.DoubleStarSegment) {
             /*
              * 0) this      /user/{id}/**
              * 1) path  /aaa/user/1234     (1) match
@@ -110,7 +131,7 @@ public final class HPath {
     }
 
     public boolean isPrefixOf(String[] path, int matchStart) {
-        if (segments[segments.length - 1] instanceof PathSegment.Star2Segment) {
+        if (segments[segments.length - 1] instanceof PathSegment.DoubleStarSegment) {
             /*
              * 0) this      /user/{id}/**
              * 1) path  /aaa/user/123    (1) true

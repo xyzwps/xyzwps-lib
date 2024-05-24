@@ -1,9 +1,9 @@
-package com.xyzwps.lib.express;
+package com.xyzwps.lib.express.middleware.router;
 
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static com.xyzwps.lib.express.PathSegment.*;
+import static com.xyzwps.lib.express.middleware.router.PathSegment.*;
 
 class HSegmentTests {
 
@@ -12,7 +12,7 @@ class HSegmentTests {
     @Test
     void create() {
         assertEquals(StarSegment.INSTANCE, from("*"));
-        assertEquals(Star2Segment.INSTANCE, from("**"));
+        assertEquals(DoubleStarSegment.INSTANCE, from("**"));
         assertEquals(new VariableSegment("abc"), from("{abc}"));
         assertEquals(new PlainSegment("abc"), from("abc"));
         assertEquals(new PlainSegment("aB_1"), from("aB_1"));

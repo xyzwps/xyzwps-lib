@@ -13,6 +13,7 @@ public final class BioHttpRequest implements HttpRequest {
     private final HttpProtocol protocol;
     private final HttpHeaders headers;
     private final HttpSearchParams searchParams;
+    private final HttpPathVariables pathVariables;
     private Object body;
 
     private final MimeType contentType;
@@ -28,6 +29,7 @@ public final class BioHttpRequest implements HttpRequest {
 
         var contentTypeStr = headers.contentType();
         this.contentType = contentTypeStr == null ? null : MimeType.parse(contentTypeStr);
+        this.pathVariables = new HttpPathVariables();
     }
 
     @Override
@@ -73,6 +75,11 @@ public final class BioHttpRequest implements HttpRequest {
     @Override
     public HttpSearchParams searchParams() {
         return searchParams;
+    }
+
+    @Override
+    public HttpPathVariables pathVariables() {
+        return pathVariables;
     }
 
     @Override

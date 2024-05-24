@@ -8,12 +8,13 @@ import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.net.Socket;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
-// TODO: connection manager
 public class ConnectionHandler implements Runnable {
 
     private static final Logger log = LoggerFactory.getLogger(ConnectionHandler.class);
+    private static final AtomicInteger id_counter = new AtomicInteger(0);
 
     private final Socket socket;
     private final HttpMiddleware middleware;
@@ -21,10 +22,16 @@ public class ConnectionHandler implements Runnable {
     private final KeepAliveConfig keepAliveConfig = new KeepAliveConfig(30, 1000);
     private final AtomicInteger keepAliveCounter = new AtomicInteger(0);
 
+
+    private final int id;
+    private static final ConnectionManager cm = new ConnectionManager();
+
+
     ConnectionHandler(Socket socket, HttpMiddleware middleware) {
         this.socket = Args.notNull(socket, "Socket cannot be null");
         this.middleware = Args.notNull(middleware, "HttpMiddleware cannot be null");
         this.keepAlive = false;
+        this.id = id_counter.getAndIncrement();
     }
 
     @Override
@@ -33,6 +40,8 @@ public class ConnectionHandler implements Runnable {
              var in = new PushbackInputStream(socket.getInputStream(), 1);
              var out = socket.getOutputStream()
         ) {
+            cm.add(this);
+
             int firstByte;
             while ((firstByte = in.read()) >= 0) {
                 in.unread(firstByte);
@@ -87,6 +96,8 @@ public class ConnectionHandler implements Runnable {
             log.error("Bad protocol error", e);
         } catch (Exception e) {
             log.error("Unhandled error", e);
+        } finally {
+            cm.rm(this);
         }
     }
 
@@ -103,5 +114,22 @@ public class ConnectionHandler implements Runnable {
     private static boolean isKeepAlive(HttpHeaders headers) {
         return headers.getAll(HttpHeaders.CONNECTION).stream()
                 .anyMatch(it -> it.equalsIgnoreCase("Keep-Alive"));
+    }
+
+
+    private static final class ConnectionManager {
+        private final ConcurrentHashMap<Integer, ConnectionHandler> connections = new ConcurrentHashMap<>();
+
+        void add(ConnectionHandler handler) {
+            this.connections.put(handler.id, handler);
+        }
+
+        int count() {
+            return connections.size();
+        }
+
+        void rm(ConnectionHandler handler) {
+            connections.remove(handler.id);
+        }
     }
 }

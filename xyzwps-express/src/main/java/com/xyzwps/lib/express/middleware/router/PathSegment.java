@@ -1,10 +1,10 @@
-package com.xyzwps.lib.express;
+package com.xyzwps.lib.express.middleware.router;
 
 import java.util.regex.Pattern;
 
 import static com.xyzwps.lib.dollar.Dollar.*;
 
-public interface PathSegment {
+public sealed interface PathSegment {
 
     static PathSegment from(String segment) {
         if ($.isEmpty(segment)) {
@@ -26,7 +26,7 @@ public interface PathSegment {
 
         if (segment.contains("*")) {
             if (segment.equals("*")) return StarSegment.INSTANCE;
-            if (segment.equals("**")) return Star2Segment.INSTANCE;
+            if (segment.equals("**")) return DoubleStarSegment.INSTANCE;
             throw new IllegalArgumentException("Invalid segment '" + segment + "'");
         }
 
@@ -67,7 +67,7 @@ public interface PathSegment {
         }
     }
 
-    enum Star2Segment implements PathSegment {
+    enum DoubleStarSegment implements PathSegment {
         INSTANCE;
 
         @Override

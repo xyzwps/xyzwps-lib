@@ -81,20 +81,10 @@ public interface HttpRequest {
      */
     HttpSearchParams searchParams();
 
-    // TODO: path variable
-
-//    /**
-//     * Get path variable value by specified name.
-//     *
-//     * @param name cannot be null
-//     * @return null if not matched
-//     */
-//    String pathVariable(String name);
-//
-//    /**
-//     * Get all path variables.
-//     *
-//     * @return all path variables
-//     */
-//    Map<String, String> pathVariables();
+    /**
+     * Get all path variables.
+     *
+     * @return all path variables
+     */
+    HttpPathVariables pathVariables();
 }
