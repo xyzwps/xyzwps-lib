@@ -12,7 +12,6 @@ import java.util.function.BiConsumer;
 import static com.xyzwps.lib.dollar.Dollar.*;
 
 // TODO: test
-// TODO: 不要 implement Map，同时实现 JSONSerializer
 final class BioHttpHeaders implements HttpHeaders {
 
     private final MultiValuesMap<HttpHeaderName, String> map = new SimpleMultiValuesMap<>();
