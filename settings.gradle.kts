@@ -46,6 +46,7 @@ include(
     "xyzwps-express",  //
     "xyzwps-express:server-bio",
     "xyzwps-express:server-nio",
+    "xyzwps-express:server-commons",
     "xyzwps-express:server-undertow"
 )
 include("xyzwps-json")

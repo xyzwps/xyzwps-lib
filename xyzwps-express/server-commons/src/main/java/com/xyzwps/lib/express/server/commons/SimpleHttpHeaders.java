@@ -1,6 +1,7 @@
-package com.xyzwps.lib.express.server.bio;
+package com.xyzwps.lib.express.server.commons;
 
 import com.xyzwps.lib.bedrock.Args;
+import com.xyzwps.lib.dollar.Dollar;
 import com.xyzwps.lib.express.HttpHeaders;
 import com.xyzwps.lib.express.util.MultiValuesMap;
 import com.xyzwps.lib.express.util.SimpleMultiValuesMap;
@@ -9,10 +10,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.function.BiConsumer;
 
-import static com.xyzwps.lib.dollar.Dollar.*;
-
 // TODO: test
-final class BioHttpHeaders implements HttpHeaders {
+public final class SimpleHttpHeaders implements HttpHeaders {
 
     private final MultiValuesMap<HttpHeaderName, String> map = new SimpleMultiValuesMap<>();
 
@@ -61,7 +60,7 @@ final class BioHttpHeaders implements HttpHeaders {
 
     @Override
     public Set<String> names() {
-        return $(this.map.names()).map(it -> it.name).toSet();
+        return Dollar.$(this.map.names()).map(it -> it.name).toSet();
     }
 
     @Override
@@ -70,5 +69,16 @@ final class BioHttpHeaders implements HttpHeaders {
         Args.notNull(value, "Value cannot be null");
 
         this.map.set(new HttpHeaderName(name), value);
+    }
+
+    @Override
+    public String toString() {
+        var sb = new StringBuilder();
+        forEach((name, values) -> {
+            for (var value : values) {
+                sb.append(name).append(": ").append(value).append("\r\n");
+            }
+        });
+        return sb.toString();
     }
 }

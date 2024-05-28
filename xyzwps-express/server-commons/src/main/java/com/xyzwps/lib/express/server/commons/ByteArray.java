@@ -1,4 +1,4 @@
-package com.xyzwps.lib.express.server.bio.util;
+package com.xyzwps.lib.express.server.commons;
 
 import java.nio.charset.Charset;
 
@@ -7,7 +7,7 @@ public final class ByteArray {
     private int size;
     private byte[] arr;
 
-    private static final int MIN_CAP = 256;
+    private static final int MIN_CAP = 128;
 
     public ByteArray(int cap) {
         if (cap < MIN_CAP) {

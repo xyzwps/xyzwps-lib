@@ -5,6 +5,7 @@ import com.xyzwps.lib.express.HttpHeaders;
 import com.xyzwps.lib.express.HttpProtocol;
 import com.xyzwps.lib.express.HttpResponse;
 import com.xyzwps.lib.express.HttpStatus;
+import com.xyzwps.lib.express.server.commons.SimpleHttpHeaders;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -21,7 +22,7 @@ public final class BioHttpResponse implements HttpResponse {
     public BioHttpResponse(OutputStream out, HttpProtocol protocol) {
         this.out = Objects.requireNonNull(out);
         this.protocol = Objects.requireNonNull(protocol);
-        this.headers = new BioHttpHeaders();
+        this.headers = new SimpleHttpHeaders();
     }
 
     @Override

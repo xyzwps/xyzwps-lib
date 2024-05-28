@@ -85,6 +85,10 @@ public interface HttpHeaders {
         return get(CONTENT_TYPE);
     }
 
+    default boolean connectionKeepAlive() {
+        return this.getAll(HttpHeaders.CONNECTION).stream().anyMatch(it -> it.equalsIgnoreCase("Keep-Alive"));
+    }
+
     int CONTENT_LENGTH_LIMIT = 1024 * 1024 * 50;
 
     String AUTHORIZATION = "Authorization";

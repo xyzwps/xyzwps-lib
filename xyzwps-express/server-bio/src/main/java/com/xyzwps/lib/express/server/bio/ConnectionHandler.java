@@ -58,7 +58,7 @@ public class ConnectionHandler implements Runnable {
                         .rightOrThrow(BadProtocolException::new);
 
                 // region check keep alive
-                if (isKeepAlive(headers)) {
+                if (headers.connectionKeepAlive()) {
                     this.keepAlive = true;
                 }
                 // endregion
@@ -109,13 +109,6 @@ public class ConnectionHandler implements Runnable {
             throw new UncheckedIOException(e);
         }
     }
-
-
-    private static boolean isKeepAlive(HttpHeaders headers) {
-        return headers.getAll(HttpHeaders.CONNECTION).stream()
-                .anyMatch(it -> it.equalsIgnoreCase("Keep-Alive"));
-    }
-
 
     private static final class ConnectionManager {
         private final ConcurrentHashMap<Integer, ConnectionHandler> connections = new ConcurrentHashMap<>();

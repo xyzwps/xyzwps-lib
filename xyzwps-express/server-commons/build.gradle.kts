@@ -19,7 +19,6 @@ dependencies {
     implementation(project(":xyzwps-bedrock"))
     implementation(project(":xyzwps-dollar"))
     implementation(project(":xyzwps-express"))
-    implementation(project(":xyzwps-express:server-commons"))
 
     testImplementation(platform(libs.junit.bom))
     testImplementation(libs.junit.jupiter)

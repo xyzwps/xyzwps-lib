@@ -1,5 +1,7 @@
 package com.xyzwps.lib.express.server.nio;
 
+import com.xyzwps.lib.express.server.commons.InvalidHttpMessageException;
+
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
@@ -31,60 +33,104 @@ public class NioServer {
                     var key = keyItr.next();
                     keyItr.remove();
 
-                    if (key.isAcceptable()) {
-                        // A connection was accepted by a ServerSocketChannel.
-                        var server = (ServerSocketChannel) key.channel();
-                        System.out.println(server.hashCode() + " " + ssc.hashCode() + " " + (server == ssc));
+                    if (!key.isValid()) {
+                        continue;
+                    }
 
-                        var client = server.accept();
-                        if (client == null) {
-                            continue;
+                    var channel = key.channel();
+
+                    if (key.isAcceptable()) {
+                        printSelectionKeyState(key, "accepted");
+                        if (channel instanceof ServerSocketChannel) {
+                            var socketChannel = ssc.accept();
+                            if (socketChannel == null) {
+                                continue;
+                            }
+                            socketChannel.configureBlocking(false);
+                            var sChanKey = socketChannel.register(selector, SelectionKey.OP_READ);
+                            new Connection(socketChannel, sChanKey);
+                        } else {
+                            System.out.println("ERROR: unhandled acceptable channel " + channel.getClass().getCanonicalName());
                         }
-                        client.configureBlocking(false);
-                        // register socket channel with selector for read operations
-                        client.register(selector, SelectionKey.OP_READ);
-                    }
-                    //
-                    else if (key.isReadable()) {
-                        // A socket channel is ready for reading.
-                        var client = (SocketChannel) key.channel();
-                        handleRequest(client);
-                        key.interestOps(SelectionKey.OP_WRITE);
-                    }
-                    //
-                    else if (key.isWritable()) {
-                        // A socket channel is ready for writing.
-                        var client = (SocketChannel) key.channel();
-                        // Perform work on the socket channel.
-                        handleResponse(client);
+                    } else if (key.isReadable()) {
+                        printSelectionKeyState(key, "readable");
+                        if (channel instanceof SocketChannel socket) {
+                            try {
+                                var parsed = handleRequest(socket);
+                                if (parsed.socketEOF) {
+                                    key.cancel();
+                                    channel.close();
+                                } else {
+                                    var channelSocket = (Connection) key.attachment();
+                                    channelSocket.setStartLine(parsed.startLine);
+                                    channelSocket.setRequestHeaders(parsed.headers);
+                                    key.interestOps(SelectionKey.OP_WRITE);
+                                }
+                            } catch (InvalidHttpMessageException e) {
+                                key.cancel();
+                                channel.close();
+                            }
+                        } else {
+                            System.out.println("ERROR: unhandled readable channel " + channel.getClass().getCanonicalName());
+                        }
+                    } else if (key.isWritable()) {
+                        printSelectionKeyState(key, "writable");
+                        if (channel instanceof SocketChannel socket) {
+                            var connection = (Connection) key.attachment();
+                            handleResponse(socket, connection);
+                            key.interestOps(SelectionKey.OP_READ);
+                        } else {
+                            System.out.println("ERROR: unhandled writable channel " + channel.getClass().getCanonicalName());
+                        }
+                    } else if (key.isConnectable()) {
+                        printSelectionKeyState(key, "connected");
                     }
                 }
             }
         }
     }
 
-    private static void handleRequest(SocketChannel channel) throws IOException {
+    private static void printSelectionKeyState(SelectionKey key, String branch) {
+        System.out.println("\nChannel at branch " + branch + " : " + key.channel().getClass().getCanonicalName() + " " + System.identityHashCode(key));
+        System.out.println(" > r:" + key.isReadable() + " w:" + key.isWritable() + " a:" + key.isAcceptable() + " c:" + key.isConnectable());
+        System.out.println();
+    }
+
+    /**
+     * @return true if EOF
+     */
+    private static RequestParser handleRequest(SocketChannel channel) throws IOException, InvalidHttpMessageException {
         // 从通道中读取请求头数据
         ByteBuffer buffer = ByteBuffer.allocate(2048);
 
-        while (channel.read(buffer) > 0) {
-            buffer.flip();
+        RequestParser bsc = new RequestParser();
 
-            while (buffer.hasRemaining()) {
-                System.out.print((char) buffer.get());
+        while (true) {
+            int count = channel.read(buffer);
+            if (count < 0) {
+                // EOF
+                bsc.put(true, (byte) 0);
+                bsc.eof();
+                return bsc;
+            } else if (count == 0) {
+                // do nothing
+                return bsc;
+            } else {
+                buffer.flip();
+                while (buffer.hasRemaining()) {
+                    byte b = buffer.get();
+                    bsc.put(false, b);
+                }
             }
-
             buffer.clear();
-
-            System.out.println();
         }
     }
 
-    private static void handleResponse(SocketChannel channel) throws IOException {
-        var resp = "HTTP/1.1 200\r\nContent-Type: text/plain\r\nContent-Length: 3\r\n\r\n123";
-        channel.write(ByteBuffer.wrap(resp.getBytes()));
-        channel.close(); // TODO: 实现 keep-alive
+    private static void handleResponse(SocketChannel channel, Connection connection) throws IOException {
+        var keepAlive = connection.isKeepAlive() ? "Keep-Alive: timeout=60, max=500\r\n" : "";
+        var resp = String.format("HTTP/1.1 200\r\nContent-Type: text/plain\r\n%sContent-Length: 3\r\n\r\n123", keepAlive);
+        var writeBytes = channel.write(ByteBuffer.wrap(resp.getBytes()));
+        System.out.println(" > 已写入 " + writeBytes + " 总共 " + resp.getBytes().length);
     }
-
 
 }
