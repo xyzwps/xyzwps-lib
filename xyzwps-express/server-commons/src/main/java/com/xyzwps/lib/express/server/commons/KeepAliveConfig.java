@@ -1,4 +1,4 @@
-package com.xyzwps.lib.express.server.bio;
+package com.xyzwps.lib.express.server.commons;
 
 import com.xyzwps.lib.bedrock.Args;
 
@@ -11,9 +11,5 @@ public record KeepAliveConfig(int timeout, int max) {
     public KeepAliveConfig {
         Args.ge(timeout, 0, "Parameter timeout should be greater than or equals to 0");
         Args.ge(max, 0, "Parameter max should be greater than or equals to 0");
-    }
-
-    public String toHeaderValue(int used) {
-        return "timeout=" + timeout + ", max=" + (max - used);
     }
 }

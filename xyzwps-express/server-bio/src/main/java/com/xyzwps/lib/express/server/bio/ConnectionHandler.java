@@ -3,6 +3,8 @@ package com.xyzwps.lib.express.server.bio;
 import com.xyzwps.lib.bedrock.Args;
 import com.xyzwps.lib.express.*;
 import com.xyzwps.lib.express.server.bio.common.ContentLengthInputStream;
+import com.xyzwps.lib.express.server.commons.KeepAliveConfig;
+import com.xyzwps.lib.express.server.commons.KeepAliveInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -18,10 +20,9 @@ public class ConnectionHandler implements Runnable {
 
     private final Socket socket;
     private final HttpMiddleware middleware;
-    private boolean keepAlive;
-    private final KeepAliveConfig keepAliveConfig = new KeepAliveConfig(30, 1000);
-    private final AtomicInteger keepAliveCounter = new AtomicInteger(0);
 
+    // TODO: 配置化 keep alive 信息，区分主动和被动
+    private KeepAliveInfo keepAliveInfo;
 
     private final int id;
     private static final ConnectionManager cm = new ConnectionManager();
@@ -30,12 +31,12 @@ public class ConnectionHandler implements Runnable {
     ConnectionHandler(Socket socket, HttpMiddleware middleware) {
         this.socket = Args.notNull(socket, "Socket cannot be null");
         this.middleware = Args.notNull(middleware, "HttpMiddleware cannot be null");
-        this.keepAlive = false;
         this.id = id_counter.getAndIncrement();
     }
 
     @Override
     public void run() {
+        // TODO: 这里 keep alive 不大对
         try (socket;
              var in = new PushbackInputStream(socket.getInputStream(), 1);
              var out = socket.getOutputStream()
@@ -59,7 +60,7 @@ public class ConnectionHandler implements Runnable {
 
                 // region check keep alive
                 if (headers.connectionKeepAlive()) {
-                    this.keepAlive = true;
+                    this.keepAliveInfo = new KeepAliveInfo(new KeepAliveConfig(30, 1000));
                 }
                 // endregion
 
@@ -72,9 +73,8 @@ public class ConnectionHandler implements Runnable {
                 var response = new BioHttpResponse(out, request.protocol());
 
                 // region set keep alive header
-                int usedCount = keepAliveCounter.incrementAndGet();
-                if (usedCount < keepAliveConfig.max()) {
-                    response.headers().append(HttpHeaders.KEEP_ALIVE, keepAliveConfig.toHeaderValue(usedCount));
+                if (keepAliveInfo != null && keepAliveInfo.shouldKeepAlive()) {
+                    response.headers().append(HttpHeaders.KEEP_ALIVE, keepAliveInfo.toHeaderValue());
                 }
                 // endregion
 
@@ -83,10 +83,10 @@ public class ConnectionHandler implements Runnable {
                 exhaust(requestBody);
 
                 // region check connection should keep alive
-                if (!keepAlive || usedCount >= keepAliveConfig.max()) {
+                if (keepAliveInfo != null && keepAliveInfo.shouldKeepAlive()) {
                     break;
                 } else {
-                    socket.setSoTimeout(keepAliveConfig.timeout() * 1000);
+                    socket.close();
                 }
                 // endregion
             }

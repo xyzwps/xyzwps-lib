@@ -19,9 +19,9 @@ public final class Connection {
 
     private boolean keepAlive = false;
 
-    HttpHeaders requestHeaders;
 
-    StartLine startLine;
+    private HttpHeaders requestHeaders;
+    private StartLine startLine;
 
     public Connection(SocketChannel channel, SelectionKey key) {
         this.channel = Objects.requireNonNull(channel);
@@ -42,5 +42,18 @@ public final class Connection {
 
     public boolean isKeepAlive() {
         return keepAlive;
+    }
+
+    public HttpHeaders getRequestHeaders() {
+        return requestHeaders;
+    }
+
+    public StartLine getStartLine() {
+        return startLine;
+    }
+
+    public void clean() {
+        this.requestHeaders = null;
+        this.startLine = null;
     }
 }
