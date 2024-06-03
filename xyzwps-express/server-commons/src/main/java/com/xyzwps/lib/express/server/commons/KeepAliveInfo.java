@@ -26,6 +26,8 @@ public final class KeepAliveInfo {
         return keepAlive && max.get() > 0 && System.currentTimeMillis() < endTs;
     }
 
+    // TODO: 实现自动 timeout
+
     public String toHeaderValue() {
         if (keepAlive) {
             return "timeout=" + ((endTs - System.currentTimeMillis()) / 1000L) + ", max=" + (max.decrementAndGet());

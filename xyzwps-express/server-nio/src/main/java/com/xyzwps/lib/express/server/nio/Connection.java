@@ -35,9 +35,9 @@ public final class Connection {
 
     public void setRequestHeaders(HttpHeaders requestHeaders) {
         this.requestHeaders = requestHeaders;
-        if (requestHeaders.connectionKeepAlive()) {
-            this.keepAlive = new KeepAliveInfo(new KeepAliveConfig(10 * 1000, 100)); // TODO: 配置化
-        }
+//        if (requestHeaders.connectionKeepAlive()) {
+//            this.keepAlive = new KeepAliveInfo(new KeepAliveConfig(10 * 1000, 100)); // TODO: 配置化
+//        }
     }
 
     public void setStartLine(StartLine startLine) {

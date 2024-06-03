@@ -42,7 +42,7 @@ public final class BioServer implements Server {
     }
 
     void handleSocket(Socket socket, HttpMiddleware middleware) {
-        RequestExecutors.runOnVirtualThread(new ConnectionHandler(socket, middleware));
+        RequestExecutors.runOnVirtualThread(new BioConnection(socket, middleware));
     }
 
 }
