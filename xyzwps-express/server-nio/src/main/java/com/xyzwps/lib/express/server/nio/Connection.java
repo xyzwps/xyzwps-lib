@@ -1,6 +1,8 @@
 package com.xyzwps.lib.express.server.nio;
 
 import com.xyzwps.lib.express.HttpHeaders;
+import com.xyzwps.lib.express.server.commons.KeepAliveConfig;
+import com.xyzwps.lib.express.server.commons.KeepAliveInfo;
 import com.xyzwps.lib.express.server.commons.StartLine;
 
 import java.nio.channels.SelectionKey;
@@ -17,7 +19,7 @@ public final class Connection {
 
     private final int id;
 
-    private boolean keepAlive = false;
+    private KeepAliveInfo keepAlive;
 
 
     private HttpHeaders requestHeaders;
@@ -33,7 +35,9 @@ public final class Connection {
 
     public void setRequestHeaders(HttpHeaders requestHeaders) {
         this.requestHeaders = requestHeaders;
-        this.keepAlive = requestHeaders.connectionKeepAlive();
+        if (requestHeaders.connectionKeepAlive()) {
+            this.keepAlive = new KeepAliveInfo(new KeepAliveConfig(10 * 1000, 100)); // TODO: 配置化
+        }
     }
 
     public void setStartLine(StartLine startLine) {
@@ -41,7 +45,7 @@ public final class Connection {
     }
 
     public boolean isKeepAlive() {
-        return keepAlive;
+        return keepAlive != null && keepAlive.shouldKeepAlive();
     }
 
     public HttpHeaders getRequestHeaders() {
