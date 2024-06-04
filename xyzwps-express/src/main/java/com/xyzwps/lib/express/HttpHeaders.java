@@ -5,7 +5,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.function.BiConsumer;
 
-// TODO: 同时实现 JSONSerializer
 public interface HttpHeaders {
 
     /**
@@ -97,4 +96,6 @@ public interface HttpHeaders {
     String CONNECTION = "Connection";
 
     String KEEP_ALIVE = "Keep-Alive";
+
+    String DATE = "Date";
 }

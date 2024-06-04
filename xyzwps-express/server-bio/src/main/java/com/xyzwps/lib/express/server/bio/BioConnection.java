@@ -103,15 +103,15 @@ public class BioConnection implements Runnable {
         var request = new BioHttpRequest(startLine.method(), startLine.toURI(), startLine.protocol(), headers, requestBody);
         var response = new BioHttpResponse(out, request.protocol());
 
+        var responseHeaders = response.headers();
 
         var shouldKeepAlive = keepAliveInfo != null && keepAliveInfo.shouldKeepAlive();
         // region set keep alive header
         if (shouldKeepAlive) {
-            var responseHeaders = response.headers();
             responseHeaders.append(HttpHeaders.CONNECTION, "Keep-Alive");
             responseHeaders.append(HttpHeaders.KEEP_ALIVE, keepAliveInfo.toHeaderValue());
         } else {
-            response.headers().append(HttpHeaders.CONNECTION, "Close");
+            responseHeaders.append(HttpHeaders.CONNECTION, "Close");
         }
         // endregion
 

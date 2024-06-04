@@ -6,6 +6,7 @@ import com.xyzwps.lib.express.HttpProtocol;
 import com.xyzwps.lib.express.HttpResponse;
 import com.xyzwps.lib.express.HttpStatus;
 import com.xyzwps.lib.express.server.commons.SimpleHttpHeaders;
+import com.xyzwps.lib.express.server.commons.header.HeaderDateValue;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -37,7 +38,7 @@ public final class BioHttpResponse implements HttpResponse {
 
     public void send(byte[] bytes) {
         this.headers.set("Content-Length", Integer.toString(bytes == null ? 0 : bytes.length));
-        this.headers.set("Connection", "keep-alive");
+        this.headers.set(HttpHeaders.DATE, HeaderDateValue.get());
 
         try {
             out.write(protocol.value.getBytes());
