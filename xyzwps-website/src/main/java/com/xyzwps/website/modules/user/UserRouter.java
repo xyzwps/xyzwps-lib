@@ -1,12 +1,11 @@
 package com.xyzwps.website.modules.user;
 
 import com.xyzwps.lib.express.HttpHeaders;
+import com.xyzwps.lib.express.Log;
 import com.xyzwps.lib.express.middleware.JsonParser;
 import com.xyzwps.lib.express.middleware.router.NestRouter;
 import com.xyzwps.website.common.JSON;
 import com.xyzwps.website.Person;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -17,8 +16,6 @@ import static com.xyzwps.lib.express.HttpStatus.*;
 
 @Singleton
 public class UserRouter implements Consumer<NestRouter> {
-
-    private static final Logger log = LoggerFactory.getLogger(UserRouter.class);
 
     private final JsonParser json = new JsonParser(JSON.OM);
 
@@ -51,14 +48,14 @@ public class UserRouter implements Consumer<NestRouter> {
                     }
                 })
                 .use((ctx) -> {
-                    log.info(" > ready to get posts");
+                    Log.infof(" > ready to get posts");
                     ctx.next();
                 })
                 .get("/{id}/posts", (ctx) -> {
                     var resp = ctx.response();
                     resp.ok();
                     resp.headers().set("Content-Type", "application/json");
-                    log.info(" > posts gotten");
+                    Log.infof(" > posts gotten");
                     resp.send("{\"msg\":\"get user posts\"}".getBytes());
                 });
     }

@@ -50,6 +50,7 @@ include(
     "xyzwps-express:server-undertow"
 )
 include("xyzwps-json")
+include("xyzwps-log")
 include("xyzwps-website")
 include("lib:jsdom:mimetype")
 include("lib:jshttp:mime-db")

@@ -1,10 +1,9 @@
 plugins {
     java
-    jacoco
     `java-library`
 }
 
-group = "com.xyzwps.lib.express"
+group = "com.xyzwps.lib"
 version = findProperty("lib.version")!!
 // TODO: 使用 properties 文件的写法太啰嗦了，想办法改成插件
 java.sourceCompatibility = JavaVersion.valueOf("VERSION_" + findProperty("lib.java.version"))
@@ -14,13 +13,6 @@ repositories {
 }
 
 dependencies {
-    api(project(":lib:jsdom:mimetype"))
-    api(project(":lib:jshttp:mime-db"))
-    api(project(":xyzwps-bedrock"))
-    api(project(":xyzwps-dollar"))
-    api(project(":xyzwps-log"))
-    api(libs.bundles.jackson)
-
     testImplementation(platform(libs.junit.bom))
     testImplementation(libs.junit.jupiter)
 }

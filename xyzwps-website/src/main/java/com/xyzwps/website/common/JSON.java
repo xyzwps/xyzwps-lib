@@ -4,7 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.xyzwps.lib.express.jackson.ServerJacksonModule;
 
-public class JSON {
+public final class JSON {
 
     public static final ObjectMapper OM = new ObjectMapper();
 
@@ -30,5 +30,9 @@ public class JSON {
         } else {
             return stringify(obj);
         }
+    }
+
+    private JSON() throws IllegalAccessException {
+        throw new IllegalAccessException("??");
     }
 }

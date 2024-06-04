@@ -5,8 +5,6 @@ import com.xyzwps.lib.express.*;
 import com.xyzwps.lib.express.server.bio.common.ContentLengthInputStream;
 import com.xyzwps.lib.express.server.commons.KeepAliveConfig;
 import com.xyzwps.lib.express.server.commons.KeepAliveInfo;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.net.Socket;
@@ -17,7 +15,6 @@ import java.util.concurrent.locks.ReentrantLock;
 
 public class BioConnection implements Runnable {
 
-    private static final Logger log = LoggerFactory.getLogger(BioConnection.class);
     private static final AtomicInteger id_counter = new AtomicInteger(0);
 
     private final Socket socket;
@@ -59,18 +56,18 @@ public class BioConnection implements Runnable {
             }
         } catch (SocketException e) {
             if ("Connection reset".equalsIgnoreCase(e.getMessage())) {
-                System.out.println("==> socket closed by client");
+                Log.infof("==> socket closed by client");
             } else {
-                log.error("Handle socket error", e);
+                Log.errorf(e, "Handle socket error");
             }
         } catch (IOException | UncheckedIOException e) {
-            log.error("Handle socket error", e);
+            Log.errorf(e, "Handle socket error");
         } catch (BadProtocolException e) {
-            log.error("Bad protocol error", e);
+            Log.errorf(e, "Bad protocol error");
         } catch (Exception e) {
-            log.error("Unhandled error", e);
+            Log.errorf(e, "Unhandled error");
         } finally {
-            System.out.println("==> socket " + connectionId + " has been closed.");
+            Log.infof("==> socket " + connectionId + " has been closed.");
             cm.rm(this);
         }
     }
@@ -82,11 +79,11 @@ public class BioConnection implements Runnable {
         this.connectionRequestCount++;
         var requestParser = new RawRequestParser(in);
         var startLine = requestParser.startLine()
-                .peekLeft(log::error)
+                .peekLeft(Log::errorf)
                 .rightOrThrow(BadProtocolException::new);
 
         var headers = requestParser.headers()
-                .peekLeft(log::error)
+                .peekLeft(Log::errorf)
                 .rightOrThrow(BadProtocolException::new);
 
         // region check keep alive
@@ -118,7 +115,7 @@ public class BioConnection implements Runnable {
         }
         // endregion
 
-        System.out.println("==> " + connectionId + '-' + connectionRequestCount);
+        Log.infof("==> " + connectionId + '-' + connectionRequestCount);
 
         middleware.call(HttpContext.start(request, response));
         exhaust(requestBody);

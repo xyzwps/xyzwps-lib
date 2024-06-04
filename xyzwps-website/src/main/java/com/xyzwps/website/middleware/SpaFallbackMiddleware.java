@@ -1,12 +1,7 @@
 package com.xyzwps.website.middleware;
 
-import com.xyzwps.lib.express.HttpContext;
-import com.xyzwps.lib.express.HttpHeaders;
-import com.xyzwps.lib.express.HttpMethod;
-import com.xyzwps.lib.express.HttpMiddleware;
+import com.xyzwps.lib.express.*;
 import com.xyzwps.website.modules.conf.Configurations;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -15,8 +10,6 @@ import java.nio.file.Path;
 
 @Singleton
 public class SpaFallbackMiddleware implements HttpMiddleware {
-
-    private static final Logger log = LoggerFactory.getLogger(SpaFallbackMiddleware.class);
 
     private final Configurations conf;
 
@@ -45,14 +38,14 @@ public class SpaFallbackMiddleware implements HttpMiddleware {
     private byte[] getIndexDotHtml() {
         var path = Path.of(conf.getRouterStaticDirectory()).resolve("index.html");
         if (!Files.exists(path)) {
-            log.warn("File {} does not exist.", path);
+            Log.warnf("File %s does not exist.", path);
             return null;
         }
 
         try {
             return Files.readAllBytes(path);
         } catch (Exception e) {
-            log.error("Read file {} error.", path, e);
+            Log.errorf(e, "Read file %s error.", path);
             return null;
         }
     }

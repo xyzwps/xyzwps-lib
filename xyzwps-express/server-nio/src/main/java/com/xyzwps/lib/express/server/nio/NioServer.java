@@ -1,5 +1,6 @@
 package com.xyzwps.lib.express.server.nio;
 
+import com.xyzwps.lib.express.Log;
 import com.xyzwps.lib.express.server.commons.InvalidHttpMessageException;
 
 import java.io.IOException;
@@ -50,7 +51,7 @@ public class NioServer {
                             var sChanKey = socketChannel.register(selector, SelectionKey.OP_READ);
                             new Connection(socketChannel, sChanKey);
                         } else {
-                            System.out.println("ERROR: unhandled acceptable channel " + channel.getClass().getCanonicalName());
+                            Log.errorf("ERROR: unhandled acceptable channel %s", channel.getClass().getCanonicalName());
                         }
                     } else if (key.isReadable()) {
                         printSelectionKeyState(key, "readable");
@@ -71,7 +72,7 @@ public class NioServer {
                                 channel.close();
                             }
                         } else {
-                            System.out.println("ERROR: unhandled readable channel " + channel.getClass().getCanonicalName());
+                            Log.errorf("ERROR: unhandled readable channel %s", channel.getClass().getCanonicalName());
                         }
                     } else if (key.isWritable()) {
                         printSelectionKeyState(key, "writable");
@@ -80,7 +81,7 @@ public class NioServer {
                             handleResponse(socket, connection);
                             key.interestOps(SelectionKey.OP_READ);
                         } else {
-                            System.out.println("ERROR: unhandled writable channel " + channel.getClass().getCanonicalName());
+                            Log.errorf("ERROR: unhandled writable channel %s", channel.getClass().getCanonicalName());
                         }
                     } else if (key.isConnectable()) {
                         printSelectionKeyState(key, "connected");
@@ -91,9 +92,9 @@ public class NioServer {
     }
 
     private static void printSelectionKeyState(SelectionKey key, String branch) {
-        System.out.println("\nChannel at branch " + branch + " : " + key.channel().getClass().getCanonicalName() + " " + System.identityHashCode(key));
-        System.out.println(" > r:" + key.isReadable() + " w:" + key.isWritable() + " a:" + key.isAcceptable() + " c:" + key.isConnectable());
-        System.out.println();
+        Log.infof("\nChannel at branch " + branch + " : " + key.channel().getClass().getCanonicalName() + " " + System.identityHashCode(key));
+        Log.infof(" > r:" + key.isReadable() + " w:" + key.isWritable() + " a:" + key.isAcceptable() + " c:" + key.isConnectable());
+        Log.infof("");
     }
 
     /**
@@ -130,7 +131,7 @@ public class NioServer {
         var keepAlive = connection.isKeepAlive() ? "Keep-Alive: timeout=60, max=500\r\n" : "";
         var resp = String.format("HTTP/1.1 200\r\nContent-Type: text/plain\r\n%sContent-Length: 3\r\n\r\n123", keepAlive);
         var writeBytes = channel.write(ByteBuffer.wrap(resp.getBytes()));
-        System.out.println(" > 已写入 " + writeBytes + " 总共 " + resp.getBytes().length);
+        Log.infof(" > 已写入 " + writeBytes + " 总共 " + resp.getBytes().length);
     }
 
 }
