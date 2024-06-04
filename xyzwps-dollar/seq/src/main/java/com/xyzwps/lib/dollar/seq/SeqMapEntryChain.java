@@ -10,10 +10,21 @@ import java.util.function.BiFunction;
 import java.util.function.BiPredicate;
 import java.util.function.Function;
 
+/**
+ * A chain of map entries backed by a {@link Seq}.
+ *
+ * @param <K> the type of keys
+ * @param <V> the type of values
+ */
 public class SeqMapEntryChain<K, V> implements MapEntryChain<K, V> {
 
     private final Seq<Map.Entry<K, V>> seq;
 
+    /**
+     * Create a new chain of map entries backed by the specified {@link Seq}.
+     *
+     * @param seq the sequence
+     */
     public SeqMapEntryChain(Seq<Map.Entry<K, V>> seq) {
         this.seq = seq == null ? Seq.empty() : seq;
     }

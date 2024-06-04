@@ -6,6 +6,9 @@ import java.util.Objects;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
+/**
+ * A utility class for handling {@link Map}.
+ */
 public interface MapUtils {
 
     /**
@@ -154,8 +157,23 @@ public interface MapUtils {
         return env.v1;
     }
 
+    /**
+     * A simple environment class for holding a single value.
+     *
+     * @param <T> type of value
+     */
     class Env1<T> {
-       public T v1;
+
+        /**
+         * Default constructor.
+         */
+        public Env1() {
+        }
+
+        /**
+         * The value.
+         */
+        public T v1;
     }
 
     /**

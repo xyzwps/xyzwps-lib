@@ -10,10 +10,20 @@ import com.xyzwps.lib.dollar.util.ObjIntPredicate;
 import java.util.*;
 import java.util.function.*;
 
+/**
+ * A chain backed by a {@link Seq}.
+ *
+ * @param <T> the type of elements in the chain
+ */
 public class SeqChain<T> implements Chain<T> {
 
     private final Seq<T> seq;
 
+    /**
+     * Create a new chain backed by the specified {@link Seq}.
+     *
+     * @param seq the sequence
+     */
     public SeqChain(Seq<T> seq) {
         this.seq = seq == null ? Seq.empty() : seq;
     }

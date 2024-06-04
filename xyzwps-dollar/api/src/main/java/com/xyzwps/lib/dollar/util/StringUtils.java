@@ -1,6 +1,8 @@
 package com.xyzwps.lib.dollar.util;
 
-
+/**
+ * A collection of string utility functions.
+ */
 public interface StringUtils {
 
     /**

@@ -9,9 +9,13 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.function.Supplier;
 
-import static com.xyzwps.lib.dollar.util.ObjectUtils.*;
-
+/**
+ * A factory for creating map entry chains backed by a {@link Seq}.
+ */
 public enum SeqMapEntryChainFactory implements MapEntryChainFactory {
+    /**
+     * The singleton instance.
+     */
     INSTANCE;
 
     @Override
@@ -26,10 +30,18 @@ public enum SeqMapEntryChainFactory implements MapEntryChainFactory {
         return new SeqMapEntryChain<>(Seq.from(map.entrySet()));
     }
 
-    public <K, V> MapEntryChain<K, V> from(Supplier<Map<K, V>> supplier) {
-        Objects.requireNonNull(supplier);
+    /**
+     * Create a new chain of map entries from the specified map producer.
+     *
+     * @param mapProducer the producer of the map
+     * @param <K>         the type of keys
+     * @param <V>         the type of values
+     * @return a new chain of map entries
+     */
+    public <K, V> MapEntryChain<K, V> from(Supplier<Map<K, V>> mapProducer) {
+        Objects.requireNonNull(mapProducer);
         return new SeqMapEntryChain<>(Seq.create(() -> {
-            Map<K, V> map = SharedUtils.defaultTo(supplier.get(), Collections.emptyMap());
+            Map<K, V> map = SharedUtils.defaultTo(mapProducer.get(), Collections.emptyMap());
             return map.entrySet();
         }));
     }

@@ -2,6 +2,9 @@ package com.xyzwps.lib.dollar.util;
 
 import java.util.*;
 
+/**
+ * A factory for creating lists.
+ */
 public interface ListFactory {
 
     /**

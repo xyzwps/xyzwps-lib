@@ -2,6 +2,9 @@ package com.xyzwps.lib.dollar.util;
 
 import java.util.HashMap;
 
+/**
+ * A factory for creating maps.
+ */
 public interface MapFactory {
 
 

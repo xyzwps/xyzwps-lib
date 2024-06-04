@@ -10,7 +10,7 @@ import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
-import static com.xyzwps.lib.dollar.Dollar.$.*;
+import static com.xyzwps.lib.dollar.Dollar.$;
 import static org.junit.jupiter.api.Assertions.*;
 
 

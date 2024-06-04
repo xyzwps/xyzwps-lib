@@ -2,12 +2,21 @@ package com.xyzwps.lib.dollar.util;
 
 import java.util.Iterator;
 
+/**
+ * An iterable that generates a range of integers.
+ */
 public class RangeIterable implements Iterable<Integer> {
 
     private final int start;
     private final int end;
     private final boolean incr;
 
+    /**
+     * Create a new range iterable.
+     *
+     * @param start the start value
+     * @param end   the end value
+     */
     public RangeIterable(int start, int end) {
         this.start = start;
         this.end = end;

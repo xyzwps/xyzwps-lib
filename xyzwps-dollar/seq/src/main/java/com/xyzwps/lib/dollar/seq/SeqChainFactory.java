@@ -4,7 +4,13 @@ import com.xyzwps.lib.dollar.Chain;
 import com.xyzwps.lib.dollar.ChainFactory;
 import com.xyzwps.lib.dollar.util.RangeIterable;
 
+/**
+ * A factory for creating {@link SeqChain} instances.
+ */
 public enum SeqChainFactory implements ChainFactory {
+    /**
+     * The singleton instance.
+     */
     INSTANCE;
 
     @Override

@@ -30,7 +30,7 @@ public sealed interface Either<E, A> {
      * @param left The error value to be encapsulated in the Left instance.
      * @param <E>  The type of the error value.
      * @param <A>  The placeholder type for the potential success value (unused in Left instances).
-     * @return An instance of `Either.Left<E, A>`.
+     * @return An instance of `Either.Left&lt;E, A&gt;`.
      */
     static <E, A> Either<E, A> left(E left) {
         return new Left<>(left);
@@ -44,7 +44,7 @@ public sealed interface Either<E, A> {
      * @param right The success value to be encapsulated in the Right instance.
      * @param <E>   The placeholder type for the potential error value (unused in Right instances).
      * @param <A>   The type of the success value.
-     * @return An instance of `Either.Right<E, A>`.
+     * @return An instance of `Either.Right&lt;E, A&gt;`.
      */
     static <E, A> Either<E, A> right(A right) {
         return new Right<>(right);
@@ -122,12 +122,30 @@ public sealed interface Either<E, A> {
     <A2> Either<E, A2> mapRight(Function<A, A2> mapper);
 
 
+    /**
+     * Applies the provided consumer to the left value if it is a Left instance.
+     *
+     * @param consumer the consumer to apply to the left value if it is a Left instance
+     * @return this Either instance
+     */
     default Either<E, A> peek(Consumer<A> consumer) {
         return peekRight(consumer);
     }
 
+    /**
+     * Applies the provided consumer to the left value if it is a Left instance.
+     *
+     * @param consumer the consumer to apply to the left value if it is a Left instance
+     * @return this Either instance
+     */
     Either<E, A> peekLeft(Consumer<E> consumer);
 
+    /**
+     * Applies the provided consumer to the right value if it is a Right instance.
+     *
+     * @param consumer the consumer to apply to the right value if it is a Right instance
+     * @return this Either instance
+     */
     Either<E, A> peekRight(Consumer<A> consumer);
 
     /**

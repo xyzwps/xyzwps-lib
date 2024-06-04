@@ -8,6 +8,9 @@ import java.util.function.*;
 
 import static com.xyzwps.lib.dollar.util.Comparators.*;
 
+/**
+ * A utility class for handling collections.
+ */
 public interface CollectionUtils {
 
     /**
@@ -162,7 +165,9 @@ public interface CollectionUtils {
     /**
      * Map elements to {@link Iterable}s in order and flat them into next stage.
      *
+     * @param iterable  to be handled
      * @param flatMapFn which map an element to an {@link Iterable}
+     * @param <T>       type of elements
      * @param <R>       flatten elements type
      * @return next stage
      */
@@ -577,7 +582,9 @@ public interface CollectionUtils {
      * Iterates over elements of {@link Iterable} and remove the duplicated by keys.
      *
      * @param iterable to be handled
+     * @param toKey    function to get key from element
      * @param <T>      type of elements
+     * @param <K>      type of keys
      * @return new {@link List} with unique elements
      */
     default <T, K> List<T> uniqueBy(Iterable<T> iterable, Function<T, K> toKey) {
@@ -604,7 +611,9 @@ public interface CollectionUtils {
      * The second argument of toKey function is the index of corresponding element.
      *
      * @param iterable to be handled
+     * @param toKey    function to get key from element
      * @param <T>      type of elements
+     * @param <K>      type of keys
      * @return new {@link List} with unique elements
      */
     default <T, K> List<T> uniqueBy(Iterable<T> iterable, ObjIntFunction<T, K> toKey) {
@@ -650,6 +659,7 @@ public interface CollectionUtils {
      * @param combineFn combine function.
      * @param <T>       element type of the first list
      * @param <R>       element type of the second list
+     * @param <S>       type of combined object
      * @return a list of combined
      */
     default <T, R, S> List<S> zip(Iterable<T> left, Iterable<R> right, BiFunction<T, R, S> combineFn) {

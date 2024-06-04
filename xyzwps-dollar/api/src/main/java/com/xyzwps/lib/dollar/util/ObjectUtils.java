@@ -1,5 +1,8 @@
 package com.xyzwps.lib.dollar.util;
 
+/**
+ * A utility class for object operations.
+ */
 public interface ObjectUtils {
 
     /**
