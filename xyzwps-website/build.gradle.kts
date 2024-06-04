@@ -26,3 +26,14 @@ dependencies {
 tasks.test {
     useJUnitPlatform()
 }
+
+
+tasks.jar {
+    configurations.runtimeClasspath.get().filter { it.name.endsWith("jar") }.forEach {
+        println("=> dependent jar: $it")
+        copy {
+            from(it)
+            into("$projectDir/build/libs/dependencies")
+        }
+    }
+}
