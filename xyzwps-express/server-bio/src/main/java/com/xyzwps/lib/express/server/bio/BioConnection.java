@@ -9,6 +9,8 @@ import com.xyzwps.lib.express.server.commons.KeepAliveInfo;
 import java.io.*;
 import java.net.Socket;
 import java.net.SocketException;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.ReentrantLock;
@@ -90,7 +92,9 @@ public class BioConnection implements Runnable {
         if (this.keepAliveInfo == null) {
             var values = headers.getAll(HttpHeaders.CONNECTION);
             if (values == null || values.isEmpty() || values.stream().anyMatch(it -> it.equalsIgnoreCase("Keep-Alive"))) {
-                this.keepAliveInfo = new KeepAliveInfo(new KeepAliveConfig(30, 100));
+                var keepAliveConfig = new KeepAliveConfig(30, 100);
+                this.keepAliveInfo = new KeepAliveInfo(keepAliveConfig);
+                KEEP_ALIVE_TIMER.schedule(closeSocketAfterKeepAliveTimeout(), keepAliveConfig.timeout() * 1000L); // TODO: 乱七八糟，想想办法再
             }
         }
         // endregion
@@ -125,6 +129,25 @@ public class BioConnection implements Runnable {
         // endregion
     }
 
+    private TimerTask closeSocketAfterKeepAliveTimeout() {
+        return new TimerTask() {
+            @Override
+            public void run() {
+                if (loopLock.tryLock()) {
+                    try (socket) {
+                        Log.infof("==> socket " + connectionId + " has been closed by keep alive timeout.");
+                    } catch (IOException e) {
+                        Log.errorf(e, "Handle socket error");
+                    } finally {
+                        cm.rm(BioConnection.this);
+                    }
+                    loopLock.unlock();
+                }
+            }
+        };
+    }
+
+
     @SuppressWarnings("StatementWithEmptyBody")
     private static void exhaust(InputStream in) {
         try (in) {
@@ -149,4 +172,7 @@ public class BioConnection implements Runnable {
             connections.remove(handler.connectionId);
         }
     }
+
+
+    private static final Timer KEEP_ALIVE_TIMER = new Timer();
 }
