@@ -1,7 +1,10 @@
 package com.xyzwps.lib.json.element;
 
+import com.xyzwps.lib.bedrock.lang.Equals;
+
 import java.util.ArrayList;
 import java.util.function.Consumer;
+import java.util.function.ObjIntConsumer;
 
 public final class JsonArray implements JsonElement {
     private final ArrayList<JsonElement> elements = new ArrayList<>();
@@ -27,17 +30,19 @@ public final class JsonArray implements JsonElement {
         if (obj == null) return false;
         if (obj == this) return true;
         if (obj instanceof JsonArray that) {
-            if (this.elements.size() != that.elements.size()) return false;
-            for (int i = 0; i < this.elements.size(); i++) {
-                if (!this.elements.get(i).equals(that.elements.get(i))) return false;
-            }
-            return true;
+            return Equals.itemEquals(this.elements, that.elements);
         }
         return false;
     }
 
     public void forEach(Consumer<JsonElement> consumer) {
         this.elements.forEach(consumer);
+    }
+
+    public void forEach(ObjIntConsumer<JsonElement> consumer) {
+        for (int i = 0; i < elements.size(); i++) {
+            consumer.accept(elements.get(i), i);
+        }
     }
 
     public int length() {

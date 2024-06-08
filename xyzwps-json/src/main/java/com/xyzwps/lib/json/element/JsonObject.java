@@ -1,5 +1,7 @@
 package com.xyzwps.lib.json.element;
 
+import com.xyzwps.lib.bedrock.lang.Equals;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -41,13 +43,7 @@ public final class JsonObject implements JsonElement {
         if (obj == null) return false;
         if (obj == this) return true;
         if (obj instanceof JsonObject that) {
-            if (this.map.size() != that.map.size()) return false;
-            for (var entry : this.map.entrySet()) {
-                var key = entry.getKey();
-                var value = entry.getValue();
-                if (!value.equals(that.map.get(key))) return false;
-            }
-            return true;
+            return Equals.itemEquals(this.map, that.map);
         }
         return false;
     }

@@ -25,7 +25,9 @@ public final class JsonUtils {
         if (json2 == null) {
             return false;
         }
-        return PARSER.parse(new StringCharGenerator(json1)).equals(PARSER.parse(new StringCharGenerator(json2)));
+        var j1 = PARSER.parse(new StringCharGenerator(json1));
+        var j2 = PARSER.parse(new StringCharGenerator(json2));
+        return j1.equals(j2);
     }
 
     private JsonUtils() throws IllegalAccessException {
