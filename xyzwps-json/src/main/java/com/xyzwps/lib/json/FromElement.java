@@ -2,9 +2,9 @@ package com.xyzwps.lib.json;
 
 import com.xyzwps.lib.beans.BeanUtils;
 import com.xyzwps.lib.bedrock.lang.DefaultValues;
-import com.xyzwps.lib.bedrock.lang.Types;
 import com.xyzwps.lib.json.element.*;
 
+import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -27,12 +27,27 @@ public final class FromElement {
             case JsonDecimal d -> d.value().shortValue();
             default -> throw new JsonException("Cannot convert to Short from " + e.getClass().getSimpleName());
         });
+        f.addFromElementConverter(short.class, (e) -> switch (e) {
+            case JsonInteger i -> i.value().shortValue();
+            case JsonDecimal d -> d.value().shortValue();
+            default -> throw new JsonException("Cannot convert to Short from " + e.getClass().getSimpleName());
+        });
         f.addFromElementConverter(Integer.class, (e) -> switch (e) {
             case JsonInteger i -> i.value().intValue();
             case JsonDecimal d -> d.value().intValue();
             default -> throw new JsonException("Cannot convert to Integer from " + e.getClass().getSimpleName());
         });
+        f.addFromElementConverter(int.class, (e) -> switch (e) {
+            case JsonInteger i -> i.value().intValue();
+            case JsonDecimal d -> d.value().intValue();
+            default -> throw new JsonException("Cannot convert to Integer from " + e.getClass().getSimpleName());
+        });
         f.addFromElementConverter(Long.class, (e) -> switch (e) {
+            case JsonInteger i -> i.value().longValue();
+            case JsonDecimal d -> d.value().longValue();
+            default -> throw new JsonException("Cannot convert to Long from " + e.getClass().getSimpleName());
+        });
+        f.addFromElementConverter(long.class, (e) -> switch (e) {
             case JsonInteger i -> i.value().longValue();
             case JsonDecimal d -> d.value().longValue();
             default -> throw new JsonException("Cannot convert to Long from " + e.getClass().getSimpleName());
@@ -47,7 +62,17 @@ public final class FromElement {
             case JsonDecimal d -> d.value().floatValue();
             default -> throw new JsonException("Cannot convert to Float from " + e.getClass().getSimpleName());
         });
+        f.addFromElementConverter(float.class, (e) -> switch (e) {
+            case JsonInteger i -> i.value().floatValue();
+            case JsonDecimal d -> d.value().floatValue();
+            default -> throw new JsonException("Cannot convert to Float from " + e.getClass().getSimpleName());
+        });
         f.addFromElementConverter(Double.class, (e) -> switch (e) {
+            case JsonInteger i -> i.value().doubleValue();
+            case JsonDecimal d -> d.value().doubleValue();
+            default -> throw new JsonException("Cannot convert to Double from " + e.getClass().getSimpleName());
+        });
+        f.addFromElementConverter(double.class, (e) -> switch (e) {
             case JsonInteger i -> i.value().doubleValue();
             case JsonDecimal d -> d.value().doubleValue();
             default -> throw new JsonException("Cannot convert to Double from " + e.getClass().getSimpleName());
@@ -58,6 +83,11 @@ public final class FromElement {
             default -> throw new JsonException("Cannot convert to BigDecimal from " + e.getClass().getSimpleName());
         });
         f.addFromElementConverter(Boolean.class, (e) -> switch (e) {
+            case JsonInteger i -> !BigInteger.ZERO.equals(i.value());
+            case JsonBoolean b -> b.value;
+            default -> throw new JsonException("Cannot convert to Boolean from " + e.getClass().getSimpleName());
+        });
+        f.addFromElementConverter(boolean.class, (e) -> switch (e) {
             case JsonInteger i -> !BigInteger.ZERO.equals(i.value());
             case JsonBoolean b -> b.value;
             default -> throw new JsonException("Cannot convert to Boolean from " + e.getClass().getSimpleName());
@@ -116,7 +146,7 @@ public final class FromElement {
         Objects.requireNonNull(element);
         Objects.requireNonNull(type);
 
-        if (element instanceof JsonNull jn) {
+        if (element instanceof JsonNull) {
             return null;
         }
 
@@ -125,22 +155,52 @@ public final class FromElement {
             return (T) converter.convert(element);
         }
 
-        if (element instanceof JsonObject jo) {
-            if (type instanceof Class<?> c) {
-                var beanInfo = BeanUtils.getBeanInfoFromClass(c);
-                var parsedProps = new HashMap<String, Object>();
-                beanInfo.getBeanProperties().forEach(prop -> {
-                    var propName = prop.name();
-                    var propElement = jo.get(propName);
-                    var propValue = propElement == null ? DefaultValues.get(prop.type()) : fromElement(propElement, prop.type());
-                    parsedProps.put(propName, propValue);
-                });
-                return (T) beanInfo.create(parsedProps);
-            } else {
-                throw new IllegalStateException("TODO: 暂支持泛型类");
+        switch (element) {
+            case JsonObject jo -> {
+                if (type instanceof Class<?> c) {
+                    var beanInfo = BeanUtils.getBeanInfoFromClass(c);
+                    var parsedProps = new HashMap<String, Object>();
+                    beanInfo.getBeanProperties().forEach(prop -> {
+                        var propName = prop.name();
+                        var propElement = jo.get(propName);
+                        var propValue = propElement == null ? DefaultValues.get(prop.type()) : fromElement(propElement, prop.type());
+                        parsedProps.put(propName, propValue);
+                    });
+                    return (T) beanInfo.create(parsedProps);
+                } else {
+                    throw new IllegalStateException("TODO: 暂支持泛型类");
+                }
             }
+            case JsonArray ja -> {
+                switch (type) {
+                    case ParameterizedType pt -> {
+                        var rawType = pt.getRawType();
+                        if (rawType.equals(ArrayList.class)) {
+                            return (T) fromJsonArray(ja, pt.getActualTypeArguments()[0], new ArrayList<>(ja.length()));
+                        }
+                        if (rawType.equals(LinkedList.class)) {
+                            return (T) fromJsonArray(ja, pt.getActualTypeArguments()[0], new LinkedList<>());
+                        }
+                        if (rawType.equals(List.class)) {
+                            return (T) fromJsonArray(ja, pt.getActualTypeArguments()[0], new ArrayList<>(ja.length()));
+                        }
+
+                        // TODO: handle array
+                        // TODO: handle multi-dim array
+                        throw new JsonException(String.format("Cannot convert to %s from %s",
+                                type.getTypeName(), element.getClass().getSimpleName()));
+                    }
+                    default -> throw new RuntimeException();
+                }
+            }
+            default -> throw new JsonException(String.format("Cannot convert to %s(%s) from %s",
+                    type.getTypeName(), type.getClass().getCanonicalName(), element.getClass().getSimpleName()));
         }
-        throw new JsonException("Cannot convert to " + type.getTypeName() + " from " + element.getClass().getSimpleName());
+    }
+
+    private List<?> fromJsonArray(JsonArray ja, Type elementType, List<?> list) {
+        ja.forEach((arrayItem) -> list.add(fromElement(arrayItem, elementType)));
+        return list;
     }
 
 

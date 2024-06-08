@@ -296,5 +296,4 @@ public interface Generator<T> {
         });
     }
 
-    // TODO: zip
 }

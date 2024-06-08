@@ -25,4 +25,8 @@ public final class JsonArray implements JsonElement {
     public void forEach(Consumer<JsonElement> consumer) {
         this.elements.forEach(consumer);
     }
+
+    public int length() {
+        return elements.size();
+    }
 }
