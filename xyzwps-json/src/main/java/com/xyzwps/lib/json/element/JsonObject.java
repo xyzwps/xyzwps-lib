@@ -36,6 +36,22 @@ public final class JsonObject implements JsonElement {
         return sb.append('}').toString();
     }
 
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) return false;
+        if (obj == this) return true;
+        if (obj instanceof JsonObject that) {
+            if (this.map.size() != that.map.size()) return false;
+            for (var entry : this.map.entrySet()) {
+                var key = entry.getKey();
+                var value = entry.getValue();
+                if (!value.equals(that.map.get(key))) return false;
+            }
+            return true;
+        }
+        return false;
+    }
+
     private static class Env {
         boolean first = true;
     }

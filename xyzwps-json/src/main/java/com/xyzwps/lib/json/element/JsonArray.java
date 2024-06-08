@@ -22,6 +22,20 @@ public final class JsonArray implements JsonElement {
         return sb.append(']').toString();
     }
 
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) return false;
+        if (obj == this) return true;
+        if (obj instanceof JsonArray that) {
+            if (this.elements.size() != that.elements.size()) return false;
+            for (int i = 0; i < this.elements.size(); i++) {
+                if (!this.elements.get(i).equals(that.elements.get(i))) return false;
+            }
+            return true;
+        }
+        return false;
+    }
+
     public void forEach(Consumer<JsonElement> consumer) {
         this.elements.forEach(consumer);
     }
