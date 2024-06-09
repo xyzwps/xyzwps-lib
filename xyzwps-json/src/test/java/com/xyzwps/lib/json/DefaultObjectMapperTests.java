@@ -51,6 +51,7 @@ class DefaultObjectMapperTests {
                             List.of(new Point(1, 2), new Point(100, 200)),
                             List.of(new Point(3, 4), new Point(300, 400))
                     })
+                    .matrix(new int[][]{{1, 2}, {3, 4}})
                     .bools(new boolean[]{true, false})
                     .shorts(new short[]{1, 2, 3})
                     .ints(new int[]{1, 2, 3})
@@ -95,6 +96,7 @@ class DefaultObjectMapperTests {
                             [ { "x": 1, "y": 2 }, { "x": 100, "y": 200 } ],
                             [ { "x": 3, "y": 4 }, { "x": 300, "y": 400 } ]
                         ],
+                        "matrix": [[1, 2], [3, 4]],
                         "bools": [true, false],
                         "shorts": [1, 2, 3],
                         "ints": [1, 2, 3],
@@ -111,10 +113,6 @@ class DefaultObjectMapperTests {
             assertEquals(obj.getForRecord(), parsed.getForRecord());
             assertEquals(obj.getForList(), parsed.getForList());
             assertTrue(Equals.arrayEquals(obj.getForObjectArray(), parsed.getForObjectArray()));
-            var vectors = parsed.vectors;
-            assertEquals(2, vectors.length);
-            assertIterableEquals(List.of(new Point(1, 2), new Point(100, 200)), vectors[0]);
-            assertIterableEquals(List.of(new Point(3, 4), new Point(300, 400)), vectors[1]);
             assertArrayEquals(obj.getBools(), parsed.getBools());
             assertArrayEquals(obj.getShorts(), parsed.getShorts());
             assertArrayEquals(obj.getInts(), parsed.getInts());
@@ -122,6 +120,16 @@ class DefaultObjectMapperTests {
             assertArrayEquals(obj.getFloats(), parsed.getFloats(), 0.0001f);
             assertArrayEquals(obj.getDoubles(), parsed.getDoubles(), 0.0001);
             assertArrayEquals(obj.getChars(), parsed.getChars());
+
+            var vectors = parsed.vectors;
+            assertEquals(2, vectors.length);
+            assertIterableEquals(List.of(new Point(1, 2), new Point(100, 200)), vectors[0]);
+            assertIterableEquals(List.of(new Point(3, 4), new Point(300, 400)), vectors[1]);
+
+            var matrix = parsed.matrix;
+            assertEquals(2, matrix.length);
+            assertArrayEquals(new int[]{1, 2}, matrix[0]);
+            assertArrayEquals(new int[]{3, 4}, matrix[1]);
         }
 
         @Data
@@ -134,10 +142,9 @@ class DefaultObjectMapperTests {
             private Point forRecord;
             private TreeNode forList;
             private Point[] forObjectArray;
-            private List<Point>[] vectors;
+            private List<Point>[] vectors; // generic array
+            private int[][] matrix; // multi-dimensions array
             // TODO: generic list
-            // TODO: generic array
-            // TODO: multi-dimensions array
             // TODO: map
             // TODO: generic map
             private boolean[] bools;

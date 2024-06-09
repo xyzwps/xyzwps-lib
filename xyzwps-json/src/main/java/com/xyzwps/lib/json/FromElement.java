@@ -279,7 +279,6 @@ public final class FromElement {
                                     type.getTypeName(), element.getClass().getSimpleName()));
                         }
 
-//                        // TODO: handle array
 //                        // TODO: handle multi-dim array
                     }
                     default -> {
