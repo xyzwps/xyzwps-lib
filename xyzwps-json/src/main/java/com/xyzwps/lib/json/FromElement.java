@@ -5,6 +5,7 @@ import com.xyzwps.lib.bedrock.lang.DefaultValues;
 import com.xyzwps.lib.json.element.*;
 
 import java.lang.reflect.Array;
+import java.lang.reflect.GenericArrayType;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.math.BigDecimal;
@@ -266,11 +267,21 @@ public final class FromElement {
                                     type.getTypeName(), element.getClass().getSimpleName()));
                         }
                     }
-                    // TODO: 处理泛型数组
-//                    case ArrayType at -> {
+                    case GenericArrayType gat -> {
+                        var elementType = gat.getGenericComponentType();
+                        if (elementType instanceof ParameterizedType pt) {
+                            var array = Array.newInstance((Class<?>) pt.getRawType(), ja.length());
+                            ja.forEach((arrayItem, i) -> Array.set(array, i, fromElement(arrayItem, elementType)));
+                            // noinspection unchecked
+                            return (T) array;
+                        } else {
+                            throw new JsonException(String.format("Cannot convert to %s from %s",
+                                    type.getTypeName(), element.getClass().getSimpleName()));
+                        }
+
 //                        // TODO: handle array
 //                        // TODO: handle multi-dim array
-//                    }
+                    }
                     default -> {
                         throw new RuntimeException();
                     }
