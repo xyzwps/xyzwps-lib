@@ -13,6 +13,8 @@ import java.math.BigInteger;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
+import static com.xyzwps.lib.json.FromElementConverters.*;
+
 public final class FromElement {
 
     private final ConcurrentHashMap<Class<?>, FromElementConverter<?, ?>> fromElementTable;
@@ -24,133 +26,25 @@ public final class FromElement {
     public static FromElement createDefault() {
         var f = new FromElement();
 
-        f.addFromElementConverter(Short.class, (e) -> switch (e) {
-            case JsonInteger i -> i.value().shortValue();
-            case JsonDecimal d -> d.value().shortValue();
-            default -> throw new JsonException("Cannot convert to Short from " + e.getClass().getSimpleName());
-        });
-        f.addFromElementConverter(short.class, (e) -> switch (e) {
-            case JsonInteger i -> i.value().shortValue();
-            case JsonDecimal d -> d.value().shortValue();
-            default -> throw new JsonException("Cannot convert to Short from " + e.getClass().getSimpleName());
-        });
-        f.addFromElementConverter(Integer.class, (e) -> switch (e) {
-            case JsonInteger i -> i.value().intValue();
-            case JsonDecimal d -> d.value().intValue();
-            default -> throw new JsonException("Cannot convert to Integer from " + e.getClass().getSimpleName());
-        });
-        f.addFromElementConverter(int.class, (e) -> switch (e) {
-            case JsonInteger i -> i.value().intValue();
-            case JsonDecimal d -> d.value().intValue();
-            default -> throw new JsonException("Cannot convert to Integer from " + e.getClass().getSimpleName());
-        });
-        f.addFromElementConverter(Long.class, (e) -> switch (e) {
-            case JsonInteger i -> i.value().longValue();
-            case JsonDecimal d -> d.value().longValue();
-            default -> throw new JsonException("Cannot convert to Long from " + e.getClass().getSimpleName());
-        });
-        f.addFromElementConverter(long.class, (e) -> switch (e) {
-            case JsonInteger i -> i.value().longValue();
-            case JsonDecimal d -> d.value().longValue();
-            default -> throw new JsonException("Cannot convert to Long from " + e.getClass().getSimpleName());
-        });
-        f.addFromElementConverter(BigInteger.class, (e) -> switch (e) {
-            case JsonInteger i -> i.value();
-            case JsonDecimal d -> d.value().toBigInteger();
-            default -> throw new JsonException("Cannot convert to BigInteger from " + e.getClass().getSimpleName());
-        });
-        f.addFromElementConverter(Float.class, (e) -> switch (e) {
-            case JsonInteger i -> i.value().floatValue();
-            case JsonDecimal d -> d.value().floatValue();
-            default -> throw new JsonException("Cannot convert to Float from " + e.getClass().getSimpleName());
-        });
-        f.addFromElementConverter(float.class, (e) -> switch (e) {
-            case JsonInteger i -> i.value().floatValue();
-            case JsonDecimal d -> d.value().floatValue();
-            default -> throw new JsonException("Cannot convert to Float from " + e.getClass().getSimpleName());
-        });
-        f.addFromElementConverter(Double.class, (e) -> switch (e) {
-            case JsonInteger i -> i.value().doubleValue();
-            case JsonDecimal d -> d.value().doubleValue();
-            default -> throw new JsonException("Cannot convert to Double from " + e.getClass().getSimpleName());
-        });
-        f.addFromElementConverter(double.class, (e) -> switch (e) {
-            case JsonInteger i -> i.value().doubleValue();
-            case JsonDecimal d -> d.value().doubleValue();
-            default -> throw new JsonException("Cannot convert to Double from " + e.getClass().getSimpleName());
-        });
-        f.addFromElementConverter(BigDecimal.class, (e) -> switch (e) {
-            case JsonInteger i -> new BigDecimal(i.value());
-            case JsonDecimal d -> d.value();
-            default -> throw new JsonException("Cannot convert to BigDecimal from " + e.getClass().getSimpleName());
-        });
-        f.addFromElementConverter(Boolean.class, (e) -> switch (e) {
-            case JsonInteger i -> !BigInteger.ZERO.equals(i.value());
-            case JsonBoolean b -> b.value;
-            default -> throw new JsonException("Cannot convert to Boolean from " + e.getClass().getSimpleName());
-        });
-        f.addFromElementConverter(boolean.class, (e) -> switch (e) {
-            case JsonInteger i -> !BigInteger.ZERO.equals(i.value());
-            case JsonBoolean b -> b.value;
-            default -> throw new JsonException("Cannot convert to Boolean from " + e.getClass().getSimpleName());
-        });
-        f.addFromElementConverter(Character.class, (c) -> switch (c) {
-            case JsonString s -> {
-                if (s.value().length() != 1) {
-                    throw new JsonException("Cannot convert to Character from String with length != 1");
-                }
-                yield s.value().charAt(0);
-            }
-            default -> throw new JsonException("Cannot convert to Character from " + c.getClass().getSimpleName());
-        });
-        f.addFromElementConverter(char.class, (c) -> switch (c) {
-            case JsonString s -> {
-                if (s.value().length() != 1) {
-                    throw new JsonException("Cannot convert to Character from String with length != 1");
-                }
-                yield s.value().charAt(0);
-            }
-            default -> throw new JsonException("Cannot convert to Character from " + c.getClass().getSimpleName());
-        });
-        f.addFromElementConverter(String.class, (e) -> switch (e) {
-            case JsonBoolean it -> it.value ? "true" : "false";
-            case JsonDecimal it -> it.value().toString();
-            case JsonInteger it -> it.value().toString();
-            case JsonString it -> it.value();
-            default -> throw new JsonException("Cannot convert to String from " + e.getClass().getSimpleName());
-        });
-        f.addFromElementConverter(Map.class, (e) -> switch (e) {
-            case JsonObject o -> {
-                var map = new HashMap<String, Object>();
-                o.forEach((key, element) -> map.put(key, switch (element) {
-                    case JsonNull it -> f.fromElement(it, Object.class);
-                    case JsonArray it -> f.fromElement(it, List.class);
-                    case JsonBoolean it -> f.fromElement(it, Boolean.class);
-                    case JsonDecimal it -> f.fromElement(it, BigDecimal.class);
-                    case JsonInteger it -> f.fromElement(it, BigInteger.class);
-                    case JsonObject it -> f.fromElement(it, Map.class);
-                    case JsonString it -> f.fromElement(it, String.class);
-                }));
-                yield map;
-            }
-            default -> throw new JsonException("Cannot convert to Map from " + e.getClass().getSimpleName());
-        });
-        f.addFromElementConverter(List.class, (e) -> switch (e) {
-            case JsonArray a -> {
-                var list = new ArrayList<>();
-                a.forEach((element) -> list.add(switch (element) {
-                    case JsonNull it -> f.fromElement(it, Object.class);
-                    case JsonArray it -> f.fromElement(it, List.class);
-                    case JsonBoolean it -> f.fromElement(it, Boolean.class);
-                    case JsonDecimal it -> f.fromElement(it, BigDecimal.class);
-                    case JsonInteger it -> f.fromElement(it, BigInteger.class);
-                    case JsonObject it -> f.fromElement(it, Map.class);
-                    case JsonString it -> f.fromElement(it, String.class);
-                }));
-                yield list;
-            }
-            default -> throw new JsonException("Cannot convert to List from " + e.getClass().getSimpleName());
-        });
+        f.addFromElementConverter(Short.class, TO_SHORT);
+        f.addFromElementConverter(short.class, TO_SHORT);
+        f.addFromElementConverter(Integer.class, TO_INT);
+        f.addFromElementConverter(int.class, TO_INT);
+        f.addFromElementConverter(Long.class, TO_LONG);
+        f.addFromElementConverter(long.class, TO_LONG);
+        f.addFromElementConverter(BigInteger.class, TO_BIGINT);
+        f.addFromElementConverter(Float.class, TO_FLOAT);
+        f.addFromElementConverter(float.class, TO_FLOAT);
+        f.addFromElementConverter(Double.class, TO_DOUBLE);
+        f.addFromElementConverter(double.class, TO_DOUBLE);
+        f.addFromElementConverter(BigDecimal.class, TO_BIGDECIMAL);
+        f.addFromElementConverter(Boolean.class, TO_BOOLEAN);
+        f.addFromElementConverter(boolean.class, TO_BOOLEAN);
+        f.addFromElementConverter(Character.class, TO_CHAR);
+        f.addFromElementConverter(char.class, TO_CHAR);
+        f.addFromElementConverter(String.class, TO_STRING);
+        f.addFromElementConverter(Map.class, TO_MAP.apply(f));
+        f.addFromElementConverter(List.class, TO_LIST.apply(f));
 
         return f;
     }
