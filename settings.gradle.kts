@@ -26,6 +26,9 @@ dependencyResolutionManagement {
 
             version("undertow", "2.3.13.Final")
             library("undertow-core", "io.undertow", "undertow-core").versionRef("undertow")
+
+            version("lombok", "1.18.32")
+            library("lombok", "org.projectlombok", "lombok").versionRef("lombok")
         }
     }
 }

@@ -169,8 +169,10 @@ public final class FromElement {
             return null;
         }
 
+        //noinspection SuspiciousMethodCalls, rawtypes
         FromElementConverter converter = fromElementTable.get(type);
         if (converter != null) {
+            //noinspection unchecked
             return (T) converter.convert(element);
         }
 
@@ -185,6 +187,7 @@ public final class FromElement {
                         var propValue = propElement == null ? DefaultValues.get(prop.type()) : fromElement(propElement, prop.type());
                         parsedProps.put(propName, propValue);
                     });
+                    //noinspection unchecked
                     return (T) beanInfo.create(parsedProps);
                 } else {
                     throw new IllegalStateException("TODO: 暂支持泛型类");
@@ -194,6 +197,7 @@ public final class FromElement {
                 switch (type) {
                     case ParameterizedType pt -> {
                         var rawType = pt.getRawType();
+                        //noinspection IfCanBeSwitch
                         if (rawType.equals(ArrayList.class)) {
                             // noinspection unchecked
                             return (T) fromJsonArray(ja, pt.getActualTypeArguments()[0], new ArrayList<>(ja.length()));
@@ -209,6 +213,7 @@ public final class FromElement {
                         throw new JsonException(String.format("Cannot convert to %s from %s",
                                 type.getTypeName(), element.getClass().getSimpleName()));
                     }
+                    //noinspection rawtypes
                     case Class c -> {
                         if (c.isArray()) {
                             var elementType = c.getComponentType();
@@ -216,27 +221,35 @@ public final class FromElement {
                             if (elementType.isPrimitive()) {
                                 if (elementType == short.class) {
                                     var sa = (short[]) array;
+                                    // noinspection all
                                     ja.forEach((arrayItem, i) -> sa[i] = fromElement(arrayItem, elementType));
                                 } else if (elementType == int.class) {
                                     var ia = (int[]) array;
+                                    // noinspection all
                                     ja.forEach((arrayItem, i) -> ia[i] = fromElement(arrayItem, elementType));
                                 } else if (elementType == long.class) {
                                     var la = (long[]) array;
+                                    // noinspection all
                                     ja.forEach((arrayItem, i) -> la[i] = fromElement(arrayItem, elementType));
                                 } else if (elementType == float.class) {
                                     var fa = (float[]) array;
+                                    // noinspection all
                                     ja.forEach((arrayItem, i) -> fa[i] = fromElement(arrayItem, elementType));
                                 } else if (elementType == double.class) {
                                     var da = (double[]) array;
+                                    // noinspection all
                                     ja.forEach((arrayItem, i) -> da[i] = fromElement(arrayItem, elementType));
                                 } else if (elementType == boolean.class) {
                                     var ba = (boolean[]) array;
+                                    // noinspection all
                                     ja.forEach((arrayItem, i) -> ba[i] = fromElement(arrayItem, elementType));
                                 } else if (elementType == char.class) {
                                     var ca = (char[]) array;
+                                    // noinspection all
                                     ja.forEach((arrayItem, i) -> ca[i] = fromElement(arrayItem, elementType));
                                 } else if (elementType == byte.class) {
                                     var ba = (byte[]) array;
+                                    // noinspection all
                                     ja.forEach((arrayItem, i) -> ba[i] = fromElement(arrayItem, elementType));
                                 } else {
                                     throw new JsonException(String.format("Cannot convert to %s from %s",
@@ -246,6 +259,7 @@ public final class FromElement {
                                 var oa = (Object[]) array;
                                 ja.forEach((arrayItem, i) -> oa[i] = fromElement(arrayItem, elementType));
                             }
+                            // noinspection unchecked
                             return (T) array;
                         } else {
                             throw new JsonException(String.format("Cannot convert to %s from %s",
@@ -254,8 +268,6 @@ public final class FromElement {
                     }
                     // TODO: 处理泛型数组
 //                    case ArrayType at -> {
-//
-//
 //                        // TODO: handle array
 //                        // TODO: handle multi-dim array
 //                    }
@@ -264,8 +276,20 @@ public final class FromElement {
                     }
                 }
             }
-            default -> throw new JsonException(String.format("Cannot convert to %s(%s) from %s",
-                    type.getTypeName(), type.getClass().getCanonicalName(), element.getClass().getSimpleName()));
+            case JsonString js -> {
+                if (type instanceof Class<?> c) {
+                    if (c.isEnum()) {
+                        // noinspection unchecked, rawtypes
+                        return (T) Enum.valueOf((Class<? extends Enum>) c, js.value());
+                    }
+                }
+                throw new JsonException(String.format("Cannot convert to %s(%s) from %s",
+                        type.getTypeName(), type.getClass().getCanonicalName(), element.getClass().getSimpleName()));
+            }
+            default -> {
+                throw new JsonException(String.format("Cannot convert to %s(%s) from %s",
+                        type.getTypeName(), type.getClass().getCanonicalName(), element.getClass().getSimpleName()));
+            }
         }
     }
 

@@ -16,6 +16,8 @@ dependencies {
     implementation(project(":xyzwps-bedrock"))
     testImplementation(platform(libs.junit.bom))
     testImplementation(libs.junit.jupiter)
+    testCompileOnly(libs.lombok)
+    testAnnotationProcessor(libs.lombok)
 }
 
 tasks.test {

@@ -43,7 +43,7 @@ public final class JsonObject implements JsonElement {
         if (obj == null) return false;
         if (obj == this) return true;
         if (obj instanceof JsonObject that) {
-            return Equals.itemEquals(this.map, that.map);
+            return Equals.mapEntryEquals(this.map, that.map);
         }
         return false;
     }

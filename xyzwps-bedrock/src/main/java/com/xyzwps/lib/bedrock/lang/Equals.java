@@ -5,7 +5,7 @@ import java.util.Map;
 
 public final class Equals {
 
-    public static <T> boolean equals(List<T> a, List<T> b) {
+    public static <T> boolean listStrictEquals(List<T> a, List<T> b) {
         if (a == b) return true;
         if (a == null || b == null) return false;
         if (!a.getClass().equals(b.getClass())) return false;
@@ -16,7 +16,7 @@ public final class Equals {
         return true;
     }
 
-    public static <T> boolean itemEquals(List<T> a, List<T> b) {
+    public static <T> boolean listItemEquals(List<T> a, List<T> b) {
         if (a == b) return true;
         if (a == null || b == null) return false;
         if (a.size() != b.size()) return false;
@@ -26,7 +26,7 @@ public final class Equals {
         return true;
     }
 
-    public static <K, V> boolean equals(Map<K, V> a, Map<K, V> b) {
+    public static <K, V> boolean mapStrictEquals(Map<K, V> a, Map<K, V> b) {
         if (a == b) return true;
         if (a == null || b == null) return false;
         if (!a.getClass().equals(b.getClass())) return false;
@@ -39,7 +39,7 @@ public final class Equals {
         return true;
     }
 
-    public static <K, V> boolean itemEquals(Map<K, V> a, Map<K, V> b) {
+    public static <K, V> boolean mapEntryEquals(Map<K, V> a, Map<K, V> b) {
         if (a == b) return true;
         if (a == null || b == null) return false;
         if (a.size() != b.size()) return false;

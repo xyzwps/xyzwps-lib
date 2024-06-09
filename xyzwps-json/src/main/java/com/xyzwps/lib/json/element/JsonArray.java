@@ -30,7 +30,7 @@ public final class JsonArray implements JsonElement {
         if (obj == null) return false;
         if (obj == this) return true;
         if (obj instanceof JsonArray that) {
-            return Equals.itemEquals(this.elements, that.elements);
+            return Equals.listItemEquals(this.elements, that.elements);
         }
         return false;
     }
