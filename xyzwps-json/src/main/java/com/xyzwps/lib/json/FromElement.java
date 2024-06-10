@@ -49,7 +49,6 @@ public final class FromElement {
 
         f.addFromKeyConverter(String.class, KEY_TO_STRING);
 
-
         return f;
     }
 
@@ -145,21 +144,7 @@ public final class FromElement {
         beanInfo.getBeanProperties().forEach(prop -> {
             var propType = prop.type();
             if (propType instanceof TypeVariable<?> tv) {
-                // region get actual type
-                var typeParams = ((Class<?>) rawType).getTypeParameters();
-                int index = -1;
-                for (int i = 0; i < typeParams.length; i++) {
-                    var it = typeParams[i];
-                    if (it.equals(tv)) {
-                        index = i;
-                        break;
-                    }
-                }
-                if (index < 0) {
-                    throw new IllegalStateException();
-                }
-                var actualType = pt.getActualTypeArguments()[index];
-                // endregion
+                var actualType = getActualType(pt, (Class<?>) rawType, tv);
                 var propName = prop.name();
                 var propElement = jo.get(propName);
                 var propValue = propElement == null ? DefaultValues.get(prop.type()) : fromElement(propElement, actualType);
@@ -174,13 +159,37 @@ public final class FromElement {
         return beanInfo.create(parsedProps);
     }
 
+    /**
+     * @param pt      where to get type variable values
+     * @param rawType where to get generic variables
+     * @param tv      generic variable
+     * @return actual type corresponding to the <code>tv</code> from <code>pt</code>
+     */
+    private static Type getActualType(ParameterizedType pt, Class<?> rawType, TypeVariable<?> tv) {
+        var typeParams = rawType.getTypeParameters();
+        int index = -1;
+        for (int i = 0; i < typeParams.length; i++) {
+            var it = typeParams[i];
+            if (it.equals(tv)) {
+                index = i;
+                break;
+            }
+        }
+        if (index < 0) {
+            throw new IllegalStateException();
+        }
+        return pt.getActualTypeArguments()[index];
+    }
+
     private Object jsonObjectToBean(JsonObject jo, Class<?> c) {
         var beanInfo = BeanUtils.getBeanInfoFromClass(c);
         var parsedProps = new HashMap<String, Object>();
         beanInfo.getBeanProperties().forEach(prop -> {
             var propName = prop.name();
             var propElement = jo.get(propName);
-            var propValue = propElement == null ? DefaultValues.get(prop.type()) : fromElement(propElement, prop.type());
+            var propValue = propElement == null
+                    ? DefaultValues.get(prop.type())
+                    : fromElement(propElement, prop.type());
             parsedProps.put(propName, propValue);
         });
         return beanInfo.create(parsedProps);
@@ -188,15 +197,12 @@ public final class FromElement {
 
     private Object jsonArrayToList(JsonArray ja, ParameterizedType pt) {
         var rawType = pt.getRawType();
-        //noinspection IfCanBeSwitch
-        if (rawType.equals(ArrayList.class)) {
-            return fromJsonArray(ja, pt.getActualTypeArguments()[0], new ArrayList<>(ja.length()));
+        var elementType = pt.getActualTypeArguments()[0];
+        if (rawType.equals(ArrayList.class) || rawType.equals(List.class)) {
+            return fromJsonArray(ja, elementType, new ArrayList<>(ja.length()));
         }
         if (rawType.equals(LinkedList.class)) {
-            return fromJsonArray(ja, pt.getActualTypeArguments()[0], new LinkedList<>());
-        }
-        if (rawType.equals(List.class)) {
-            return fromJsonArray(ja, pt.getActualTypeArguments()[0], new ArrayList<>(ja.length()));
+            return fromJsonArray(ja, elementType, new LinkedList<>());
         }
         throw new JsonException("Cannot parse json array to " + pt);
     }
