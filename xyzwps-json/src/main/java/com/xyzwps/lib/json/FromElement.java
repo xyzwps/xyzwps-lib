@@ -218,28 +218,76 @@ public final class FromElement {
         if (elementType.isPrimitive()) {
             if (elementType == short.class) {
                 var sa = (short[]) array;
-                ja.forEach((arrayItem, i) -> sa[i] = fromElement(arrayItem, elementType));
+                ja.forEach((arrayItem, i) -> {
+                    if (fromElement(arrayItem, elementType) instanceof Short s) {
+                        sa[i] = s;
+                    } else {
+                        throw new JsonException();
+                    }
+                });
             } else if (elementType == int.class) {
                 var ia = (int[]) array;
-                ja.forEach((arrayItem, i) -> ia[i] = fromElement(arrayItem, elementType));
+                ja.forEach((arrayItem, i) -> {
+                    if (fromElement(arrayItem, elementType) instanceof Integer s) {
+                        ia[i] = s;
+                    } else {
+                        throw new JsonException();
+                    }
+                });
             } else if (elementType == long.class) {
                 var la = (long[]) array;
-                ja.forEach((arrayItem, i) -> la[i] = fromElement(arrayItem, elementType));
+                ja.forEach((arrayItem, i) -> {
+                    if (fromElement(arrayItem, elementType) instanceof Long s) {
+                        la[i] = s;
+                    } else {
+                        throw new JsonException();
+                    }
+                });
             } else if (elementType == float.class) {
                 var fa = (float[]) array;
-                ja.forEach((arrayItem, i) -> fa[i] = fromElement(arrayItem, elementType));
+                ja.forEach((arrayItem, i) -> {
+                    if (fromElement(arrayItem, elementType) instanceof Float s) {
+                        fa[i] = s;
+                    } else {
+                        throw new JsonException();
+                    }
+                });
             } else if (elementType == double.class) {
                 var da = (double[]) array;
-                ja.forEach((arrayItem, i) -> da[i] = fromElement(arrayItem, elementType));
+                ja.forEach((arrayItem, i) -> {
+                    if (fromElement(arrayItem, elementType) instanceof Double s) {
+                        da[i] = s;
+                    } else {
+                        throw new JsonException();
+                    }
+                });
             } else if (elementType == boolean.class) {
                 var ba = (boolean[]) array;
-                ja.forEach((arrayItem, i) -> ba[i] = fromElement(arrayItem, elementType));
+                ja.forEach((arrayItem, i) -> {
+                    if (fromElement(arrayItem, elementType) instanceof Boolean s) {
+                        ba[i] = s;
+                    } else {
+                        throw new JsonException();
+                    }
+                });
             } else if (elementType == char.class) {
                 var ca = (char[]) array;
-                ja.forEach((arrayItem, i) -> ca[i] = fromElement(arrayItem, elementType));
+                ja.forEach((arrayItem, i) -> {
+                    if (fromElement(arrayItem, elementType) instanceof Character s) {
+                        ca[i] = s;
+                    } else {
+                        throw new JsonException();
+                    }
+                });
             } else if (elementType == byte.class) {
                 var ba = (byte[]) array;
-                ja.forEach((arrayItem, i) -> ba[i] = fromElement(arrayItem, elementType));
+                ja.forEach((arrayItem, i) -> {
+                    if (fromElement(arrayItem, elementType) instanceof Byte s) {
+                        ba[i] = s;
+                    } else {
+                        throw new JsonException();
+                    }
+                });
             } else {
                 throw new JsonException("Cannot parse json array to primitive array of " + elementType.getName());
             }
