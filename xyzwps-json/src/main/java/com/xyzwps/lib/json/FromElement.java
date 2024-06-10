@@ -63,6 +63,7 @@ public final class FromElement {
         this.fromKeyTable.put(Objects.requireNonNull(type), Objects.requireNonNull(converter));
     }
 
+    @SuppressWarnings({"unchecked", "rawtypes"})
     public <T> T fromElement(JsonElement element, Type type) {
         Objects.requireNonNull(element);
         Objects.requireNonNull(type);
@@ -71,10 +72,9 @@ public final class FromElement {
             return null;
         }
 
-        //noinspection SuspiciousMethodCalls, rawtypes
+        //noinspection SuspiciousMethodCalls
         FromElementConverter converter = fromElementTable.get(type);
         if (converter != null) {
-            //noinspection unchecked
             return (T) converter.convert(element);
         }
 
@@ -85,178 +85,169 @@ public final class FromElement {
         switch (element) {
             case JsonObject jo -> {
                 if (type instanceof Class<?> c) {
-                    var beanInfo = BeanUtils.getBeanInfoFromClass(c);
-                    var parsedProps = new HashMap<String, Object>();
-                    beanInfo.getBeanProperties().forEach(prop -> {
-                        var propName = prop.name();
-                        var propElement = jo.get(propName);
-                        var propValue = propElement == null ? DefaultValues.get(prop.type()) : fromElement(propElement, prop.type());
-                        parsedProps.put(propName, propValue);
-                    });
-                    //noinspection unchecked
-                    return (T) beanInfo.create(parsedProps);
-                } else if (type instanceof ParameterizedType pt) {
+                    return (T) jsonObjectToBean(jo, c);
+                }
+                if (type instanceof ParameterizedType pt) {
                     var rawType = pt.getRawType();
                     if (rawType instanceof Class<?> c) {
                         if (c.isAssignableFrom(Map.class)) {
-
-                            // TODO: 更多种类的 map
-                            var typeArguments = pt.getActualTypeArguments();
-                            var keyType = typeArguments[0];
-                            var valueType = typeArguments[1];
-
-                            var toKeyConverter = fromKeyTable.get(keyType);
-                            var map = new HashMap();
-
-                            jo.forEach((key, value) -> map.put(toKeyConverter.convert(key), fromElement(value, valueType)));
-                            //noinspection unchecked
-                            return (T) map;
+                            return (T) jsonObjectToMap(jo, pt, rawType);
                         } else {
-                            var beanInfo = BeanUtils.getBeanInfoFromClass(c);
-                            var parsedProps = new HashMap<String, Object>();
-                            beanInfo.getBeanProperties().forEach(prop -> {
-                                var propType = prop.type();
-                                if (propType instanceof TypeVariable<?> tv) {
-                                    // region get actual type
-                                    var typeParams = ((Class<?>) rawType).getTypeParameters();
-                                    int index = -1;
-                                    for (int i = 0; i < typeParams.length; i++) {
-                                        var it = typeParams[i];
-                                        if (it.equals(tv)) {
-                                            index = i;
-                                            break;
-                                        }
-                                    }
-                                    if (index < 0) {
-                                        throw new IllegalStateException();
-                                    }
-                                    var actualType = pt.getActualTypeArguments()[index];
-                                    // endregion
-                                    var propName = prop.name();
-                                    var propElement = jo.get(propName);
-                                    var propValue = propElement == null ? DefaultValues.get(prop.type()) : fromElement(propElement, actualType);
-                                    parsedProps.put(propName, propValue);
-                                } else {
-                                    var propName = prop.name();
-                                    var propElement = jo.get(propName);
-                                    var propValue = propElement == null ? DefaultValues.get(prop.type()) : fromElement(propElement, prop.type());
-                                    parsedProps.put(propName, propValue);
-                                }
-                            });
-                            //noinspection unchecked
-                            return (T) beanInfo.create(parsedProps);
+                            return (T) jsonObjectToGenericBean(jo, pt, rawType, c);
                         }
                     }
-                    throw new IllegalStateException("TODO: 暂支持泛型类");
-                } else {
-                    throw new IllegalStateException("TODO: 暂支持泛型类");
+
                 }
+                throw new IllegalStateException("TODO: 暂支持泛型类");
             }
             case JsonArray ja -> {
-                switch (type) {
-                    case ParameterizedType pt -> {
-                        var rawType = pt.getRawType();
-                        //noinspection IfCanBeSwitch
-                        if (rawType.equals(ArrayList.class)) {
-                            // noinspection unchecked
-                            return (T) fromJsonArray(ja, pt.getActualTypeArguments()[0], new ArrayList<>(ja.length()));
-                        }
-                        if (rawType.equals(LinkedList.class)) {
-                            // noinspection unchecked
-                            return (T) fromJsonArray(ja, pt.getActualTypeArguments()[0], new LinkedList<>());
-                        }
-                        if (rawType.equals(List.class)) {
-                            // noinspection unchecked
-                            return (T) fromJsonArray(ja, pt.getActualTypeArguments()[0], new ArrayList<>(ja.length()));
-                        }
-                        throw new JsonException(String.format("Cannot convert to %s from %s",
-                                type.getTypeName(), element.getClass().getSimpleName()));
-                    }
-                    //noinspection rawtypes
+                return switch (type) {
+                    case ParameterizedType pt -> (T) jsonArrayToList(ja, pt);
+                    case GenericArrayType gat -> (T) jsonArrayToGenericArray(ja, gat);
                     case Class c -> {
                         if (c.isArray()) {
-                            var elementType = c.getComponentType();
-                            var array = Array.newInstance(elementType, ja.length());
-                            if (elementType.isPrimitive()) {
-                                if (elementType == short.class) {
-                                    var sa = (short[]) array;
-                                    // noinspection all
-                                    ja.forEach((arrayItem, i) -> sa[i] = fromElement(arrayItem, elementType));
-                                } else if (elementType == int.class) {
-                                    var ia = (int[]) array;
-                                    // noinspection all
-                                    ja.forEach((arrayItem, i) -> ia[i] = fromElement(arrayItem, elementType));
-                                } else if (elementType == long.class) {
-                                    var la = (long[]) array;
-                                    // noinspection all
-                                    ja.forEach((arrayItem, i) -> la[i] = fromElement(arrayItem, elementType));
-                                } else if (elementType == float.class) {
-                                    var fa = (float[]) array;
-                                    // noinspection all
-                                    ja.forEach((arrayItem, i) -> fa[i] = fromElement(arrayItem, elementType));
-                                } else if (elementType == double.class) {
-                                    var da = (double[]) array;
-                                    // noinspection all
-                                    ja.forEach((arrayItem, i) -> da[i] = fromElement(arrayItem, elementType));
-                                } else if (elementType == boolean.class) {
-                                    var ba = (boolean[]) array;
-                                    // noinspection all
-                                    ja.forEach((arrayItem, i) -> ba[i] = fromElement(arrayItem, elementType));
-                                } else if (elementType == char.class) {
-                                    var ca = (char[]) array;
-                                    // noinspection all
-                                    ja.forEach((arrayItem, i) -> ca[i] = fromElement(arrayItem, elementType));
-                                } else if (elementType == byte.class) {
-                                    var ba = (byte[]) array;
-                                    // noinspection all
-                                    ja.forEach((arrayItem, i) -> ba[i] = fromElement(arrayItem, elementType));
-                                } else {
-                                    throw new JsonException(String.format("Cannot convert to %s from %s",
-                                            type.getTypeName(), element.getClass().getSimpleName()));
-                                }
-                            } else {
-                                var oa = (Object[]) array;
-                                ja.forEach((arrayItem, i) -> oa[i] = fromElement(arrayItem, elementType));
-                            }
-                            // noinspection unchecked
-                            return (T) array;
-                        } else {
-                            throw new JsonException(String.format("Cannot convert to %s from %s",
-                                    type.getTypeName(), element.getClass().getSimpleName()));
+                            yield (T) jsonArrayToArray(ja, c);
                         }
+                        throw new JsonException("Cannot parse json array to " + c.getCanonicalName());
                     }
-                    case GenericArrayType gat -> {
-                        var elementType = gat.getGenericComponentType();
-                        if (elementType instanceof ParameterizedType pt) {
-                            var array = Array.newInstance((Class<?>) pt.getRawType(), ja.length());
-                            ja.forEach((arrayItem, i) -> Array.set(array, i, fromElement(arrayItem, elementType)));
-                            // noinspection unchecked
-                            return (T) array;
-                        } else {
-                            throw new JsonException(String.format("Cannot convert to %s from %s",
-                                    type.getTypeName(), element.getClass().getSimpleName()));
-                        }
-                    }
-                    default -> {
-                        throw new RuntimeException();
-                    }
-                }
+                    default -> throw new JsonException("Cannot parse json array to " + type);
+                };
             }
             case JsonString js -> {
                 if (type instanceof Class<?> c) {
                     if (c.isEnum()) {
-                        // noinspection unchecked, rawtypes
                         return (T) Enum.valueOf((Class<? extends Enum>) c, js.value());
                     }
                 }
-                throw new JsonException(String.format("Cannot convert to %s(%s) from %s",
-                        type.getTypeName(), type.getClass().getCanonicalName(), element.getClass().getSimpleName()));
+                throw new JsonException("Cannot parse json string to " + type);
             }
             default -> {
                 throw new JsonException(String.format("Cannot convert to %s(%s) from %s",
                         type.getTypeName(), type.getClass().getCanonicalName(), element.getClass().getSimpleName()));
             }
         }
+    }
+
+    private Object jsonObjectToMap(JsonObject jo, ParameterizedType pt, Type rawType) {
+        var typeArguments = pt.getActualTypeArguments();
+        var keyType = typeArguments[0];
+        var valueType = typeArguments[1];
+
+        var toKeyConverter = fromKeyTable.get(keyType);
+        var map = rawType.equals(TreeMap.class) ? new TreeMap<>() : new HashMap<>();
+        jo.forEach((key, value) -> map.put(toKeyConverter.convert(key), fromElement(value, valueType)));
+        return map;
+    }
+
+    private Object jsonObjectToGenericBean(JsonObject jo, ParameterizedType pt, Type rawType, Class<?> rawTypeClass) {
+        var beanInfo = BeanUtils.getBeanInfoFromClass(rawTypeClass);
+        var parsedProps = new HashMap<String, Object>();
+        beanInfo.getBeanProperties().forEach(prop -> {
+            var propType = prop.type();
+            if (propType instanceof TypeVariable<?> tv) {
+                // region get actual type
+                var typeParams = ((Class<?>) rawType).getTypeParameters();
+                int index = -1;
+                for (int i = 0; i < typeParams.length; i++) {
+                    var it = typeParams[i];
+                    if (it.equals(tv)) {
+                        index = i;
+                        break;
+                    }
+                }
+                if (index < 0) {
+                    throw new IllegalStateException();
+                }
+                var actualType = pt.getActualTypeArguments()[index];
+                // endregion
+                var propName = prop.name();
+                var propElement = jo.get(propName);
+                var propValue = propElement == null ? DefaultValues.get(prop.type()) : fromElement(propElement, actualType);
+                parsedProps.put(propName, propValue);
+            } else {
+                var propName = prop.name();
+                var propElement = jo.get(propName);
+                var propValue = propElement == null ? DefaultValues.get(prop.type()) : fromElement(propElement, prop.type());
+                parsedProps.put(propName, propValue);
+            }
+        });
+        return beanInfo.create(parsedProps);
+    }
+
+    private Object jsonObjectToBean(JsonObject jo, Class<?> c) {
+        var beanInfo = BeanUtils.getBeanInfoFromClass(c);
+        var parsedProps = new HashMap<String, Object>();
+        beanInfo.getBeanProperties().forEach(prop -> {
+            var propName = prop.name();
+            var propElement = jo.get(propName);
+            var propValue = propElement == null ? DefaultValues.get(prop.type()) : fromElement(propElement, prop.type());
+            parsedProps.put(propName, propValue);
+        });
+        return beanInfo.create(parsedProps);
+    }
+
+    private Object jsonArrayToList(JsonArray ja, ParameterizedType pt) {
+        var rawType = pt.getRawType();
+        //noinspection IfCanBeSwitch
+        if (rawType.equals(ArrayList.class)) {
+            return fromJsonArray(ja, pt.getActualTypeArguments()[0], new ArrayList<>(ja.length()));
+        }
+        if (rawType.equals(LinkedList.class)) {
+            return fromJsonArray(ja, pt.getActualTypeArguments()[0], new LinkedList<>());
+        }
+        if (rawType.equals(List.class)) {
+            return fromJsonArray(ja, pt.getActualTypeArguments()[0], new ArrayList<>(ja.length()));
+        }
+        throw new JsonException("Cannot parse json array to " + pt);
+    }
+
+    private Object jsonArrayToGenericArray(JsonArray ja, GenericArrayType gat) {
+        var elementType = gat.getGenericComponentType();
+        if (elementType instanceof ParameterizedType pt) {
+            var array = Array.newInstance((Class<?>) pt.getRawType(), ja.length());
+            ja.forEach((arrayItem, i) -> Array.set(array, i, fromElement(arrayItem, elementType)));
+            return array;
+        } else {
+            throw new JsonException("Cannot parse json array to " + gat);
+        }
+    }
+
+    private Object jsonArrayToArray(JsonArray ja, Class<?> c) {
+        var elementType = c.getComponentType();
+        var array = Array.newInstance(elementType, ja.length());
+        if (elementType.isPrimitive()) {
+            if (elementType == short.class) {
+                var sa = (short[]) array;
+                ja.forEach((arrayItem, i) -> sa[i] = fromElement(arrayItem, elementType));
+            } else if (elementType == int.class) {
+                var ia = (int[]) array;
+                ja.forEach((arrayItem, i) -> ia[i] = fromElement(arrayItem, elementType));
+            } else if (elementType == long.class) {
+                var la = (long[]) array;
+                ja.forEach((arrayItem, i) -> la[i] = fromElement(arrayItem, elementType));
+            } else if (elementType == float.class) {
+                var fa = (float[]) array;
+                ja.forEach((arrayItem, i) -> fa[i] = fromElement(arrayItem, elementType));
+            } else if (elementType == double.class) {
+                var da = (double[]) array;
+                ja.forEach((arrayItem, i) -> da[i] = fromElement(arrayItem, elementType));
+            } else if (elementType == boolean.class) {
+                var ba = (boolean[]) array;
+                ja.forEach((arrayItem, i) -> ba[i] = fromElement(arrayItem, elementType));
+            } else if (elementType == char.class) {
+                var ca = (char[]) array;
+                ja.forEach((arrayItem, i) -> ca[i] = fromElement(arrayItem, elementType));
+            } else if (elementType == byte.class) {
+                var ba = (byte[]) array;
+                ja.forEach((arrayItem, i) -> ba[i] = fromElement(arrayItem, elementType));
+            } else {
+                throw new JsonException("Cannot parse json array to primitive array of " + elementType.getName());
+            }
+        } else {
+            var oa = (Object[]) array;
+            ja.forEach((arrayItem, i) -> oa[i] = fromElement(arrayItem, elementType));
+        }
+        return array;
     }
 
     private List<?> fromJsonArray(JsonArray ja, Type elementType, List<?> list) {
