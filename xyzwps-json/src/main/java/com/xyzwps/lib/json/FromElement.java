@@ -4,23 +4,24 @@ import com.xyzwps.lib.beans.BeanUtils;
 import com.xyzwps.lib.bedrock.lang.DefaultValues;
 import com.xyzwps.lib.json.element.*;
 
-import java.lang.reflect.Array;
-import java.lang.reflect.GenericArrayType;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
+import java.lang.reflect.*;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static com.xyzwps.lib.json.FromElementConverters.*;
+import static com.xyzwps.lib.json.FromKeyConverters.*;
 
 public final class FromElement {
 
     private final ConcurrentHashMap<Class<?>, FromElementConverter<?, ?>> fromElementTable;
 
+    private final ConcurrentHashMap<Class<?>, FromKeyConverter<?>> fromKeyTable;
+
     private FromElement() {
         this.fromElementTable = new ConcurrentHashMap<>();
+        this.fromKeyTable = new ConcurrentHashMap<>();
     }
 
     public static FromElement createDefault() {
@@ -46,14 +47,20 @@ public final class FromElement {
         f.addFromElementConverter(Map.class, TO_MAP.apply(f));
         f.addFromElementConverter(List.class, TO_LIST.apply(f));
 
+        f.addFromKeyConverter(String.class, KEY_TO_STRING);
+
+
         return f;
     }
 
     // TODO: 支持日期时间
-    // TODO: 测试
 
     public void addFromElementConverter(Class<?> type, FromElementConverter<?, ?> converter) {
         this.fromElementTable.put(Objects.requireNonNull(type), Objects.requireNonNull(converter));
+    }
+
+    public void addFromKeyConverter(Class<?> type, FromKeyConverter<?> converter) {
+        this.fromKeyTable.put(Objects.requireNonNull(type), Objects.requireNonNull(converter));
     }
 
     public <T> T fromElement(JsonElement element, Type type) {
@@ -71,6 +78,10 @@ public final class FromElement {
             return (T) converter.convert(element);
         }
 
+        if (type.equals(Object.class)) {
+            return (T) element.toJavaObject();
+        }
+
         switch (element) {
             case JsonObject jo -> {
                 if (type instanceof Class<?> c) {
@@ -84,6 +95,59 @@ public final class FromElement {
                     });
                     //noinspection unchecked
                     return (T) beanInfo.create(parsedProps);
+                } else if (type instanceof ParameterizedType pt) {
+                    var rawType = pt.getRawType();
+                    if (rawType instanceof Class<?> c) {
+                        if (c.isAssignableFrom(Map.class)) {
+
+                            // TODO: 更多种类的 map
+                            var typeArguments = pt.getActualTypeArguments();
+                            var keyType = typeArguments[0];
+                            var valueType = typeArguments[1];
+
+                            var toKeyConverter = fromKeyTable.get(keyType);
+                            var map = new HashMap();
+
+                            jo.forEach((key, value) -> map.put(toKeyConverter.convert(key), fromElement(value, valueType)));
+                            //noinspection unchecked
+                            return (T) map;
+                        } else {
+                            var beanInfo = BeanUtils.getBeanInfoFromClass(c);
+                            var parsedProps = new HashMap<String, Object>();
+                            beanInfo.getBeanProperties().forEach(prop -> {
+                                var propType = prop.type();
+                                if (propType instanceof TypeVariable<?> tv) {
+                                    // region get actual type
+                                    var typeParams = ((Class<?>) rawType).getTypeParameters();
+                                    int index = -1;
+                                    for (int i = 0; i < typeParams.length; i++) {
+                                        var it = typeParams[i];
+                                        if (it.equals(tv)) {
+                                            index = i;
+                                            break;
+                                        }
+                                    }
+                                    if (index < 0) {
+                                        throw new IllegalStateException();
+                                    }
+                                    var actualType = pt.getActualTypeArguments()[index];
+                                    // endregion
+                                    var propName = prop.name();
+                                    var propElement = jo.get(propName);
+                                    var propValue = propElement == null ? DefaultValues.get(prop.type()) : fromElement(propElement, actualType);
+                                    parsedProps.put(propName, propValue);
+                                } else {
+                                    var propName = prop.name();
+                                    var propElement = jo.get(propName);
+                                    var propValue = propElement == null ? DefaultValues.get(prop.type()) : fromElement(propElement, prop.type());
+                                    parsedProps.put(propName, propValue);
+                                }
+                            });
+                            //noinspection unchecked
+                            return (T) beanInfo.create(parsedProps);
+                        }
+                    }
+                    throw new IllegalStateException("TODO: 暂支持泛型类");
                 } else {
                     throw new IllegalStateException("TODO: 暂支持泛型类");
                 }
@@ -172,8 +236,6 @@ public final class FromElement {
                             throw new JsonException(String.format("Cannot convert to %s from %s",
                                     type.getTypeName(), element.getClass().getSimpleName()));
                         }
-
-//                        // TODO: handle multi-dim array
                     }
                     default -> {
                         throw new RuntimeException();
@@ -201,7 +263,4 @@ public final class FromElement {
         ja.forEach((arrayItem) -> list.add(fromElement(arrayItem, elementType)));
         return list;
     }
-
-
-    // TODO: 处理泛型类，如 List<Integer> 之类的
 }

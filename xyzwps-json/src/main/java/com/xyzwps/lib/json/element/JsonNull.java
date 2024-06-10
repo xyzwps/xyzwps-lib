@@ -7,4 +7,9 @@ public record JsonNull()  implements JsonElement {
     public String toString() {
         return "null";
     }
+
+    @Override
+    public Object toJavaObject() {
+        return null;
+    }
 }

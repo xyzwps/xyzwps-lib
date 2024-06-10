@@ -8,4 +8,9 @@ public record JsonDecimal(BigDecimal value) implements JsonElement {
     public String toString() {
         return value.toString();
     }
+
+    @Override
+    public Object toJavaObject() {
+        return value;
+    }
 }

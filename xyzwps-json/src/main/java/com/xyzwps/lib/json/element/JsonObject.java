@@ -48,6 +48,17 @@ public final class JsonObject implements JsonElement {
         return false;
     }
 
+    @Override
+    public Object toJavaObject() {
+        return toMap();
+    }
+
+    public Map<String, Object> toMap() {
+        var map = new HashMap<String, Object>();
+        this.map.forEach((key, value) -> map.put(key, value.toJavaObject()));
+        return map;
+    }
+
     private static class Env {
         boolean first = true;
     }

@@ -3,6 +3,7 @@ package com.xyzwps.lib.json.element;
 import com.xyzwps.lib.bedrock.lang.Equals;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.ObjIntConsumer;
 
@@ -43,6 +44,19 @@ public final class JsonArray implements JsonElement {
         for (int i = 0; i < elements.size(); i++) {
             consumer.accept(elements.get(i), i);
         }
+    }
+
+    @Override
+    public Object toJavaObject() {
+        return toList();
+    }
+
+    public List<Object> toList() {
+        var list = new ArrayList<>();
+        for (var element : elements) {
+            list.add(element.toJavaObject());
+        }
+        return list;
     }
 
     public int length() {

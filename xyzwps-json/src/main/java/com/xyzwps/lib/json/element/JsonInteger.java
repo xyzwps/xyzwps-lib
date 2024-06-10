@@ -8,4 +8,9 @@ public record JsonInteger(BigInteger value) implements JsonElement {
     public String toString() {
         return value.toString();
     }
+
+    @Override
+    public Object toJavaObject() {
+        return value;
+    }
 }

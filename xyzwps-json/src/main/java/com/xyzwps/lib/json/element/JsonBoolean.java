@@ -17,4 +17,9 @@ public enum JsonBoolean implements JsonElement {
     public String toString() {
         return this.name().toLowerCase();
     }
+
+    @Override
+    public Object toJavaObject() {
+        return this.value ? Boolean.TRUE : Boolean.FALSE;
+    }
 }

@@ -6,4 +6,9 @@ public record JsonString(String value) implements JsonElement {
     public String toString() {
         return '"' + value + '"'; // TODO: 处理转义字符
     }
+
+    @Override
+    public Object toJavaObject() {
+        return value;
+    }
 }

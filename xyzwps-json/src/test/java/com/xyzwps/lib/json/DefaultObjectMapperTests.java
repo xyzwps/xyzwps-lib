@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.List;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static com.xyzwps.lib.json.JsonUtils.*;
@@ -47,10 +48,13 @@ class DefaultObjectMapperTests {
                             ))
                     )))
                     .forObjectArray(new Point[]{new Point(1, 2), new Point(100, 200)})
+                    //noinspection unchecked
                     .vectors(new List[]{
                             List.of(new Point(1, 2), new Point(100, 200)),
                             List.of(new Point(3, 4), new Point(300, 400))
                     })
+                    .holderList(List.of(new Holder<>(new Point(1, 2), "P1"), new Holder<>(new Point(100, 200), "P2")))
+                    .attributes(Map.of("key", "value", "key2", List.of(1, 2, 3)))
                     .matrix(new int[][]{{1, 2}, {3, 4}})
                     .bools(new boolean[]{true, false})
                     .shorts(new short[]{1, 2, 3})
@@ -96,6 +100,11 @@ class DefaultObjectMapperTests {
                             [ { "x": 1, "y": 2 }, { "x": 100, "y": 200 } ],
                             [ { "x": 3, "y": 4 }, { "x": 300, "y": 400 } ]
                         ],
+                        "holderList": [
+                            { "value": { "x": 1, "y": 2 },     "name": "P1" },
+                            { "value": { "x": 100, "y": 200 }, "name": "P2" }
+                        ],
+                        "attributes": { "key": "value", "key2": [1, 2, 3] },
                         "matrix": [[1, 2], [3, 4]],
                         "bools": [true, false],
                         "shorts": [1, 2, 3],
@@ -130,6 +139,13 @@ class DefaultObjectMapperTests {
             assertEquals(2, matrix.length);
             assertArrayEquals(new int[]{1, 2}, matrix[0]);
             assertArrayEquals(new int[]{3, 4}, matrix[1]);
+
+            assertIterableEquals(obj.getHolderList(), parsed.getHolderList());
+
+            var attributes = parsed.getAttributes();
+            assertEquals(2, attributes.size());
+            assertEquals("value", attributes.get("key"));
+            assertIterableEquals(List.of(BigInteger.valueOf(1), BigInteger.valueOf(2), BigInteger.valueOf(3)), (List<?>) attributes.get("key2"));
         }
 
         @Data
@@ -144,8 +160,8 @@ class DefaultObjectMapperTests {
             private Point[] forObjectArray;
             private List<Point>[] vectors; // generic array
             private int[][] matrix; // multi-dimensions array
-            // TODO: generic list
-            // TODO: map
+            private List<Holder<Point, String>> holderList; // generic list
+            private Map<String, Object> attributes; // map
             // TODO: generic map
             private boolean[] bools;
             private short[] shorts;
@@ -252,6 +268,9 @@ class DefaultObjectMapperTests {
         }
     }
 
+    public record Holder<T, N>(T value, N name) {
+    }
+
     public record PrimitiveArrays(
             boolean[] bools,
             short[] shorts,
@@ -295,7 +314,7 @@ class DefaultObjectMapperTests {
     }
 
     public enum Weekday {
-        MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY, SATURDAY, SUNDAY
+        SUNDAY
     }
 
     @Data
