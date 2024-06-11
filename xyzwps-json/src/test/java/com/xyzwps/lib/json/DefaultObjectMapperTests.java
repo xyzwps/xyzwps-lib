@@ -1,6 +1,7 @@
 package com.xyzwps.lib.json;
 
 import com.xyzwps.lib.bedrock.lang.Equals;
+import com.xyzwps.lib.bedrock.lang.TypeRef;
 import lombok.*;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -19,6 +20,21 @@ class DefaultObjectMapperTests {
 
     @Nested
     class StringifyAndParseTests {
+
+        @Test
+        void testTypeRef() {
+            List<Point> points = List.of(new Point(1, 2), new Point(100, 200));
+            var json = OM.stringify(points);
+            assertTrue(jsonEquals(json, """
+                    [
+                        { "x": 1,   "y": 2 },
+                        { "x": 100, "y": 200 }
+                    ]
+                    """));
+            List<Point> parsed = OM.parse(json, new TypeRef<List<Point>>() {
+            });
+            assertIterableEquals(points, parsed);
+        }
 
         @Test
         void test() {
@@ -48,7 +64,6 @@ class DefaultObjectMapperTests {
                             ))
                     )))
                     .forObjectArray(new Point[]{new Point(1, 2), new Point(100, 200)})
-                    //noinspection unchecked
                     .vectors(new List[]{
                             List.of(new Point(1, 2), new Point(100, 200)),
                             List.of(new Point(3, 4), new Point(300, 400))

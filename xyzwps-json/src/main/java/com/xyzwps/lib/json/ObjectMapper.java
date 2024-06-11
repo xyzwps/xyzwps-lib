@@ -1,5 +1,6 @@
 package com.xyzwps.lib.json;
 
+import com.xyzwps.lib.bedrock.lang.TypeRef;
 import com.xyzwps.lib.json.element.ElementParser;
 import com.xyzwps.lib.json.element.SimpleParser;
 import com.xyzwps.lib.json.util.StringCharGenerator;
@@ -28,6 +29,12 @@ public final class ObjectMapper {
         Objects.requireNonNull(type);
         var element = elementParser.parse(new StringCharGenerator(str));
         return fromElement.fromElement(element, type);
+    }
+
+    public <T> T parse(String str, TypeRef<T> type) {
+        Objects.requireNonNull(type);
+        var element = elementParser.parse(new StringCharGenerator(str));
+        return fromElement.fromElement(element, type.type);
     }
 
 }
