@@ -16,7 +16,7 @@ import static com.xyzwps.lib.json.JsonUtils.*;
 
 class DefaultObjectMapperTests {
 
-    static final ObjectMapper OM = new ObjectMapper();
+    static final JsonMapper JM = new JsonMapper();
 
     @Nested
     class StringifyAndParseTests {
@@ -24,14 +24,14 @@ class DefaultObjectMapperTests {
         @Test
         void testTypeRef() {
             List<Point> points = List.of(new Point(1, 2), new Point(100, 200));
-            var json = OM.stringify(points);
+            var json = JM.stringify(points);
             assertTrue(jsonEquals(json, """
                     [
                         { "x": 1,   "y": 2 },
                         { "x": 100, "y": 200 }
                     ]
                     """));
-            List<Point> parsed = OM.parse(json, new TypeRef<List<Point>>() {
+            List<Point> parsed = JM.parse(json, new TypeRef<List<Point>>() {
             });
             assertIterableEquals(points, parsed);
         }
@@ -80,7 +80,7 @@ class DefaultObjectMapperTests {
                     .chars(new char[]{'a', 'b', 'c'})
                     .build();
 
-            var json = OM.stringify(obj);
+            var json = JM.stringify(obj);
             assertTrue(jsonEquals(json, """
                     {
                         "forPojo": {
@@ -131,7 +131,7 @@ class DefaultObjectMapperTests {
                     }
                     """));
 
-            var parsed = OM.parse(json, StringifyAndParseIntros.class);
+            var parsed = JM.parse(json, StringifyAndParseIntros.class);
             assertEquals(obj.getForPojo(), parsed.getForPojo());
             assertEquals(obj.getForEnum(), Weekday.SUNDAY);
             assertEquals(obj.getForRecord(), parsed.getForRecord());
@@ -191,9 +191,9 @@ class DefaultObjectMapperTests {
         @Test
         void testRecord() {
             var p = new Point(1, 2);
-            var json = OM.stringify(p);
+            var json = JM.stringify(p);
             assertEquals("{\"x\":1,\"y\":2}", json);
-            var parsed = OM.parse(json, Point.class);
+            var parsed = JM.parse(json, Point.class);
             assertEquals(p, parsed);
         }
 
@@ -210,7 +210,7 @@ class DefaultObjectMapperTests {
                     ))
             ));
 
-            var json = OM.stringify(tree);
+            var json = JM.stringify(tree);
             assertTrue(jsonEquals(json, """
                     { "id":1,"title":"区域", "children": [
                         { "id":2,"title":"璃月", "children":[
@@ -224,7 +224,7 @@ class DefaultObjectMapperTests {
                     ]}
                     """));
 
-            var parsed = OM.parse(json, TreeNode.class);
+            var parsed = JM.parse(json, TreeNode.class);
             assertEquals(tree, parsed);
         }
 
@@ -234,7 +234,7 @@ class DefaultObjectMapperTests {
                     new Point(1, 2),
                     new Point(100, 200),
             });
-            var json = OM.stringify(image);
+            var json = JM.stringify(image);
             assertTrue(jsonEquals(json, """
                     {
                         "width": 1366,
@@ -245,7 +245,7 @@ class DefaultObjectMapperTests {
                         ]
                     }
                     """));
-            var parsed = OM.parse(json, Image.class);
+            var parsed = JM.parse(json, Image.class);
             assertEquals(image, parsed);
         }
 
@@ -260,7 +260,7 @@ class DefaultObjectMapperTests {
                     new double[]{1.1, 2.2, 3.3},
                     new char[]{'a', 'b', 'c'}
             );
-            var json = OM.stringify(arr);
+            var json = JM.stringify(arr);
             assertTrue(jsonEquals(json, """
                     {
                         "bools": [true,false],
@@ -272,7 +272,7 @@ class DefaultObjectMapperTests {
                         "chars":["a","b","c"]
                     }
                     """));
-            var parsed = OM.parse(json, PrimitiveArrays.class);
+            var parsed = JM.parse(json, PrimitiveArrays.class);
             assertArrayEquals(arr.bools, parsed.bools);
             assertArrayEquals(arr.shorts, parsed.shorts);
             assertArrayEquals(arr.ints, parsed.ints);

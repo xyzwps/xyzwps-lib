@@ -7,7 +7,7 @@ import com.xyzwps.lib.json.util.StringCharGenerator;
 
 import java.util.Objects;
 
-public final class ObjectMapper {
+public final class JsonMapper {
 
     private final ElementParser elementParser;
 
@@ -15,7 +15,7 @@ public final class ObjectMapper {
 
     private final FromElement fromElement;
 
-    public ObjectMapper() {
+    public JsonMapper() {
         this.elementParser = new SimpleParser();
         this.toElement = ToElement.createDefault();
         this.fromElement = FromElement.createDefault();
@@ -27,12 +27,18 @@ public final class ObjectMapper {
 
     public <T> T parse(String str, Class<T> type) {
         Objects.requireNonNull(type);
+        if (str == null) {
+            return null;
+        }
         var element = elementParser.parse(new StringCharGenerator(str));
         return fromElement.fromElement(element, type);
     }
 
     public <T> T parse(String str, TypeRef<T> type) {
         Objects.requireNonNull(type);
+        if (str == null) {
+            return null;
+        }
         var element = elementParser.parse(new StringCharGenerator(str));
         return fromElement.fromElement(element, type.type);
     }
