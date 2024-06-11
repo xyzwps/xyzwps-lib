@@ -1,7 +1,7 @@
 package com.xyzwps.lib.json.element;
 
 
-import com.xyzwps.lib.json.util.StringCharGenerator;
+import com.xyzwps.lib.json.util.CharGenerator;
 import org.junit.jupiter.api.Test;
 
 import java.util.function.Consumer;
@@ -23,7 +23,7 @@ class VeryDeepJsonObjectTests {
     @Test
     void simpleParserDemo() {
         var parser = new SimpleParser();
-        Consumer<String> print = (str) -> System.out.println(parser.parse(new StringCharGenerator(str)).getClass().getCanonicalName());
+        Consumer<String> print = (str) -> System.out.println(parser.parse(CharGenerator.from(str)).getClass().getCanonicalName());
 
         assertThrows(StackOverflowError.class, () -> print.accept(VERY_DEEP_JSON));
     }
@@ -32,7 +32,7 @@ class VeryDeepJsonObjectTests {
     @Test
     void stackParserDemo() {
         var parser = new StackParser();
-        Consumer<String> print = (str) -> System.out.println(parser.parse(new StringCharGenerator(str)).getClass().getCanonicalName());
+        Consumer<String> print = (str) -> System.out.println(parser.parse(CharGenerator.from(str)).getClass().getCanonicalName());
 
         print.accept(VERY_DEEP_JSON);
     }

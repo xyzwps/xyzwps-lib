@@ -1,6 +1,6 @@
 package com.xyzwps.lib.json.token;
 
-import com.xyzwps.lib.json.util.StringCharGenerator;
+import com.xyzwps.lib.json.util.CharGenerator;
 import com.xyzwps.lib.json.SyntaxException;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class SimpleTokenizerTests {
 
     static SimpleTokenizer create(String text) {
-        return new SimpleTokenizer(new StringCharGenerator(text));
+        return new SimpleTokenizer(CharGenerator.from(text));
     }
 
     @Nested

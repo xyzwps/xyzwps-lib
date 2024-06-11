@@ -1,6 +1,6 @@
 package com.xyzwps.lib.json.element;
 
-import com.xyzwps.lib.json.util.StringCharGenerator;
+import com.xyzwps.lib.json.util.CharGenerator;
 import org.junit.jupiter.api.Test;
 
 import java.util.function.Consumer;
@@ -10,7 +10,7 @@ class SimpleParserTests {
     @Test
     void simpleParserDemo() {
         var parser = new SimpleParser();
-        Consumer<String> print = (str) -> System.out.println(parser.parse(new StringCharGenerator(str)));
+        Consumer<String> print = (str) -> System.out.println(parser.parse(CharGenerator.from(str)));
 
         print.accept("{}");
         print.accept("[]");
@@ -48,7 +48,7 @@ class SimpleParserTests {
     @Test
     void stackParserDemo() {
         var parser = new StackParser();
-        Consumer<String> print = (str) -> System.out.println(parser.parse(new StringCharGenerator(str)));
+        Consumer<String> print = (str) -> System.out.println(parser.parse(CharGenerator.from(str)));
 
         print.accept("{}");
         print.accept("[]");

@@ -17,7 +17,7 @@ import static com.xyzwps.lib.express.HttpStatus.*;
 @Singleton
 public class UserRouter implements Consumer<NestRouter> {
 
-    private final JsonParser json = new JsonParser(JSON.OM);
+    private final JsonParser json = new JsonParser(JSON.JM);
 
     @Inject
     UserRouter() {

@@ -3,8 +3,9 @@ package com.xyzwps.lib.json;
 import com.xyzwps.lib.bedrock.lang.TypeRef;
 import com.xyzwps.lib.json.element.ElementParser;
 import com.xyzwps.lib.json.element.SimpleParser;
-import com.xyzwps.lib.json.util.StringCharGenerator;
+import com.xyzwps.lib.json.util.CharGenerator;
 
+import java.io.Reader;
 import java.util.Objects;
 
 public final class JsonMapper {
@@ -25,12 +26,30 @@ public final class JsonMapper {
         return toElement.toElement(object).toString();
     }
 
+    public <T> T parse(Reader reader, Class<T> type) {
+        Objects.requireNonNull(type);
+        if (reader == null) {
+            return null;
+        }
+        var element = elementParser.parse(CharGenerator.from(reader));
+        return fromElement.fromElement(element, type);
+    }
+
+    public <T> T parse(Reader reader, TypeRef<T> type) {
+        Objects.requireNonNull(type);
+        if (reader == null) {
+            return null;
+        }
+        var element = elementParser.parse(CharGenerator.from(reader));
+        return fromElement.fromElement(element, type.type);
+    }
+
     public <T> T parse(String str, Class<T> type) {
         Objects.requireNonNull(type);
         if (str == null) {
             return null;
         }
-        var element = elementParser.parse(new StringCharGenerator(str));
+        var element = elementParser.parse(CharGenerator.from(str));
         return fromElement.fromElement(element, type);
     }
 
@@ -39,8 +58,24 @@ public final class JsonMapper {
         if (str == null) {
             return null;
         }
-        var element = elementParser.parse(new StringCharGenerator(str));
+        var element = elementParser.parse(CharGenerator.from(str));
         return fromElement.fromElement(element, type.type);
+    }
+
+    public void addToElementConverter(Class<?> type, ToElementConverter<?> converter) {
+        toElement.addToElementConverter(type, converter);
+    }
+
+    public void addToKeyConverter(Class<?> type, ToKeyConverter<?> converter) {
+        toElement.addToKeyConverter(type, converter);
+    }
+
+    public void addFromElementConverter(Class<?> type, FromElementConverter<?, ?> converter) {
+        fromElement.addFromElementConverter(type, converter);
+    }
+
+    public void addFromKeyConverter(Class<?> type, FromKeyConverter<?> converter) {
+        fromElement.addFromKeyConverter(type, converter);
     }
 
 }

@@ -2,13 +2,13 @@ package com.xyzwps.lib.json.util;
 
 import java.util.Objects;
 
-public class StringCharGenerator implements CharGenerator {
+class StringCharGenerator implements CharGenerator {
 
     private final String str;
     private final int length;
     private int current = 0;
 
-    public StringCharGenerator(String str) {
+    StringCharGenerator(String str) {
         this.str = Objects.requireNonNull(str);
         this.length = str.length();
     }

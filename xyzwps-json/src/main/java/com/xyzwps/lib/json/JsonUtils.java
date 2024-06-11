@@ -2,7 +2,7 @@ package com.xyzwps.lib.json;
 
 import com.xyzwps.lib.json.element.ElementParser;
 import com.xyzwps.lib.json.element.StackParser;
-import com.xyzwps.lib.json.util.StringCharGenerator;
+import com.xyzwps.lib.json.util.CharGenerator;
 
 /**
  * Utility class for JSON.
@@ -25,8 +25,8 @@ public final class JsonUtils {
         if (json2 == null) {
             return false;
         }
-        var j1 = PARSER.parse(new StringCharGenerator(json1));
-        var j2 = PARSER.parse(new StringCharGenerator(json2));
+        var j1 = PARSER.parse(CharGenerator.from(json1));
+        var j2 = PARSER.parse(CharGenerator.from(json2));
         return j1.equals(j2);
     }
 

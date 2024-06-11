@@ -6,6 +6,7 @@ import lombok.*;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
+import java.io.StringReader;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.List;
@@ -22,7 +23,31 @@ class DefaultObjectMapperTests {
     class StringifyAndParseTests {
 
         @Test
-        void testTypeRef() {
+        void testReaderToClass() {
+            var point = new Point(1, 2);
+            var json = JM.stringify(point);
+            assertTrue(jsonEquals(json, "{\"x\":1,\"y\":2}"));
+            var parsed = JM.parse(new StringReader(json), Point.class);
+            assertEquals(point, parsed);
+        }
+
+        @Test
+        void testReaderToTypeRef() {
+            List<Point> points = List.of(new Point(1, 2), new Point(100, 200));
+            var json = JM.stringify(points);
+            assertTrue(jsonEquals(json, """
+                    [
+                        { "x": 1,   "y": 2 },
+                        { "x": 100, "y": 200 }
+                    ]
+                    """));
+            List<Point> parsed = JM.parse(new StringReader(json), new TypeRef<List<Point>>() {
+            });
+            assertIterableEquals(points, parsed);
+        }
+
+        @Test
+        void testStringToTypeRef() {
             List<Point> points = List.of(new Point(1, 2), new Point(100, 200));
             var json = JM.stringify(points);
             assertTrue(jsonEquals(json, """
@@ -37,7 +62,7 @@ class DefaultObjectMapperTests {
         }
 
         @Test
-        void test() {
+        void testStringToClass() {
             var obj = StringifyAndParseIntros.builder()
                     .forPojo(Pojo.builder()
                             .sp((short) 3)
