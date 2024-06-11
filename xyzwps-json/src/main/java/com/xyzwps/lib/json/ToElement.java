@@ -5,8 +5,7 @@ import com.xyzwps.lib.json.element.*;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 public final class ToElement {
@@ -65,10 +64,32 @@ public final class ToElement {
             return JsonNull.INSTANCE;
         }
 
+        // TODO: 支持接口
         ToElementConverter converter = this.getToElementConverter(object.getClass());
         if (converter != null) {
             return converter.convert(object);
         }
+
+        // region handle interfaces
+        var interfaces = getInterfaces(object.getClass());
+        for (var i : interfaces) {
+            converter = this.getToElementConverter(i);
+            if (converter != null) {
+                return converter.convert(object);
+            }
+        }
+        // endregion
+
+        // region handle super class
+        var superClass = object.getClass().getSuperclass();
+        while (superClass != Object.class) {
+            converter = this.getToElementConverter(superClass);
+            if (converter != null) {
+                return converter.convert(object);
+            }
+            superClass = superClass.getSuperclass();
+        }
+        // endregion
 
         if (object.getClass().isEnum()) {
             return new JsonString(((Enum<?>) object).name());
@@ -161,5 +182,33 @@ public final class ToElement {
         var jo = new JsonObject();
         map.forEach((key, value) -> jo.put(toKey(key), toElement(value)));
         return jo;
+    }
+
+    private static Class<?>[] getInterfaces(Class<?> c) {
+        var duplicateSet = new HashSet<Class<?>>();
+        var queue = new LinkedList<Class<?>>();
+
+        var current = c;
+        while (current != Object.class) {
+            getInterfaces(current, duplicateSet, queue);
+            current = current.getSuperclass();
+        }
+
+        return duplicateSet.toArray(new Class<?>[0]);
+    }
+
+    private static void getInterfaces(Class<?> c, Set<Class<?>> duplicateSet, LinkedList<Class<?>> queue) {
+        var current = c;
+        while (current != null) {
+            var itfs = c.getInterfaces();
+            for (var itf : itfs) {
+                if (duplicateSet.contains(itf)) continue;
+
+                duplicateSet.add(itf);
+                queue.add(itf);
+            }
+
+            current = queue.poll();
+        }
     }
 }

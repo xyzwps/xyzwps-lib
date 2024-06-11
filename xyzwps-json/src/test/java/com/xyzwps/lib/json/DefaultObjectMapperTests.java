@@ -2,6 +2,8 @@ package com.xyzwps.lib.json;
 
 import com.xyzwps.lib.bedrock.lang.Equals;
 import com.xyzwps.lib.bedrock.lang.TypeRef;
+import com.xyzwps.lib.json.element.JsonObject;
+import com.xyzwps.lib.json.element.JsonString;
 import lombok.*;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -9,18 +11,124 @@ import org.junit.jupiter.api.Test;
 import java.io.StringReader;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.BiConsumer;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static com.xyzwps.lib.json.JsonUtils.*;
 
 class DefaultObjectMapperTests {
 
-    static final JsonMapper JM = new JsonMapper();
+    @Nested
+    class StringifyForSuperConverter {
+
+        @Test
+        void testStringifyByInterfaceConverter() {
+            var jm = new JsonMapper();
+            Attributes attr = new SimpleAttributes();
+            attr.put("key", "value");
+
+            var json = jm.stringify(attr);
+            assertTrue(jsonEquals(json, "{}"));
+
+            jm.addToElementConverter(Attributes.class, (Attributes a) -> {
+                var jo = new JsonObject();
+                a.forEach(jo::put);
+                return jo;
+            });
+
+            var json2 = jm.stringify(attr);
+            assertFalse(jsonEquals(json2, "{}"));
+            assertTrue(jsonEquals(json2, "{\"key\":\"value\"}"));
+
+            jm.addToElementConverter(SimpleAttributes.class, (Attributes a) -> {
+                var sb = new StringBuilder();
+                a.forEach((k, v) -> sb.append(k).append(":").append(v).append(","));
+                return new JsonString(sb.toString());
+            });
+
+            var json3 = jm.stringify(attr);
+            assertFalse(jsonEquals(json3, "{}"));
+            assertFalse(jsonEquals(json3, "{\"key\":\"value\"}"));
+            assertTrue(jsonEquals(json3, "\"key:value,\""));
+        }
+
+        @Test
+        void testStringifyBySuperConverter() {
+            var jm = new JsonMapper();
+            Attributes attr = new SimpleAttributes();
+            attr.put("key", "value");
+
+            var json = jm.stringify(attr);
+            assertTrue(jsonEquals(json, "{}"));
+
+            jm.addToElementConverter(AbstractAttributes.class, (AbstractAttributes a) -> {
+                var jo = new JsonObject();
+                a.forEach(jo::put);
+                return jo;
+            });
+
+            var json2 = jm.stringify(attr);
+            assertFalse(jsonEquals(json2, "{}"));
+            assertTrue(jsonEquals(json2, "{\"key\":\"value\"}"));
+
+            jm.addToElementConverter(SimpleAttributes.class, (Attributes a) -> {
+                var sb = new StringBuilder();
+                a.forEach((k, v) -> sb.append(k).append(":").append(v).append(","));
+                return new JsonString(sb.toString());
+            });
+
+            var json3 = jm.stringify(attr);
+            assertFalse(jsonEquals(json3, "{}"));
+            assertFalse(jsonEquals(json3, "{\"key\":\"value\"}"));
+            assertTrue(jsonEquals(json3, "\"key:value,\""));
+        }
+
+
+        public interface Attributes {
+            Object get(String name);
+
+            void put(String name, String value);
+
+            void forEach(BiConsumer<String, String> action);
+        }
+
+        public static class SimpleAttributes extends AbstractAttributes {
+        }
+
+
+        public static abstract class AbstractAttributes implements Attributes {
+            private final Map<String, String> map;
+
+            public AbstractAttributes() {
+                this.map = new HashMap<>();
+            }
+
+            @Override
+            public Object get(String name) {
+                return map.get(name);
+            }
+
+            @Override
+            public void put(String name, String value) {
+                map.put(name, value);
+            }
+
+            @Override
+            public void forEach(BiConsumer<String, String> action) {
+                map.forEach(action);
+            }
+        }
+
+    }
+
 
     @Nested
     class StringifyAndParseTests {
+
+        static final JsonMapper JM = new JsonMapper();
 
         @Test
         void testReaderToClass() {
