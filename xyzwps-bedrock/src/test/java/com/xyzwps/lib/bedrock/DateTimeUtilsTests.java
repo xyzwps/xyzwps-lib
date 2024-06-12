@@ -16,6 +16,15 @@ import static com.xyzwps.lib.bedrock.DateTimeUtils.*;
 class DateTimeUtilsTests {
 
     @Nested
+    class RFC1123Tests {
+        @Test
+        void testInstant() {
+            var instant = Instant.ofEpochMilli(1614585802023L);
+            assertEquals("Mon, 1 Mar 2021 08:03:22 GMT", RFC1123.instantToString(instant));
+        }
+    }
+
+    @Nested
     class ISOTests {
 
         @Test

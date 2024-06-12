@@ -16,6 +16,20 @@ import java.util.regex.Pattern;
 public final class DateTimeUtils {
 
     /**
+     * A utility class for RFC 1123 date and time.
+     */
+    public static final class RFC1123 {
+
+        public static String instantToString(Instant instant) {
+            return instant.atZone(ZoneId.of("GMT")).format(DateTimeFormatter.RFC_1123_DATE_TIME);
+        }
+
+        private RFC1123() throws IllegalAccessException {
+            throw new IllegalAccessException("??");
+        }
+    }
+
+    /**
      * A utility class for ISO 8061 date and time.
      *
      * @see <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/toISOString">MDN: <code>Date.prototype.toISOString()</code></a>
