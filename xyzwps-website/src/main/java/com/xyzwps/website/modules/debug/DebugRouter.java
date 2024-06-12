@@ -8,6 +8,8 @@ import com.xyzwps.website.common.JSON;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Consumer;
@@ -42,6 +44,8 @@ public class DebugRouter implements Consumer<NestRouter> {
                     map.put("searchParams", req.searchParams());
                     map.put("attributes", ctx.attributes());
                     map.put("pathVars", req.pathVariables());
+                    map.put("date", new Date());
+                    map.put("localDateTime", LocalDateTime.now());
 
                     resp.send(JSON.stringify(map, true).getBytes());
                 })

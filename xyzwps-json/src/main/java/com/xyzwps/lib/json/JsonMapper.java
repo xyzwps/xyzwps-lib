@@ -7,6 +7,7 @@ import com.xyzwps.lib.json.util.CharGenerator;
 
 import java.io.Reader;
 import java.util.Objects;
+import java.util.function.Consumer;
 
 public final class JsonMapper {
 
@@ -20,6 +21,8 @@ public final class JsonMapper {
         this.elementParser = new SimpleParser();
         this.toElement = ToElement.createDefault();
         this.fromElement = FromElement.createDefault();
+
+        // TODO: 支持日期时间
     }
 
     public String stringify(Object object) {
@@ -68,6 +71,10 @@ public final class JsonMapper {
         }
         var element = elementParser.parse(CharGenerator.from(str));
         return fromElement.fromElement(element, type.type);
+    }
+
+    public void configure(Consumer<JsonMapper> consumer) {
+        consumer.accept(this);
     }
 
     public void addToElementConverter(Class<?> type, ToElementConverter<?> converter) {

@@ -1,6 +1,7 @@
 package com.xyzwps.website.common;
 
 import com.xyzwps.lib.express.jackson.JsonConfigurer;
+import com.xyzwps.lib.json.DateTimeConfigurer;
 import com.xyzwps.lib.json.JsonMapper;
 
 public final class JSON {
@@ -8,7 +9,8 @@ public final class JSON {
     public static final JsonMapper JM = new JsonMapper();
 
     static {
-        new JsonConfigurer().accept(JM);
+        JM.configure(new JsonConfigurer());
+        JM.configure(new DateTimeConfigurer());
     }
 
     public static String stringify(Object obj) {

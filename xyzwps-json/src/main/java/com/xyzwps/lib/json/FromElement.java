@@ -52,8 +52,6 @@ public final class FromElement {
         return f;
     }
 
-    // TODO: 支持日期时间
-
     public void addFromElementConverter(Class<?> type, FromElementConverter<?, ?> converter) {
         this.fromElementTable.put(Objects.requireNonNull(type), Objects.requireNonNull(converter));
     }
