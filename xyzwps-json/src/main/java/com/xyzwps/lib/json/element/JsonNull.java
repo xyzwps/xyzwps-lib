@@ -5,11 +5,11 @@ public record JsonNull()  implements JsonElement {
 
     @Override
     public String toString() {
-        return "null";
+        return this.acceptVisitor(ToJsonStringVisitor.INSTANCE);
     }
 
     @Override
-    public Object toJavaObject() {
-        return null;
+    public <R> R acceptVisitor(JsonElementVisitor<R> visitor) {
+        return visitor.visit(this);
     }
 }

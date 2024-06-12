@@ -26,6 +26,14 @@ public final class JsonMapper {
         return toElement.toElement(object).toString();
     }
 
+    public String stringify(Object object, boolean pretty) {
+        if (pretty) {
+            return toElement.toElement(object).toPrettyString();
+        } else {
+            return this.stringify(object);
+        }
+    }
+
     public <T> T parse(Reader reader, Class<T> type) {
         Objects.requireNonNull(type);
         if (reader == null) {

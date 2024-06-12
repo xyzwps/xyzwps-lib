@@ -6,11 +6,11 @@ public record JsonDecimal(BigDecimal value) implements JsonElement {
 
     @Override
     public String toString() {
-        return value.toString();
+        return this.acceptVisitor(ToJsonStringVisitor.INSTANCE);
     }
 
     @Override
-    public Object toJavaObject() {
-        return value;
+    public <R> R acceptVisitor(JsonElementVisitor<R> visitor) {
+        return visitor.visit(this);
     }
 }

@@ -4,11 +4,11 @@ public record JsonString(String value) implements JsonElement {
 
     @Override
     public String toString() {
-        return '"' + value + '"'; // TODO: 处理转义字符
+        return this.acceptVisitor(ToJsonStringVisitor.INSTANCE);
     }
 
     @Override
-    public Object toJavaObject() {
-        return value;
+    public <R> R acceptVisitor(JsonElementVisitor<R> visitor) {
+        return visitor.visit(this);
     }
 }

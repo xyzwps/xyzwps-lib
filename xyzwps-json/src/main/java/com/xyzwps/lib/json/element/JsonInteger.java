@@ -4,13 +4,17 @@ import java.math.BigInteger;
 
 public record JsonInteger(BigInteger value) implements JsonElement {
 
-    @Override
-    public String toString() {
-        return value.toString();
+    public JsonInteger(int value) {
+        this(BigInteger.valueOf(value));
     }
 
     @Override
-    public Object toJavaObject() {
-        return value;
+    public String toString() {
+        return this.acceptVisitor(ToJsonStringVisitor.INSTANCE);
+    }
+
+    @Override
+    public <R> R acceptVisitor(JsonElementVisitor<R> visitor) {
+        return visitor.visit(this);
     }
 }

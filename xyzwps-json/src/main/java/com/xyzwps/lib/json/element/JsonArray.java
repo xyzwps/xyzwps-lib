@@ -3,27 +3,18 @@ package com.xyzwps.lib.json.element;
 import com.xyzwps.lib.bedrock.lang.Equals;
 
 import java.util.ArrayList;
-import java.util.List;
-import java.util.function.Consumer;
 import java.util.function.ObjIntConsumer;
 
-public final class JsonArray implements JsonElement {
-    private final ArrayList<JsonElement> elements = new ArrayList<>();
+public final class JsonArray extends ArrayList<JsonElement> implements JsonElement {
 
-    public void add(JsonElement element) {
-        this.elements.add(element);
+    @Override
+    public <R> R acceptVisitor(JsonElementVisitor<R> visitor) {
+        return visitor.visit(this);
     }
 
     @Override
     public String toString() {
-        var sb = new StringBuilder().append('[');
-        if (!elements.isEmpty()) {
-            sb.append(elements.getFirst().toString());
-        }
-        for (int i = 1; i < elements.size(); i++) {
-            sb.append(',').append(elements.get(i).toString());
-        }
-        return sb.append(']').toString();
+        return this.acceptVisitor(ToJsonStringVisitor.INSTANCE);
     }
 
     @Override
@@ -31,35 +22,18 @@ public final class JsonArray implements JsonElement {
         if (obj == null) return false;
         if (obj == this) return true;
         if (obj instanceof JsonArray that) {
-            return Equals.listItemEquals(this.elements, that.elements);
+            return Equals.listItemEquals(this, that);
         }
         return false;
     }
 
-    public void forEach(Consumer<JsonElement> consumer) {
-        this.elements.forEach(consumer);
-    }
-
     public void forEach(ObjIntConsumer<JsonElement> consumer) {
-        for (int i = 0; i < elements.size(); i++) {
-            consumer.accept(elements.get(i), i);
+        for (int i = 0; i < this.size(); i++) {
+            consumer.accept(this.get(i), i);
         }
-    }
-
-    @Override
-    public Object toJavaObject() {
-        return toList();
-    }
-
-    public List<Object> toList() {
-        var list = new ArrayList<>();
-        for (var element : elements) {
-            list.add(element.toJavaObject());
-        }
-        return list;
     }
 
     public int length() {
-        return elements.size();
+        return this.size();
     }
 }

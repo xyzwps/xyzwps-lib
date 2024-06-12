@@ -16,7 +16,7 @@ public final class JSON {
     }
 
     public static String stringify(Object obj, boolean pretty) {
-        return JM.stringify(obj); // TODO: pretty print
+        return JM.stringify(obj, pretty);
     }
 
     private JSON() throws IllegalAccessException {

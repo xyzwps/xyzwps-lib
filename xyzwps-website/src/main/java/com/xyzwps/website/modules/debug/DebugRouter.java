@@ -29,7 +29,7 @@ public class DebugRouter implements Consumer<NestRouter> {
                     var req = ctx.request();
                     var resp = ctx.response();
 
-                    ctx.attribute("haha", "haha");
+                    ctx.attribute("haha", "ha\nha");
 
                     resp.ok();
                     resp.headers().set(HttpHeaders.CONTENT_TYPE, "application/json");

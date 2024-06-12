@@ -5,8 +5,11 @@ public enum JsonBoolean implements JsonElement {
 
     public final boolean value;
 
+    public final String stringValue;
+
     JsonBoolean(boolean value) {
         this.value = value;
+        this.stringValue = value ? "true" : "false";
     }
 
     public static JsonBoolean of(boolean b) {
@@ -15,11 +18,12 @@ public enum JsonBoolean implements JsonElement {
 
     @Override
     public String toString() {
-        return this.name().toLowerCase();
+        return this.acceptVisitor(ToJsonStringVisitor.INSTANCE);
     }
 
     @Override
-    public Object toJavaObject() {
-        return this.value ? Boolean.TRUE : Boolean.FALSE;
+    public <R> R acceptVisitor(JsonElementVisitor<R> visitor) {
+        return visitor.visit(this);
     }
+
 }
