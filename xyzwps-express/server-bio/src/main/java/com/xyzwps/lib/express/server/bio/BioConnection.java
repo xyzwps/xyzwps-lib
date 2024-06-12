@@ -102,7 +102,7 @@ public class BioConnection implements Runnable {
         var contentLength = headers.contentLength();
         InputStream requestBody = contentLength == 0
                 ? InputStream.nullInputStream()
-                : new ContentLengthInputStream(in, 2048, contentLength);
+                : new ContentLengthInputStream(in, contentLength);
 
         var request = new BioHttpRequest(startLine.method(), startLine.toURI(), startLine.protocol(), headers, requestBody);
         var response = new BioHttpResponse(out, request.protocol());
