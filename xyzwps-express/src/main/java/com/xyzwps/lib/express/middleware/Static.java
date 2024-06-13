@@ -3,6 +3,7 @@ package com.xyzwps.lib.express.middleware;
 import com.xyzwps.lib.express.HttpHeaders;
 import com.xyzwps.lib.express.HttpMethod;
 import com.xyzwps.lib.express.HttpMiddleware;
+import com.xyzwps.lib.express.middleware.router.HPath;
 import lib.jshttp.mimedb.MimeDb;
 
 import java.io.BufferedInputStream;
@@ -12,13 +13,29 @@ import java.util.Objects;
 
 public final class Static {
 
-    private final String root;
+    private final String rootDir;
+    private final String pathPrefix;
 
-    // TODO: 支持 prefix
     // TODO: cache
 
-    public Static(String root) {
-        this.root = Objects.requireNonNull(root);
+    public Static(String pathPrefix, String rootDir) {
+        this.rootDir = Objects.requireNonNull(rootDir);
+
+        if (pathPrefix == null || pathPrefix.isEmpty()) {
+            this.pathPrefix = "/";
+            return;
+        }
+
+        var prefixHPath = HPath.from(pathPrefix);
+        if (prefixHPath.isPlain()) {
+            this.pathPrefix = prefixHPath.toString() + '/';
+        } else {
+            throw new IllegalArgumentException("pathPrefix must be plain path");
+        }
+    }
+
+    public Static(String rootDir) {
+        this(null, rootDir);
     }
 
     public HttpMiddleware serve() {
@@ -32,7 +49,14 @@ public final class Static {
             }
 
             var path = req.path();
-            var lastPart = path.substring(path.lastIndexOf('/') + 1);
+            if (!path.startsWith(pathPrefix)) {
+                ctx.next();
+                return;
+            }
+
+            var relativeFilePath = '/' + path.substring(pathPrefix.length());
+
+            var lastPart = relativeFilePath.substring(relativeFilePath.lastIndexOf('/') + 1);
             var ext = lastPart.substring(lastPart.lastIndexOf('.') + 1);
 
             var $matchedMime = MimeDb.findFirstByExtension(ext);
@@ -42,7 +66,7 @@ public final class Static {
             }
             var mime = $matchedMime.get();
 
-            var filePath = Path.of(root, req.path());
+            var filePath = Path.of(rootDir, relativeFilePath);
             if (!Files.exists(filePath)) {
                 ctx.next();
                 return;

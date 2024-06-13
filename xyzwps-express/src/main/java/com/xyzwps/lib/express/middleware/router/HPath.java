@@ -34,6 +34,7 @@ public final class HPath {
 
     private static final HPath ROOT = new HPath(EMPTY_SEGMENT_ARR);
 
+
     public static HPath from(String path) {
         if ($.isEmpty(path)) {
             return ROOT;
@@ -82,6 +83,11 @@ public final class HPath {
             }
         }
         return list;
+    }
+
+
+    public boolean isPlain() {
+        return segments.length == 0 || Arrays.stream(segments).allMatch(PathSegment.PlainSegment.class::isInstance);
     }
 
 

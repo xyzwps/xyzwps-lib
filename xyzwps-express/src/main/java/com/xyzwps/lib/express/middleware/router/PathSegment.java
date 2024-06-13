@@ -17,7 +17,6 @@ public sealed interface PathSegment {
                 if (!VariableSegment.VAR_PATTERN.matcher(variableName).matches()) {
                     throw new IllegalArgumentException("Invalid path variable name '" + variableName + "'");
                 }
-                // TODO: 记录 pathVar
                 return new VariableSegment(variableName); // TODO: 支持正则表达式
             } else {
                 throw new IllegalArgumentException("Invalid path variable segment '" + segment + "'");
