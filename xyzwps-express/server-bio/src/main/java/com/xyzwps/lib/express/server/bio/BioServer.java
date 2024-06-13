@@ -13,19 +13,24 @@ public final class BioServer implements Server {
     public void start(ServerConfig config) {
         Args.notNull(config, "ServerConfig cannot be null");
 
-        var serverSocket = createServerSocket(config.port);
-        while (true) {
-            try {
-                var socket = serverSocket.accept();
-                this.handleSocket(socket, config.middleware);
-            } catch (IOException e) {
-                Log.errorf(e, "Socket handling failed with uncaught error");
-                throw new UncheckedIOException("Accept server socket failed", e);
+        try (var serverSocket = createServerSocket(config.port)) {
+            //noinspection InfiniteLoopStatement
+            while (true) {
+                try {
+                    var socket = serverSocket.accept();
+                    this.handleSocket(socket, config.middleware);
+                } catch (IOException e) {
+                    Log.errorf(e, "Socket handling failed with uncaught error");
+                    throw new UncheckedIOException("Accept server socket failed", e);
+                }
             }
+        } catch (IOException e) {
+            Log.errorf(e, "Server socket closed");
+            throw new UncheckedIOException("Server socket closed", e);
         }
     }
 
-    private static ServerSocket createServerSocket(int port) {
+    private static ServerSocket createServerSocket(int port) throws IOException {
         try {
             var server = new ServerSocket();
             server.setReuseAddress(true);
@@ -33,7 +38,7 @@ public final class BioServer implements Server {
             return server;
         } catch (IOException e) {
             Log.errorf(e, "Create server socket failed");
-            throw new UncheckedIOException("Create server socket failed", e);
+            throw e;
         }
     }
 

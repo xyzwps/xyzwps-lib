@@ -21,8 +21,6 @@ public final class JsonMapper {
         this.elementParser = new SimpleParser();
         this.toElement = ToElement.createDefault();
         this.fromElement = FromElement.createDefault();
-
-        // TODO: 支持日期时间
     }
 
     public String stringify(Object object) {

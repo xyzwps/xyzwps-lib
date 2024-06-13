@@ -7,7 +7,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
-import static com.xyzwps.lib.beans.Utils.forEach;
+import static com.xyzwps.lib.bedrock.ArrayUtils.forEach;
 
 record ClassAnalyzer<T>(Class<T> beanClass) implements BeanInfoAnalyser<T> {
 

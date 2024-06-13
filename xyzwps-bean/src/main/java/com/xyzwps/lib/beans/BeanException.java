@@ -1,6 +1,9 @@
 package com.xyzwps.lib.beans;
 
-public class BeanException extends RuntimeException {
+/**
+ * Exception for beans.
+ */
+public final class BeanException extends RuntimeException {
 
     BeanException(String message) {
         super(message);

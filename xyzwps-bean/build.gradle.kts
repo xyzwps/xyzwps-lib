@@ -1,6 +1,6 @@
 plugins {
     java
-    groovy
+    `java-library`
 }
 
 group = "com.xyzwps.lib"
