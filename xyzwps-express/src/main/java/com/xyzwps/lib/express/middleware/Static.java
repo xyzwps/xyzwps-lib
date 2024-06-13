@@ -1,8 +1,6 @@
 package com.xyzwps.lib.express.middleware;
 
-import com.xyzwps.lib.express.HttpHeaders;
-import com.xyzwps.lib.express.HttpMethod;
-import com.xyzwps.lib.express.HttpMiddleware;
+import com.xyzwps.lib.express.*;
 import com.xyzwps.lib.express.middleware.router.HPath;
 import lib.jshttp.mimedb.MimeDb;
 
@@ -75,13 +73,15 @@ public final class Static {
             try {
                 var inputStream = Files.newInputStream(filePath);
                 var buffer = new BufferedInputStream(inputStream);
-                var allbytes = buffer.readAllBytes(); // TODO: 优化 getAllBBytes
+                var allBytes = buffer.readAllBytes(); // TODO: 优化 getAllBBytes
                 resp.ok();
                 resp.headers().set(HttpHeaders.CONTENT_TYPE, mime.essence());
-                resp.send(allbytes);
+                resp.send(allBytes);
             } catch (Exception e) {
-                // TODO: 处理错误
-                ctx.next();
+                Log.errorf(e, "Static middleware error");
+                resp.status(HttpStatus.INTERNAL_SERVER_ERROR);
+                resp.headers().set(HttpHeaders.CONTENT_TYPE, "text/plain");
+                resp.send("Internal Server Error".getBytes());
             }
         };
     }
