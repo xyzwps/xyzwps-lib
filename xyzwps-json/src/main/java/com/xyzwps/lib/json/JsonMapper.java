@@ -29,7 +29,7 @@ public final class JsonMapper {
 
     public String stringify(Object object, boolean pretty) {
         if (pretty) {
-            return toElement.toElement(object).toPrettyString();
+            return toElement.toElement(object).stringify();
         } else {
             return this.stringify(object);
         }

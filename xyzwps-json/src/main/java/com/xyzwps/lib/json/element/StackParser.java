@@ -53,7 +53,7 @@ public class StackParser implements ElementParser {
     }
 
 
-    sealed interface ParserResult {
+    public sealed interface ParserResult {
 
         static FullResult full(JsonElement element) {
             return new FullResult(element);
@@ -70,7 +70,7 @@ public class StackParser implements ElementParser {
         }
     }
 
-    sealed interface ValueParser {
+    public sealed interface ValueParser {
 
         ParserResult parse(Tokenizer tokenizer);
 

@@ -9,24 +9,24 @@ import static org.junit.jupiter.api.Assertions.*;
 class JsonElementTests {
 
     @Test
-    void testToPrettyString() {
+    void testStringify() {
         var ji = new JsonInteger(12);
-        assertEquals("12", ji.toPrettyString());
+        assertEquals("12", ji.stringify(true));
 
         var jb = JsonBoolean.TRUE;
-        assertEquals("true", jb.toPrettyString());
+        assertEquals("true", jb.stringify(true));
 
         var jd = new JsonDecimal(new BigDecimal("12.34"));
-        assertEquals("12.34", jd.toPrettyString());
+        assertEquals("12.34", jd.stringify(true));
 
         var jn = JsonNull.INSTANCE;
-        assertEquals("null", jn.toPrettyString());
+        assertEquals("null", jn.stringify(true));
 
         var js = new JsonString("a\nbc");
-        assertEquals("\"a\\nbc\"", js.toPrettyString());
+        assertEquals("\"a\\nbc\"", js.stringify(true));
 
         var ja = new JsonArray();
-        assertEquals("[]", ja.toPrettyString());
+        assertEquals("[]", ja.stringify(true));
 
         ja.add(ji);
         ja.add(jb);
@@ -34,7 +34,7 @@ class JsonElementTests {
                     [
                         12,
                         true
-                    ]""", ja.toPrettyString());
+                    ]""", ja.stringify(true));
 
         var ja2 = new JsonArray();
         ja2.add(js);
@@ -46,10 +46,10 @@ class JsonElementTests {
                         [
                             "a\\nbc"
                         ]
-                    ]""", ja.toPrettyString());
+                    ]""", ja.stringify(true));
 
         var jo = new JsonObject();
-        assertEquals("{}", jo.toPrettyString());
+        assertEquals("{}", jo.stringify(true));
 
         jo.put("ji", ji);
         jo.put("jb", jb);
@@ -57,7 +57,7 @@ class JsonElementTests {
                     {
                         "jb": true,
                         "ji": 12
-                    }""", jo.toPrettyString());
+                    }""", jo.stringify(true));
 
         var jo2 = new JsonObject();
         jo2.put("a\nbc", js);
@@ -69,7 +69,7 @@ class JsonElementTests {
                         "jo2": {
                             "a\\nbc": "a\\nbc"
                         }
-                    }""", jo.toPrettyString());
+                    }""", jo.stringify(true));
 
         ja.add(jo2);
         assertEquals("""
@@ -82,7 +82,7 @@ class JsonElementTests {
                         {
                             "a\\nbc": "a\\nbc"
                         }
-                    ]""", ja.toPrettyString());
+                    ]""", ja.stringify(true));
 
     }
 }

@@ -3,15 +3,23 @@ package com.xyzwps.lib.json.element;
 public sealed interface JsonElement
         permits JsonArray, JsonBoolean, JsonDecimal, JsonInteger, JsonNull, JsonObject, JsonString {
 
-    <R> R acceptVisitor(JsonElementVisitor<R> visitor);
+    <R> R visit(JsonElementVisitor<R> visitor);
+
+    <R, C> R visit(C ctx, JsonElementVisitor2<R, C> visitor);
 
     default Object toJavaObject() {
-        return this.acceptVisitor(ToJavaObjectVisitor.INSTANCE);
+        return this.visit(ToJavaObjectVisitor.INSTANCE);
     }
 
-    default String toPrettyString() {
-        return this.acceptVisitor(new ToPrettyStringVisitor()).toString();
+    default String stringify(boolean pretty) {
+        if (pretty) {
+            return this.visit(0, new ToPrettyStringVisitor()).toString();
+        } else {
+            return this.visit(ToJsonStringVisitor.INSTANCE);
+        }
     }
 
-    String toString();
+    default String stringify() {
+        return this.stringify(false);
+    }
 }
