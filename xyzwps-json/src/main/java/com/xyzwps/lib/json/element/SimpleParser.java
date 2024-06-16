@@ -8,8 +8,6 @@ import java.util.Objects;
 
 /**
  * Simple recursive parser.
- *
- * TODO: 限制栈深
  */
 public class SimpleParser implements ElementParser {
 

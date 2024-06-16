@@ -13,9 +13,9 @@ public sealed interface JsonElement
 
     default String stringify(boolean pretty) {
         if (pretty) {
-            return this.visit(0, new ToPrettyStringVisitor()).toString();
+            return this.visit(0, new PrettyStringifierVisitor()).toString();
         } else {
-            return this.visit(ToJsonStringVisitor.INSTANCE);
+            return this.visit(CompactStringifierVisitor.INSTANCE);
         }
     }
 

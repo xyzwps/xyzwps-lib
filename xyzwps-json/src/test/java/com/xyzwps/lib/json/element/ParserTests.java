@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.function.Consumer;
 
-class SimpleParserTests {
+class ParserTests {
 
     @Test
     void simpleParserDemo() {

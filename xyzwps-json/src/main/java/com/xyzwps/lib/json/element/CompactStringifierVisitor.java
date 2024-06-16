@@ -1,11 +1,11 @@
 package com.xyzwps.lib.json.element;
 
-public final class ToJsonStringVisitor implements JsonElementVisitor<String> {
+public final class CompactStringifierVisitor implements JsonElementVisitor<String> {
 
-    private ToJsonStringVisitor() {
+    private CompactStringifierVisitor() {
     }
 
-    public static final ToJsonStringVisitor INSTANCE = new ToJsonStringVisitor();
+    public static final CompactStringifierVisitor INSTANCE = new CompactStringifierVisitor();
 
     @Override
     public String visit(JsonArray ja) {

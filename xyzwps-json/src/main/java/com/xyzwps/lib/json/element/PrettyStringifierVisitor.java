@@ -1,8 +1,8 @@
 package com.xyzwps.lib.json.element;
 
-import static com.xyzwps.lib.json.element.ToJsonStringVisitor.appendToHandleEscapeChars;
+import static com.xyzwps.lib.json.element.CompactStringifierVisitor.appendToHandleEscapeChars;
 
-public final class ToPrettyStringVisitor implements JsonElementVisitor2<StringBuilder, Integer> {
+public final class PrettyStringifierVisitor implements JsonElementVisitor2<StringBuilder, Integer> {
 
     private static final String INDENT = "    ";
 

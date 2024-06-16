@@ -8,7 +8,7 @@ import java.util.function.Consumer;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class VeryDeepJsonObjectTests {
+class ParserVeryDeepTests {
 
     static final String VERY_DEEP_JSON;
 
