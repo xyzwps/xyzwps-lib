@@ -49,7 +49,6 @@ public final class PrettyStringifierStacker {
 
     private sealed interface Frame {
 
-
         FrameState write(StringBuilder sb);
 
         record AtomFrame(JsonElement element) implements Frame {
