@@ -20,7 +20,7 @@ public final class JsonMapper {
     public JsonMapper() {
         this.elementParser = new SimpleParser();
         this.toElement = ToElement.createDefault();
-        this.fromElement = FromElement.createDefault();
+        this.fromElement = FromElementVisitor.createDefault();
     }
 
     public String stringify(Object object) {
