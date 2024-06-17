@@ -53,7 +53,7 @@ public class SimpleTokenizer implements Tokenizer {
 
             @Override
             public JsonToken pick() {
-                return new CommaToken();
+                return CommaToken.INSTANCE;
             }
         }
 
@@ -63,7 +63,7 @@ public class SimpleTokenizer implements Tokenizer {
 
             @Override
             public JsonToken pick() {
-                return new SemiToken();
+                return SemiToken.INSTANCE;
             }
         }
 
@@ -73,7 +73,7 @@ public class SimpleTokenizer implements Tokenizer {
 
             @Override
             public JsonToken pick() {
-                return new ArrayOpenToken();
+                return ArrayOpenToken.INSTANCE;
             }
         }
 
@@ -83,7 +83,7 @@ public class SimpleTokenizer implements Tokenizer {
 
             @Override
             public JsonToken pick() {
-                return new ArrayCloseToken();
+                return ArrayCloseToken.INSTANCE;
             }
         }
 
@@ -93,7 +93,7 @@ public class SimpleTokenizer implements Tokenizer {
 
             @Override
             public JsonToken pick() {
-                return new ObjectOpenToken();
+                return ObjectOpenToken.INSTANCE;
             }
         }
 
@@ -103,7 +103,7 @@ public class SimpleTokenizer implements Tokenizer {
 
             @Override
             public JsonToken pick() {
-                return new ObjectCloseToken();
+                return ObjectCloseToken.INSTANCE;
             }
         }
 
@@ -289,7 +289,7 @@ public class SimpleTokenizer implements Tokenizer {
             private static final char[] word = "true".toCharArray();
 
             public TruePicker(CharGenerator chars) {
-                super(chars, word, new BooleanToken(true));
+                super(chars, word, BooleanToken.TRUE);
             }
         }
 
@@ -297,7 +297,7 @@ public class SimpleTokenizer implements Tokenizer {
             private static final char[] word = "false".toCharArray();
 
             public FalsePicker(CharGenerator chars) {
-                super(chars, word, new BooleanToken(false));
+                super(chars, word, BooleanToken.FALSE);
             }
         }
 
@@ -305,7 +305,7 @@ public class SimpleTokenizer implements Tokenizer {
             private static final char[] word = "null".toCharArray();
 
             public NullPicker(CharGenerator chars) {
-                super(chars, word, new NullToken());
+                super(chars, word, NullToken.INSTANCE);
             }
         }
 

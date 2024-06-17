@@ -1,4 +1,5 @@
 package com.xyzwps.lib.json.token;
 
-public record CommaToken() implements JsonToken {
+public enum CommaToken implements JsonToken {
+    INSTANCE
 }

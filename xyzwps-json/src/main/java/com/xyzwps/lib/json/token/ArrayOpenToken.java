@@ -1,4 +1,5 @@
 package com.xyzwps.lib.json.token;
 
-public record ArrayOpenToken() implements JsonToken {
+public enum ArrayOpenToken implements JsonToken {
+    INSTANCE
 }

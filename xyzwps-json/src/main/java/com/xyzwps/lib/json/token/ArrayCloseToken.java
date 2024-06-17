@@ -1,4 +1,5 @@
 package com.xyzwps.lib.json.token;
 
-public record ArrayCloseToken() implements JsonToken {
+public enum ArrayCloseToken implements JsonToken {
+    INSTANCE
 }

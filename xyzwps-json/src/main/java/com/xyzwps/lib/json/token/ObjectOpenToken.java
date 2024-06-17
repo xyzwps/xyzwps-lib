@@ -1,4 +1,5 @@
 package com.xyzwps.lib.json.token;
 
-public record ObjectOpenToken() implements JsonToken {
+public enum ObjectOpenToken implements JsonToken {
+    INSTANCE
 }

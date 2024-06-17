@@ -1,4 +1,5 @@
 package com.xyzwps.lib.json.token;
 
-public record SemiToken() implements JsonToken {
+public enum SemiToken implements JsonToken {
+    INSTANCE
 }

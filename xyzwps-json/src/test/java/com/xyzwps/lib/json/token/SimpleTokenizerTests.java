@@ -24,7 +24,7 @@ class SimpleTokenizerTests {
         void ok() {
             List.of("true", " true", "true ", " true ").forEach(text -> {
                 var it = create(text);
-                assertEquals(it.nextToken(), new BooleanToken(true));
+                assertEquals(it.nextToken(), BooleanToken.TRUE);
                 assertNull(it.nextToken());
             });
         }
@@ -44,7 +44,7 @@ class SimpleTokenizerTests {
         void ok() {
             List.of("false", " false", "false ", " false ").forEach(text -> {
                 var it = create(text);
-                assertEquals(it.nextToken(), new BooleanToken(false));
+                assertEquals(it.nextToken(), BooleanToken.FALSE);
                 assertNull(it.nextToken());
             });
         }
@@ -64,7 +64,7 @@ class SimpleTokenizerTests {
         void ok() {
             List.of("null", " null", "null ", " null ").forEach(text -> {
                 var it = create(text);
-                assertEquals(it.nextToken(), new NullToken());
+                assertEquals(it.nextToken(), NullToken.INSTANCE);
                 assertNull(it.nextToken());
             });
         }
