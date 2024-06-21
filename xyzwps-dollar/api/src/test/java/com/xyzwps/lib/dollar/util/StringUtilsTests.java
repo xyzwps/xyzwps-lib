@@ -8,6 +8,16 @@ import static org.junit.jupiter.api.Assertions.*;
 class StringUtilsTests implements StringUtils {
 
     @Test
+    void testCamelCase() {
+        assertNull(camelCase(null));
+        assertEquals("", camelCase(""));
+        assertEquals("fooBar", camelCase("foo_bar"));
+        assertEquals("fooBar", camelCase("Foo Bar"));
+        assertEquals("fooBar", camelCase("--foo-bar--"));
+        assertEquals("fooBar", camelCase("__foo_Bar__"));
+    }
+
+    @Test
     void testIsEmpty() {
         assertTrue(isEmpty(null));
         assertTrue(isEmpty(""));
@@ -106,6 +116,16 @@ class StringUtilsTests implements StringUtils {
         assertEquals("abc+++", padStart("+++", 6, "abcd"));
 
         assertEquals("+++---***", padStart("+++---***", 6, "abcd"));
+    }
+
+    @Test
+    void testSnakeCase() {
+        assertNull(snakeCase(null));
+        assertEquals("", snakeCase(""));
+        assertEquals("foo_bar", snakeCase("fooBar"));
+        assertEquals("foo_bar", snakeCase("Foo Bar"));
+        assertEquals("foo_bar", snakeCase("--foo-bar--"));
+        assertEquals("foo_bar", snakeCase("__foo_Bar__"));
     }
 
 

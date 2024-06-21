@@ -6,6 +6,49 @@ package com.xyzwps.lib.dollar.util;
 public interface StringUtils {
 
     /**
+     * Converts a string to camel case. For example:
+     * <pre>
+     *     "foo_bar" -> "fooBar"
+     * </pre>
+     *
+     * @param str the string to convert
+     * @return the camel case string
+     */
+    default String camelCase(String str) {
+        if (str == null) {
+            return null;
+        }
+
+        var len = str.length();
+        if (len == 0) {
+            return "";
+        }
+
+        var sb = new StringBuilder();
+        boolean nextUpper = false;
+        for (var i = 0; i < len; i++) {
+            var c = str.charAt(i);
+            switch (c) {
+                case '_', '-', ' ' -> nextUpper = true;
+                default -> {
+                    if (nextUpper) {
+                        if (sb.isEmpty()) {
+                            sb.append(Character.toLowerCase(c));
+                        } else {
+                            sb.append(Character.toUpperCase(c));
+                        }
+                        nextUpper = false;
+                    } else {
+                        sb.append(Character.toLowerCase(c));
+                    }
+                }
+            }
+        }
+        return sb.toString();
+    }
+
+
+    /**
      * Check if a string is empty or not.
      *
      * @param string to be checked
@@ -118,6 +161,49 @@ public interface StringUtils {
         return sb.toString();
     }
 
+    /**
+     * Converts a string to snake case. For example:
+     * <pre>
+     *    "fooBar" ->  "foo_bar"
+     * </pre>
+     *
+     * @param str the string to convert
+     * @return the snake case string
+     */
+    default String snakeCase(String str) {
+        if (str == null) {
+            return null;
+        }
+
+        var len = str.length();
+        if (len == 0) {
+            return "";
+        }
+
+        var sb = new StringBuilder();
+        var shouldAppendUnderline = false;
+        for (var i = 0; i < len; i++) {
+            var c = str.charAt(i);
+            if (c == ' ' || c == '-' || c == '_') {
+                if (!shouldAppendUnderline && !sb.isEmpty()) {
+                    shouldAppendUnderline = true;
+                }
+                continue;
+            }
+            if (Character.isUpperCase(c)) {
+                if (!shouldAppendUnderline && !sb.isEmpty()) {
+                    shouldAppendUnderline = true;
+                }
+            }
+            if (shouldAppendUnderline) {
+                sb.append('_').append(Character.toLowerCase(c));
+                shouldAppendUnderline = false;
+            } else {
+                sb.append(Character.toLowerCase(c));
+            }
+        }
+        return sb.toString();
+    }
 
     /**
      * Take the substring made up of the first <code>n</code> characters.
