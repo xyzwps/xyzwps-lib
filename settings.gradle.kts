@@ -8,6 +8,8 @@ dependencyResolutionManagement {
             library("dagger", "com.google.dagger", "dagger").versionRef("dagger")
             library("dagger-compiler", "com.google.dagger", "dagger-compiler").versionRef("dagger")
 
+            library("h2", "com.h2database:h2:2.2.224")
+
             library("hocon", "com.typesafe:config:1.4.3")
 
             version("jackson", "2.17.0")
@@ -52,6 +54,7 @@ include(
     "xyzwps-express:server-commons",
     "xyzwps-express:server-undertow"
 )
+include("xyzwps-jdbc")
 include("xyzwps-json")
 include("xyzwps-log")
 include("xyzwps-website")

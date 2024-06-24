@@ -23,7 +23,9 @@ record RecordAnalyzer<T>(Class<T> beanClass) implements BeanInfoAnalyser<T> {
         var rcs = beanClass.getRecordComponents();
         Class<?>[] paramTypes = Arrays.stream(rcs).map(RecordComponent::getType).toArray(Class[]::new);
         try {
-            return beanClass.getConstructor(paramTypes);
+            var constructor = beanClass.getDeclaredConstructor(paramTypes);
+            constructor.setAccessible(true);
+            return constructor;
         } catch (NoSuchMethodException e) {
             throw new IllegalStateException("No corresponding constructor in record " + beanClass.getCanonicalName(), e);
         }

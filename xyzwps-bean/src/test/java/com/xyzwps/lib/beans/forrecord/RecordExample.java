@@ -19,7 +19,5 @@ public record RecordExample(
         /* 12 */ int[] intArr,
         /* 13 */ String[] strArr,
         /* 14 */ Holder<String>[] holderArr
-                 // TODO: 更复杂的反省
-                 // TODO: 多维数组
 ) {
 }

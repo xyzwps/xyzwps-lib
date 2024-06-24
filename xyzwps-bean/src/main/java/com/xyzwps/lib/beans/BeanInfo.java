@@ -42,6 +42,15 @@ public final class BeanInfo<T> {
     }
 
     /**
+     * Check if the bean is a record.
+     *
+     * @return true if the bean is a record, false otherwise.
+     */
+    public boolean isRecord() {
+        return isRecord;
+    }
+
+    /**
      * Get the properties of the bean.
      *
      * @return the properties of the bean.
