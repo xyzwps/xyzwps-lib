@@ -29,7 +29,7 @@ class PropertyInfoBuilder {
         Type propertyType = decidePropertyType();
         var getter = getMethod == null ? null : new ImplGetter(getMethod.method(), propertyName, beanClass);
         var setter = setMethod == null ? null : new ImplSetter(setMethod.method(), propertyName, beanClass);
-        return Optional.of(new ImplPropertyInfo(propertyName, propertyType,
+        return Optional.of(new ImplPropertyInfo(propertyName, propertyType, propertyField == null ? null : propertyField.field,
                 getter, setter, getMethod != null, setMethod != null, beanClass));
     }
 

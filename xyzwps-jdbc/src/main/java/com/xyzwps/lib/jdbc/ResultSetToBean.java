@@ -75,7 +75,9 @@ public final class ResultSetToBean {
             }
 
             var name = prop.name();
-            var column = $.snakeCase(name);
+            var columnAnno = prop.findAnnotation(anno -> anno.annotationType().equals(Column.class));
+            // TODO: cache column name
+            var column = (columnAnno == null) ? $.snakeCase(name) : ((Column) columnAnno).name();
 
             var getter = getters.get(type);
             if (getter == null) {

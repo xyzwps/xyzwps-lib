@@ -27,6 +27,6 @@ class ResultSetToBeanTests {
         ));
     }
 
-    record User(long uid, String name, int age, LocalDateTime createdAt) {
+    record User(@Column(name = "uid") long id, String name, int age, LocalDateTime createdAt) {
     }
 }

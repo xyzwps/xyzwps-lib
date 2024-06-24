@@ -1,6 +1,13 @@
 package com.xyzwps.lib.beans;
 
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Field;
 import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.function.Predicate;
 
 /**
  * A property of a bean.
@@ -51,6 +58,53 @@ public interface PropertyInfo {
      * @return the bean class of the property.
      */
     Class<?> beanClass();
+
+
+    /**
+     * The field of the property.
+     *
+     * @return the field of the property. May be null if the property is not backed by a field.
+     */
+    Field field();
+
+    /**
+     * Get the first annotation satisfying the predicate. The search order is field, getter, setter.
+     *
+     * @return the first annotations satisfying the predicate. May be null if no annotation is found.
+     */
+    default Annotation findAnnotation(Predicate<Annotation> predicate) {
+        Objects.requireNonNull(predicate);
+        // TODO: write tests for this method
+        var field = field();
+        if (field != null) {
+            Annotation[] fieldAnnotations = field.getAnnotations();
+            for (var annotation : fieldAnnotations) {
+                if (predicate.test(annotation)) {
+                    return annotation;
+                }
+            }
+        }
+
+        if (readable()) {
+            Annotation[] getterAnnotations = getter().method().getAnnotations();
+            for (var annotation : getterAnnotations) {
+                if (predicate.test(annotation)) {
+                    return annotation;
+                }
+            }
+        }
+
+        if (writable()) {
+            Annotation[] setterAnnotations = setter().method().getAnnotations();
+            for (var annotation : setterAnnotations) {
+                if (predicate.test(annotation)) {
+                    return annotation;
+                }
+            }
+        }
+
+        return null;
+    }
 
     /**
      * Get property value from getter, not property field.

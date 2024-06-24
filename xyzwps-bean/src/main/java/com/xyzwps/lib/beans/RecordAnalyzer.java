@@ -13,7 +13,7 @@ record RecordAnalyzer<T>(Class<T> beanClass) implements BeanInfoAnalyser<T> {
         var props = new ArrayList<PropertyInfo>(rcs.length);
         for (var rc : rcs) {
             var getter = new ImplGetter(rc.getAccessor(), rc.getName(), beanClass);
-            var prop = new ImplPropertyInfo(rc.getName(), rc.getGenericType(), getter, null, true, false, beanClass);
+            var prop = new ImplPropertyInfo(rc.getName(), rc.getGenericType(), null, getter, null, true, false, beanClass);
             props.add(prop);
         }
         return new BeanInfo<T>(beanClass, getConstructor(), props, true);
