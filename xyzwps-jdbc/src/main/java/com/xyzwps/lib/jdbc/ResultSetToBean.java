@@ -2,6 +2,7 @@ package com.xyzwps.lib.jdbc;
 
 import com.xyzwps.lib.beans.BeanUtils;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Type;
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -17,10 +18,6 @@ import static com.xyzwps.lib.dollar.Dollar.*;
 public final class ResultSetToBean {
 
     private final ConcurrentHashMap<Type, ValueGetter> getters = new ConcurrentHashMap<>();
-
-    interface ValueGetter {
-        Object get(ResultSet rs, String column) throws SQLException;
-    }
 
     public ResultSetToBean() {
         getters.put(short.class, ResultSet::getShort);
@@ -75,11 +72,15 @@ public final class ResultSetToBean {
             }
 
             var name = prop.name();
-            var columnAnno = prop.findAnnotation(anno -> anno.annotationType().equals(Column.class));
-            // TODO: cache column name
-            var column = (columnAnno == null) ? $.snakeCase(name) : ((Column) columnAnno).name();
+            var anno = prop.findAnnotation(it -> it.annotationType().equals(Column.class));
+            Column columnAnno = anno == null ? null : (Column) anno;
 
-            var getter = getters.get(type);
+            // TODO: cache column name, entity info
+            var column = (columnAnno == null) ? $.snakeCase(name) : columnAnno.name();
+
+            ValueGetter getter = columnAnno != null && columnAnno.getter() != ValueGetter.None.class
+                    ? getFromClass(columnAnno.getter())
+                    : getters.get(type);
             if (getter == null) {
                 if (type instanceof Class<?> c && c.isEnum()) {
                     var str = rs.getString(column);
@@ -93,6 +94,22 @@ public final class ResultSetToBean {
         }
 
         return bi.create(values);
+    }
+
+    private static ValueGetter getFromClass(Class<?> clazz) {
+        try {
+            var constructor = clazz.getConstructor();
+            var getter = constructor.newInstance();
+            if (getter instanceof ValueGetter) {
+                return (ValueGetter) getter;
+            } else {
+                throw new IllegalStateException("Unexpected value: " + getter);
+            }
+        } catch (NoSuchMethodException e) {
+            throw new RuntimeException("No default constructor defined for Class " + clazz.getCanonicalName(), e);
+        } catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {
+            throw new RuntimeException("Cannot create instance from default constructor of " + clazz.getCanonicalName(), e);
+        }
     }
 
     @SuppressWarnings({"unchecked", "rawtypes"})

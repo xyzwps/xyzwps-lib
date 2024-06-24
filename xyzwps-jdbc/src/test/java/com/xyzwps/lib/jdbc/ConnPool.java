@@ -18,6 +18,7 @@ public final class ConnPool {
                     CREATE TABLE users (
                         uid        bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
                         name       VARCHAR(255) NOT NULL,
+                        region     VARCHAR(8) NOT NULL,
                         age        INT NOT NULL,
                         use_sword  BOOLEAN NOT NULL DEFAULT FALSE,
                         gender     enum('F', 'M'),
@@ -25,17 +26,17 @@ public final class ConnPool {
                         created_at TIMESTAMP NOT NULL
                     )""");
             conn.createStatement().execute("""
-                    INSERT INTO users (name, age, use_sword, gender, created_at) VALUES
-                        ('Keqing', 17, true,  'F', '2023-10-10 12:00:00'),
-                        ('Diona',  13, false, 'F', '2023-10-10 12:00:00'),
-                        ('Eula',   22, false, 'F', '2023-10-10 12:00:00'),
-                        ('Amber',  18, false, 'F', '2023-10-10 12:00:00'),
-                        ('Navia',  24, false, 'F', '2023-10-10 12:00:00')
+                    INSERT INTO users (name, region, age, use_sword, gender, created_at) VALUES
+                        ('Keqing', '璃月', 17, true,  'F', '2023-10-10 12:00:00'),
+                        ('Diona',  '蒙德', 13, false, 'F', '2023-10-10 12:00:00'),
+                        ('Eula',   '蒙德', 22, false, 'F', '2023-10-10 12:00:00'),
+                        ('Amber',  '蒙德', 18, false, 'F', '2023-10-10 12:00:00'),
+                        ('Navia',  '枫丹', 24, false, 'F', '2023-10-10 12:00:00')
                     """);
 
             conn.createStatement().execute("""
-                    INSERT INTO users (name, age, use_sword, gender, remark, created_at) VALUES
-                        ('Diluc',  27, false, 'M', 'Red hairs', '2023-10-10 12:00:00')
+                    INSERT INTO users (name, region, age, use_sword, gender, remark, created_at) VALUES
+                        ('Diluc', '蒙德', 27, false, 'M', 'Red hairs', '2023-10-10 12:00:00')
                     """);
             conn.close();
         } catch (SQLException e) {

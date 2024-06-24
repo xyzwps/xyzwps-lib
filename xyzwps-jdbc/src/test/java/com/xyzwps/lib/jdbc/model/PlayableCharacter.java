@@ -7,6 +7,8 @@ import java.time.LocalDateTime;
 public record PlayableCharacter(
         @Column(name = "uid") long id,
         String name,
+        @Column(name = "region", getter = Region.RegionGetter.class)
+        Region region,
         int age,
         boolean useSword,
         Gender gender,
