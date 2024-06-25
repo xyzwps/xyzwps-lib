@@ -44,10 +44,37 @@ public final class ResultSetToBean {
         getters.put(java.time.Instant.class, (rs, col) -> rs.getTimestamp(col).toInstant());
     }
 
+    @SuppressWarnings("unchecked")
     public <T> ArrayList<T> toList(ResultSet rs, Class<T> clazz) throws SQLException {
         var list = new ArrayList<T>();
-        while (rs.next()) {
-            list.add(toBean(rs, clazz));
+        if (clazz == String.class) {
+            while (rs.next()) {
+                list.add((T) rs.getString(1));
+            }
+        } else if (clazz == Integer.class || clazz == int.class) {
+            while (rs.next()) {
+                list.add((T) Integer.valueOf(rs.getInt(1)));
+            }
+        } else if (clazz == Long.class || clazz == long.class) {
+            while (rs.next()) {
+                list.add((T) Long.valueOf(rs.getLong(1)));
+            }
+        } else if (clazz == Double.class || clazz == double.class) {
+            while (rs.next()) {
+                list.add((T) Double.valueOf(rs.getDouble(1)));
+            }
+        } else if (clazz == Float.class || clazz == float.class) {
+            while (rs.next()) {
+                list.add((T) Float.valueOf(rs.getFloat(1)));
+            }
+        } else if (clazz == Boolean.class || clazz == boolean.class) {
+            while (rs.next()) {
+                list.add((T) Boolean.valueOf(rs.getBoolean(1)));
+            }
+        } else {
+            while (rs.next()) {
+                list.add(toBean(rs, clazz));
+            }
         }
         return list;
     }

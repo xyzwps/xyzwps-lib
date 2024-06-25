@@ -15,4 +15,7 @@ public interface PlayableCharacterDao {
 
     @Query(sql = "SELECT * FROM users WHERE uid = ?")
     Optional<PlayableCharacter> findOptionalById(long id);
+
+    @Query(sql = "SELECT COUNT(*) FROM users")
+    int count();
 }

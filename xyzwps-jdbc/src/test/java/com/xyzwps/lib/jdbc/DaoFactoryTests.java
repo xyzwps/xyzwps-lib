@@ -54,6 +54,12 @@ public class DaoFactoryTests {
                 assertFalse(unknown.isPresent());
             }
             // endregion
+
+            // region count
+            {
+                var count = dao.count();
+                assertEquals(count, 6);
+            }
         }
     }
 }

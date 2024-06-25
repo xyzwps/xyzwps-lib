@@ -47,9 +47,10 @@ public final class DaoFactory {
         if (returnType instanceof Class<?> clazz) {
             if (clazz.isAssignableFrom(Void.class)) {
                 throw new IllegalArgumentException("The return type of method " + method.getName() + " must not be void.");
+            } else {
+                resultType = QueryResultType.SINGLE;
             }
             elementType = clazz;
-            resultType = QueryResultType.SINGLE;
         } else if (returnType instanceof ParameterizedType pt) {
             var rawType = pt.getRawType();
             if (rawType.equals(Iterable.class) || rawType.equals(Collection.class) || rawType.equals(List.class) || rawType.equals(ArrayList.class)) {
@@ -72,7 +73,6 @@ public final class DaoFactory {
             throw new IllegalArgumentException("Unsupported return type of method " + method.getName() + ".");
         }
 
-        // TODO: support count
         ResultSet resultSet;
         if (args == null || args.length == 0) {
             resultSet = conn.createStatement().executeQuery(sql);
