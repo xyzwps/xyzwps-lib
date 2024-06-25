@@ -7,6 +7,8 @@ import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Proxy;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;
 
@@ -39,21 +41,23 @@ public final class DaoFactory {
 
     private static Object handleQuery(Method method, Object[] args, ResultSetToBean rs2b, Connection conn, String sql) throws SQLException {
         var returnType = method.getGenericReturnType();
-        int resultType = -1; // 0: single, 1: list, 2: linked list
+        QueryResultType resultType;
 
-        Class<?> elementType = null;
+        Class<?> elementType;
         if (returnType instanceof Class<?> clazz) {
             if (clazz.isAssignableFrom(Void.class)) {
                 throw new IllegalArgumentException("The return type of method " + method.getName() + " must not be void.");
             }
             elementType = clazz;
-            resultType = 0;
+            resultType = QueryResultType.SINGLE;
         } else if (returnType instanceof ParameterizedType pt) {
             var rawType = pt.getRawType();
             if (rawType.equals(Iterable.class) || rawType.equals(Collection.class) || rawType.equals(List.class) || rawType.equals(ArrayList.class)) {
-                resultType = 1;
+                resultType = QueryResultType.LIST;
             } else if (rawType.equals(LinkedList.class)) {
-                resultType = 2;
+                resultType = QueryResultType.LINKED_LIST;
+            } else if (rawType.equals(Optional.class)) {
+                resultType = QueryResultType.OPTIONAL;
             } else {
                 throw new IllegalArgumentException("Unsupported return type of method " + method.getName() + ".");
             }
@@ -68,13 +72,50 @@ public final class DaoFactory {
             throw new IllegalArgumentException("Unsupported return type of method " + method.getName() + ".");
         }
 
-        var list = rs2b.toList(conn.createStatement().executeQuery(sql), elementType);
+        // TODO: support count
+        ResultSet resultSet;
+        if (args == null || args.length == 0) {
+            resultSet = conn.createStatement().executeQuery(sql);
+        } else {
+            var ps = conn.prepareStatement(sql);
+            setPreparedStatementArgs(ps, args);
+            resultSet = ps.executeQuery();
+        }
+
+        var list = rs2b.toList(resultSet, elementType);
         return switch (resultType) {
-            case 0 -> list.isEmpty() ? DefaultValues.get(elementType) : list.getFirst();
-            case 1 -> list;
-            case 2 -> new LinkedList<>(list);
-            default -> throw new IllegalStateException("Maybe a bug");
+            case SINGLE -> list.isEmpty() ? DefaultValues.get(elementType) : list.getFirst();
+            case OPTIONAL -> list.isEmpty() ? Optional.empty() : Optional.of(list.getFirst());
+            case LIST -> list;
+            case LINKED_LIST -> new LinkedList<>(list);
         };
+    }
+
+    private static void setPreparedStatementArgs(PreparedStatement ps, Object[] args) throws SQLException {
+        for (int i = 0; i < args.length; i++) {
+            final int index = i + 1;
+            var it = args[i];
+            switch (it) {
+                case null -> ps.setObject(index, null);
+                case String v -> ps.setString(index, v);
+                case Short v -> ps.setShort(index, v);
+                case Integer v -> ps.setInt(index, v);
+                case Long v -> ps.setLong(index, v);
+                case Float v -> ps.setFloat(index, v);
+                case Double v -> ps.setDouble(index, v);
+                case Boolean v -> ps.setBoolean(index, v);
+                // TODO: 支持更多类型
+                default -> ps.setObject(index, it);
+            }
+        }
+    }
+
+
+    enum QueryResultType {
+        SINGLE,
+        LIST,
+        LINKED_LIST,
+        OPTIONAL
     }
 
     private static Object handleExecute(Method method, Object[] args, Connection conn, String sql) {
