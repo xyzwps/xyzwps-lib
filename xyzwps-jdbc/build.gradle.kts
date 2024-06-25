@@ -12,6 +12,7 @@ repositories {
 }
 
 dependencies {
+    implementation(project(":xyzwps-bedrock"))
     implementation(project(":xyzwps-bean"))
     implementation(project(":xyzwps-dollar"))
     testImplementation(platform(libs.junit.bom))

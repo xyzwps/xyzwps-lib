@@ -45,7 +45,7 @@ public final class ResultSetToBean {
         getters.put(java.time.Instant.class, (rs, col) -> rs.getTimestamp(col).toInstant());
     }
 
-    public <T> List<T> toList(ResultSet rs, Class<T> clazz) throws SQLException {
+    public <T> ArrayList<T> toList(ResultSet rs, Class<T> clazz) throws SQLException {
         var list = new ArrayList<T>();
         while (rs.next()) {
             list.add(toBean(rs, clazz));
