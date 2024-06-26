@@ -1,6 +1,5 @@
 package com.xyzwps.lib.jdbc;
 
-import com.xyzwps.lib.beans.BeanUtils;
 import com.xyzwps.lib.bedrock.BeanParam;
 import com.xyzwps.lib.bedrock.Param;
 import com.xyzwps.lib.bedrock.lang.DefaultValues;
@@ -13,31 +12,31 @@ import java.sql.*;
 import java.util.*;
 import java.util.regex.Pattern;
 
-record DaoMethodInvocationHandler(Class<?> daoInterface, TX tx) implements InvocationHandler {
+record DaoMethodInvocationHandler(Class<?> daoInterface, TransactionContext ctx) implements InvocationHandler {
 
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
         var $query = method.getAnnotation(Query.class);
         if ($query != null) {
-            return handleQuery(tx, $query, method, args);
+            return handleQuery(ctx, $query, method, args);
         }
 
         var $execute = method.getAnnotation(Execute.class);
         if ($execute != null) {
-            return handleExecute(tx, $execute, method, args);
+            return handleExecute(ctx, $execute, method, args);
         }
 
         throw new DbException("No annotation found for method " + method.getName() + " in " + daoInterface.getCanonicalName() + ".");
     }
 
 
-    private static Object handleQuery(TX tx, Query query, Method method, Object[] args) throws SQLException {
+    private static Object handleQuery(TransactionContext ctx, Query query, Method method, Object[] args) throws SQLException {
         var returnType = determineQueryReturnType(method);
         var resultType = returnType.first();
         var elementType = returnType.second();
 
-        try (var statement = execute(tx, query.sql(), method, args, false); var rs = statement.getResultSet()) {
-            var list = tx.rs2b.toList(rs, elementType);
+        try (var statement = execute(ctx, query.sql(), method, args, false); var rs = statement.getResultSet()) {
+            var list = ctx.rs2b().toList(rs, elementType);
             return switch (resultType) {
                 case SINGLE -> list.isEmpty() ? DefaultValues.get(elementType) : list.getFirst();
                 case OPTIONAL -> list.isEmpty() ? Optional.empty() : Optional.of(list.getFirst());
@@ -47,12 +46,25 @@ record DaoMethodInvocationHandler(Class<?> daoInterface, TX tx) implements Invoc
         }
     }
 
-    private static Object handleExecute(TX tx, Execute execute, Method method, Object[] args) throws SQLException {
+    private static Object handleExecute(TransactionContext ctx, Execute execute, Method method, Object[] args) throws SQLException {
         var returnType = determineExecuteReturnType(method, execute);
         var resultType = returnType.first();
         var elementType = returnType.second();
 
-        try (var statement = execute(tx, execute.sql(), method, args, resultType == ExecuteResultType.GENERATED_KEYS)) {
+        if (resultType == ExecuteResultType.BATCH) {
+            var list = getListArgument(args);
+            var nps = NamedPreparedSql.create(execute.sql());
+            try (var s = ctx.prepareStatement(nps.sql())) {
+                for (var it : list) {
+                    setNamedPreparedStatementArgs(s, nps.names(), it);
+                    s.addBatch();
+                }
+                s.executeBatch();
+                return null;
+            }
+        }
+
+        try (var statement = execute(ctx, execute.sql(), method, args, resultType == ExecuteResultType.GENERATED_KEYS)) {
             return switch (resultType) {
                 case VOID -> null;
                 case AFFECTED_ROWS -> statement.getUpdateCount();
@@ -71,15 +83,46 @@ record DaoMethodInvocationHandler(Class<?> daoInterface, TX tx) implements Invoc
                         }
                     }
                 }
+                case BATCH -> throw new DbException("Maybe a bug");
             };
         }
     }
 
+    private static List<?> getListArgument(Object[] args) {
+        Object arg0 = args[0];
+        if (arg0 instanceof List<?> list) {
+            return list;
+        }
+        throw new DbException("The first argument of batch execute method must be a List.");
+    }
+
     private static Pair<ExecuteResultType, Class<?>> determineExecuteReturnType(Method method, Execute execute) {
         var returnType = method.getGenericReturnType();
+        if (execute.batch()) {
+            if (returnType instanceof Class<?> clazz) {
+                if (!clazz.getName().equals("void")) {
+                    throw new DbException("The return type of batch execute method " + method.getName() + " must be void.");
+                }
+                var params = method.getParameters();
+                if (params.length != 1) {
+                    throw new DbException("The batch execute method " + method.getName() + " must have only one parameter.");
+                }
+                var paramType = params[0].getParameterizedType();
+                if (paramType instanceof Class<?> c && List.class.isAssignableFrom(c)) {
+                    return Pair.of(ExecuteResultType.BATCH, null);
+                } else if (paramType instanceof ParameterizedType pt) {
+                    var rawType = pt.getRawType();
+                    if (rawType instanceof Class<?> c && List.class.isAssignableFrom(c)) {
+                        return Pair.of(ExecuteResultType.BATCH, clazz);
+                    }
+                }
+                throw new DbException("The parameter of batch execute method " + method.getName() + " must be a List.");
+            }
+            throw new DbException("The return type of batch execute method " + method.getName() + " must be void.");
+        }
 
         if (returnType instanceof Class<?> clazz) {
-            if (clazz.isAssignableFrom(Void.class)) {
+            if (clazz.getName().equals("void")) {
                 return Pair.of(ExecuteResultType.VOID, null);
             }
             if (execute.returnGeneratedKeys()) {
@@ -97,7 +140,7 @@ record DaoMethodInvocationHandler(Class<?> daoInterface, TX tx) implements Invoc
         var returnType = method.getGenericReturnType();
 
         if (returnType instanceof Class<?> clazz) {
-            if (clazz.isAssignableFrom(Void.class)) {
+            if (clazz.getName().equals("void")) {
                 throw new DbException("The return type of query method " + method.getName() + " cannot be void.");
             }
             return Pair.of(QueryResultType.SINGLE, clazz);
@@ -129,15 +172,15 @@ record DaoMethodInvocationHandler(Class<?> daoInterface, TX tx) implements Invoc
         throw new DbException("Unsupported return type of query method " + method.getName() + ".");
     }
 
-    private static Statement execute(TX tx, String sql, Method method, Object[] args, boolean returnAutoGeneratedKeys) throws SQLException {
+    private static Statement execute(TransactionContext ctx, String sql, Method method, Object[] args, boolean returnAutoGeneratedKeys) throws SQLException {
         if (args == null || args.length == 0) {
-            var s = tx.createStatement();
+            var s = ctx.createStatement();
             s.execute(sql);
             return s;
         }
 
         var nps = NamedPreparedSql.create(sql);
-        var ps = tx.prepareStatement(nps.sql(), returnAutoGeneratedKeys);
+        var ps = ctx.prepareStatement(nps.sql(), returnAutoGeneratedKeys);
         if (nps.names().isEmpty()) {
             setPreparedStatementArgs(ps, args);
         } else {
@@ -186,54 +229,19 @@ record DaoMethodInvocationHandler(Class<?> daoInterface, TX tx) implements Invoc
             map.put(names.get(i), args[i]);
         }
 
+        setNamedPreparedStatementArgs(ps, names, map);
+    }
+
+
+    private static void setNamedPreparedStatementArgs(PreparedStatement ps, List<String> names, Object pathToValues) throws SQLException {
         Object[] theArgs = new Object[names.size()];
         for (int i = 0; i < names.size(); i++) {
             var path = names.get(i);
-            theArgs[i] = getValueFromMap(map, path);
+            theArgs[i] = ObjectPaths.getValue(pathToValues, path);
         }
-
         setPreparedStatementArgs(ps, theArgs);
     }
 
-    @SuppressWarnings({"unchecked", "rawtypes"})
-    private static Object getValueFromMap(Map<String, Object> map, String path) {
-        if (map.containsKey(path)) {
-            return map.get(path);
-        }
-
-        var segments = path.split("\\.");
-        if (segments.length != 2) {
-            throw new DbException("The named parameter " + path + " is not found in the map.");
-        }
-
-        String rootKey = segments[0], pathKey = segments[1];
-        if (!map.containsKey(rootKey)) {
-            throw new DbException("The named parameter " + path + " is not found in the map.");
-        }
-
-        var root = map.get(segments[0]);
-        if (root instanceof Map<?, ?> rootMap) {
-            return rootMap.get(pathKey);
-        } else {
-            var prop = BeanUtils.getBeanInfoFromObject(root).getPropertyInfo(pathKey)
-                    .orElseThrow(() -> new DbException("The named parameter " + path + " is not found in the map."));
-            var anno = prop.getAnnotation(Column.class);
-            var mapper = anno == null || ColumnPropertyMapper.None.class.equals(anno.mapper()) ? null : anno.mapper();
-            if (mapper == null) {
-                return BeanUtils.getProperty(root, pathKey).getOrThrow();
-            }
-
-            if (ColumnPropertyMapper.class.isAssignableFrom(mapper)) {
-                return new MappedArg(BeanUtils.getProperty(root, pathKey).getOrThrow(),
-                        (ColumnPropertyMapper<?>) InstanceUtils.createInstanceFromDefaultConstructor(mapper));
-            } else {
-                throw new DbException("The mapper of the named parameter " + path + " is not a valid ColumnPropertyMapper.");
-            }
-        }
-    }
-
-    private record MappedArg<T>(T arg, ColumnPropertyMapper<T> mapper) {
-    }
 
     @SuppressWarnings({"rawtypes", "unchecked"})
     private static void setPreparedStatementArgs(PreparedStatement ps, Object[] args) throws SQLException {
@@ -251,8 +259,8 @@ record DaoMethodInvocationHandler(Class<?> daoInterface, TX tx) implements Invoc
                 case Boolean v -> ps.setBoolean(index, v);
                 case Enum v -> ps.setString(index, v.name());
                 case MappedArg v -> {
-                    if (v.arg == null) ps.setObject(index, null);
-                    else v.mapper().fromProperty(ps, index, v.arg);
+                    if (v.arg() == null) ps.setObject(index, null);
+                    else v.mapper().fromProperty(ps, index, v.arg());
                 }
                 // TODO: 支持更多类型
                 // TODO: 支持 where in
@@ -270,6 +278,7 @@ record DaoMethodInvocationHandler(Class<?> daoInterface, TX tx) implements Invoc
 
     enum ExecuteResultType {
         VOID,
+        BATCH,
         AFFECTED_ROWS,
         GENERATED_KEYS
     }

@@ -17,4 +17,15 @@ public @interface Execute {
     String sql();
 
     boolean returnGeneratedKeys() default false;
+
+    /**
+     * Whether to batch execute. Batching execute requires that
+     * <ol>
+     *  <li>method returns void</li>
+     *  <li>method accepts a {@link java.util.List}</li>
+     * </ol>
+     *
+     * @return true if batch execute.
+     */
+    boolean batch() default false;
 }

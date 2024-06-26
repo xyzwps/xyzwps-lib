@@ -14,11 +14,10 @@ class ResultSetToBeanTests {
 
     @Test
     void test() {
-        ConnPool.db.tx(tx -> {
-            try(var stmt = tx.createStatement();
-                var rs = stmt.executeQuery("SELECT * FROM users ORDER BY uid ASC")) {
-                var toBean = new ResultSetToBean();
-                var list = toBean.toList(rs, PlayableCharacter.class);
+        ConnPool.db.tx(ctx -> {
+            try(var stmt = ctx.createStatement();
+                var rs = stmt.executeQuery("SELECT * FROM playable_characters ORDER BY uid ASC")) {
+                var list = ctx.rs2b().toList(rs, PlayableCharacter.class);
                 assertIterableEquals(list, List.of(
                         new PlayableCharacter(1, "Keqing", LIYUE, 17, true, F, null, LocalDateTime.of(2023, 10, 10, 12, 0, 0)),
                         new PlayableCharacter(2, "Diona", MONDSTADT, 13, false, F, null, LocalDateTime.of(2023, 10, 10, 12, 0, 0)),

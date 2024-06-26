@@ -13,9 +13,9 @@ public final class Database {
         this.rs2b = new ResultSetToBean();
     }
 
-    public void tx(SqlConsumer<TX> handler) {
+    public void tx(SqlConsumer<TransactionContext> handler) {
         try (var conn = ds.getConnection()) {
-            var tx = new TX(conn, rs2b);
+            var tx = new TransactionContext(conn, rs2b);
             try {
                 conn.setAutoCommit(false);
                 handler.accept(tx);

@@ -2,7 +2,6 @@ package com.xyzwps.lib.jdbc;
 
 import com.xyzwps.lib.beans.BeanUtils;
 
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Type;
 import java.math.BigDecimal;
 import java.math.BigInteger;

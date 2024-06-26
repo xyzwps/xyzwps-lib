@@ -5,7 +5,7 @@ import java.util.*;
 
 public final class DaoFactory {
 
-    public static <T> T createDao(Class<T> daoInterface, TX tx) {
+    public static <T> T createDao(Class<T> daoInterface, TransactionContext transactionContext) {
         Objects.requireNonNull(daoInterface);
 
         if (!daoInterface.isInterface()) {
@@ -16,7 +16,7 @@ public final class DaoFactory {
         return (T) Proxy.newProxyInstance(
                 daoInterface.getClassLoader(),
                 new Class<?>[]{daoInterface},
-                new DaoMethodInvocationHandler(daoInterface, tx)
+                new DaoMethodInvocationHandler(daoInterface, transactionContext)
         );
     }
 
