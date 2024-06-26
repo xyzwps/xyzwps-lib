@@ -1,22 +1,24 @@
 package com.xyzwps.lib.jdbc;
 
 import javax.sql.DataSource;
-import java.sql.Connection;
 import java.sql.SQLException;
 
 public final class Database {
 
     private final DataSource ds;
+    private final ResultSetToBean rs2b;
 
     public Database(DataSource ds) {
         this.ds = ds;
+        this.rs2b = new ResultSetToBean();
     }
 
-    public void tx(SqlConsumer<Connection> handler) {
+    public void tx(SqlConsumer<TX> handler) {
         try (var conn = ds.getConnection()) {
+            var tx = new TX(conn, rs2b);
             try {
                 conn.setAutoCommit(false);
-                handler.accept(conn);
+                handler.accept(tx);
                 conn.commit();
             } catch (Exception e) {
                 try {

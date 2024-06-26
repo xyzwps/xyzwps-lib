@@ -15,9 +15,8 @@ public class DaoFactoryTests {
 
     @Test
     void test() {
-        ConnPool.db.tx(conn -> {
-            var toBean = new ResultSetToBean();
-            var dao = DaoFactory.createDao(PlayableCharacterDao.class, toBean, conn);
+        ConnPool.db.tx(tx -> {
+            var dao = DaoFactory.createDao(PlayableCharacterDao.class, tx);
 
             // region find all
             {
