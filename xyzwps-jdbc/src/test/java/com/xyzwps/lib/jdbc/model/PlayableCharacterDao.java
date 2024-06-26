@@ -28,7 +28,10 @@ public interface PlayableCharacterDao {
     @Execute(sql = """
             INSERT INTO users (name, region, age, use_sword, gender, remark, created_at)
             VALUES (:c.name, :c.region, :c.age, :c.useSword, :c.gender, :c.remark, :c.createdAt)
-            """)
-    void insert(@BeanParam("c") PlayableCharacter character);
+            """, returnGeneratedKeys = true)
+    long insert(@BeanParam("c") PlayableCharacter character);
+
+    @Execute(sql = "update users set remark = :remark where uid = :id")
+    int updateRemark(@Param("id") long id, @Param("remark") String remark);
 
 }

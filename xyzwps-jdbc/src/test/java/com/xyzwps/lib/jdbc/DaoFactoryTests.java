@@ -66,6 +66,20 @@ public class DaoFactoryTests {
                 var count = dao.countByRegionAndGender("蒙德", F);
                 assertEquals(count, 3);
             }
+            // endregion
+
+            // region update remark
+            {
+                assertEquals(1, dao.updateRemark(6, "Red hair"));
+                assertEquals(dao.findById(6), new PlayableCharacter(6, "Diluc", MONDSTADT, 27, false, M, "Red hair", LocalDateTime.of(2023, 10, 10, 12, 0, 0)));
+
+                assertEquals(1, dao.updateRemark(6, "Red hair"));
+                assertEquals(dao.findById(6), new PlayableCharacter(6, "Diluc", MONDSTADT, 27, false, M, "Red hair", LocalDateTime.of(2023, 10, 10, 12, 0, 0)));
+
+                dao.updateRemark(6, "Red hairs");
+            }
+            // endregion
+
         });
     }
 }

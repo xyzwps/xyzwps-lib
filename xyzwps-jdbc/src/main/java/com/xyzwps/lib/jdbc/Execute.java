@@ -15,4 +15,6 @@ public @interface Execute {
      * @return SQL statement.
      */
     String sql();
+
+    boolean returnGeneratedKeys() default false;
 }
