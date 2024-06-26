@@ -48,34 +48,40 @@ public final class ResultSetToBean {
     public <T> ArrayList<T> toList(ResultSet rs, Class<T> clazz) throws SQLException {
         var list = new ArrayList<T>();
         if (clazz == String.class) {
-            while (rs.next()) {
-                list.add((T) rs.getString(1));
-            }
-        } else if (clazz == Integer.class || clazz == int.class) {
-            while (rs.next()) {
-                list.add((T) Integer.valueOf(rs.getInt(1)));
-            }
-        } else if (clazz == Long.class || clazz == long.class) {
-            while (rs.next()) {
-                list.add((T) Long.valueOf(rs.getLong(1)));
-            }
-        } else if (clazz == Double.class || clazz == double.class) {
-            while (rs.next()) {
-                list.add((T) Double.valueOf(rs.getDouble(1)));
-            }
-        } else if (clazz == Float.class || clazz == float.class) {
-            while (rs.next()) {
-                list.add((T) Float.valueOf(rs.getFloat(1)));
-            }
-        } else if (clazz == Boolean.class || clazz == boolean.class) {
-            while (rs.next()) {
-                list.add((T) Boolean.valueOf(rs.getBoolean(1)));
-            }
-        } else {
-            while (rs.next()) {
-                list.add(toBean(rs, clazz));
-            }
+            while (rs.next()) list.add((T) rs.getString(1));
+            return list;
         }
+
+        if (clazz == Short.class || clazz == short.class) {
+            while (rs.next()) list.add((T) Short.valueOf(rs.getShort(1)));
+            return list;
+        }
+        if (clazz == Integer.class || clazz == int.class) {
+            while (rs.next()) list.add((T) Integer.valueOf(rs.getInt(1)));
+            return list;
+        }
+
+        if (clazz == Long.class || clazz == long.class) {
+            while (rs.next()) list.add((T) Long.valueOf(rs.getLong(1)));
+            return list;
+        }
+
+        if (clazz == Double.class || clazz == double.class) {
+            while (rs.next()) list.add((T) Double.valueOf(rs.getDouble(1)));
+            return list;
+        }
+
+        if (clazz == Float.class || clazz == float.class) {
+            while (rs.next()) list.add((T) Float.valueOf(rs.getFloat(1)));
+            return list;
+        }
+
+        if (clazz == Boolean.class || clazz == boolean.class) {
+            while (rs.next()) list.add((T) Boolean.valueOf(rs.getBoolean(1)));
+            return list;
+        }
+
+        while (rs.next()) list.add(toBean(rs, clazz));
         return list;
     }
 
@@ -132,9 +138,9 @@ public final class ResultSetToBean {
                 throw new IllegalStateException("Unexpected value: " + getter);
             }
         } catch (NoSuchMethodException e) {
-            throw new RuntimeException("No default constructor defined for Class " + clazz.getCanonicalName(), e);
+            throw new DbException("No default constructor defined for Class " + clazz.getCanonicalName(), e);
         } catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {
-            throw new RuntimeException("Cannot create instance from default constructor of " + clazz.getCanonicalName(), e);
+            throw new DbException("Cannot create instance from default constructor of " + clazz.getCanonicalName(), e);
         }
     }
 

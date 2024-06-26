@@ -60,6 +60,13 @@ public class DaoFactoryTests {
                 var count = dao.count();
                 assertEquals(count, 6);
             }
+            // endregion
+
+            // region count by region and gender
+            {
+                var count = dao.countByRegionAndGender("蒙德", F);
+                assertEquals(count, 3);
+            }
         }
     }
 }
