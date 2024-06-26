@@ -1,7 +1,8 @@
 package com.xyzwps.lib.jdbc.model;
 
-import com.xyzwps.lib.jdbc.ValueGetter;
+import com.xyzwps.lib.jdbc.ColumnPropertyMapper;
 
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
@@ -37,10 +38,16 @@ public enum Region {
         };
     }
 
-    public static class RegionGetter implements ValueGetter {
+    public static class RegionMapper implements ColumnPropertyMapper<Region> {
+
         @Override
-        public Object get(ResultSet rs, String column) throws SQLException {
+        public Region fromColumn(ResultSet rs, String column) throws SQLException {
             return Region.fromZhName(rs.getString(column));
+        }
+
+        @Override
+        public void fromProperty(PreparedStatement ps, int index, Region property) throws SQLException {
+            ps.setString(index, property.zhName);
         }
     }
 }

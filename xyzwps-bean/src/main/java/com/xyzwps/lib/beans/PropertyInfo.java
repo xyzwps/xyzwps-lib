@@ -4,7 +4,6 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Type;
 import java.util.Objects;
-import java.util.function.Predicate;
 
 /**
  * A property of a bean.
@@ -69,34 +68,28 @@ public interface PropertyInfo {
      *
      * @return the first annotations satisfying the predicate. May be null if no annotation is found.
      */
-    default Annotation findAnnotation(Predicate<Annotation> predicate) {
-        Objects.requireNonNull(predicate);
+    default <T extends Annotation> T getAnnotation(Class<T> annotationClass) {
+        Objects.requireNonNull(annotationClass);
         // TODO: write tests for this method
         var field = field();
         if (field != null) {
-            Annotation[] fieldAnnotations = field.getAnnotations();
-            for (var annotation : fieldAnnotations) {
-                if (predicate.test(annotation)) {
-                    return annotation;
-                }
+            var anno = field.getAnnotation(annotationClass);
+            if (anno != null) {
+                return anno;
             }
         }
 
         if (readable()) {
-            Annotation[] getterAnnotations = getter().method().getAnnotations();
-            for (var annotation : getterAnnotations) {
-                if (predicate.test(annotation)) {
-                    return annotation;
-                }
+            var anno = getter().method().getAnnotation(annotationClass);
+            if (anno != null) {
+                return anno;
             }
         }
 
         if (writable()) {
-            Annotation[] setterAnnotations = setter().method().getAnnotations();
-            for (var annotation : setterAnnotations) {
-                if (predicate.test(annotation)) {
-                    return annotation;
-                }
+            var anno = setter().method().getAnnotation(annotationClass);
+            if (anno != null) {
+                return anno;
             }
         }
 

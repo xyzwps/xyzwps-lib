@@ -12,4 +12,8 @@ public final class BeanException extends RuntimeException {
     BeanException(String message, Exception e) {
         super(message, e);
     }
+
+    BeanException(Exception e) {
+        super(e);
+    }
 }

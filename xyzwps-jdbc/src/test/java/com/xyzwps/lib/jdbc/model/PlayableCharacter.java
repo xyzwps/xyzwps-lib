@@ -7,7 +7,7 @@ import java.time.LocalDateTime;
 public record PlayableCharacter(
         @Column(name = "uid") long id,
         String name,
-        @Column(name = "region", getter = Region.RegionGetter.class)
+        @Column(name = "region", mapper = Region.RegionMapper.class)
         Region region,
         int age,
         boolean useSword,

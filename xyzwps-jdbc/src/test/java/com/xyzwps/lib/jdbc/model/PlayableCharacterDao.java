@@ -25,6 +25,10 @@ public interface PlayableCharacterDao {
     @Query(sql = "SELECT COUNT(*) FROM users where region = :region and gender = :gender")
     int countByRegionAndGender(@Param("region") String region, @Param("gender") Gender gender);
 
-    @Execute(sql = "insert into ")
-    long insert(@BeanParam("c") PlayableCharacter character);
+    @Execute(sql = """
+            INSERT INTO users (name, region, age, use_sword, gender, remark, created_at)
+            VALUES (:c.name, :c.region, :c.age, :c.useSword, :c.gender, :c.remark, :c.createdAt)
+            """)
+    void insert(@BeanParam("c") PlayableCharacter character);
+
 }

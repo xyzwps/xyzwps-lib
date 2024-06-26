@@ -6,6 +6,13 @@ package com.xyzwps.lib.beans;
 public sealed interface GetResult {
 
     /**
+     * Get the property value or throw exception.
+     *
+     * @return the property value.
+     */
+    Object getOrThrow();
+
+    /**
      * Create a successful result.
      *
      * @param object the property value.
@@ -46,6 +53,10 @@ public sealed interface GetResult {
      * @param value the property value.
      */
     record Ok(Object value) implements GetResult {
+        @Override
+        public Object getOrThrow() {
+            return value;
+        }
     }
 
     /**
@@ -54,12 +65,20 @@ public sealed interface GetResult {
      * @param cause the exception cause.
      */
     record Failed(Exception cause) implements GetResult {
+        @Override
+        public Object getOrThrow() {
+            throw new BeanException(cause);
+        }
     }
 
     /**
      * A not readable result.
      */
     record NotReadable() implements GetResult {
+        @Override
+        public Object getOrThrow() {
+            throw new BeanException("The property is not readable.");
+        }
     }
 
     /**
@@ -68,6 +87,10 @@ public sealed interface GetResult {
      * @param name the property name.
      */
     record NoSuchProperty(String name) implements GetResult {
+        @Override
+        public Object getOrThrow() {
+            throw new BeanException("No such property: " + name);
+        }
     }
 
 }

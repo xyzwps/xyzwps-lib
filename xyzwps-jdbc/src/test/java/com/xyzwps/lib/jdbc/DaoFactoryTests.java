@@ -4,7 +4,6 @@ import com.xyzwps.lib.jdbc.model.PlayableCharacter;
 import com.xyzwps.lib.jdbc.model.PlayableCharacterDao;
 import org.junit.jupiter.api.Test;
 
-import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -15,8 +14,8 @@ import static org.junit.jupiter.api.Assertions.*;
 public class DaoFactoryTests {
 
     @Test
-    void test() throws SQLException {
-        try (var conn = ConnPool.getConnection()) {
+    void test() {
+        ConnPool.db.tx(conn -> {
             var toBean = new ResultSetToBean();
             var dao = DaoFactory.createDao(PlayableCharacterDao.class, toBean, conn);
 
@@ -67,6 +66,6 @@ public class DaoFactoryTests {
                 var count = dao.countByRegionAndGender("蒙德", F);
                 assertEquals(count, 3);
             }
-        }
+        });
     }
 }

@@ -3,7 +3,6 @@ package com.xyzwps.lib.jdbc;
 import com.xyzwps.lib.jdbc.model.PlayableCharacter;
 import org.junit.jupiter.api.Test;
 
-import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -14,8 +13,8 @@ import static com.xyzwps.lib.jdbc.model.Region.*;
 class ResultSetToBeanTests {
 
     @Test
-    void test() throws SQLException {
-        try (var conn = ConnPool.getConnection()) {
+    void test() {
+        ConnPool.db.tx(conn -> {
             var stmt = conn.createStatement();
             var rs = stmt.executeQuery("SELECT * FROM users ORDER BY uid ASC");
 
@@ -29,7 +28,7 @@ class ResultSetToBeanTests {
                     new PlayableCharacter(5, "Navia", FONTAINE, 24, false, F, null, LocalDateTime.of(2023, 10, 10, 12, 0, 0)),
                     new PlayableCharacter(6, "Diluc", MONDSTADT, 27, false, M, "Red hairs", LocalDateTime.of(2023, 10, 10, 12, 0, 0))
             ));
-        }
+        });
     }
 
 }

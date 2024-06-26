@@ -3,7 +3,6 @@ package com.xyzwps.lib.jdbc;
 import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.function.Consumer;
 
 public final class Database {
 
@@ -13,7 +12,7 @@ public final class Database {
         this.ds = ds;
     }
 
-    public void tx(Consumer<Connection> handler) {
+    public void tx(SqlConsumer<Connection> handler) {
         try (var conn = ds.getConnection()) {
             try {
                 conn.setAutoCommit(false);
@@ -22,7 +21,7 @@ public final class Database {
             } catch (Exception e) {
                 try {
                     conn.rollback();
-                } catch (Exception e2) {
+                } catch (SQLException e2) {
                     throw new DbException("Rollback failed", e2);
                 }
                 throw new DbException("Transaction failed", e);

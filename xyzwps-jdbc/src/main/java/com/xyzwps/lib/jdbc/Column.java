@@ -17,9 +17,9 @@ public @interface Column {
     String name();
 
     /**
-     * The implementation class of the {@link ValueGetter} for the column.
+     * The implementation class of the {@link ColumnPropertyMapper} for the column.
      *
-     * @return The implementation class of the {@link ValueGetter} for the column.
+     * @return The implementation class of the {@link ColumnPropertyMapper} for the column.
      */
-    Class<?> getter() default ValueGetter.None.class;
+    Class<?> mapper() default ColumnPropertyMapper.None.class;
 }

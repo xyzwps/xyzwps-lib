@@ -16,32 +16,32 @@ import static com.xyzwps.lib.dollar.Dollar.*;
 
 public final class ResultSetToBean {
 
-    private final ConcurrentHashMap<Type, ValueGetter> getters = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<Type, ColumnPropertyMapper<?>> getters = new ConcurrentHashMap<>();
 
     public ResultSetToBean() {
-        getters.put(short.class, ResultSet::getShort);
-        getters.put(Short.class, ResultSet::getShort);
-        getters.put(int.class, ResultSet::getInt);
-        getters.put(Integer.class, ResultSet::getInt);
-        getters.put(long.class, ResultSet::getLong);
-        getters.put(Long.class, ResultSet::getLong);
-        getters.put(float.class, ResultSet::getFloat);
-        getters.put(Float.class, ResultSet::getFloat);
-        getters.put(double.class, ResultSet::getDouble);
-        getters.put(Double.class, ResultSet::getDouble);
-        getters.put(boolean.class, ResultSet::getBoolean);
-        getters.put(Boolean.class, ResultSet::getBoolean);
-        getters.put(BigInteger.class, (rs, col) -> rs.getBigDecimal(col).toBigInteger());
-        getters.put(BigDecimal.class, ResultSet::getBigDecimal);
-        getters.put(String.class, ResultSet::getString);
-        getters.put(java.sql.Date.class, ResultSet::getDate);
-        getters.put(java.sql.Time.class, ResultSet::getTime);
-        getters.put(java.sql.Timestamp.class, ResultSet::getTimestamp);
-        getters.put(java.util.Date.class, ResultSet::getTimestamp);
-        getters.put(java.time.LocalDate.class, (rs, col) -> rs.getDate(col).toLocalDate());
-        getters.put(java.time.LocalTime.class, (rs, col) -> rs.getTime(col).toLocalTime());
-        getters.put(java.time.LocalDateTime.class, (rs, col) -> rs.getTimestamp(col).toLocalDateTime());
-        getters.put(java.time.Instant.class, (rs, col) -> rs.getTimestamp(col).toInstant());
+        getters.put(short.class, ColumnPropertyMappers.SHORT);
+        getters.put(Short.class, ColumnPropertyMappers.SHORT);
+        getters.put(int.class, ColumnPropertyMappers.INTEGER);
+        getters.put(Integer.class, ColumnPropertyMappers.INTEGER);
+        getters.put(long.class, ColumnPropertyMappers.LONG);
+        getters.put(Long.class, ColumnPropertyMappers.LONG);
+        getters.put(float.class, ColumnPropertyMappers.FLOAT);
+        getters.put(Float.class, ColumnPropertyMappers.FLOAT);
+        getters.put(double.class, ColumnPropertyMappers.DOUBLE);
+        getters.put(Double.class, ColumnPropertyMappers.DOUBLE);
+        getters.put(boolean.class, ColumnPropertyMappers.BOOLEAN);
+        getters.put(Boolean.class, ColumnPropertyMappers.BOOLEAN);
+        getters.put(BigInteger.class, ColumnPropertyMappers.BIG_INTEGER);
+        getters.put(BigDecimal.class, ColumnPropertyMappers.BIG_DECIMAL);
+        getters.put(String.class, ColumnPropertyMappers.STRING);
+        getters.put(java.sql.Date.class, ColumnPropertyMappers.SQL_DATE);
+        getters.put(java.sql.Time.class, ColumnPropertyMappers.SQL_TIME);
+        getters.put(java.sql.Timestamp.class, ColumnPropertyMappers.SQL_TIMESTAMP);
+        getters.put(java.util.Date.class, ColumnPropertyMappers.UTIL_DATE);
+        getters.put(java.time.LocalDate.class, ColumnPropertyMappers.LOCAL_DATE);
+        getters.put(java.time.LocalTime.class, ColumnPropertyMappers.LOCAL_TIME);
+        getters.put(java.time.LocalDateTime.class, ColumnPropertyMappers.LOCAL_DATE_TIME);
+        getters.put(java.time.Instant.class, ColumnPropertyMappers.INSTANT);
     }
 
     @SuppressWarnings("unchecked")
@@ -104,44 +104,36 @@ public final class ResultSetToBean {
             }
 
             var name = prop.name();
-            var anno = prop.findAnnotation(it -> it.annotationType().equals(Column.class));
-            Column columnAnno = anno == null ? null : (Column) anno;
+            var anno = prop.getAnnotation(Column.class);
 
             // TODO: cache column name, entity info
-            var column = (columnAnno == null) ? $.snakeCase(name) : columnAnno.name();
+            var column = (anno == null) ? $.snakeCase(name) : anno.name();
 
-            ValueGetter getter = columnAnno != null && columnAnno.getter() != ValueGetter.None.class
-                    ? getFromClass(columnAnno.getter())
+            ColumnPropertyMapper<?> mapper = anno != null && anno.mapper() != ColumnPropertyMapper.None.class
+                    ? getFromClass(anno.mapper())
                     : getters.get(type);
-            if (getter == null) {
+            if (mapper == null) {
                 if (type instanceof Class<?> c && c.isEnum()) {
                     var str = rs.getString(column);
                     values.put(name, $.isEmpty(str) ? null : toEnum(c, str));
                 } else {
-                    throw new IllegalStateException("Unexpected value: " + type);
+                    throw new DbException("Unexpected value: " + type);
                 }
             } else {
-                values.put(name, getter.get(rs, column));
+                values.put(name, mapper.fromColumn(rs, column));
             }
         }
 
         return bi.create(values);
     }
 
-    private static ValueGetter getFromClass(Class<?> clazz) {
-        try {
-            var constructor = clazz.getConstructor();
-            var getter = constructor.newInstance();
-            if (getter instanceof ValueGetter) {
-                return (ValueGetter) getter;
-            } else {
-                throw new IllegalStateException("Unexpected value: " + getter);
-            }
-        } catch (NoSuchMethodException e) {
-            throw new DbException("No default constructor defined for Class " + clazz.getCanonicalName(), e);
-        } catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {
-            throw new DbException("Cannot create instance from default constructor of " + clazz.getCanonicalName(), e);
+    private static ColumnPropertyMapper<?> getFromClass(Class<?> clazz) {
+        var inst = InstanceUtils.createInstanceFromDefaultConstructor(clazz);
+        if (inst instanceof ColumnPropertyMapper<?> mapper) {
+            return mapper;
         }
+
+        throw new DbException("The class " + clazz.getCanonicalName() + " is not a ColumnPropertyMapper.");
     }
 
     @SuppressWarnings({"unchecked", "rawtypes"})
