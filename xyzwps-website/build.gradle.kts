@@ -13,8 +13,6 @@ repositories {
 dependencies {
     implementation(project(":xyzwps-express"))
     implementation(project(":xyzwps-express:server-bio"))
-    implementation(project(":xyzwps-express:server-undertow"))
-    implementation(libs.bundles.logging)
     implementation(libs.hocon)
     implementation(libs.dagger)
     annotationProcessor(libs.dagger.compiler)

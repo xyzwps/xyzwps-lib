@@ -12,9 +12,10 @@ dependencyResolutionManagement {
 
             library("hocon", "com.typesafe:config:1.4.3")
 
-            version("logging", "3.6.0.Final")
-            library("jboss-logging", "org.jboss.logging", "jboss-logging").versionRef("logging")
-            bundle("logging", listOf("jboss-logging"))
+            library("slf4j-api", "org.slf4j:slf4j-api:2.0.13")
+            library("jboss-logging", "org.jboss.logging:jboss-logging:3.6.0.Final")
+            library("logback-classic", "ch.qos.logback:logback-classic:1.4.6")
+            bundle("logging", listOf("jboss-logging", "slf4j-api", "logback-classic"))
 
             version("jackson", "2.17.0")
             library("jackson-core", "com.fasterxml.jackson.core", "jackson-core").versionRef("jackson")
@@ -24,11 +25,6 @@ dependencyResolutionManagement {
             version("junit", "5.10.2")
             library("junit-bom", "org.junit", "junit-bom").versionRef("junit")
             library("junit-jupiter", "org.junit.jupiter", "junit-jupiter").versionRef("junit")
-
-            version("slf4j", "2.0.13")
-            library("slf4j-api", "org.slf4j", "slf4j-api").versionRef("slf4j")
-            library("slf4j-simple", "org.slf4j", "slf4j-simple").versionRef("slf4j")
-            bundle("slf4j", listOf("slf4j-api", "slf4j-simple"))
 
             version("undertow", "2.3.13.Final")
             library("undertow-core", "io.undertow", "undertow-core").versionRef("undertow")
