@@ -10,7 +10,7 @@ class ColumnPropertyMappers {
     private ColumnPropertyMappers() {
     }
 
-    public static final ColumnPropertyMapper<Short> SHORT = new ColumnPropertyMapper<>() {
+    static final ColumnPropertyMapper<Short> SHORT = new ColumnPropertyMapper<>() {
         @Override
         public Short fromColumn(ResultSet rs, String column) throws SQLException {
             return rs.getShort(column);
@@ -22,7 +22,7 @@ class ColumnPropertyMappers {
         }
     };
 
-    public static final ColumnPropertyMapper<Integer> INTEGER = new ColumnPropertyMapper<>() {
+    static final ColumnPropertyMapper<Integer> INTEGER = new ColumnPropertyMapper<>() {
         @Override
         public Integer fromColumn(ResultSet rs, String column) throws SQLException {
             return rs.getInt(column);
@@ -34,7 +34,7 @@ class ColumnPropertyMappers {
         }
     };
 
-    public static final ColumnPropertyMapper<Long> LONG = new ColumnPropertyMapper<>() {
+    static final ColumnPropertyMapper<Long> LONG = new ColumnPropertyMapper<>() {
         @Override
         public Long fromColumn(ResultSet rs, String column) throws SQLException {
             return rs.getLong(column);
@@ -46,7 +46,7 @@ class ColumnPropertyMappers {
         }
     };
 
-    public static final ColumnPropertyMapper<Float> FLOAT = new ColumnPropertyMapper<>() {
+    static final ColumnPropertyMapper<Float> FLOAT = new ColumnPropertyMapper<>() {
         @Override
         public Float fromColumn(ResultSet rs, String column) throws SQLException {
             return rs.getFloat(column);
@@ -58,7 +58,7 @@ class ColumnPropertyMappers {
         }
     };
 
-    public static final ColumnPropertyMapper<Double> DOUBLE = new ColumnPropertyMapper<>() {
+    static final ColumnPropertyMapper<Double> DOUBLE = new ColumnPropertyMapper<>() {
         @Override
         public Double fromColumn(ResultSet rs, String column) throws SQLException {
             return rs.getDouble(column);
@@ -70,7 +70,7 @@ class ColumnPropertyMappers {
         }
     };
 
-    public static final ColumnPropertyMapper<Boolean> BOOLEAN = new ColumnPropertyMapper<>() {
+    static final ColumnPropertyMapper<Boolean> BOOLEAN = new ColumnPropertyMapper<>() {
         @Override
         public Boolean fromColumn(ResultSet rs, String column) throws SQLException {
             return rs.getBoolean(column);
@@ -82,7 +82,7 @@ class ColumnPropertyMappers {
         }
     };
 
-    public static final ColumnPropertyMapper<String> STRING = new ColumnPropertyMapper<>() {
+    static final ColumnPropertyMapper<String> STRING = new ColumnPropertyMapper<>() {
         @Override
         public String fromColumn(ResultSet rs, String column) throws SQLException {
             return rs.getString(column);
@@ -94,7 +94,7 @@ class ColumnPropertyMappers {
         }
     };
 
-    public static final ColumnPropertyMapper<BigInteger> BIG_INTEGER = new ColumnPropertyMapper<>() {
+    static final ColumnPropertyMapper<BigInteger> BIG_INTEGER = new ColumnPropertyMapper<>() {
         @Override
         public BigInteger fromColumn(ResultSet rs, String column) throws SQLException {
             return rs.getBigDecimal(column).toBigInteger();
@@ -106,7 +106,7 @@ class ColumnPropertyMappers {
         }
     };
 
-    public static final ColumnPropertyMapper<BigDecimal> BIG_DECIMAL = new ColumnPropertyMapper<>() {
+    static final ColumnPropertyMapper<BigDecimal> BIG_DECIMAL = new ColumnPropertyMapper<>() {
         @Override
         public BigDecimal fromColumn(ResultSet rs, String column) throws SQLException {
             return rs.getBigDecimal(column);
@@ -118,7 +118,7 @@ class ColumnPropertyMappers {
         }
     };
 
-    public static final ColumnPropertyMapper<java.sql.Date> SQL_DATE = new ColumnPropertyMapper<>() {
+    static final ColumnPropertyMapper<java.sql.Date> SQL_DATE = new ColumnPropertyMapper<>() {
         @Override
         public java.sql.Date fromColumn(ResultSet rs, String column) throws SQLException {
             return rs.getDate(column);
@@ -130,7 +130,7 @@ class ColumnPropertyMappers {
         }
     };
 
-    public static final ColumnPropertyMapper<java.sql.Time> SQL_TIME = new ColumnPropertyMapper<>() {
+    static final ColumnPropertyMapper<java.sql.Time> SQL_TIME = new ColumnPropertyMapper<>() {
         @Override
         public java.sql.Time fromColumn(ResultSet rs, String column) throws SQLException {
             return rs.getTime(column);
@@ -142,7 +142,7 @@ class ColumnPropertyMappers {
         }
     };
 
-    public static final ColumnPropertyMapper<java.sql.Timestamp> SQL_TIMESTAMP = new ColumnPropertyMapper<>() {
+    static final ColumnPropertyMapper<java.sql.Timestamp> SQL_TIMESTAMP = new ColumnPropertyMapper<>() {
         @Override
         public java.sql.Timestamp fromColumn(ResultSet rs, String column) throws SQLException {
             return rs.getTimestamp(column);
@@ -154,7 +154,7 @@ class ColumnPropertyMappers {
         }
     };
 
-    public static final ColumnPropertyMapper<java.util.Date> UTIL_DATE = new ColumnPropertyMapper<>() {
+    static final ColumnPropertyMapper<java.util.Date> UTIL_DATE = new ColumnPropertyMapper<>() {
         @Override
         public java.util.Date fromColumn(ResultSet rs, String column) throws SQLException {
             return rs.getTimestamp(column);
@@ -166,7 +166,7 @@ class ColumnPropertyMappers {
         }
     };
 
-    public static final ColumnPropertyMapper<java.time.LocalDate> LOCAL_DATE = new ColumnPropertyMapper<>() {
+    static final ColumnPropertyMapper<java.time.LocalDate> LOCAL_DATE = new ColumnPropertyMapper<>() {
         @Override
         public java.time.LocalDate fromColumn(ResultSet rs, String column) throws SQLException {
             return rs.getDate(column).toLocalDate();
@@ -178,7 +178,7 @@ class ColumnPropertyMappers {
         }
     };
 
-    public static final ColumnPropertyMapper<java.time.LocalTime> LOCAL_TIME = new ColumnPropertyMapper<>() {
+    static final ColumnPropertyMapper<java.time.LocalTime> LOCAL_TIME = new ColumnPropertyMapper<>() {
         @Override
         public java.time.LocalTime fromColumn(ResultSet rs, String column) throws SQLException {
             return rs.getTime(column).toLocalTime();
@@ -190,7 +190,7 @@ class ColumnPropertyMappers {
         }
     };
 
-    public static final ColumnPropertyMapper<java.time.LocalDateTime> LOCAL_DATE_TIME = new ColumnPropertyMapper<>() {
+    static final ColumnPropertyMapper<java.time.LocalDateTime> LOCAL_DATE_TIME = new ColumnPropertyMapper<>() {
         @Override
         public java.time.LocalDateTime fromColumn(ResultSet rs, String column) throws SQLException {
             return rs.getTimestamp(column).toLocalDateTime();
@@ -202,7 +202,7 @@ class ColumnPropertyMappers {
         }
     };
 
-    public static final ColumnPropertyMapper<java.time.Instant> INSTANT = new ColumnPropertyMapper<>() {
+    static final ColumnPropertyMapper<java.time.Instant> INSTANT = new ColumnPropertyMapper<>() {
         @Override
         public java.time.Instant fromColumn(ResultSet rs, String column) throws SQLException {
             return rs.getTimestamp(column).toInstant();
