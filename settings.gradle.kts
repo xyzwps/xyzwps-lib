@@ -9,6 +9,10 @@ dependencyResolutionManagement {
             library("dagger-compiler", "com.google.dagger", "dagger-compiler").versionRef("dagger")
 
             library("h2", "com.h2database:h2:2.2.224")
+            library("hikari", "com.zaxxer:HikariCP:5.1.0")
+            library("mysql", "com.mysql:mysql-connector-j:8.4.0")
+
+            library("testcontainers-bom", "org.testcontainers:testcontainers-bom:1.19.8")
 
             library("hocon", "com.typesafe:config:1.4.3")
 
@@ -17,6 +21,7 @@ dependencyResolutionManagement {
             library("logback-classic", "ch.qos.logback:logback-classic:1.4.6")
             bundle("logging", listOf("jboss-logging", "slf4j-api", "logback-classic"))
 
+            // TODO: 删除 jackson
             version("jackson", "2.17.0")
             library("jackson-core", "com.fasterxml.jackson.core", "jackson-core").versionRef("jackson")
             library("jackson-databind", "com.fasterxml.jackson.core", "jackson-databind").versionRef("jackson")
