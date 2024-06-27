@@ -3,7 +3,7 @@ package com.xyzwps.lib.jdbc;
 import javax.sql.DataSource;
 import java.sql.SQLException;
 
-public final class Database {
+public class Database {
 
     private final DataSource ds;
     private final ResultSetToBean rs2b;

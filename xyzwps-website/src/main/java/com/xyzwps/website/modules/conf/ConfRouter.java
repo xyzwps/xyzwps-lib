@@ -19,7 +19,6 @@ public class ConfRouter implements Consumer<NestRouter> {
         this.conf = conf;
     }
 
-
     @Override
     public void accept(NestRouter nestRouter) {
         nestRouter

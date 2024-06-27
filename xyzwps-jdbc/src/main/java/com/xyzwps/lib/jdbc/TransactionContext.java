@@ -32,4 +32,7 @@ public final class TransactionContext {
         return conn.prepareStatement(sql);
     }
 
+    public <T> T createDao(Class<T> daoClass) {
+        return DaoFactory.createDao(daoClass, this);
+    }
 }

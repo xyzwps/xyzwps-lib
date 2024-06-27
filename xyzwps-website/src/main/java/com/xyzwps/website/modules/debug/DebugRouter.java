@@ -4,6 +4,7 @@ import com.xyzwps.lib.express.HttpHeaders;
 import com.xyzwps.lib.express.middleware.BasicAuth;
 import com.xyzwps.lib.express.middleware.router.NestRouter;
 import com.xyzwps.website.common.JSON;
+import com.xyzwps.website.db.MainDatabase;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -19,9 +20,12 @@ public class DebugRouter implements Consumer<NestRouter> {
 
     public final BasicAuth basicAuth;
 
+    public final MainDatabase maindb;
+
     @Inject
-    DebugRouter(BasicAuth basicAuth) {
+    DebugRouter(BasicAuth basicAuth, MainDatabase maindb) {
         this.basicAuth = basicAuth;
+        this.maindb = maindb;
     }
 
     @Override
@@ -33,10 +37,17 @@ public class DebugRouter implements Consumer<NestRouter> {
 
                     ctx.attribute("haha", "ha\nha");
 
+                    var map = new HashMap<String, Object>();
+
+                    maindb.tx(tx -> {
+                        var dao = tx.createDao(DebugDao.class);
+                        map.put("jdbc", dao.count());
+                    });
+
                     resp.ok();
                     resp.headers().set(HttpHeaders.CONTENT_TYPE, "application/json");
 
-                    var map = new HashMap<String, Object>();
+
                     map.put("protocol", req.protocol());
                     map.put("method", req.method());
                     map.put("path", req.path());

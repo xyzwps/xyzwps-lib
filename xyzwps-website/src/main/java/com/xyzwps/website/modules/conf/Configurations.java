@@ -2,6 +2,7 @@ package com.xyzwps.website.modules.conf;
 
 import com.typesafe.config.Config;
 import com.typesafe.config.ConfigFactory;
+import com.zaxxer.hikari.HikariConfig;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -28,5 +29,12 @@ public class Configurations {
         return config.getInt("app.server.port");
     }
 
-
+    public HikariConfig getHikariConfig(String db) {
+        var conf = new HikariConfig();
+        conf.setJdbcUrl(config.getString("app." + db + ".url"));
+        conf.setUsername(config.getString("app." + db + ".username"));
+        conf.setPassword(config.getString("app." + db + ".password"));
+        conf.setDriverClassName(config.getString("app." + db + ".driver"));
+        return conf;
+    }
 }
