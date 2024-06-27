@@ -18,8 +18,8 @@ dependencies {
     api(project(":lib:jshttp:mime-db"))
     api(project(":xyzwps-bedrock"))
     api(project(":xyzwps-dollar"))
-    api(project(":xyzwps-log"))
     api(project(":xyzwps-json"))
+    api(libs.bundles.logging)
 
     testImplementation(platform(libs.junit.bom))
     testImplementation(libs.junit.jupiter)

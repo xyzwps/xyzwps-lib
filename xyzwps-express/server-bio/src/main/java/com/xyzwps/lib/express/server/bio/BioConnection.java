@@ -5,6 +5,7 @@ import com.xyzwps.lib.express.*;
 import com.xyzwps.lib.express.server.bio.common.ContentLengthInputStream;
 import com.xyzwps.lib.express.server.commons.KeepAliveConfig;
 import com.xyzwps.lib.express.server.commons.KeepAliveInfo;
+import org.jboss.logging.Logger;
 
 import java.io.*;
 import java.net.Socket;
@@ -16,6 +17,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.ReentrantLock;
 
 public class BioConnection implements Runnable {
+
+    private static final Logger log = Logger.getLogger(BioConnection.class);
 
     private static final AtomicInteger id_counter = new AtomicInteger(0);
 
@@ -58,18 +61,18 @@ public class BioConnection implements Runnable {
             }
         } catch (SocketException e) {
             if ("Connection reset".equalsIgnoreCase(e.getMessage())) {
-                Log.infof("==> socket closed by client");
+                log.infof("==> socket closed by client");
             } else {
-                Log.errorf(e, "Handle socket error");
+                log.errorf(e, "Handle socket error");
             }
         } catch (IOException | UncheckedIOException e) {
-            Log.errorf(e, "Handle socket error");
+            log.errorf(e, "Handle socket error");
         } catch (BadProtocolException e) {
-            Log.errorf(e, "Bad protocol error");
+            log.errorf(e, "Bad protocol error");
         } catch (Exception e) {
-            Log.errorf(e, "Unhandled error");
+            log.errorf(e, "Unhandled error");
         } finally {
-            Log.infof("==> socket " + connectionId + " has been closed.");
+            log.infof("==> socket " + connectionId + " has been closed.");
             cm.rm(this);
         }
     }
@@ -81,11 +84,11 @@ public class BioConnection implements Runnable {
         this.connectionRequestCount++;
         var requestParser = new RawRequestParser(in);
         var startLine = requestParser.startLine()
-                .peekLeft(Log::errorf)
+                .peekLeft(log::errorf)
                 .rightOrThrow(BadProtocolException::new);
 
         var headers = requestParser.headers()
-                .peekLeft(Log::errorf)
+                .peekLeft(log::errorf)
                 .rightOrThrow(BadProtocolException::new);
 
         // region check keep alive
@@ -119,7 +122,7 @@ public class BioConnection implements Runnable {
         }
         // endregion
 
-        Log.infof("==> " + connectionId + '-' + connectionRequestCount);
+        log.infof("==> " + connectionId + '-' + connectionRequestCount);
 
         middleware.call(HttpContext.start(request, response));
         exhaust(requestBody);
@@ -135,9 +138,9 @@ public class BioConnection implements Runnable {
             public void run() {
                 if (loopLock.tryLock()) {
                     try (socket) {
-                        Log.infof("==> socket " + connectionId + " has been closed by keep alive timeout.");
+                        log.infof("==> socket " + connectionId + " has been closed by keep alive timeout.");
                     } catch (IOException e) {
-                        Log.errorf(e, "Handle socket error");
+                        log.errorf(e, "Handle socket error");
                     } finally {
                         cm.rm(BioConnection.this);
                     }

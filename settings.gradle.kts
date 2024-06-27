@@ -12,6 +12,10 @@ dependencyResolutionManagement {
 
             library("hocon", "com.typesafe:config:1.4.3")
 
+            version("logging", "3.6.0.Final")
+            library("jboss-logging", "org.jboss.logging", "jboss-logging").versionRef("logging")
+            bundle("logging", listOf("jboss-logging"))
+
             version("jackson", "2.17.0")
             library("jackson-core", "com.fasterxml.jackson.core", "jackson-core").versionRef("jackson")
             library("jackson-databind", "com.fasterxml.jackson.core", "jackson-databind").versionRef("jackson")
@@ -56,7 +60,6 @@ include(
 )
 include("xyzwps-jdbc")
 include("xyzwps-json")
-include("xyzwps-log")
 include("xyzwps-website")
 include("lib:jsdom:mimetype")
 include("lib:jshttp:mime-db")

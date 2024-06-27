@@ -4,11 +4,14 @@ import com.xyzwps.lib.bedrock.Args;
 import com.xyzwps.lib.express.*;
 import io.undertow.server.HttpServerExchange;
 import lib.jsdom.mimetype.MimeType;
+import org.jboss.logging.Logger;
 
 import java.io.InputStream;
 import java.util.List;
 
 class UndertowHttpRequest implements HttpRequest {
+
+    private static final Logger log = Logger.getLogger(UndertowHttpRequest.class);
 
     private final HttpServerExchange exchange;
 
@@ -30,7 +33,7 @@ class UndertowHttpRequest implements HttpRequest {
         this.searchParams = HttpSearchParams.parse(exchange.getQueryString());
         this.headers = new UndertowHttpHeaders(exchange.getRequestHeaders());
         this.protocol = HttpProtocol.from(exchange.getProtocol().toString())
-                .peekLeft(Log::errorf)
+                .peekLeft(log::errorf)
                 .rightOrThrow(BadProtocolException::new);
         this.body = in;
         this.pathVariables = new HttpPathVariables();

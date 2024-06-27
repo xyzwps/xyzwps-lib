@@ -3,6 +3,7 @@ package com.xyzwps.lib.express.middleware;
 import com.xyzwps.lib.express.*;
 import com.xyzwps.lib.express.middleware.router.HPath;
 import lib.jshttp.mimedb.MimeDb;
+import org.jboss.logging.Logger;
 
 import java.io.BufferedInputStream;
 import java.nio.file.Files;
@@ -10,6 +11,8 @@ import java.nio.file.Path;
 import java.util.Objects;
 
 public final class Static {
+
+    private static final Logger log = Logger.getLogger(Static.class);
 
     private final String rootDir;
     private final String pathPrefix;
@@ -78,7 +81,7 @@ public final class Static {
                 resp.headers().set(HttpHeaders.CONTENT_TYPE, mime.essence());
                 resp.send(allBytes);
             } catch (Exception e) {
-                Log.errorf(e, "Static middleware error");
+                log.errorf(e, "Static middleware error");
                 resp.status(HttpStatus.INTERNAL_SERVER_ERROR);
                 resp.headers().set(HttpHeaders.CONTENT_TYPE, "text/plain");
                 resp.send("Internal Server Error".getBytes());

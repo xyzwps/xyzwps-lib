@@ -1,6 +1,5 @@
 package com.xyzwps.lib.express.server.nio;
 
-import com.xyzwps.lib.express.Log;
 import com.xyzwps.lib.express.server.commons.InvalidHttpMessageException;
 
 import java.io.IOException;

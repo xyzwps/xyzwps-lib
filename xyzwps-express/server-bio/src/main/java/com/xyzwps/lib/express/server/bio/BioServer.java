@@ -2,12 +2,15 @@ package com.xyzwps.lib.express.server.bio;
 
 import com.xyzwps.lib.bedrock.Args;
 import com.xyzwps.lib.express.*;
+import org.jboss.logging.Logger;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.net.*;
 
 public final class BioServer implements Server {
+
+    private static final Logger log = Logger.getLogger(BioServer.class);
 
     @Override
     public void start(ServerConfig config) {
@@ -20,12 +23,12 @@ public final class BioServer implements Server {
                     var socket = serverSocket.accept();
                     this.handleSocket(socket, config.middleware);
                 } catch (IOException e) {
-                    Log.errorf(e, "Socket handling failed with uncaught error");
+                    log.errorf(e, "Socket handling failed with uncaught error");
                     throw new UncheckedIOException("Accept server socket failed", e);
                 }
             }
         } catch (IOException e) {
-            Log.errorf(e, "Server socket closed");
+            log.errorf(e, "Server socket closed");
             throw new UncheckedIOException("Server socket closed", e);
         }
     }
@@ -37,7 +40,7 @@ public final class BioServer implements Server {
             server.bind(new InetSocketAddress((InetAddress) null, port), 50);
             return server;
         } catch (IOException e) {
-            Log.errorf(e, "Create server socket failed");
+            log.errorf(e, "Create server socket failed");
             throw e;
         }
     }
