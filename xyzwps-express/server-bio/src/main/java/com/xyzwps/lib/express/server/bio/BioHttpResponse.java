@@ -1,10 +1,7 @@
 package com.xyzwps.lib.express.server.bio;
 
 import com.xyzwps.lib.bedrock.Args;
-import com.xyzwps.lib.express.HttpHeaders;
-import com.xyzwps.lib.express.HttpProtocol;
-import com.xyzwps.lib.express.HttpResponse;
-import com.xyzwps.lib.express.HttpStatus;
+import com.xyzwps.lib.express.*;
 import com.xyzwps.lib.express.server.commons.SimpleHttpHeaders;
 import com.xyzwps.lib.express.server.commons.header.HeaderDateValue;
 
@@ -17,6 +14,7 @@ public final class BioHttpResponse implements HttpResponse {
     private final OutputStream out;
     private final HttpProtocol protocol;
     private final HttpHeaders headers;
+    private final SetCookies cookies;
 
     private HttpStatus status = HttpStatus.OK;
 
@@ -24,6 +22,7 @@ public final class BioHttpResponse implements HttpResponse {
         this.out = Objects.requireNonNull(out);
         this.protocol = Objects.requireNonNull(protocol);
         this.headers = new SimpleHttpHeaders();
+        this.cookies = new SetCookies();
     }
 
     @Override
@@ -34,6 +33,11 @@ public final class BioHttpResponse implements HttpResponse {
     @Override
     public HttpHeaders headers() {
         return headers;
+    }
+
+    @Override
+    public SetCookies cookies() {
+        return cookies;
     }
 
     public void send(byte[] bytes) {
@@ -60,6 +64,13 @@ public final class BioHttpResponse implements HttpResponse {
                         out.write('\n');
                     }
                 }
+            }
+
+            for (var cookie : cookies) {
+                out.write("Set-Cookie: ".getBytes());
+                out.write(cookie.toString().getBytes());
+                out.write('\r');
+                out.write('\n');
             }
 
             out.write('\r');

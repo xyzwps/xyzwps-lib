@@ -20,6 +20,8 @@ public interface HttpResponse {
      */
     HttpHeaders headers();
 
+    SetCookies cookies();
+
     // TODO: lazy send
     /**
      * Send bytes and headers to client and set header <code>Content-Type</code> value with <code>bytes.length.</code>
