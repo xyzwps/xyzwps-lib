@@ -1,4 +1,4 @@
-package com.xyzwps.lib.express.jackson;
+package com.xyzwps.lib.express.json;
 
 import com.xyzwps.lib.express.HttpProtocol;
 import com.xyzwps.lib.json.ToElementConverter;

@@ -21,12 +21,6 @@ dependencyResolutionManagement {
             library("logback-classic", "ch.qos.logback:logback-classic:1.4.6")
             bundle("logging", listOf("jboss-logging", "slf4j-api", "logback-classic"))
 
-            // TODO: 删除 jackson
-            version("jackson", "2.17.0")
-            library("jackson-core", "com.fasterxml.jackson.core", "jackson-core").versionRef("jackson")
-            library("jackson-databind", "com.fasterxml.jackson.core", "jackson-databind").versionRef("jackson")
-            bundle("jackson", listOf("jackson-core", "jackson-databind"))
-
             version("junit", "5.10.2")
             library("junit-bom", "org.junit", "junit-bom").versionRef("junit")
             library("junit-jupiter", "org.junit.jupiter", "junit-jupiter").versionRef("junit")

@@ -1,6 +1,6 @@
 package com.xyzwps.website.common;
 
-import com.xyzwps.lib.express.jackson.JsonConfigurer;
+import com.xyzwps.lib.express.json.JsonConfigurer;
 import com.xyzwps.lib.json.DateTimeConfigurer;
 import com.xyzwps.lib.json.JsonMapper;
 
