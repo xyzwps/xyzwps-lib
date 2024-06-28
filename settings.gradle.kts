@@ -33,9 +33,6 @@ dependencyResolutionManagement {
             library("junit-bom", "org.junit", "junit-bom").versionRef("junit")
             library("junit-jupiter", "org.junit.jupiter", "junit-jupiter").versionRef("junit")
 
-            version("undertow", "2.3.13.Final")
-            library("undertow-core", "io.undertow", "undertow-core").versionRef("undertow")
-
             version("lombok", "1.18.32")
             library("lombok", "org.projectlombok", "lombok").versionRef("lombok")
         }
@@ -59,8 +56,7 @@ include(
     "xyzwps-express:server-bio",
     "xyzwps-express:server-nio",
     "xyzwps-express:server-commons",
-    "xyzwps-express:server-helidon",
-    "xyzwps-express:server-undertow"
+    "xyzwps-express:server-helidon"
 )
 include("xyzwps-jdbc")
 include("xyzwps-json")
