@@ -1,7 +1,7 @@
 package com.xyzwps.website.middleware;
 
 import com.xyzwps.lib.express.*;
-import com.xyzwps.website.modules.conf.Configurations;
+import com.xyzwps.website.Configurations;
 import jakarta.inject.Singleton;
 import org.jboss.logging.Logger;
 

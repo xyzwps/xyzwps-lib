@@ -1,7 +1,7 @@
 package com.xyzwps.website.db;
 
 import com.xyzwps.lib.jdbc.Database;
-import com.xyzwps.website.modules.conf.Configurations;
+import com.xyzwps.website.Configurations;
 import com.zaxxer.hikari.HikariDataSource;
 import jakarta.inject.Singleton;
 
