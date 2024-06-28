@@ -3,11 +3,15 @@ package com.xyzwps.lib.express.server.undertow;
 import com.xyzwps.lib.bedrock.Args;
 import com.xyzwps.lib.express.*;
 import io.undertow.server.HttpServerExchange;
+import io.undertow.server.handlers.Cookie;
 import lib.jsdom.mimetype.MimeType;
 import org.jboss.logging.Logger;
 
 import java.io.InputStream;
+import java.net.HttpCookie;
 import java.util.List;
+
+import static com.xyzwps.lib.dollar.Dollar.*;
 
 class UndertowHttpRequest implements HttpRequest {
 
@@ -25,6 +29,8 @@ class UndertowHttpRequest implements HttpRequest {
 
     private final HttpPathVariables pathVariables;
 
+    private final List<Cookie> cookies;
+
     private Object body;
 
     UndertowHttpRequest(HttpServerExchange exchange, InputStream in) {
@@ -37,6 +43,7 @@ class UndertowHttpRequest implements HttpRequest {
                 .rightOrThrow(BadProtocolException::new);
         this.body = in;
         this.pathVariables = new HttpPathVariables();
+        this.cookies = $.arrayListFrom(exchange.requestCookies().iterator());
     }
 
     @Override
@@ -101,5 +108,25 @@ class UndertowHttpRequest implements HttpRequest {
     @Override
     public HttpPathVariables pathVariables() {
         return pathVariables;
+    }
+
+    @Override
+    public HttpCookie cookie(String name) {
+        if (cookies.isEmpty()) {
+            return null;
+        }
+
+        return cookies.stream().findFirst().map(c -> {
+            var cookie = new HttpCookie(c.getName(), c.getValue());
+            cookie.setDomain(c.getDomain());
+            cookie.setPath(c.getPath());
+            cookie.setMaxAge(c.getMaxAge());
+            cookie.setSecure(c.isSecure());
+            cookie.setVersion(c.getVersion());
+            cookie.setHttpOnly(c.isHttpOnly());
+            cookie.setDiscard(c.isDiscard());
+            cookie.setComment(c.getComment());
+            return cookie;
+        }).orElse(null);
     }
 }

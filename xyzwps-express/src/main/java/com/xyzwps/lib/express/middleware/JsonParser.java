@@ -47,9 +47,7 @@ public final class JsonParser {
     private <T> HttpMiddleware parseBody(Class<T> tClass, MimeType type) {
         return (ctx) -> {
             var req = ctx.request();
-            var resp = ctx.response();
-
-            InputStream is = (InputStream) req.body();
+            var is = (InputStream) req.body();
             try {
                 var charset = type.parameters.get("charset").map(Charset::forName).orElse(StandardCharsets.UTF_8);
                 var reader = new InputStreamReader(is, charset);

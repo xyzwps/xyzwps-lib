@@ -3,6 +3,7 @@ package com.xyzwps.website.modules;
 import com.xyzwps.lib.express.middleware.router.RouterMiddleware;
 import com.xyzwps.website.modules.conf.ConfRouter;
 import com.xyzwps.website.modules.debug.DebugRouter;
+import com.xyzwps.website.modules.action.ActionRouter;
 import com.xyzwps.website.modules.user.UserRouter;
 import jakarta.inject.Singleton;
 
@@ -13,6 +14,7 @@ public class IndexRouterBuilder {
 
     public IndexRouterBuilder(ConfRouter confBuilder,
                               DebugRouter debugRouter,
+                              ActionRouter action,
                               UserRouter userRouter) {
         this.router = new RouterMiddleware()
                 .get("/api/hello/world", (ctx) -> {
@@ -21,6 +23,7 @@ public class IndexRouterBuilder {
                     resp.headers().set("Content-Type", "application/json");
                     resp.send("[\"Hello\":\"World\"]".getBytes());
                 })
+                .nest("/api/a", action)
                 .nest("/api/conf", confBuilder)
                 .nest("/api/debug", debugRouter)
                 .nest("/api/users", userRouter);

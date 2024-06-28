@@ -17,9 +17,13 @@ dependencies {
     implementation(libs.hikari)
     implementation(libs.mysql)
     implementation(libs.hocon)
+    compileOnly(libs.lombok)
+    annotationProcessor(libs.lombok)
     implementation(libs.avaje.inject)
     annotationProcessor(libs.avaje.injectgen)
 
+    testCompileOnly(libs.lombok)
+    testAnnotationProcessor(libs.lombok)
     testImplementation(libs.avaje.inject)
     testAnnotationProcessor(libs.avaje.injectgen)
     testImplementation(platform(libs.junit.bom))

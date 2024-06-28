@@ -98,4 +98,6 @@ public interface HttpHeaders {
     String KEEP_ALIVE = "Keep-Alive";
 
     String DATE = "Date";
+
+    String COOKIE = "Cookie";
 }

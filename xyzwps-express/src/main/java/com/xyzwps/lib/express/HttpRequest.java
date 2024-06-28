@@ -2,6 +2,7 @@ package com.xyzwps.lib.express;
 
 import lib.jsdom.mimetype.MimeType;
 
+import java.net.HttpCookie;
 import java.util.List;
 
 /**
@@ -87,4 +88,6 @@ public interface HttpRequest {
      * @return all path variables
      */
     HttpPathVariables pathVariables();
+
+    HttpCookie cookie(String name);
 }
