@@ -1,3 +1,11 @@
+pluginManagement {
+    plugins {
+        kotlin("jvm") version "2.0.0"
+    }
+}
+plugins {
+    id("org.gradle.toolchains.foojay-resolver-convention") version "0.5.0"
+}
 rootProject.name = "xyzwps-lib"
 
 // https://docs.gradle.org/current/userguide/platforms.html
@@ -51,6 +59,7 @@ include(
     "xyzwps-express:server-bio",
     "xyzwps-express:server-nio",
     "xyzwps-express:server-commons",
+    "xyzwps-express:server-helidon",
     "xyzwps-express:server-undertow"
 )
 include("xyzwps-jdbc")
