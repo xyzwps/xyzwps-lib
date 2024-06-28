@@ -7,10 +7,8 @@ import com.xyzwps.website.middleware.LogRequestCostMiddleware;
 import com.xyzwps.website.middleware.SpaFallbackMiddleware;
 import com.xyzwps.website.modules.IndexRouterBuilder;
 import com.xyzwps.website.modules.conf.Configurations;
+import jakarta.inject.Singleton;
 import org.jboss.logging.Logger;
-
-import javax.inject.Inject;
-import javax.inject.Singleton;
 
 @Singleton
 public class HttpServerLayer {
@@ -19,7 +17,6 @@ public class HttpServerLayer {
 
     private final ServerConfig serverConfig;
 
-    @Inject
     public HttpServerLayer(IndexRouterBuilder routerBuilder,
                            Configurations conf,
                            LogRequestCostMiddleware logRequestCostMiddleware,

@@ -1,10 +1,9 @@
 package com.xyzwps.website.middleware;
 
 import com.xyzwps.lib.express.*;
+import jakarta.inject.Singleton;
 import org.jboss.logging.Logger;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
 import java.util.concurrent.atomic.AtomicLong;
 
 @Singleton
@@ -13,10 +12,6 @@ public class LogRequestCostMiddleware implements HttpMiddleware {
     private static final Logger log = Logger.getLogger(LogRequestCostMiddleware.class);
 
     private static final AtomicLong COUNTER = new AtomicLong(0);
-
-    @Inject
-    LogRequestCostMiddleware() {
-    }
 
     @Override
     public void call(HttpContext ctx) {

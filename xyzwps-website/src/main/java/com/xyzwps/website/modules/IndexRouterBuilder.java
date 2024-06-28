@@ -4,16 +4,13 @@ import com.xyzwps.lib.express.middleware.router.RouterMiddleware;
 import com.xyzwps.website.modules.conf.ConfRouter;
 import com.xyzwps.website.modules.debug.DebugRouter;
 import com.xyzwps.website.modules.user.UserRouter;
-
-import javax.inject.Inject;
-import javax.inject.Singleton;
+import jakarta.inject.Singleton;
 
 @Singleton
 public class IndexRouterBuilder {
 
     public final RouterMiddleware router;
 
-    @Inject
     public IndexRouterBuilder(ConfRouter confBuilder,
                               DebugRouter debugRouter,
                               UserRouter userRouter) {

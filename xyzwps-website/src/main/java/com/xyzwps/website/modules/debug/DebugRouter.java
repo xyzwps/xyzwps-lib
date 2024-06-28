@@ -5,9 +5,7 @@ import com.xyzwps.lib.express.middleware.BasicAuth;
 import com.xyzwps.lib.express.middleware.router.NestRouter;
 import com.xyzwps.website.common.JSON;
 import com.xyzwps.website.db.MainDatabase;
-
-import javax.inject.Inject;
-import javax.inject.Singleton;
+import jakarta.inject.Singleton;
 
 import java.time.LocalDateTime;
 import java.util.Date;
@@ -22,8 +20,7 @@ public class DebugRouter implements Consumer<NestRouter> {
 
     public final MainDatabase maindb;
 
-    @Inject
-    DebugRouter(BasicAuth basicAuth, MainDatabase maindb) {
+    public DebugRouter(BasicAuth basicAuth, MainDatabase maindb) {
         this.basicAuth = basicAuth;
         this.maindb = maindb;
     }

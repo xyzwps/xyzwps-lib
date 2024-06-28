@@ -1,13 +1,13 @@
 package com.xyzwps.website.middleware;
 
 import com.xyzwps.lib.express.middleware.BasicAuth;
-import dagger.Module;
-import dagger.Provides;
+import io.avaje.inject.Bean;
+import io.avaje.inject.Factory;
 
-@Module
+@Factory
 public class MiddlewareModule {
 
-    @Provides
+    @Bean
     public static BasicAuth provideBasicAuth() {
         return new BasicAuth((username, password) -> "scott".equals(username) && "tiger".equals(password));
     }

@@ -2,10 +2,9 @@ package com.xyzwps.website.middleware;
 
 import com.xyzwps.lib.express.*;
 import com.xyzwps.website.modules.conf.Configurations;
+import jakarta.inject.Singleton;
 import org.jboss.logging.Logger;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
@@ -16,8 +15,7 @@ public class SpaFallbackMiddleware implements HttpMiddleware {
 
     private final Configurations conf;
 
-    @Inject
-    SpaFallbackMiddleware(Configurations conf) {
+    public SpaFallbackMiddleware(Configurations conf) {
         this.conf = conf;
     }
 

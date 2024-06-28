@@ -6,10 +6,8 @@ import com.xyzwps.lib.express.middleware.router.NestRouter;
 import com.xyzwps.website.common.JSON;
 import com.xyzwps.website.Person;
 import com.xyzwps.website.middleware.LogRequestCostMiddleware;
+import jakarta.inject.Singleton;
 import org.jboss.logging.Logger;
-
-import javax.inject.Inject;
-import javax.inject.Singleton;
 
 import java.util.function.Consumer;
 
@@ -21,10 +19,6 @@ public class UserRouter implements Consumer<NestRouter> {
     private static final Logger log = Logger.getLogger(LogRequestCostMiddleware.class);
 
     private final JsonParser json = new JsonParser(JSON.JM);
-
-    @Inject
-    UserRouter() {
-    }
 
     @Override
     public void accept(NestRouter nestRouter) {

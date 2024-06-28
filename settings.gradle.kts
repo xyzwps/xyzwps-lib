@@ -4,6 +4,12 @@ rootProject.name = "xyzwps-lib"
 dependencyResolutionManagement {
     versionCatalogs {
         create("libs") {
+
+            version("avaje", "9.12")
+            library("avaje-inject", "io.avaje", "avaje-inject").versionRef("avaje")
+            library("avaje-injectgen", "io.avaje", "avaje-inject-generator").versionRef("avaje")
+
+
             version("dagger", "2.51.1")
             library("dagger", "com.google.dagger", "dagger").versionRef("dagger")
             library("dagger-compiler", "com.google.dagger", "dagger-compiler").versionRef("dagger")

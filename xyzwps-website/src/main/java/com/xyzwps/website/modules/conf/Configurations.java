@@ -3,16 +3,14 @@ package com.xyzwps.website.modules.conf;
 import com.typesafe.config.Config;
 import com.typesafe.config.ConfigFactory;
 import com.zaxxer.hikari.HikariConfig;
+import jakarta.inject.Singleton;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
 
 @Singleton
 public class Configurations {
 
     private final Config config;
 
-    @Inject
     public Configurations() {
         this.config = ConfigFactory.load("app");
     }

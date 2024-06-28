@@ -3,9 +3,8 @@ package com.xyzwps.website.modules.conf;
 import com.xyzwps.lib.express.HttpHeaders;
 import com.xyzwps.lib.express.middleware.router.NestRouter;
 import com.xyzwps.website.common.JSON;
+import jakarta.inject.Singleton;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
 import java.util.HashMap;
 import java.util.function.Consumer;
 
@@ -14,7 +13,6 @@ public class ConfRouter implements Consumer<NestRouter> {
 
     public final Configurations conf;
 
-    @Inject
     ConfRouter(Configurations conf) {
         this.conf = conf;
     }

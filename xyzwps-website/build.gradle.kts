@@ -17,9 +17,11 @@ dependencies {
     implementation(libs.hikari)
     implementation(libs.mysql)
     implementation(libs.hocon)
-    implementation(libs.dagger)
-    annotationProcessor(libs.dagger.compiler)
+    implementation(libs.avaje.inject)
+    annotationProcessor(libs.avaje.injectgen)
 
+    testImplementation(libs.avaje.inject)
+    testAnnotationProcessor(libs.avaje.injectgen)
     testImplementation(platform(libs.junit.bom))
     testImplementation(libs.junit.jupiter)
 }
