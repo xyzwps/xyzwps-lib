@@ -19,7 +19,7 @@ public final class SetCookie {
     private Integer maxAge;
     private SameSite sameSite;
 
-    SetCookie(String name, String value) {
+    public SetCookie(String name, String value) {
         this.name = name;
         this.value = value;
     }

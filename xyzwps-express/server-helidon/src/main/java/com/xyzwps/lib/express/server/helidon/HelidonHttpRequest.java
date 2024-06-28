@@ -44,7 +44,7 @@ class HelidonHttpRequest implements HttpRequest {
         this.pathVariables = new HttpPathVariables();
 
 
-        this.cookies = SimpleCookie.from(HttpHeaders.COOKIE);
+        this.cookies = SimpleCookie.from(headers.get(HttpHeaders.COOKIE));
     }
 
     @Override

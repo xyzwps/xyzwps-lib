@@ -33,7 +33,7 @@ public final class BioHttpRequest implements HttpRequest {
         this.contentType = contentTypeStr == null ? null : MimeType.parse(contentTypeStr);
         this.pathVariables = new HttpPathVariables();
 
-        this.cookies = SimpleCookie.from(HttpHeaders.COOKIE);
+        this.cookies = SimpleCookie.from(headers.get(HttpHeaders.COOKIE));
     }
 
     @Override
