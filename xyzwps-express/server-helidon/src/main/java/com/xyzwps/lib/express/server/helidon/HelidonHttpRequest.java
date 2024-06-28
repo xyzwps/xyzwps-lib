@@ -2,11 +2,11 @@ package com.xyzwps.lib.express.server.helidon;
 
 import com.xyzwps.lib.bedrock.Args;
 import com.xyzwps.lib.express.*;
+import com.xyzwps.lib.express.server.commons.SimpleCookie;
 import io.helidon.webserver.http.ServerRequest;
 import lib.jsdom.mimetype.MimeType;
 
 import java.io.InputStream;
-import java.net.HttpCookie;
 import java.util.List;
 
 class HelidonHttpRequest implements HttpRequest {
@@ -18,7 +18,7 @@ class HelidonHttpRequest implements HttpRequest {
     private final MimeType contentType;
     private final HttpSearchParams searchParams;
     private final HttpPathVariables pathVariables;
-    private final List<HttpCookie> cookies;
+    private final Cookies cookies;
 
     HelidonHttpRequest(ServerRequest request, InputStream in) {
         this.body = in;
@@ -43,12 +43,8 @@ class HelidonHttpRequest implements HttpRequest {
         this.searchParams = HttpSearchParams.parse(req.query().rawValue());
         this.pathVariables = new HttpPathVariables();
 
-        var cookieStr = headers.get(HttpHeaders.COOKIE);
-        if (cookieStr == null || cookieStr.isBlank()) {
-            this.cookies = null;
-        } else {
-            this.cookies = HttpCookie.parse(cookieStr);
-        }
+
+        this.cookies = SimpleCookie.from(HttpHeaders.COOKIE);
     }
 
     @Override
@@ -107,16 +103,7 @@ class HelidonHttpRequest implements HttpRequest {
     }
 
     @Override
-    public HttpCookie cookie(String name) {
-        if (cookies == null) {
-            return null;
-        }
-
-        for (var cookie : cookies) {
-            if (cookie.getName().equalsIgnoreCase(name)) {
-                return cookie;
-            }
-        }
-        return null;
+    public Cookies cookies() {
+        return cookies;
     }
 }

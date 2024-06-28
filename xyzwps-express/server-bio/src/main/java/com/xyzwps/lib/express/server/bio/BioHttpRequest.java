@@ -1,9 +1,9 @@
 package com.xyzwps.lib.express.server.bio;
 
 import com.xyzwps.lib.express.*;
+import com.xyzwps.lib.express.server.commons.SimpleCookie;
 import lib.jsdom.mimetype.MimeType;
 
-import java.net.HttpCookie;
 import java.net.URI;
 import java.util.List;
 import java.util.Objects;
@@ -15,7 +15,7 @@ public final class BioHttpRequest implements HttpRequest {
     private final HttpHeaders headers;
     private final HttpSearchParams searchParams;
     private final HttpPathVariables pathVariables;
-    private final List<HttpCookie> cookies;
+    private final Cookies cookies;
     private Object body;
 
     private final MimeType contentType;
@@ -33,12 +33,7 @@ public final class BioHttpRequest implements HttpRequest {
         this.contentType = contentTypeStr == null ? null : MimeType.parse(contentTypeStr);
         this.pathVariables = new HttpPathVariables();
 
-        var cookieStr = headers.get(HttpHeaders.COOKIE);
-        if (cookieStr == null || cookieStr.isBlank()) {
-            this.cookies = null;
-        } else {
-            this.cookies = HttpCookie.parse(cookieStr);
-        }
+        this.cookies = SimpleCookie.from(HttpHeaders.COOKIE);
     }
 
     @Override
@@ -97,16 +92,7 @@ public final class BioHttpRequest implements HttpRequest {
     }
 
     @Override
-    public HttpCookie cookie(String name) {
-        if (cookies == null) {
-            return null;
-        }
-
-        for (var cookie : cookies) {
-            if (cookie.getName().equalsIgnoreCase(name)) {
-                return cookie;
-            }
-        }
-        return null;
+    public Cookies cookies() {
+        return cookies;
     }
 }
