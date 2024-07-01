@@ -7,12 +7,12 @@ sealed interface RouteItem {
     /**
      * @param url
      * @param method      match any of methods if it is null
-     * @param middlewares
+     * @param middleware
      */
-    record Handler(HPath url, HttpMethod method, HttpMiddleware[] middlewares) implements RouteItem {
+    record Handler(String url, HttpMethod method, HttpMiddleware middleware) implements RouteItem {
     }
 
-    record Nest(HPath prefix, NestRouter router) implements RouteItem {
+    record Nest(String prefix, Router router) implements RouteItem {
     }
 
     record Use(HttpMiddleware mw) implements RouteItem {

@@ -2,7 +2,7 @@ package com.xyzwps.website.modules.debug;
 
 import com.xyzwps.lib.express.HttpHeaders;
 import com.xyzwps.lib.express.middleware.BasicAuth;
-import com.xyzwps.lib.express.middleware.router.NestRouter;
+import com.xyzwps.lib.express.middleware.router.Router;
 import com.xyzwps.website.common.JSON;
 import com.xyzwps.website.db.MainDatabase;
 import jakarta.inject.Singleton;
@@ -11,23 +11,12 @@ import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.function.Consumer;
 
 @Singleton
-public class DebugRouter implements Consumer<NestRouter> {
-
-    public final BasicAuth basicAuth;
-
-    public final MainDatabase maindb;
+public class DebugRouter extends Router {
 
     public DebugRouter(BasicAuth basicAuth, MainDatabase maindb) {
-        this.basicAuth = basicAuth;
-        this.maindb = maindb;
-    }
-
-    @Override
-    public void accept(NestRouter nestRouter) {
-        nestRouter
+        this
                 .get("/{id}", (ctx) -> {
                     var req = ctx.request();
                     var resp = ctx.response();

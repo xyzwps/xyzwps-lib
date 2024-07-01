@@ -25,7 +25,6 @@ public sealed interface PathSegment {
 
         if (segment.contains("*")) {
             if (segment.equals("*")) return StarSegment.INSTANCE;
-            if (segment.equals("**")) return DoubleStarSegment.INSTANCE;
             throw new IllegalArgumentException("Invalid segment '" + segment + "'");
         }
 
@@ -63,15 +62,6 @@ public sealed interface PathSegment {
         @Override
         public String toString() {
             return "*";
-        }
-    }
-
-    enum DoubleStarSegment implements PathSegment {
-        INSTANCE;
-
-        @Override
-        public String toString() {
-            return "**";
         }
     }
 }

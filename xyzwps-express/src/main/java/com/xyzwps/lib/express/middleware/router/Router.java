@@ -1,115 +1,105 @@
 package com.xyzwps.lib.express.middleware.router;
 
-import com.xyzwps.lib.bedrock.Args;
 import com.xyzwps.lib.express.HttpMethod;
 import com.xyzwps.lib.express.HttpMiddleware;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Consumer;
 
+import static com.xyzwps.lib.express.HttpMiddleware.*;
 
-abstract class Router<T extends Router<T>> {
-    protected final int matchStart;
+public class Router {
 
-    protected final List<RouteItem> items = new ArrayList<>(); // TODO: 并发安全
+    private final List<RouteItem> items = new ArrayList<>();
 
-    protected Router(int matchStart) {
-        this.matchStart = matchStart;
+    public Router handle(HttpMethod method, String url, HttpMiddleware mw0, HttpMiddleware... mws) {
+        if (method == HttpMethod.CONNECT) {
+            throw new IllegalArgumentException("Unsupported method: " + method);
+        }
+
+        items.add(new RouteItem.Handler(url, method, compose2(mw0, compose(mws))));
+        return this;
     }
 
-
-    public abstract T handle(HttpMethod method, String url, HttpMiddleware mw0, HttpMiddleware... mws);
-
-
-    protected void handle0(HttpMethod method, String url, HttpMiddleware mw0, HttpMiddleware... mws) {
-        Args.notNull(mw0, "The first middleware cannot be null");
-        Args.notNull(mws, "mws cannot be null");
-        Args.itemsNotNull(mws, i -> "mws[" + i + "] cannot be null");
-
-        HttpMiddleware[] mergedMws = new HttpMiddleware[mws.length + 1];
-        System.arraycopy(mws, 0, mergedMws, 1, mws.length);
-        mergedMws[0] = mw0;
-        items.add(new RouteItem.Handler(HPath.from(url), method, mergedMws));
+    public Router use(HttpMiddleware mw) {
+        items.add(new RouteItem.Use(mw));
+        return this;
     }
 
-    public T all(String url, HttpMiddleware mw0, HttpMiddleware... mws) {
+    public Router nest(String prefix, Router router) {
+        items.add(new RouteItem.Nest(prefix, router));
+        return this;
+    }
+
+    List<RouteItem.Handler> toHandlers(String prefix, HttpMiddleware parentMiddleware) {
+        List<List<HttpMiddleware>> useItems = new ArrayList<>();
+        final int size = items.size();
+        for (int i = 0; i < size; i++) {
+            var item = items.get(i);
+            List<HttpMiddleware> prev = i == 0 ? List.of() : useItems.getLast();
+            if (item instanceof RouteItem.Use use) {
+                List<HttpMiddleware> curr = new ArrayList<>(prev);
+                curr.add(use.mw());
+                useItems.add(curr);
+            } else {
+                useItems.add(prev);
+            }
+        }
+
+
+        List<RouteItem.Handler> handlers = new ArrayList<>();
+        for (int i = 0; i < size; i++) {
+            var userItemsI = useItems.get(i);
+            switch (items.get(i)) {
+                case RouteItem.Handler handler ->
+                        handlers.add(new RouteItem.Handler(prefix + '/' + handler.url(), handler.method(),
+                                compose(parentMiddleware, compose(userItemsI.toArray(EMPTY_MIDDLEWARES)), handler.middleware())));
+                case RouteItem.Nest nest -> handlers.addAll(nest.router().toHandlers(prefix + '/' + nest.prefix(),
+                        compose(parentMiddleware, compose(userItemsI.toArray(EMPTY_MIDDLEWARES)))));
+                case RouteItem.Use ignored -> {
+                }
+            }
+        }
+        return handlers;
+    }
+
+    private static final HttpMiddleware[] EMPTY_MIDDLEWARES = new HttpMiddleware[0];
+
+
+    public Router all(String url, HttpMiddleware mw0, HttpMiddleware... mws) {
         return handle(null, url, mw0, mws);
     }
 
-    public T get(String url, HttpMiddleware mw0, HttpMiddleware... mws) {
+    public Router get(String url, HttpMiddleware mw0, HttpMiddleware... mws) {
         return handle(HttpMethod.GET, url, mw0, mws);
     }
 
-    public T post(String url, HttpMiddleware mw0, HttpMiddleware... mws) {
+    public Router post(String url, HttpMiddleware mw0, HttpMiddleware... mws) {
         return handle(HttpMethod.POST, url, mw0, mws);
     }
 
-    public T put(String url, HttpMiddleware mw0, HttpMiddleware... mws) {
+    public Router put(String url, HttpMiddleware mw0, HttpMiddleware... mws) {
         return handle(HttpMethod.PUT, url, mw0, mws);
     }
 
-    public T delete(String url, HttpMiddleware mw0, HttpMiddleware... mws) {
+    public Router delete(String url, HttpMiddleware mw0, HttpMiddleware... mws) {
         return handle(HttpMethod.DELETE, url, mw0, mws);
     }
 
-    public T patch(String url, HttpMiddleware mw0, HttpMiddleware... mws) {
+    public Router patch(String url, HttpMiddleware mw0, HttpMiddleware... mws) {
         return handle(HttpMethod.PATCH, url, mw0, mws);
     }
 
-    /**
-     * TODO:
-     */
-    public T head(String url, HttpMiddleware mw0, HttpMiddleware... mws) {
+    public Router head(String url, HttpMiddleware mw0, HttpMiddleware... mws) {
         return handle(HttpMethod.HEAD, url, mw0, mws);
     }
 
-    /**
-     * TODO:
-     */
-    public T connect(String url, HttpMiddleware mw0, HttpMiddleware... mws) {
-        return handle(HttpMethod.CONNECT, url, mw0, mws);
-    }
-
-    /**
-     * TODO:
-     */
-    public T options(String url, HttpMiddleware mw0, HttpMiddleware... mws) {
+    public Router options(String url, HttpMiddleware mw0, HttpMiddleware... mws) {
         return handle(HttpMethod.OPTIONS, url, mw0, mws);
     }
 
-    /**
-     * TODO:
-     */
-    public T trace(String url, HttpMiddleware mw0, HttpMiddleware... mws) {
+    public Router trace(String url, HttpMiddleware mw0, HttpMiddleware... mws) {
         return handle(HttpMethod.TRACE, url, mw0, mws);
     }
 
-    public abstract T use(HttpMiddleware mw);
-
-    protected void use0(HttpMiddleware mw) {
-        Args.notNull(mw, "Middleware cannot be null");
-
-        items.add(new RouteItem.Use(mw));
-    }
-
-    public abstract T nest(String prefix, Consumer<NestRouter> routerConsumer);
-
-    protected void nest0(String prefix, Consumer<NestRouter> nestRouterBuilder) {
-        Args.notNull(nestRouterBuilder, "nestRouterBuilder cannot be null");
-        Args.notNull(prefix, "Prefix cannot be null");
-
-        if (prefix.contains("**")) {
-            throw new IllegalArgumentException("Prefix cannot contains '**'");
-        }
-
-        var segmentedPrefix = HPath.from(prefix);
-        if (segmentedPrefix.length() == 0) {
-            throw new IllegalArgumentException("Prefix cannot be empty");
-        }
-
-        var nestRouter = new NestRouter(this.matchStart + segmentedPrefix.length());
-        nestRouterBuilder.accept(nestRouter);
-        items.add(new RouteItem.Nest(segmentedPrefix, nestRouter));
-    }
 }

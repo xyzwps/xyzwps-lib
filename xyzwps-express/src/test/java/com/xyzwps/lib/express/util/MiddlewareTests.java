@@ -82,9 +82,9 @@ class MiddlewareTests {
                 List.of()
         ));
 
-        assertThrows(IllegalArgumentException.class, () -> Middleware.<DemoContext, DemoMiddleware>compose(
+        assertThrows(IllegalArgumentException.class, () -> Middleware.compose(
                 (m1, m2) -> (ctx) -> m1.call(new DemoContext(m2, ctx)),
-                null
+                (List<DemoMiddleware>) null
         ));
 
         assertThrows(IllegalArgumentException.class, () -> Middleware.<DemoContext, DemoMiddleware>compose(

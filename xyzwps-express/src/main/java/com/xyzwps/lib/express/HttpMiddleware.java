@@ -2,13 +2,11 @@ package com.xyzwps.lib.express;
 
 import com.xyzwps.lib.express.util.Middleware;
 
-import java.util.List;
-
 public interface HttpMiddleware extends Middleware<HttpContext> {
 
     HttpMiddleware DO_NOTHING = HttpContext::next;
 
-    static HttpMiddleware compose(List<HttpMiddleware> mws) {
+    static HttpMiddleware compose(HttpMiddleware... mws) {
         return Middleware.compose(HttpMiddleware::compose2, mws);
     }
 

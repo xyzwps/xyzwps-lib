@@ -12,7 +12,6 @@ class HSegmentTests {
     @Test
     void create() {
         assertEquals(StarSegment.INSTANCE, from("*"));
-        assertEquals(DoubleStarSegment.INSTANCE, from("**"));
         assertEquals(new VariableSegment("abc"), from("{abc}"));
         assertEquals(new PlainSegment("abc"), from("abc"));
         assertEquals(new PlainSegment("aB_1"), from("aB_1"));

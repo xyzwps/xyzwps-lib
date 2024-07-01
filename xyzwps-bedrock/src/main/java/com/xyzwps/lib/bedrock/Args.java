@@ -27,6 +27,12 @@ public final class Args {
         return str;
     }
 
+    public static <T> void notEmpty(T[] array, String message) {
+        if (array == null || array.length == 0) {
+            throw new IllegalArgumentException(message);
+        }
+    }
+
     public static void notEmpty(Collection<?> c, String message) {
         if (c == null || c.isEmpty()) {
             throw new IllegalArgumentException(message);

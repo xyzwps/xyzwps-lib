@@ -5,7 +5,6 @@ import com.xyzwps.lib.express.HttpMiddleware;
 import com.xyzwps.lib.express.middleware.JsonParser;
 import jakarta.inject.Singleton;
 
-import java.util.List;
 import java.util.function.BiFunction;
 
 @Singleton
@@ -31,6 +30,6 @@ public class JsonHandlerFactory {
                 throw new RuntimeException();
             }
         };
-        return HttpMiddleware.compose(List.of(json.json(tClass), jsonHandler));
+        return HttpMiddleware.compose(json.json(tClass), jsonHandler);
     }
 }
