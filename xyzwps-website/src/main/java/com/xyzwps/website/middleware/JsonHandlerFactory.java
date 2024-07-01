@@ -17,11 +17,16 @@ public class JsonHandlerFactory {
         this.json = json;
     }
 
-    public <T> HttpMiddleware create(Class<T> tClass, BiFunction<HttpContext, T, Object> consumer) {
+    public <R> HttpMiddleware create(Class<R> tClass, BiFunction<HttpContext, R, Object> consumer) {
         JsonHandler jsonHandler = context -> {
             var payload = context.request().body();
             if (tClass.isInstance(payload)) {
-                return consumer.apply(context, tClass.cast(payload));
+                try {
+                    var body = tClass.cast(payload);
+                    return consumer.apply(context, body);
+                } catch (Exception e) {
+                    throw new RuntimeException();
+                }
             } else {
                 throw new RuntimeException();
             }

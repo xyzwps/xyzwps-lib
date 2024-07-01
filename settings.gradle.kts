@@ -14,7 +14,11 @@ dependencyResolutionManagement {
         create("libs") {
             version("avaje", "9.12")
             library("avaje-inject", "io.avaje", "avaje-inject").versionRef("avaje")
-            library("avaje-injectgen", "io.avaje", "avaje-inject-generator").versionRef("avaje")
+            library("avaje-inject-generator", "io.avaje", "avaje-inject-generator").versionRef("avaje")
+            version("avaje-validator", "1.5")
+            library("avaje-validator", "io.avaje", "avaje-validator").versionRef("avaje-validator")
+            library("avaje-validator-constraints", "io.avaje", "avaje-validator-constraints").versionRef("avaje-validator")
+            library("avaje-validator-generator", "io.avaje", "avaje-validator-generator").versionRef("avaje-validator")
 
             library("h2", "com.h2database:h2:2.2.224")
             library("hikari", "com.zaxxer:HikariCP:5.1.0")

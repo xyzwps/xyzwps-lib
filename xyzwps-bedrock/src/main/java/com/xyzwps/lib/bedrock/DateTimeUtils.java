@@ -42,6 +42,7 @@ public final class DateTimeUtils {
 
         private static final DateTimeFormatter UTC_DTF = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
 
+        // TODO: 细化正则表达式
         private static final Pattern UTC_PATTERN = Pattern.compile("^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3}Z$");
 
         /**

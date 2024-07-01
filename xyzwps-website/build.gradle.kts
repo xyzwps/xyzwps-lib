@@ -20,12 +20,12 @@ dependencies {
     compileOnly(libs.lombok)
     annotationProcessor(libs.lombok)
     implementation(libs.avaje.inject)
-    annotationProcessor(libs.avaje.injectgen)
+    annotationProcessor(libs.avaje.inject.generator)
 
     testCompileOnly(libs.lombok)
     testAnnotationProcessor(libs.lombok)
     testImplementation(libs.avaje.inject)
-    testAnnotationProcessor(libs.avaje.injectgen)
+    testAnnotationProcessor(libs.avaje.inject.generator)
     testImplementation(platform(libs.junit.bom))
     testImplementation(libs.junit.jupiter)
 }
