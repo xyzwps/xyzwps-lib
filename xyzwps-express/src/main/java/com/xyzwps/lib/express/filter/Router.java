@@ -15,16 +15,23 @@ public class Router {
     private final List<Item> items = new ArrayList<>();
 
     public Filter toFilter() {
+        return toFilter(null);
+    }
+
+    public Filter toFilter(Filter notFoundFilter) {
         return (req, res, next) -> {
             var result = match(req.method(), UrlPath.parse(req.path()), 0);
             if (result instanceof MatchResult.Matched matched) {
                 req.pathVariables().addAll(matched.pathVariables);
                 matched.filter.filter(req, res, next);
             } else {
-                // TODO: config
-                res.status(HttpStatus.NOT_FOUND);
-                res.headers().set(HttpHeaders.CONTENT_TYPE, "text/html");
-                res.send("<html><head><title>Not Found</title></head><body>Not Found</body></html>".getBytes());
+                if (notFoundFilter == null) {
+                    res.status(HttpStatus.NOT_FOUND);
+                    res.headers().set(HttpHeaders.CONTENT_TYPE, "text/html");
+                    res.send("<html><head><title>Not Found</title></head><body>Not Found</body></html>".getBytes());
+                } else {
+                    notFoundFilter.filter(req, res, next);
+                }
             }
         };
     }
