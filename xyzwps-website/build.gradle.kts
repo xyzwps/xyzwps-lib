@@ -10,6 +10,11 @@ repositories {
     mavenCentral()
 }
 
+object Versions {
+    const val AVAJE_INJECT = "9.12"
+    const val AVAJE_VALIDATOR = "1.5"
+}
+
 dependencies {
     implementation(project(":xyzwps-express"))
     implementation(project(":xyzwps-express:server-bio"))
@@ -19,13 +24,16 @@ dependencies {
     implementation(libs.hocon)
     compileOnly(libs.lombok)
     annotationProcessor(libs.lombok)
-    implementation(libs.avaje.inject)
-    annotationProcessor(libs.avaje.inject.generator)
+    implementation("io.avaje:avaje-inject:${Versions.AVAJE_INJECT}")
+    annotationProcessor("io.avaje:avaje-inject-generator:${Versions.AVAJE_INJECT}")
+    implementation("io.avaje:avaje-validator:${Versions.AVAJE_VALIDATOR}")
+    implementation("io.avaje:avaje-validator-constraints:${Versions.AVAJE_VALIDATOR}")
+    annotationProcessor("io.avaje:avaje-validator-generator:${Versions.AVAJE_VALIDATOR}")
 
     testCompileOnly(libs.lombok)
     testAnnotationProcessor(libs.lombok)
-    testImplementation(libs.avaje.inject)
-    testAnnotationProcessor(libs.avaje.inject.generator)
+    testImplementation("io.avaje:avaje-inject:${Versions.AVAJE_INJECT}")
+    testAnnotationProcessor("io.avaje:avaje-inject-generator:${Versions.AVAJE_INJECT}")
     testImplementation(platform(libs.junit.bom))
     testImplementation(libs.junit.jupiter)
 }

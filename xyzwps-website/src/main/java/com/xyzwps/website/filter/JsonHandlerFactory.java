@@ -20,12 +20,8 @@ public class JsonHandlerFactory {
         JsonHandler jsonHandler = (req, resp) -> {
             var payload = req.body();
             if (tClass.isInstance(payload)) {
-                try {
-                    var body = tClass.cast(payload);
-                    return consumer.apply(req, resp, body);
-                } catch (Exception e) {
-                    throw new RuntimeException();
-                }
+                var body = tClass.cast(payload);
+                return consumer.apply(req, resp, body);
             } else {
                 throw new RuntimeException();
             }

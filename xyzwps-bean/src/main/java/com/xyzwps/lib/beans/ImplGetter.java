@@ -14,6 +14,7 @@ record ImplGetter(Method method, String propertyName, Class<?> beanClass) implem
     @Override
     public GetResult get(Object object) {
         try {
+            this.method.setAccessible(true); // TODO: 可不可以只 set 一次
             return GetResult.ok(this.method.invoke(object));
         } catch (InvocationTargetException | IllegalAccessException e) {
             return GetResult.failed(e);

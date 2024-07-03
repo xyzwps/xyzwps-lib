@@ -14,8 +14,6 @@ public class LoginBasicService {
 
     public void login(String username, String password) {
 
-
-
         System.out.println("login");
     }
 
