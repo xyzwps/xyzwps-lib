@@ -1,11 +1,11 @@
 package com.xyzwps.website.middleware;
 
-import com.xyzwps.lib.express.HttpContext;
-import com.xyzwps.lib.express.HttpMiddleware;
+import com.xyzwps.lib.bedrock.Function3;
+import com.xyzwps.lib.express.Filter;
+import com.xyzwps.lib.express.HttpRequest;
+import com.xyzwps.lib.express.HttpResponse;
 import com.xyzwps.lib.express.middleware.JsonParser;
 import jakarta.inject.Singleton;
-
-import java.util.function.BiFunction;
 
 @Singleton
 public class JsonHandlerFactory {
@@ -16,13 +16,13 @@ public class JsonHandlerFactory {
         this.json = json;
     }
 
-    public <R> HttpMiddleware create(Class<R> tClass, BiFunction<HttpContext, R, Object> consumer) {
-        JsonHandler jsonHandler = context -> {
-            var payload = context.request().body();
+    public <T> Filter create(Class<T> tClass, Function3<HttpRequest, HttpResponse, T, Object> consumer) {
+        JsonHandler jsonHandler = (req, resp) -> {
+            var payload = req.body();
             if (tClass.isInstance(payload)) {
                 try {
                     var body = tClass.cast(payload);
-                    return consumer.apply(context, body);
+                    return consumer.apply(req, resp, body);
                 } catch (Exception e) {
                     throw new RuntimeException();
                 }
@@ -30,6 +30,6 @@ public class JsonHandlerFactory {
                 throw new RuntimeException();
             }
         };
-        return HttpMiddleware.compose(json.json(tClass), jsonHandler);
+        return json.json(tClass).andThen(jsonHandler.toFilter());
     }
 }

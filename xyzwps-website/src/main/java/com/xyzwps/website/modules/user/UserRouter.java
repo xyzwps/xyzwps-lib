@@ -1,6 +1,6 @@
 package com.xyzwps.website.modules.user;
 
-import com.xyzwps.lib.express.middleware.router.Router;
+import com.xyzwps.lib.express.middleware.Router;
 import com.xyzwps.website.Person;
 import com.xyzwps.website.middleware.JsonHandlerFactory;
 import com.xyzwps.website.middleware.LogRequestCostMiddleware;
@@ -20,9 +20,9 @@ public class UserRouter extends Router {
         this
                 .post("/login/basic", json.create(LoginBasicPayload.class, basicLogin::login))
                 .get("/{id}", users::getById)
-                .use((ctx) -> {
+                .use((req, resp, next) -> {
                     log.infof(" > ready to get posts");
-                    ctx.next();
+                    next.next(req, resp);
                 })
                 .post("/{id}", json.create(Person.class, users::create));
     }

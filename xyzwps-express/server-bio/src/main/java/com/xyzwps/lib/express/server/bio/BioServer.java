@@ -21,7 +21,7 @@ public final class BioServer implements Server {
             while (true) {
                 try {
                     var socket = serverSocket.accept();
-                    this.handleSocket(socket, config.middleware);
+                    this.handleSocket(socket, config.filter);
                 } catch (IOException e) {
                     log.errorf(e, "Socket handling failed with uncaught error");
                     throw new UncheckedIOException("Accept server socket failed", e);
@@ -45,8 +45,8 @@ public final class BioServer implements Server {
         }
     }
 
-    void handleSocket(Socket socket, HttpMiddleware middleware) {
-        RequestExecutors.runOnVirtualThread(new BioConnection(socket, middleware));
+    void handleSocket(Socket socket, Filter filter) {
+        RequestExecutors.runOnVirtualThread(new BioConnection(socket, filter));
     }
 
 }

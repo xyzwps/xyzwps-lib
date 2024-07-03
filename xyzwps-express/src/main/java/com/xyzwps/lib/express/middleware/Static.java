@@ -1,7 +1,6 @@
 package com.xyzwps.lib.express.middleware;
 
 import com.xyzwps.lib.express.*;
-import com.xyzwps.lib.express.middleware.router.HPath;
 import lib.jshttp.mimedb.MimeDb;
 import org.jboss.logging.Logger;
 
@@ -27,7 +26,7 @@ public final class Static {
             return;
         }
 
-        var prefixHPath = HPath.from(pathPrefix);
+        var prefixHPath = UrlPath.parse(pathPrefix);
         if (prefixHPath.isPlain()) {
             this.pathPrefix = prefixHPath.toString() + '/';
         } else {
@@ -39,19 +38,16 @@ public final class Static {
         this(null, rootDir);
     }
 
-    public HttpMiddleware serve() {
-        return (ctx) -> {
-            var req = ctx.request();
-            var resp = ctx.response();
-
+    public Filter serve() {
+        return (req, resp, next) -> {
             if (req.method() != HttpMethod.GET) {
-                ctx.next();
+                next.next(req, resp);
                 return;
             }
 
             var path = req.path();
             if (!path.startsWith(pathPrefix)) {
-                ctx.next();
+                next.next(req, resp);
                 return;
             }
 
@@ -62,14 +58,14 @@ public final class Static {
 
             var $matchedMime = MimeDb.findFirstByExtension(ext);
             if ($matchedMime.isEmpty()) {
-                ctx.next(); // no mime type matched
+                next.next(req, resp); // no mime type matched
                 return;
             }
             var mime = $matchedMime.get();
 
             var filePath = Path.of(rootDir, relativeFilePath);
             if (!Files.exists(filePath)) {
-                ctx.next();
+                next.next(req, resp);
                 return;
             }
 

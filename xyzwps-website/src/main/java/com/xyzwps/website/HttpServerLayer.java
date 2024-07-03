@@ -5,7 +5,7 @@ import com.xyzwps.lib.express.middleware.Static;
 import com.xyzwps.lib.express.server.bio.BioServer;
 import com.xyzwps.website.middleware.LogRequestCostMiddleware;
 import com.xyzwps.website.middleware.SpaFallbackMiddleware;
-import com.xyzwps.website.modules.IndexRouterBuilder;
+import com.xyzwps.website.modules.IndexRouter;
 import jakarta.inject.Singleton;
 import org.jboss.logging.Logger;
 
@@ -16,7 +16,7 @@ public class HttpServerLayer {
 
     private final ServerConfig serverConfig;
 
-    public HttpServerLayer(IndexRouterBuilder routerBuilder,
+    public HttpServerLayer(IndexRouter routerBuilder,
                            Configurations conf,
                            LogRequestCostMiddleware logRequestCostMiddleware,
                            SpaFallbackMiddleware spaFallbackMiddleware) {
@@ -25,7 +25,7 @@ public class HttpServerLayer {
                 .use(logRequestCostMiddleware)
                 .use(new Static(conf.getRouterStaticDirectory()).serve())
                 .use(spaFallbackMiddleware)
-                .use(routerBuilder.router);
+                .use(routerBuilder.toFilter());
     }
 
     public void start() {

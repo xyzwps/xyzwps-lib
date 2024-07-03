@@ -9,39 +9,7 @@ import java.util.Objects;
  * @param <F> first element type
  * @param <S> second element type
  */
-public final class Pair<F, S> {
-
-    private final F first;
-    private final S second;
-
-    /**
-     * Default constructor.
-     *
-     * @param first  first element
-     * @param second second element
-     */
-    public Pair(F first, S second) {
-        this.first = first;
-        this.second = second;
-    }
-
-    /**
-     * Get the first element of the tuple.
-     *
-     * @return first element
-     */
-    public F first() {
-        return first;
-    }
-
-    /**
-     * Get the second element of the tuple.
-     *
-     * @return second element
-     */
-    public S second() {
-        return second;
-    }
+public record Pair<F, S>(F first, S second) {
 
     /**
      * Get the left element of the tuple.

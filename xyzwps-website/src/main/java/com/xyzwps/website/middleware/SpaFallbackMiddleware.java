@@ -9,7 +9,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 
 @Singleton
-public class SpaFallbackMiddleware implements HttpMiddleware {
+public class SpaFallbackMiddleware implements Filter {
 
     private static final Logger log = Logger.getLogger(LogRequestCostMiddleware.class);
 
@@ -20,20 +20,18 @@ public class SpaFallbackMiddleware implements HttpMiddleware {
     }
 
     @Override
-    public void call(HttpContext context) {
-        var req = context.request();
+    public void filter(HttpRequest req, HttpResponse resp, Next next) {
         if (req.method() == HttpMethod.GET && !req.path().startsWith("/api")) {
             var bytes = getIndexDotHtml();
             if (bytes != null) {
-                var resp = context.response();
                 var headers = resp.headers();
                 headers.set(HttpHeaders.CONTENT_TYPE, "text/html");
-                context.response().send(bytes);
+                resp.send(bytes);
                 return;
             }
         }
 
-        context.next();
+        next.next(req, resp);
     }
 
     private byte[] getIndexDotHtml() {

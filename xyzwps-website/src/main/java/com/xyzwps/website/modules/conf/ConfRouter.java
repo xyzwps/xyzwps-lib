@@ -1,7 +1,7 @@
 package com.xyzwps.website.modules.conf;
 
 import com.xyzwps.lib.express.HttpHeaders;
-import com.xyzwps.lib.express.middleware.router.Router;
+import com.xyzwps.lib.express.middleware.Router;
 import com.xyzwps.website.Configurations;
 import com.xyzwps.website.common.JSON;
 import jakarta.inject.Singleton;
@@ -12,8 +12,7 @@ import java.util.HashMap;
 public class ConfRouter extends Router {
 
     public ConfRouter(Configurations conf) {
-        this.get("", (ctx) -> {
-            var resp = ctx.response();
+        this.get("", (req, resp) -> {
             resp.ok();
             resp.headers().set(HttpHeaders.CONTENT_TYPE, "application/json");
             var map = new HashMap<String, Object>();

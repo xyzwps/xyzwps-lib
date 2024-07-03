@@ -1,6 +1,5 @@
 package com.xyzwps.lib.express.server.helidon;
 
-import com.xyzwps.lib.express.HttpContext;
 import com.xyzwps.lib.express.ServerConfig;
 import io.helidon.webserver.http.Handler;
 import io.helidon.webserver.http.ServerRequest;

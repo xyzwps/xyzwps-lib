@@ -5,7 +5,9 @@ import com.xyzwps.lib.express.server.commons.SimpleCookie;
 import lib.jsdom.mimetype.MimeType;
 
 import java.net.URI;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 public final class BioHttpRequest implements HttpRequest {
@@ -16,6 +18,7 @@ public final class BioHttpRequest implements HttpRequest {
     private final HttpSearchParams searchParams;
     private final HttpPathVariables pathVariables;
     private final Cookies cookies;
+    private final Map<String, Object> attributes;
     private Object body;
 
     private final MimeType contentType;
@@ -32,6 +35,7 @@ public final class BioHttpRequest implements HttpRequest {
         var contentTypeStr = headers.contentType();
         this.contentType = contentTypeStr == null ? null : MimeType.parse(contentTypeStr);
         this.pathVariables = new HttpPathVariables();
+        this.attributes = new HashMap<>();
 
         this.cookies = SimpleCookie.from(headers.get(HttpHeaders.COOKIE));
     }
@@ -94,5 +98,20 @@ public final class BioHttpRequest implements HttpRequest {
     @Override
     public Cookies cookies() {
         return cookies;
+    }
+
+    @Override
+    public Object attribute(String name) {
+        return attributes.get(name);
+    }
+
+    @Override
+    public Map<String, Object> attributes() {
+        return attributes;
+    }
+
+    @Override
+    public void attribute(String name, Object value) {
+        attributes.put(name, value);
     }
 }

@@ -6,7 +6,7 @@ import com.xyzwps.lib.express.*;
 import java.util.Base64;
 import java.util.function.BiPredicate;
 
-public final class BasicAuth implements HttpMiddleware {
+public final class BasicAuth implements Filter {
 
     private final BiPredicate<String, String> usernamePasswordChecker;
 
@@ -14,11 +14,13 @@ public final class BasicAuth implements HttpMiddleware {
         this.usernamePasswordChecker = Args.notNull(usernamePasswordChecker, "Basic auth checker cannot be null");
     }
 
-    @Override
-    public void call(HttpContext context) {
-        var req = context.request();
-        var resp = context.response();
+    private static void unauthorized(HttpResponse resp) {
+        resp.status(HttpStatus.UNAUTHORIZED);
+        resp.headers().set("WWW-Authenticate", "Basic realm=\"Invalid credential.\"");
+    }
 
+    @Override
+    public void filter(HttpRequest req, HttpResponse resp, Next next) {
         var value = req.header(HttpHeaders.AUTHORIZATION);
         if (value == null) {
             unauthorized(resp);
@@ -35,16 +37,11 @@ public final class BasicAuth implements HttpMiddleware {
 
             String username = segments[0], password = segments[1];
             if (usernamePasswordChecker.test(username, password)) {
-                context.next(); // pass
+                next.next(req, resp);
                 return;
             }
         }
 
         unauthorized(resp);
-    }
-
-    private static void unauthorized(HttpResponse resp) {
-        resp.status(HttpStatus.UNAUTHORIZED);
-        resp.headers().set("WWW-Authenticate", "Basic realm=\"Invalid credential.\"");
     }
 }

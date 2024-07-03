@@ -3,6 +3,7 @@ package com.xyzwps.lib.express;
 import lib.jsdom.mimetype.MimeType;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * An http request.
@@ -80,6 +81,12 @@ public interface HttpRequest {
      * @return never be null
      */
     HttpSearchParams searchParams();
+
+    Map<String, Object> attributes();
+
+    Object attribute(String name);
+
+    void attribute(String name, Object value);
 
     /**
      * Get all path variables.

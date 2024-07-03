@@ -1,40 +1,46 @@
 package com.xyzwps.lib.express;
 
-import com.xyzwps.lib.bedrock.Args;
 
 public final class ServerConfig {
 
-    public final HttpMiddleware middleware;
-    public final int port;
+    public Filter filter;
+    public int port;
 
     public static ServerConfig create() {
-        return new ServerConfig(HttpMiddleware.DO_NOTHING, 3000);
+        return new ServerConfig(null, 3000);
     }
 
-    private ServerConfig(HttpMiddleware middleware, int port) {
-        this.middleware = Args.notNull(middleware, "Middleware cannot be null");
+    private ServerConfig(Filter filter, int port) {
+        this.filter = filter;
         this.port = port;
     }
 
     /**
-     * Use a {@link HttpMiddleware}.
+     * Use a {@link Filter}.
      *
-     * @param mw cannot be null
-     * @return a new config
+     * @param filter to be used
+     * @return this
      */
-    public ServerConfig use(HttpMiddleware mw) {
-        Args.notNull(mw, "Middleware cannot be null");
-        return new ServerConfig(HttpMiddleware.compose2(middleware, mw), this.port);
+    public ServerConfig use(Filter filter) {
+        if (filter != null) {
+            if (this.filter == null) {
+                this.filter = filter;
+            } else {
+                this.filter = this.filter.andThen(filter);
+            }
+        }
+        return this;
     }
 
     /**
      * Set port.
      *
      * @param port should be between 0 and 0xFFFF
-     * @return a new config
+     * @return this
      */
     public ServerConfig port(int port) {
-        return new ServerConfig(this.middleware, checkPort(port));
+        this.port = checkPort(port);
+        return this;
     }
 
     private static int checkPort(int port) {

@@ -23,7 +23,7 @@ public class BioConnection implements Runnable {
     private static final AtomicInteger id_counter = new AtomicInteger(0);
 
     private final Socket socket;
-    private final HttpMiddleware middleware;
+    private final Filter filter;
 
     private KeepAliveInfo keepAliveInfo;
 
@@ -33,9 +33,9 @@ public class BioConnection implements Runnable {
 
     private final ReentrantLock loopLock = new ReentrantLock();
 
-    BioConnection(Socket socket, HttpMiddleware middleware) {
+    BioConnection(Socket socket, Filter filter) {
         this.socket = Args.notNull(socket, "Socket cannot be null");
-        this.middleware = Args.notNull(middleware, "HttpMiddleware cannot be null");
+        this.filter = filter == null ? Filter.empty() : filter;
         this.connectionId = id_counter.getAndIncrement();
     }
 
@@ -124,7 +124,7 @@ public class BioConnection implements Runnable {
 
         log.infof("==> " + connectionId + '-' + connectionRequestCount);
 
-        middleware.call(HttpContext.start(request, response));
+        filter.filter(request, response, Filter.Next.empty());
         exhaust(requestBody);
 
         // region check connection should keep alive
