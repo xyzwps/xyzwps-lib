@@ -39,7 +39,7 @@ public class IndexRouter extends Router {
         try {
             next.next(req, resp);
         } catch (Exception ex) {
-            log.error("Error in request", ex);
+            log.errorf(ex, "Error in request");
             switch (ex) {
                 case ConstraintViolationException e -> {
                     var message = e.violations().stream().findFirst().map(ConstraintViolation::message).orElse("Constraint violation");
