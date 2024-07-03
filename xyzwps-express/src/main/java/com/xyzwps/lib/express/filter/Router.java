@@ -8,16 +8,30 @@ import java.util.ArrayList;
 import java.util.List;
 
 
+/**
+ * A router that can be used to handle requests.
+ */
 public class Router {
 
     private final List<Filter> used = new ArrayList<>();
 
     private final List<Item> items = new ArrayList<>();
 
+    /**
+     * Create a new Filter that will handle requests based on the added routes.
+     *
+     * @return the filter
+     */
     public Filter toFilter() {
         return toFilter(null);
     }
 
+    /**
+     * Create a new Filter that will handle requests based on the added routes.
+     *
+     * @param notFoundFilter the filter to use when no route is matched; if null, a default 404 response will be sent
+     * @return the filter
+     */
     public Filter toFilter(Filter notFoundFilter) {
         return (req, res, next) -> {
             var result = match(req.method(), UrlPath.parse(req.path()), 0);
@@ -93,8 +107,8 @@ public class Router {
      *
      * @param method  the HTTP method
      * @param path    the path
-     * @param filter  the filter to use; if null, it will be ignored
-     * @param handler the handler to use; cannot be null
+     * @param filter  the filter to use; filter and handler cannot be both null
+     * @param handler the handler to use; filter and handler cannot be both null
      * @return this router
      */
     public Router handle(HttpMethod method, String path, Filter filter, Handler handler) {
@@ -148,102 +162,287 @@ public class Router {
         return handle(method, path, null, handler);
     }
 
+    /**
+     * Handle a request with the given method and path.
+     *
+     * @param method the HTTP method
+     * @param path   the path
+     * @param filter the filter to use; cannot be null
+     * @return this router
+     */
     public Router handle(HttpMethod method, String path, Filter filter) {
         return handle(method, path, filter, null);
     }
 
+    /**
+     * Handle a GET request with the given path.
+     *
+     * @param path    the path
+     * @param handler the handler to use; cannot be null
+     * @return this router
+     */
     public Router get(String path, Handler handler) {
         return handle(HttpMethod.GET, path, handler);
     }
 
+    /**
+     * Handle a POST request with the given path.
+     *
+     * @param path    the path
+     * @param handler the handler to use; cannot be null
+     * @return this router
+     */
     public Router post(String path, Handler handler) {
         return handle(HttpMethod.POST, path, handler);
     }
 
+    /**
+     * Handle a PUT request with the given path.
+     *
+     * @param path    the path
+     * @param handler the handler to use; cannot be null
+     * @return this router
+     */
     public Router put(String path, Handler handler) {
         return handle(HttpMethod.PUT, path, handler);
     }
 
+    /**
+     * Handle a DELETE request with the given path.
+     *
+     * @param path    the path
+     * @param handler the handler to use; cannot be null
+     * @return this router
+     */
     public Router delete(String path, Handler handler) {
         return handle(HttpMethod.DELETE, path, handler);
     }
 
+    /**
+     * Handle a PATCH request with the given path.
+     *
+     * @param path    the path
+     * @param handler the handler to use; cannot be null
+     * @return this router
+     */
     public Router patch(String path, Handler handler) {
         return handle(HttpMethod.PATCH, path, handler);
     }
 
+    /**
+     * Handle a HEAD request with the given path.
+     *
+     * @param path    the path
+     * @param handler the handler to use; cannot be null
+     * @return this router
+     */
     public Router head(String path, Handler handler) {
         return handle(HttpMethod.HEAD, path, handler);
     }
 
+    /**
+     * Handle a OPTIONS request with the given path.
+     *
+     * @param path    the path
+     * @param handler the handler to use; cannot be null
+     * @return this router
+     */
     public Router options(String path, Handler handler) {
         return handle(HttpMethod.OPTIONS, path, handler);
     }
 
+    /**
+     * Handle a TRACE request with the given path.
+     *
+     * @param path    the path
+     * @param handler the handler to use; cannot be null
+     * @return this router
+     */
     public Router trace(String path, Handler handler) {
         return handle(HttpMethod.TRACE, path, handler);
     }
 
+    /**
+     * Handle a GET request with the given path.
+     *
+     * @param path    the path
+     * @param filter  the filter to use; filter and handler cannot be both null
+     * @param handler the handler to use; filter and handler cannot be both null
+     * @return this router
+     */
     public Router get(String path, Filter filter, Handler handler) {
         return handle(HttpMethod.GET, path, filter, handler);
     }
 
+    /**
+     * Handle a POST request with the given path.
+     *
+     * @param path    the path
+     * @param filter  the filter to use; filter and handler cannot be both null
+     * @param handler the handler to use; filter and handler cannot be both null
+     * @return this router
+     */
     public Router post(String path, Filter filter, Handler handler) {
         return handle(HttpMethod.POST, path, filter, handler);
     }
 
+    /**
+     * Handle a PUT request with the given path.
+     *
+     * @param path    the path
+     * @param filter  the filter to use; filter and handler cannot be both null
+     * @param handler the handler to use; filter and handler cannot be both null
+     * @return this router
+     */
     public Router put(String path, Filter filter, Handler handler) {
         return handle(HttpMethod.PUT, path, filter, handler);
     }
 
+    /**
+     * Handle a DELETE request with the given path.
+     *
+     * @param path    the path
+     * @param filter  the filter to use; filter and handler cannot be both null
+     * @param handler the handler to use; filter and handler cannot be both null
+     * @return this router
+     */
     public Router delete(String path, Filter filter, Handler handler) {
         return handle(HttpMethod.DELETE, path, filter, handler);
     }
 
+    /**
+     * Handle a PATCH request with the given path.
+     *
+     * @param path    the path
+     * @param filter  the filter to use; filter and handler cannot be both null
+     * @param handler the handler to use; filter and handler cannot be both null
+     * @return this router
+     */
     public Router patch(String path, Filter filter, Handler handler) {
         return handle(HttpMethod.PATCH, path, filter, handler);
     }
 
+    /**
+     * Handle a HEAD request with the given path.
+     *
+     * @param path    the path
+     * @param filter  the filter to use; filter and handler cannot be both null
+     * @param handler the handler to use; filter and handler cannot be both null
+     * @return this router
+     */
     public Router head(String path, Filter filter, Handler handler) {
         return handle(HttpMethod.HEAD, path, filter, handler);
     }
 
+    /**
+     * Handle a OPTIONS request with the given path.
+     *
+     * @param path    the path
+     * @param filter  the filter to use; filter and handler cannot be both null
+     * @param handler the handler to use; filter and handler cannot be both null
+     * @return this router
+     */
     public Router options(String path, Filter filter, Handler handler) {
         return handle(HttpMethod.OPTIONS, path, filter, handler);
     }
 
+    /**
+     * Handle a TRACE request with the given path.
+     *
+     * @param path    the path
+     * @param filter  the filter to use; filter and handler cannot be both null
+     * @param handler the handler to use; filter and handler cannot be both null
+     * @return this router
+     */
     public Router trace(String path, Filter filter, Handler handler) {
         return handle(HttpMethod.TRACE, path, filter, handler);
     }
 
+
+    /**
+     * Handle a GET request with the given path.
+     *
+     * @param path   the path
+     * @param filter the filter to use; cannot be null
+     * @return this router
+     */
     public Router get(String path, Filter filter) {
         return handle(HttpMethod.GET, path, filter);
     }
 
+    /**
+     * Handle a POST request with the given path.
+     *
+     * @param path   the path
+     * @param filter the filter to use; cannot be null
+     * @return this router
+     */
     public Router post(String path, Filter filter) {
         return handle(HttpMethod.POST, path, filter);
     }
 
+    /**
+     * Handle a PUT request with the given path.
+     *
+     * @param path   the path
+     * @param filter the filter to use; cannot be null
+     * @return this router
+     */
     public Router put(String path, Filter filter) {
         return handle(HttpMethod.PUT, path, filter);
     }
 
+    /**
+     * Handle a DELETE request with the given path.
+     *
+     * @param path   the path
+     * @param filter the filter to use; cannot be null
+     * @return this router
+     */
     public Router delete(String path, Filter filter) {
         return handle(HttpMethod.DELETE, path, filter);
     }
 
+    /**
+     * Handle a PATCH request with the given path.
+     *
+     * @param path   the path
+     * @param filter the filter to use; cannot be null
+     * @return this router
+     */
     public Router patch(String path, Filter filter) {
         return handle(HttpMethod.PATCH, path, filter);
     }
 
+    /**
+     * Handle a HEAD request with the given path.
+     *
+     * @param path   the path
+     * @param filter the filter to use; cannot be null
+     * @return this router
+     */
     public Router head(String path, Filter filter) {
         return handle(HttpMethod.HEAD, path, filter);
     }
 
+    /**
+     * Handle a OPTIONS request with the given path.
+     *
+     * @param path   the path
+     * @param filter the filter to use; cannot be null
+     * @return this router
+     */
     public Router options(String path, Filter filter) {
         return handle(HttpMethod.OPTIONS, path, filter);
     }
 
+    /**
+     * Handle a TRACE request with the given path.
+     *
+     * @param path   the path
+     * @param filter the filter to use; cannot be null
+     * @return this router
+     */
     public Router trace(String path, Filter filter) {
         return handle(HttpMethod.TRACE, path, filter);
     }
