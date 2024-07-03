@@ -1,7 +1,7 @@
 package com.xyzwps.website.modules.conf;
 
 import com.xyzwps.lib.express.HttpHeaders;
-import com.xyzwps.lib.express.middleware.Router;
+import com.xyzwps.lib.express.filter.Router;
 import com.xyzwps.website.Configurations;
 import com.xyzwps.website.common.JSON;
 import jakarta.inject.Singleton;

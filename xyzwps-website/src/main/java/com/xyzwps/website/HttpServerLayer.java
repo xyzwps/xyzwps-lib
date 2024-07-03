@@ -1,10 +1,10 @@
 package com.xyzwps.website;
 
 import com.xyzwps.lib.express.ServerConfig;
-import com.xyzwps.lib.express.middleware.Static;
+import com.xyzwps.lib.express.filter.Static;
 import com.xyzwps.lib.express.server.bio.BioServer;
-import com.xyzwps.website.middleware.LogRequestCostMiddleware;
-import com.xyzwps.website.middleware.SpaFallbackMiddleware;
+import com.xyzwps.website.filter.LogRequestCostFilter;
+import com.xyzwps.website.filter.SpaFallbackFilter;
 import com.xyzwps.website.modules.IndexRouter;
 import jakarta.inject.Singleton;
 import org.jboss.logging.Logger;
@@ -12,19 +12,19 @@ import org.jboss.logging.Logger;
 @Singleton
 public class HttpServerLayer {
 
-    private static final Logger log = Logger.getLogger(LogRequestCostMiddleware.class);
+    private static final Logger log = Logger.getLogger(LogRequestCostFilter.class);
 
     private final ServerConfig serverConfig;
 
     public HttpServerLayer(IndexRouter routerBuilder,
                            Configurations conf,
-                           LogRequestCostMiddleware logRequestCostMiddleware,
-                           SpaFallbackMiddleware spaFallbackMiddleware) {
+                           LogRequestCostFilter logRequestCostFilter,
+                           SpaFallbackFilter spaFallbackFilter) {
         this.serverConfig = ServerConfig.create()
                 .port(conf.getServerPort())
-                .use(logRequestCostMiddleware)
+                .use(logRequestCostFilter)
                 .use(new Static(conf.getRouterStaticDirectory()).serve())
-                .use(spaFallbackMiddleware)
+                .use(spaFallbackFilter)
                 .use(routerBuilder.toFilter());
     }
 

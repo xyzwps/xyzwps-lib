@@ -1,8 +1,8 @@
 package com.xyzwps.website.modules.debug;
 
 import com.xyzwps.lib.express.HttpHeaders;
-import com.xyzwps.lib.express.middleware.BasicAuth;
-import com.xyzwps.lib.express.middleware.Router;
+import com.xyzwps.lib.express.filter.BasicAuth;
+import com.xyzwps.lib.express.filter.Router;
 import com.xyzwps.website.common.JSON;
 import com.xyzwps.website.db.MainDatabase;
 import jakarta.inject.Singleton;

@@ -1,9 +1,9 @@
 package com.xyzwps.website.modules.user;
 
-import com.xyzwps.lib.express.middleware.Router;
+import com.xyzwps.lib.express.filter.Router;
 import com.xyzwps.website.Person;
-import com.xyzwps.website.middleware.JsonHandlerFactory;
-import com.xyzwps.website.middleware.LogRequestCostMiddleware;
+import com.xyzwps.website.filter.JsonHandlerFactory;
+import com.xyzwps.website.filter.LogRequestCostFilter;
 import com.xyzwps.website.modules.user.handler.LoginBasicHandler;
 import com.xyzwps.website.modules.user.handler.UserHandler;
 import com.xyzwps.website.modules.user.payload.LoginBasicPayload;
@@ -13,7 +13,7 @@ import org.jboss.logging.Logger;
 @Singleton
 public class UserRouter extends Router {
 
-    private static final Logger log = Logger.getLogger(LogRequestCostMiddleware.class);
+    private static final Logger log = Logger.getLogger(LogRequestCostFilter.class);
 
     public UserRouter(UserHandler users, JsonHandlerFactory json, LoginBasicHandler basicLogin) {
 

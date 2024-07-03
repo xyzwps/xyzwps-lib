@@ -1,4 +1,4 @@
-package com.xyzwps.website.middleware;
+package com.xyzwps.website.filter;
 
 import com.xyzwps.lib.express.*;
 import com.xyzwps.website.Configurations;
@@ -9,13 +9,13 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 
 @Singleton
-public class SpaFallbackMiddleware implements Filter {
+public class SpaFallbackFilter implements Filter {
 
-    private static final Logger log = Logger.getLogger(LogRequestCostMiddleware.class);
+    private static final Logger log = Logger.getLogger(SpaFallbackFilter.class);
 
     private final Configurations conf;
 
-    public SpaFallbackMiddleware(Configurations conf) {
+    public SpaFallbackFilter(Configurations conf) {
         this.conf = conf;
     }
 

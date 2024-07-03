@@ -1,4 +1,4 @@
-package com.xyzwps.lib.express.middleware;
+package com.xyzwps.lib.express.filter;
 
 import com.xyzwps.lib.express.*;
 import lib.jshttp.mimedb.MimeDb;
@@ -77,7 +77,7 @@ public final class Static {
                 resp.headers().set(HttpHeaders.CONTENT_TYPE, mime.essence());
                 resp.send(allBytes);
             } catch (Exception e) {
-                log.errorf(e, "Static middleware error");
+                log.errorf(e, "Static filter error");
                 resp.status(HttpStatus.INTERNAL_SERVER_ERROR);
                 resp.headers().set(HttpHeaders.CONTENT_TYPE, "text/plain");
                 resp.send("Internal Server Error".getBytes());

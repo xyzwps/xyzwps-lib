@@ -1,10 +1,10 @@
-package com.xyzwps.website.middleware;
+package com.xyzwps.website.filter;
 
 import com.xyzwps.lib.bedrock.Function3;
 import com.xyzwps.lib.express.Filter;
 import com.xyzwps.lib.express.HttpRequest;
 import com.xyzwps.lib.express.HttpResponse;
-import com.xyzwps.lib.express.middleware.JsonParser;
+import com.xyzwps.lib.express.filter.JsonParser;
 import jakarta.inject.Singleton;
 
 @Singleton

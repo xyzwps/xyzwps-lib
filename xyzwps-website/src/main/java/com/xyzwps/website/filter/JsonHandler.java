@@ -1,4 +1,4 @@
-package com.xyzwps.website.middleware;
+package com.xyzwps.website.filter;
 
 import com.xyzwps.lib.express.Handler;
 import com.xyzwps.lib.express.HttpRequest;

@@ -1,9 +1,7 @@
-package com.xyzwps.lib.express.middleware;
+package com.xyzwps.lib.express.filter;
 
 import com.xyzwps.lib.bedrock.Args;
 import com.xyzwps.lib.express.Filter;
-import com.xyzwps.lib.express.HttpRequest;
-import com.xyzwps.lib.express.HttpResponse;
 import com.xyzwps.lib.json.JsonException;
 import com.xyzwps.lib.json.JsonMapper;
 import lib.jsdom.mimetype.MimeType;

@@ -1,4 +1,4 @@
-package com.xyzwps.website.middleware;
+package com.xyzwps.website.filter;
 
 import com.xyzwps.lib.express.*;
 import jakarta.inject.Singleton;
@@ -7,9 +7,9 @@ import org.jboss.logging.Logger;
 import java.util.concurrent.atomic.AtomicLong;
 
 @Singleton
-public class LogRequestCostMiddleware implements Filter {
+public class LogRequestCostFilter implements Filter {
 
-    private static final Logger log = Logger.getLogger(LogRequestCostMiddleware.class);
+    private static final Logger log = Logger.getLogger(LogRequestCostFilter.class);
 
     private static final AtomicLong COUNTER = new AtomicLong(0);
 

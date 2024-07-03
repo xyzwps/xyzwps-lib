@@ -1,4 +1,4 @@
-package com.xyzwps.lib.express.middleware;
+package com.xyzwps.lib.express.filter;
 
 import com.xyzwps.lib.bedrock.Args;
 import com.xyzwps.lib.express.*;

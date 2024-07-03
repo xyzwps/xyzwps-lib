@@ -1,13 +1,13 @@
-package com.xyzwps.website.middleware;
+package com.xyzwps.website.filter;
 
-import com.xyzwps.lib.express.middleware.BasicAuth;
-import com.xyzwps.lib.express.middleware.JsonParser;
+import com.xyzwps.lib.express.filter.BasicAuth;
+import com.xyzwps.lib.express.filter.JsonParser;
 import com.xyzwps.website.common.JSON;
 import io.avaje.inject.Bean;
 import io.avaje.inject.Factory;
 
 @Factory
-public class MiddlewareModule {
+public class FilterModule {
 
     @Bean
     public static BasicAuth provideBasicAuth() {
