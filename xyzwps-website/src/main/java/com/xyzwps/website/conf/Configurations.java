@@ -1,4 +1,4 @@
-package com.xyzwps.website;
+package com.xyzwps.website.conf;
 
 import com.typesafe.config.Config;
 import com.typesafe.config.ConfigFactory;

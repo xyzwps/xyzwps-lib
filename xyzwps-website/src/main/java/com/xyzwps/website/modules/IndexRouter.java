@@ -42,20 +42,22 @@ public class IndexRouter extends Router {
             log.errorf(ex, "Error in request");
             switch (ex) {
                 case ConstraintViolationException e -> {
-                    var message = e.violations().stream().findFirst().map(ConstraintViolation::message).orElse("Constraint violation");
+                    var message = e.violations().stream().findFirst()
+                            .map(ConstraintViolation::message).orElse("Constraint violation");
                     sendJson(resp, HttpStatus.BAD_REQUEST, new ErrorResponse(message));
                 }
                 case NullPointerException ignored ->
                         sendJson(resp, HttpStatus.INTERNAL_SERVER_ERROR, Map.of("error", "NPE"));
                 default -> {
                     var message = ex.getMessage();
-                    sendJson(resp, HttpStatus.INTERNAL_SERVER_ERROR, new ErrorResponse(message == null ? "Internal server error!" : message));
+                    sendJson(resp, HttpStatus.INTERNAL_SERVER_ERROR,
+                            new ErrorResponse(message == null ? "Internal server error!" : message));
                 }
             }
         }
     }
 
-    record ErrorResponse(String error) {
+    record ErrorResponse(String msg) {
     }
 
     private void sendJson(HttpResponse resp, HttpStatus status, Object json) {
