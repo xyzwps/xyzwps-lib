@@ -7,7 +7,9 @@ import io.helidon.webserver.http.ServerRequest;
 import lib.jsdom.mimetype.MimeType;
 
 import java.io.InputStream;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 class HelidonHttpRequest implements HttpRequest {
 
@@ -19,6 +21,7 @@ class HelidonHttpRequest implements HttpRequest {
     private final HttpSearchParams searchParams;
     private final HttpPathVariables pathVariables;
     private final Cookies cookies;
+    private final Map<String, Object> attributes;
 
     HelidonHttpRequest(ServerRequest request, InputStream in) {
         this.body = in;
@@ -42,7 +45,7 @@ class HelidonHttpRequest implements HttpRequest {
 
         this.searchParams = HttpSearchParams.parse(req.query().rawValue());
         this.pathVariables = new HttpPathVariables();
-
+        this.attributes = new HashMap<>();
 
         this.cookies = SimpleCookie.from(headers.get(HttpHeaders.COOKIE));
     }
@@ -105,5 +108,20 @@ class HelidonHttpRequest implements HttpRequest {
     @Override
     public Cookies cookies() {
         return cookies;
+    }
+
+    @Override
+    public Object attribute(String name) {
+        return attributes.get(name);
+    }
+
+    @Override
+    public Map<String, Object> attributes() {
+        return attributes;
+    }
+
+    @Override
+    public void attribute(String name, Object value) {
+        attributes.put(name, value);
     }
 }
