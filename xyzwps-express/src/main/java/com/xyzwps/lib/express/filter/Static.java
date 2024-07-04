@@ -26,7 +26,7 @@ public final class Static {
             return;
         }
 
-        var prefixHPath = UrlPath.parse(pathPrefix);
+        var prefixHPath = UrlPath.of(pathPrefix);
         if (prefixHPath.isPlain()) {
             this.pathPrefix = prefixHPath.toString() + '/';
         } else {

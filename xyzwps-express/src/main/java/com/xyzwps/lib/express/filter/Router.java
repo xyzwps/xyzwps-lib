@@ -34,7 +34,7 @@ public class Router {
      */
     public Filter toFilter(Filter notFoundFilter) {
         return (req, res, next) -> {
-            var result = match(req.method(), UrlPath.parse(req.path()), 0);
+            var result = match(req.method(), UrlPath.of(req.path()), 0);
             if (result instanceof MatchResult.Matched matched) {
                 req.pathVariables().addAll(matched.pathVariables);
                 matched.filter.filter(req, res, next);
@@ -128,7 +128,7 @@ public class Router {
             filters.add(handler.toFilter());
         }
 
-        items.add(new Item.Handled(method, UrlPath.parse(path), composeFilters(filters)));
+        items.add(new Item.Handled(method, UrlPath.of(path), composeFilters(filters)));
         return this;
     }
 
@@ -456,7 +456,7 @@ public class Router {
      * @return this router
      */
     public Router nest(String prefix, Filter filter, Router router) {
-        var prefixPath = UrlPath.parse(prefix);
+        var prefixPath = UrlPath.of(prefix);
         if (prefixPath.length() == 0) {
             throw new IllegalArgumentException("Invalid prefix: " + prefix);
         }

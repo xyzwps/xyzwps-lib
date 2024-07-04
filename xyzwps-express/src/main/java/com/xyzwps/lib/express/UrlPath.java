@@ -126,7 +126,7 @@ public final class UrlPath {
         return segments[index];
     }
 
-    public static UrlPath parse(String path) {
+    public static UrlPath of(String path) {
         if (path == null || path.isEmpty()) {
             return ROOT;
         }
@@ -166,7 +166,7 @@ public final class UrlPath {
 
     private static final UrlSegment[] EMPTY_SEGMENT_ARR = new UrlSegment[0];
 
-    private static final UrlPath ROOT = new UrlPath(EMPTY_SEGMENT_ARR, "/");
+    public static final UrlPath ROOT = new UrlPath(EMPTY_SEGMENT_ARR, "/");
 
     @Override
     public String toString() {

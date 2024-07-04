@@ -16,19 +16,19 @@ class UrlPathTests {
         @Test
         void parseEmpty() {
             {
-                var path = UrlPath.parse("");
+                var path = UrlPath.of("");
                 assertEquals(0, path.length());
                 assertEquals("/", path.rawPath());
                 assertFalse(path.hasStar2());
             }
             {
-                var path = UrlPath.parse("/");
+                var path = UrlPath.of("/");
                 assertEquals(0, path.length());
                 assertEquals("/", path.rawPath());
                 assertFalse(path.hasStar2());
             }
             {
-                var path = UrlPath.parse("/////");
+                var path = UrlPath.of("/////");
                 assertEquals(0, path.length());
                 assertEquals("/", path.rawPath());
                 assertFalse(path.hasStar2());
@@ -37,7 +37,7 @@ class UrlPathTests {
 
         @Test
         void parseNull() {
-            var path = UrlPath.parse(null);
+            var path = UrlPath.of(null);
             assertEquals(0, path.length());
             assertEquals("/", path.rawPath());
             assertFalse(path.hasStar2());
@@ -45,7 +45,7 @@ class UrlPathTests {
 
         @Test
         void parseSimple() {
-            var path = UrlPath.parse("/a/b/c");
+            var path = UrlPath.of("/a/b/c");
             assertEquals(3, path.length());
             assertEquals(new UrlSegment.Text("a"), path.get(0));
             assertEquals(new UrlSegment.Text("b"), path.get(1));
@@ -56,7 +56,7 @@ class UrlPathTests {
 
         @Test
         void parseStar() {
-            var path = UrlPath.parse("/a/*/c");
+            var path = UrlPath.of("/a/*/c");
             assertEquals(3, path.length());
             assertEquals(new UrlSegment.Text("a"), path.get(0));
             assertEquals(UrlSegment.Star.INSTANCE, path.get(1));
@@ -67,10 +67,10 @@ class UrlPathTests {
 
         @Test
         void parseStar2() {
-            assertThrows(IllegalArgumentException.class, () -> UrlPath.parse("/a/**/c"));
-            assertThrows(IllegalArgumentException.class, () -> UrlPath.parse("/**/b/c"));
+            assertThrows(IllegalArgumentException.class, () -> UrlPath.of("/a/**/c"));
+            assertThrows(IllegalArgumentException.class, () -> UrlPath.of("/**/b/c"));
 
-            var path = UrlPath.parse("/a/b/**");
+            var path = UrlPath.of("/a/b/**");
             assertEquals(3, path.length());
             assertEquals(new UrlSegment.Text("a"), path.get(0));
             assertEquals(new UrlSegment.Text("b"), path.get(1));
@@ -81,7 +81,7 @@ class UrlPathTests {
 
         @Test
         void parseParam() {
-            var path = UrlPath.parse("/a/:b/c");
+            var path = UrlPath.of("/a/:b/c");
             assertEquals(3, path.length());
             assertEquals(new UrlSegment.Text("a"), path.get(0));
             assertEquals(new UrlSegment.Param("b"), path.get(1));
@@ -96,219 +96,219 @@ class UrlPathTests {
 
         @Test
         void matchSimple() {
-            var path = UrlPath.parse("/a/b/c");
+            var path = UrlPath.of("/a/b/c");
 
-            if (path.match(UrlPath.parse("/a/b/c"), 0) instanceof UrlPath.MatchResult.Matched matched) {
+            if (path.match(UrlPath.of("/a/b/c"), 0) instanceof UrlPath.MatchResult.Matched matched) {
                 assertTrue(matched.pathVariables().isEmpty());
             } else {
                 fail();
             }
 
-            if (path.match(UrlPath.parse("/1/a/b/c"), 1) instanceof UrlPath.MatchResult.Matched matched) {
+            if (path.match(UrlPath.of("/1/a/b/c"), 1) instanceof UrlPath.MatchResult.Matched matched) {
                 assertTrue(matched.pathVariables().isEmpty());
             } else {
                 fail();
             }
 
 
-            if (path.match(UrlPath.parse("/2/1/a/b/c"), 2) instanceof UrlPath.MatchResult.Matched matched) {
+            if (path.match(UrlPath.of("/2/1/a/b/c"), 2) instanceof UrlPath.MatchResult.Matched matched) {
                 assertTrue(matched.pathVariables().isEmpty());
             } else {
                 fail();
             }
 
-            if (path.match(UrlPath.parse("/3/2/1/a/b/c"), 3) instanceof UrlPath.MatchResult.Matched matched) {
+            if (path.match(UrlPath.of("/3/2/1/a/b/c"), 3) instanceof UrlPath.MatchResult.Matched matched) {
                 assertTrue(matched.pathVariables().isEmpty());
             } else {
                 fail();
             }
 
-            assertInstanceOf(UrlPath.MatchResult.NotMatched.class, path.match(UrlPath.parse("/b/b/c"), 0));
-            assertInstanceOf(UrlPath.MatchResult.NotMatched.class, path.match(UrlPath.parse("/a/a/c"), 0));
-            assertInstanceOf(UrlPath.MatchResult.NotMatched.class, path.match(UrlPath.parse("/a/b"), 0));
-            assertInstanceOf(UrlPath.MatchResult.NotMatched.class, path.match(UrlPath.parse("/b/c"), 0));
-            assertInstanceOf(UrlPath.MatchResult.NotMatched.class, path.match(UrlPath.parse("/a"), 0));
-            assertInstanceOf(UrlPath.MatchResult.NotMatched.class, path.match(UrlPath.parse("/b"), 0));
-            assertInstanceOf(UrlPath.MatchResult.NotMatched.class, path.match(UrlPath.parse("/c"), 0));
+            assertInstanceOf(UrlPath.MatchResult.NotMatched.class, path.match(UrlPath.of("/b/b/c"), 0));
+            assertInstanceOf(UrlPath.MatchResult.NotMatched.class, path.match(UrlPath.of("/a/a/c"), 0));
+            assertInstanceOf(UrlPath.MatchResult.NotMatched.class, path.match(UrlPath.of("/a/b"), 0));
+            assertInstanceOf(UrlPath.MatchResult.NotMatched.class, path.match(UrlPath.of("/b/c"), 0));
+            assertInstanceOf(UrlPath.MatchResult.NotMatched.class, path.match(UrlPath.of("/a"), 0));
+            assertInstanceOf(UrlPath.MatchResult.NotMatched.class, path.match(UrlPath.of("/b"), 0));
+            assertInstanceOf(UrlPath.MatchResult.NotMatched.class, path.match(UrlPath.of("/c"), 0));
         }
 
         @Test
         void matchStar() {
-            var path = UrlPath.parse("/a/*/c");
+            var path = UrlPath.of("/a/*/c");
 
-            if (path.match(UrlPath.parse("/a/b/c"), 0) instanceof UrlPath.MatchResult.Matched matched) {
+            if (path.match(UrlPath.of("/a/b/c"), 0) instanceof UrlPath.MatchResult.Matched matched) {
                 assertTrue(matched.pathVariables().isEmpty());
             } else {
                 fail();
             }
 
-            if (path.match(UrlPath.parse("/a/d/c"), 0) instanceof UrlPath.MatchResult.Matched matched) {
+            if (path.match(UrlPath.of("/a/d/c"), 0) instanceof UrlPath.MatchResult.Matched matched) {
                 assertTrue(matched.pathVariables().isEmpty());
             } else {
                 fail();
             }
 
-            if (path.match(UrlPath.parse("/a/a/c"), 0) instanceof UrlPath.MatchResult.Matched matched) {
+            if (path.match(UrlPath.of("/a/a/c"), 0) instanceof UrlPath.MatchResult.Matched matched) {
                 assertTrue(matched.pathVariables().isEmpty());
             } else {
                 fail();
             }
 
-            if (path.match(UrlPath.parse("/1/a/b/c"), 1) instanceof UrlPath.MatchResult.Matched matched) {
+            if (path.match(UrlPath.of("/1/a/b/c"), 1) instanceof UrlPath.MatchResult.Matched matched) {
                 assertTrue(matched.pathVariables().isEmpty());
             } else {
                 fail();
             }
 
-            if (path.match(UrlPath.parse("/2/1/a/e/c"), 2) instanceof UrlPath.MatchResult.Matched matched) {
+            if (path.match(UrlPath.of("/2/1/a/e/c"), 2) instanceof UrlPath.MatchResult.Matched matched) {
                 assertTrue(matched.pathVariables().isEmpty());
             } else {
                 fail();
             }
 
-            if (path.match(UrlPath.parse("/3/2/1/a/f/c"), 3) instanceof UrlPath.MatchResult.Matched matched) {
+            if (path.match(UrlPath.of("/3/2/1/a/f/c"), 3) instanceof UrlPath.MatchResult.Matched matched) {
                 assertTrue(matched.pathVariables().isEmpty());
             } else {
                 fail();
             }
 
-            assertInstanceOf(UrlPath.MatchResult.NotMatched.class, path.match(UrlPath.parse("/b/b/c"), 0));
-            assertInstanceOf(UrlPath.MatchResult.NotMatched.class, path.match(UrlPath.parse("/a/b"), 0));
-            assertInstanceOf(UrlPath.MatchResult.NotMatched.class, path.match(UrlPath.parse("/b/c"), 0));
-            assertInstanceOf(UrlPath.MatchResult.NotMatched.class, path.match(UrlPath.parse("/a"), 0));
-            assertInstanceOf(UrlPath.MatchResult.NotMatched.class, path.match(UrlPath.parse("/b"), 0));
-            assertInstanceOf(UrlPath.MatchResult.NotMatched.class, path.match(UrlPath.parse("/c"), 0));
+            assertInstanceOf(UrlPath.MatchResult.NotMatched.class, path.match(UrlPath.of("/b/b/c"), 0));
+            assertInstanceOf(UrlPath.MatchResult.NotMatched.class, path.match(UrlPath.of("/a/b"), 0));
+            assertInstanceOf(UrlPath.MatchResult.NotMatched.class, path.match(UrlPath.of("/b/c"), 0));
+            assertInstanceOf(UrlPath.MatchResult.NotMatched.class, path.match(UrlPath.of("/a"), 0));
+            assertInstanceOf(UrlPath.MatchResult.NotMatched.class, path.match(UrlPath.of("/b"), 0));
+            assertInstanceOf(UrlPath.MatchResult.NotMatched.class, path.match(UrlPath.of("/c"), 0));
         }
 
         @Test
         void matchParam1() {
-            var path = UrlPath.parse("/a/:name/c");
+            var path = UrlPath.of("/a/:name/c");
 
-            if (path.match(UrlPath.parse("/a/b/c"), 0) instanceof UrlPath.MatchResult.Matched matched) {
+            if (path.match(UrlPath.of("/a/b/c"), 0) instanceof UrlPath.MatchResult.Matched matched) {
                 assertIterableEquals(List.of(Pair.of("name", "b")), matched.pathVariables());
             } else {
                 fail();
             }
 
-            if (path.match(UrlPath.parse("/a/d/c"), 0) instanceof UrlPath.MatchResult.Matched matched) {
+            if (path.match(UrlPath.of("/a/d/c"), 0) instanceof UrlPath.MatchResult.Matched matched) {
                 assertIterableEquals(List.of(Pair.of("name", "d")), matched.pathVariables());
             } else {
                 fail();
             }
 
-            if (path.match(UrlPath.parse("/a/a/c"), 0) instanceof UrlPath.MatchResult.Matched matched) {
+            if (path.match(UrlPath.of("/a/a/c"), 0) instanceof UrlPath.MatchResult.Matched matched) {
                 assertIterableEquals(List.of(Pair.of("name", "a")), matched.pathVariables());
             } else {
                 fail();
             }
 
-            if (path.match(UrlPath.parse("/1/a/b/c"), 1) instanceof UrlPath.MatchResult.Matched matched) {
+            if (path.match(UrlPath.of("/1/a/b/c"), 1) instanceof UrlPath.MatchResult.Matched matched) {
                 assertIterableEquals(List.of(Pair.of("name", "b")), matched.pathVariables());
             } else {
                 fail();
             }
 
-            if (path.match(UrlPath.parse("/2/1/a/e/c"), 2) instanceof UrlPath.MatchResult.Matched matched) {
+            if (path.match(UrlPath.of("/2/1/a/e/c"), 2) instanceof UrlPath.MatchResult.Matched matched) {
                 assertIterableEquals(List.of(Pair.of("name", "e")), matched.pathVariables());
             } else {
                 fail();
             }
 
-            if (path.match(UrlPath.parse("/3/2/1/a/f/c"), 3) instanceof UrlPath.MatchResult.Matched matched) {
+            if (path.match(UrlPath.of("/3/2/1/a/f/c"), 3) instanceof UrlPath.MatchResult.Matched matched) {
                 assertIterableEquals(List.of(Pair.of("name", "f")), matched.pathVariables());
             } else {
                 fail();
             }
 
-            assertInstanceOf(UrlPath.MatchResult.NotMatched.class, path.match(UrlPath.parse("/b/b/c"), 0));
-            assertInstanceOf(UrlPath.MatchResult.NotMatched.class, path.match(UrlPath.parse("/a/b"), 0));
-            assertInstanceOf(UrlPath.MatchResult.NotMatched.class, path.match(UrlPath.parse("/b/c"), 0));
-            assertInstanceOf(UrlPath.MatchResult.NotMatched.class, path.match(UrlPath.parse("/a"), 0));
-            assertInstanceOf(UrlPath.MatchResult.NotMatched.class, path.match(UrlPath.parse("/b"), 0));
-            assertInstanceOf(UrlPath.MatchResult.NotMatched.class, path.match(UrlPath.parse("/c"), 0));
+            assertInstanceOf(UrlPath.MatchResult.NotMatched.class, path.match(UrlPath.of("/b/b/c"), 0));
+            assertInstanceOf(UrlPath.MatchResult.NotMatched.class, path.match(UrlPath.of("/a/b"), 0));
+            assertInstanceOf(UrlPath.MatchResult.NotMatched.class, path.match(UrlPath.of("/b/c"), 0));
+            assertInstanceOf(UrlPath.MatchResult.NotMatched.class, path.match(UrlPath.of("/a"), 0));
+            assertInstanceOf(UrlPath.MatchResult.NotMatched.class, path.match(UrlPath.of("/b"), 0));
+            assertInstanceOf(UrlPath.MatchResult.NotMatched.class, path.match(UrlPath.of("/c"), 0));
         }
 
         @Test
         void matchParam2() {
-            var path = UrlPath.parse("/a/:name/:id");
+            var path = UrlPath.of("/a/:name/:id");
 
-            if (path.match(UrlPath.parse("/a/b/c"), 0) instanceof UrlPath.MatchResult.Matched matched) {
+            if (path.match(UrlPath.of("/a/b/c"), 0) instanceof UrlPath.MatchResult.Matched matched) {
                 assertIterableEquals(List.of(Pair.of("name", "b"), Pair.of("id", "c")), matched.pathVariables());
             } else {
                 fail();
             }
 
-            if (path.match(UrlPath.parse("/a/d/c"), 0) instanceof UrlPath.MatchResult.Matched matched) {
+            if (path.match(UrlPath.of("/a/d/c"), 0) instanceof UrlPath.MatchResult.Matched matched) {
                 assertIterableEquals(List.of(Pair.of("name", "d"), Pair.of("id", "c")), matched.pathVariables());
             } else {
                 fail();
             }
 
-            if (path.match(UrlPath.parse("/a/a/a"), 0) instanceof UrlPath.MatchResult.Matched matched) {
+            if (path.match(UrlPath.of("/a/a/a"), 0) instanceof UrlPath.MatchResult.Matched matched) {
                 assertIterableEquals(List.of(Pair.of("name", "a"), Pair.of("id", "a")), matched.pathVariables());
             } else {
                 fail();
             }
 
-            if (path.match(UrlPath.parse("/1/a/b/g"), 1) instanceof UrlPath.MatchResult.Matched matched) {
+            if (path.match(UrlPath.of("/1/a/b/g"), 1) instanceof UrlPath.MatchResult.Matched matched) {
                 assertIterableEquals(List.of(Pair.of("name", "b"), Pair.of("id", "g")), matched.pathVariables());
             } else {
                 fail();
             }
 
-            if (path.match(UrlPath.parse("/2/1/a/e/c"), 2) instanceof UrlPath.MatchResult.Matched matched) {
+            if (path.match(UrlPath.of("/2/1/a/e/c"), 2) instanceof UrlPath.MatchResult.Matched matched) {
                 assertIterableEquals(List.of(Pair.of("name", "e"), Pair.of("id", "c")), matched.pathVariables());
             } else {
                 fail();
             }
 
-            if (path.match(UrlPath.parse("/3/2/1/a/f/c"), 3) instanceof UrlPath.MatchResult.Matched matched) {
+            if (path.match(UrlPath.of("/3/2/1/a/f/c"), 3) instanceof UrlPath.MatchResult.Matched matched) {
                 assertIterableEquals(List.of(Pair.of("name", "f"), Pair.of("id", "c")), matched.pathVariables());
             } else {
                 fail();
             }
 
-            assertInstanceOf(UrlPath.MatchResult.NotMatched.class, path.match(UrlPath.parse("/b/b/c"), 0));
-            assertInstanceOf(UrlPath.MatchResult.NotMatched.class, path.match(UrlPath.parse("/a/b"), 0));
-            assertInstanceOf(UrlPath.MatchResult.NotMatched.class, path.match(UrlPath.parse("/b/c"), 0));
-            assertInstanceOf(UrlPath.MatchResult.NotMatched.class, path.match(UrlPath.parse("/a"), 0));
-            assertInstanceOf(UrlPath.MatchResult.NotMatched.class, path.match(UrlPath.parse("/b"), 0));
-            assertInstanceOf(UrlPath.MatchResult.NotMatched.class, path.match(UrlPath.parse("/c"), 0));
+            assertInstanceOf(UrlPath.MatchResult.NotMatched.class, path.match(UrlPath.of("/b/b/c"), 0));
+            assertInstanceOf(UrlPath.MatchResult.NotMatched.class, path.match(UrlPath.of("/a/b"), 0));
+            assertInstanceOf(UrlPath.MatchResult.NotMatched.class, path.match(UrlPath.of("/b/c"), 0));
+            assertInstanceOf(UrlPath.MatchResult.NotMatched.class, path.match(UrlPath.of("/a"), 0));
+            assertInstanceOf(UrlPath.MatchResult.NotMatched.class, path.match(UrlPath.of("/b"), 0));
+            assertInstanceOf(UrlPath.MatchResult.NotMatched.class, path.match(UrlPath.of("/c"), 0));
         }
 
         @Test
         void matchStar2() {
-            var path = UrlPath.parse("/a/**");
+            var path = UrlPath.of("/a/**");
 
-            if (path.match(UrlPath.parse("/a/b/c"), 0) instanceof UrlPath.MatchResult.Matched matched) {
+            if (path.match(UrlPath.of("/a/b/c"), 0) instanceof UrlPath.MatchResult.Matched matched) {
                 assertTrue(matched.pathVariables().isEmpty());
             } else {
                 fail();
             }
 
-            if (path.match(UrlPath.parse("/a/b"), 0) instanceof UrlPath.MatchResult.Matched matched) {
+            if (path.match(UrlPath.of("/a/b"), 0) instanceof UrlPath.MatchResult.Matched matched) {
                 assertTrue(matched.pathVariables().isEmpty());
             } else {
                 fail();
             }
 
-            if (path.match(UrlPath.parse("/a"), 0) instanceof UrlPath.MatchResult.Matched matched) {
+            if (path.match(UrlPath.of("/a"), 0) instanceof UrlPath.MatchResult.Matched matched) {
                 assertTrue(matched.pathVariables().isEmpty());
             } else {
                 fail();
             }
 
-            if (path.match(UrlPath.parse("/x/a"), 1) instanceof UrlPath.MatchResult.Matched matched) {
+            if (path.match(UrlPath.of("/x/a"), 1) instanceof UrlPath.MatchResult.Matched matched) {
                 assertTrue(matched.pathVariables().isEmpty());
             } else {
                 fail();
             }
 
-            assertInstanceOf(UrlPath.MatchResult.NotMatched.class, path.match(UrlPath.parse("/b/c"), 0));
-            assertInstanceOf(UrlPath.MatchResult.NotMatched.class, path.match(UrlPath.parse("/b"), 0));
-            assertInstanceOf(UrlPath.MatchResult.NotMatched.class, path.match(UrlPath.parse("/b/a"), 0));
-            assertInstanceOf(UrlPath.MatchResult.NotMatched.class, path.match(UrlPath.parse("/"), 0));
-            assertInstanceOf(UrlPath.MatchResult.NotMatched.class, path.match(UrlPath.parse("/aa"), 0));
+            assertInstanceOf(UrlPath.MatchResult.NotMatched.class, path.match(UrlPath.of("/b/c"), 0));
+            assertInstanceOf(UrlPath.MatchResult.NotMatched.class, path.match(UrlPath.of("/b"), 0));
+            assertInstanceOf(UrlPath.MatchResult.NotMatched.class, path.match(UrlPath.of("/b/a"), 0));
+            assertInstanceOf(UrlPath.MatchResult.NotMatched.class, path.match(UrlPath.of("/"), 0));
+            assertInstanceOf(UrlPath.MatchResult.NotMatched.class, path.match(UrlPath.of("/aa"), 0));
         }
 
     }
@@ -318,125 +318,125 @@ class UrlPathTests {
 
         @Test
         void prefixOfSimple() {
-            var path = UrlPath.parse("/a/b/c");
+            var path = UrlPath.of("/a/b/c");
 
-            if (path.prefixOf(UrlPath.parse("/a/b/c"), 0) instanceof UrlPath.MatchResult.Matched matched) {
+            if (path.prefixOf(UrlPath.of("/a/b/c"), 0) instanceof UrlPath.MatchResult.Matched matched) {
                 assertTrue(matched.pathVariables().isEmpty());
             } else {
                 fail();
             }
 
-            if (path.prefixOf(UrlPath.parse("/a/b/c/d"), 0) instanceof UrlPath.MatchResult.Matched matched) {
+            if (path.prefixOf(UrlPath.of("/a/b/c/d"), 0) instanceof UrlPath.MatchResult.Matched matched) {
                 assertTrue(matched.pathVariables().isEmpty());
             } else {
                 fail();
             }
 
-            if (path.prefixOf(UrlPath.parse("/1/a/b/c"), 1) instanceof UrlPath.MatchResult.Matched matched) {
+            if (path.prefixOf(UrlPath.of("/1/a/b/c"), 1) instanceof UrlPath.MatchResult.Matched matched) {
                 assertTrue(matched.pathVariables().isEmpty());
             } else {
                 fail();
             }
 
-            assertInstanceOf(UrlPath.MatchResult.NotMatched.class, path.prefixOf(UrlPath.parse("/b/c"), 0));
-            assertInstanceOf(UrlPath.MatchResult.NotMatched.class, path.prefixOf(UrlPath.parse("/a/b/d"), 0));
-            assertInstanceOf(UrlPath.MatchResult.NotMatched.class, path.prefixOf(UrlPath.parse("/a/b"), 0));
-            assertInstanceOf(UrlPath.MatchResult.NotMatched.class, path.prefixOf(UrlPath.parse("/a"), 0));
-            assertInstanceOf(UrlPath.MatchResult.NotMatched.class, path.prefixOf(UrlPath.parse("/a/b/c"), 1));
+            assertInstanceOf(UrlPath.MatchResult.NotMatched.class, path.prefixOf(UrlPath.of("/b/c"), 0));
+            assertInstanceOf(UrlPath.MatchResult.NotMatched.class, path.prefixOf(UrlPath.of("/a/b/d"), 0));
+            assertInstanceOf(UrlPath.MatchResult.NotMatched.class, path.prefixOf(UrlPath.of("/a/b"), 0));
+            assertInstanceOf(UrlPath.MatchResult.NotMatched.class, path.prefixOf(UrlPath.of("/a"), 0));
+            assertInstanceOf(UrlPath.MatchResult.NotMatched.class, path.prefixOf(UrlPath.of("/a/b/c"), 1));
         }
 
         @Test
         void prefixOfStar() {
-            var path = UrlPath.parse("/a/*/c");
+            var path = UrlPath.of("/a/*/c");
 
-            if (path.prefixOf(UrlPath.parse("/a/b/c"), 0) instanceof UrlPath.MatchResult.Matched matched) {
+            if (path.prefixOf(UrlPath.of("/a/b/c"), 0) instanceof UrlPath.MatchResult.Matched matched) {
                 assertTrue(matched.pathVariables().isEmpty());
             } else {
                 fail();
             }
 
-            if (path.prefixOf(UrlPath.parse("/a/c/c"), 0) instanceof UrlPath.MatchResult.Matched matched) {
+            if (path.prefixOf(UrlPath.of("/a/c/c"), 0) instanceof UrlPath.MatchResult.Matched matched) {
                 assertTrue(matched.pathVariables().isEmpty());
             } else {
                 fail();
             }
 
-            if (path.prefixOf(UrlPath.parse("/a/d/c"), 0) instanceof UrlPath.MatchResult.Matched matched) {
+            if (path.prefixOf(UrlPath.of("/a/d/c"), 0) instanceof UrlPath.MatchResult.Matched matched) {
                 assertTrue(matched.pathVariables().isEmpty());
             } else {
                 fail();
             }
 
-            if (path.prefixOf(UrlPath.parse("/a/b/c/d"), 0) instanceof UrlPath.MatchResult.Matched matched) {
+            if (path.prefixOf(UrlPath.of("/a/b/c/d"), 0) instanceof UrlPath.MatchResult.Matched matched) {
                 assertTrue(matched.pathVariables().isEmpty());
             } else {
                 fail();
             }
 
-            if (path.prefixOf(UrlPath.parse("/1/a/b/c"), 1) instanceof UrlPath.MatchResult.Matched matched) {
+            if (path.prefixOf(UrlPath.of("/1/a/b/c"), 1) instanceof UrlPath.MatchResult.Matched matched) {
                 assertTrue(matched.pathVariables().isEmpty());
             } else {
                 fail();
             }
 
-            assertInstanceOf(UrlPath.MatchResult.NotMatched.class, path.prefixOf(UrlPath.parse("/b/c"), 0));
-            assertInstanceOf(UrlPath.MatchResult.NotMatched.class, path.prefixOf(UrlPath.parse("/a/b"), 0));
-            assertInstanceOf(UrlPath.MatchResult.NotMatched.class, path.prefixOf(UrlPath.parse("/a"), 0));
-            assertInstanceOf(UrlPath.MatchResult.NotMatched.class, path.prefixOf(UrlPath.parse("/a/b/c"), 1));
+            assertInstanceOf(UrlPath.MatchResult.NotMatched.class, path.prefixOf(UrlPath.of("/b/c"), 0));
+            assertInstanceOf(UrlPath.MatchResult.NotMatched.class, path.prefixOf(UrlPath.of("/a/b"), 0));
+            assertInstanceOf(UrlPath.MatchResult.NotMatched.class, path.prefixOf(UrlPath.of("/a"), 0));
+            assertInstanceOf(UrlPath.MatchResult.NotMatched.class, path.prefixOf(UrlPath.of("/a/b/c"), 1));
         }
 
         @Test
         void prefixOfParam() {
-            var path = UrlPath.parse("/a/:name/c");
+            var path = UrlPath.of("/a/:name/c");
 
-            if (path.prefixOf(UrlPath.parse("/a/b/c"), 0) instanceof UrlPath.MatchResult.Matched matched) {
+            if (path.prefixOf(UrlPath.of("/a/b/c"), 0) instanceof UrlPath.MatchResult.Matched matched) {
                 assertIterableEquals(List.of(Pair.of("name", "b")), matched.pathVariables());
             } else {
                 fail();
             }
 
-            if (path.prefixOf(UrlPath.parse("/a/b/c/d"), 0) instanceof UrlPath.MatchResult.Matched matched) {
+            if (path.prefixOf(UrlPath.of("/a/b/c/d"), 0) instanceof UrlPath.MatchResult.Matched matched) {
                 assertIterableEquals(List.of(Pair.of("name", "b")), matched.pathVariables());
             } else {
                 fail();
             }
 
-            if (path.prefixOf(UrlPath.parse("/a/d/c"), 0) instanceof UrlPath.MatchResult.Matched matched) {
+            if (path.prefixOf(UrlPath.of("/a/d/c"), 0) instanceof UrlPath.MatchResult.Matched matched) {
                 assertIterableEquals(List.of(Pair.of("name", "d")), matched.pathVariables());
             } else {
                 fail();
             }
 
-            if (path.prefixOf(UrlPath.parse("/a/a/c"), 0) instanceof UrlPath.MatchResult.Matched matched) {
+            if (path.prefixOf(UrlPath.of("/a/a/c"), 0) instanceof UrlPath.MatchResult.Matched matched) {
                 assertIterableEquals(List.of(Pair.of("name", "a")), matched.pathVariables());
             } else {
                 fail();
             }
 
-            if (path.prefixOf(UrlPath.parse("/1/a/b/c"), 1) instanceof UrlPath.MatchResult.Matched matched) {
+            if (path.prefixOf(UrlPath.of("/1/a/b/c"), 1) instanceof UrlPath.MatchResult.Matched matched) {
                 assertIterableEquals(List.of(Pair.of("name", "b")), matched.pathVariables());
             } else {
                 fail();
             }
 
-            if (path.prefixOf(UrlPath.parse("/2/1/a/e/c"), 2) instanceof UrlPath.MatchResult.Matched matched) {
+            if (path.prefixOf(UrlPath.of("/2/1/a/e/c"), 2) instanceof UrlPath.MatchResult.Matched matched) {
                 assertIterableEquals(List.of(Pair.of("name", "e")), matched.pathVariables());
             } else {
                 fail();
             }
 
-            if (path.match(UrlPath.parse("/3/2/1/a/f/c"), 3) instanceof UrlPath.MatchResult.Matched matched) {
+            if (path.match(UrlPath.of("/3/2/1/a/f/c"), 3) instanceof UrlPath.MatchResult.Matched matched) {
                 assertIterableEquals(List.of(Pair.of("name", "f")), matched.pathVariables());
             } else {
                 fail();
             }
 
-            assertInstanceOf(UrlPath.MatchResult.NotMatched.class, path.prefixOf(UrlPath.parse("/b/b/c"), 0));
-            assertInstanceOf(UrlPath.MatchResult.NotMatched.class, path.prefixOf(UrlPath.parse("/a/b"), 0));
-            assertInstanceOf(UrlPath.MatchResult.NotMatched.class, path.prefixOf(UrlPath.parse("/b/c"), 0));
-            assertInstanceOf(UrlPath.MatchResult.NotMatched.class, path.prefixOf(UrlPath.parse("/a"), 0));
-            assertInstanceOf(UrlPath.MatchResult.NotMatched.class, path.prefixOf(UrlPath.parse("/b"), 0));
-            assertInstanceOf(UrlPath.MatchResult.NotMatched.class, path.prefixOf(UrlPath.parse("/c"), 0));
+            assertInstanceOf(UrlPath.MatchResult.NotMatched.class, path.prefixOf(UrlPath.of("/b/b/c"), 0));
+            assertInstanceOf(UrlPath.MatchResult.NotMatched.class, path.prefixOf(UrlPath.of("/a/b"), 0));
+            assertInstanceOf(UrlPath.MatchResult.NotMatched.class, path.prefixOf(UrlPath.of("/b/c"), 0));
+            assertInstanceOf(UrlPath.MatchResult.NotMatched.class, path.prefixOf(UrlPath.of("/a"), 0));
+            assertInstanceOf(UrlPath.MatchResult.NotMatched.class, path.prefixOf(UrlPath.of("/b"), 0));
+            assertInstanceOf(UrlPath.MatchResult.NotMatched.class, path.prefixOf(UrlPath.of("/c"), 0));
         }
     }
 }
