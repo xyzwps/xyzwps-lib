@@ -1,6 +1,8 @@
-package com.xyzwps.lib.express;
+package com.xyzwps.lib.express.filter;
 
 import com.xyzwps.lib.bedrock.Args;
+import com.xyzwps.lib.express.UrlPath;
+import com.xyzwps.lib.express.UrlSegment;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -21,7 +23,7 @@ class UrlPathTrie<D> {
                 rootData = data;
                 return;
             } else {
-                throw new IllegalArgumentException("Duplicate root path");
+                throw new DuplicatePathException("/");
             }
         }
 
@@ -57,14 +59,14 @@ class UrlPathTrie<D> {
                         curr.star2Data = data;
                         return;
                     }
-                    throw new IllegalArgumentException("Duplicate path: " + path.rawPath());
+                    throw new DuplicatePathException(path.rawPath());
                 }
                 default -> throw new IllegalArgumentException("Unsupported segment type: " + segment.getClass());
             }
 
             if (isLast) {
                 if (curr.data != null) {
-                    throw new IllegalArgumentException("Duplicate path: " + path.rawPath());
+                    throw new DuplicatePathException(path.rawPath());
                 }
                 curr.data = data;
             }

@@ -1,5 +1,6 @@
-package com.xyzwps.lib.express;
+package com.xyzwps.lib.express.filter;
 
+import com.xyzwps.lib.express.UrlPath;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -15,7 +16,7 @@ class UrlPathTrieTests {
         trie.insert(UrlPath.ROOT, "root");
         assertEquals("root", trie.match(UrlPath.of("/")));
 
-        assertThrows(IllegalArgumentException.class, () -> trie.insert(UrlPath.ROOT, "root2"));
+        assertThrows(DuplicatePathException.class, () -> trie.insert(UrlPath.ROOT, "root2"));
     }
 
     @Test
@@ -27,7 +28,7 @@ class UrlPathTrieTests {
         trie.insert(UrlPath.of("/a"), "a");
         assertEquals("a", trie.match(UrlPath.of("/a")));
 
-        assertThrows(IllegalArgumentException.class, () -> trie.insert(UrlPath.of("/a"), "a2"));
+        assertThrows(DuplicatePathException.class, () -> trie.insert(UrlPath.of("/a"), "a2"));
 
 
         assertNull(trie.match(UrlPath.of("/a/b/c")));
@@ -36,7 +37,7 @@ class UrlPathTrieTests {
         assertEquals("abc", trie.match(UrlPath.of("/a/b/c")));
         assertEquals("a", trie.match(UrlPath.of("/a")));
 
-        assertThrows(IllegalArgumentException.class, () -> trie.insert(UrlPath.of("/a/b/c"), "abc2"));
+        assertThrows(DuplicatePathException.class, () -> trie.insert(UrlPath.of("/a/b/c"), "abc2"));
 
 
         assertNull(trie.match(UrlPath.of("/a/b")));
@@ -46,7 +47,7 @@ class UrlPathTrieTests {
         assertEquals("a", trie.match(UrlPath.of("/a")));
         assertEquals("abc", trie.match(UrlPath.of("/a/b/c")));
 
-        assertThrows(IllegalArgumentException.class, () -> trie.insert(UrlPath.of("/a/b"), "ab2"));
+        assertThrows(DuplicatePathException.class, () -> trie.insert(UrlPath.of("/a/b"), "ab2"));
 
 
         assertNull(trie.match(UrlPath.of("/a/b/c/d")));
@@ -71,7 +72,7 @@ class UrlPathTrieTests {
         assertEquals("get user by id", trie.match(UrlPath.of("/users/2")));
         assertNull(trie.match(UrlPath.of("/users")));
 
-        assertThrows(IllegalArgumentException.class, () -> trie.insert(UrlPath.of("/users/*"), "user star"));
+        assertThrows(DuplicatePathException.class, () -> trie.insert(UrlPath.of("/users/*"), "user star"));
 
 
         assertNull(trie.match(UrlPath.of("/users/1/orders/2")));
@@ -82,7 +83,7 @@ class UrlPathTrieTests {
         assertNull(trie.match(UrlPath.of("/users/1/orders")));
         assertNull(trie.match(UrlPath.of("/users/orders/2")));
 
-        assertThrows(IllegalArgumentException.class, () -> trie.insert(UrlPath.of("/users/*/orders/*"), "order star"));
+        assertThrows(DuplicatePathException.class, () -> trie.insert(UrlPath.of("/users/*/orders/*"), "order star"));
 
         trie.insert(UrlPath.of("/users/ok/orders/ok"), "ok jia");
         assertEquals("ok jia", trie.match(UrlPath.of("/users/ok/orders/ok")));
@@ -131,8 +132,8 @@ class UrlPathTrieTests {
         assertEquals("root star2", trie.match(UrlPath.of("/b")));
         assertEquals("root star2", trie.match(UrlPath.ROOT));
 
-        assertThrows(IllegalArgumentException.class, () -> trie.insert(UrlPath.of("/**"), ""));
-        assertThrows(IllegalArgumentException.class, () -> trie.insert(UrlPath.of("/a/**"), ""));
+        assertThrows(DuplicatePathException.class, () -> trie.insert(UrlPath.of("/**"), ""));
+        assertThrows(DuplicatePathException.class, () -> trie.insert(UrlPath.of("/a/**"), ""));
 
         trie.insert(UrlPath.of("/a/:b/**"), "a:b/star2");
         assertEquals("a", trie.match(UrlPath.of("/a")));

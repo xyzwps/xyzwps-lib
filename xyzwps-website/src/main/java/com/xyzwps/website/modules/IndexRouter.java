@@ -4,11 +4,13 @@ import com.xyzwps.lib.express.Filter;
 import com.xyzwps.lib.express.HttpRequest;
 import com.xyzwps.lib.express.HttpResponse;
 import com.xyzwps.lib.express.HttpStatus;
-import com.xyzwps.lib.express.filter.SimpleRouter;
+import com.xyzwps.lib.express.filter.TrieRouter;
 import com.xyzwps.website.common.JSON;
-import com.xyzwps.website.modules.conf.ConfSimpleRouter;
-import com.xyzwps.website.modules.debug.DebugSimpleRouter;
-import com.xyzwps.website.modules.user.UserSimpleRouter;
+import com.xyzwps.website.modules.conf.ConfRouter;
+import com.xyzwps.website.modules.debug.DebugRouter;
+import com.xyzwps.website.modules.test.TestCountFilter;
+import com.xyzwps.website.modules.test.TestRouter;
+import com.xyzwps.website.modules.user.UserRouter;
 import io.avaje.validation.ConstraintViolation;
 import io.avaje.validation.ConstraintViolationException;
 import jakarta.inject.Singleton;
@@ -18,20 +20,23 @@ import java.util.Map;
 
 @Singleton
 @JBossLog
-public class IndexSimpleRouter extends SimpleRouter {
+public class IndexRouter extends TrieRouter {
 
-    public IndexSimpleRouter(ConfSimpleRouter confRouter,
-                             DebugSimpleRouter debugRouter,
-                             UserSimpleRouter userRouter) {
+    public IndexRouter(ConfRouter confRouter,
+                       DebugRouter debugRouter,
+                       TestRouter testRouter,
+                       UserRouter userRouter) {
 
         this.use(this::handleError)
-                .get("/api/hello/world", (req, resp) -> {
+                .get("/api/hello/world", (req, resp, next) -> {
                     resp.ok();
                     resp.headers().set("Content-Type", "application/json");
                     resp.send("[\"Hello\",\"World\"]".getBytes());
                 })
+                .use(new TestCountFilter(1))
                 .nest("/api/conf", confRouter)
                 .nest("/api/debug", debugRouter)
+                .nest("/api/test", testRouter)
                 .nest("/api/users", userRouter);
     }
 

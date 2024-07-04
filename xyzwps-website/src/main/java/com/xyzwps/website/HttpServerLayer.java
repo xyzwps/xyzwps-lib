@@ -6,7 +6,7 @@ import com.xyzwps.lib.express.server.bio.BioServer;
 import com.xyzwps.website.conf.Configurations;
 import com.xyzwps.website.filter.LogRequestCostFilter;
 import com.xyzwps.website.filter.SpaFallbackFilter;
-import com.xyzwps.website.modules.IndexSimpleRouter;
+import com.xyzwps.website.modules.IndexRouter;
 import jakarta.inject.Singleton;
 import org.jboss.logging.Logger;
 
@@ -17,7 +17,7 @@ public class HttpServerLayer {
 
     private final ServerConfig serverConfig;
 
-    public HttpServerLayer(IndexSimpleRouter routerBuilder,
+    public HttpServerLayer(IndexRouter routerBuilder,
                            Configurations conf,
                            LogRequestCostFilter logRequestCostFilter,
                            SpaFallbackFilter spaFallbackFilter) {

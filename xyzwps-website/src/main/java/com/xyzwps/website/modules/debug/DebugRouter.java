@@ -2,7 +2,7 @@ package com.xyzwps.website.modules.debug;
 
 import com.xyzwps.lib.express.HttpHeaders;
 import com.xyzwps.lib.express.filter.BasicAuth;
-import com.xyzwps.lib.express.filter.SimpleRouter;
+import com.xyzwps.lib.express.filter.TrieRouter;
 import com.xyzwps.website.common.JSON;
 import com.xyzwps.website.db.MainDatabase;
 import jakarta.inject.Singleton;
@@ -13,11 +13,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Singleton
-public class DebugSimpleRouter extends SimpleRouter {
+public class DebugRouter extends TrieRouter.Nest {
 
-    public DebugSimpleRouter(BasicAuth basicAuth, MainDatabase maindb) {
+    public DebugRouter(BasicAuth basicAuth, MainDatabase maindb) {
         this
-                .get("/{id}", (req, resp) -> {
+                .get("/{id}", (req, resp, next) -> {
                     req.attribute("haha", "ha\nha");
 
                     var map = new HashMap<String, Object>();
@@ -43,10 +43,10 @@ public class DebugSimpleRouter extends SimpleRouter {
 
                     resp.send(JSON.stringify(map, true).getBytes());
                 })
-                .get("/auth", basicAuth, (req, resp) -> {
+                .get("/auth", basicAuth.andThen((req, resp, next) -> {
                     resp.ok();
                     resp.headers().set(HttpHeaders.CONTENT_TYPE, "application/json");
                     resp.send(JSON.stringify(Map.of("ok", true), true).getBytes());
-                });
+                }));
     }
 }

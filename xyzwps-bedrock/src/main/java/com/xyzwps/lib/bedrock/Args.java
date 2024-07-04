@@ -2,6 +2,7 @@ package com.xyzwps.lib.bedrock;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.IntFunction;
 
 public final class Args {
@@ -18,6 +19,13 @@ public final class Args {
             throw new IllegalArgumentException(message);
         }
         return value;
+    }
+
+    public static <T> T ne(T object, T another, String message) {
+        if (Objects.equals(object, another)) {
+            throw new IllegalArgumentException(message);
+        }
+        return object;
     }
 
     public static String notEmpty(String str, String message) {

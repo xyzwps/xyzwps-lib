@@ -1,7 +1,7 @@
 package com.xyzwps.website.modules.conf;
 
 import com.xyzwps.lib.express.HttpHeaders;
-import com.xyzwps.lib.express.filter.SimpleRouter;
+import com.xyzwps.lib.express.filter.TrieRouter;
 import com.xyzwps.website.conf.Configurations;
 import com.xyzwps.website.common.JSON;
 import jakarta.inject.Singleton;
@@ -9,10 +9,10 @@ import jakarta.inject.Singleton;
 import java.util.HashMap;
 
 @Singleton
-public class ConfSimpleRouter extends SimpleRouter {
+public class ConfRouter extends TrieRouter.Nest {
 
-    public ConfSimpleRouter(Configurations conf) {
-        this.get("", (req, resp) -> {
+    public ConfRouter(Configurations conf) {
+        this.get("", (req, resp, next) -> {
             resp.ok();
             resp.headers().set(HttpHeaders.CONTENT_TYPE, "application/json");
             var map = new HashMap<String, Object>();
