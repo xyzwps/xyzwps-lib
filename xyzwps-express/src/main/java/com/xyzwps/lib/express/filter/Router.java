@@ -10,7 +10,7 @@ import java.util.List;
 /**
  * A router that uses a trie for routing requests.
  */
-public class TrieRouter {
+public class Router {
 
     private final UrlPathTrie<Filter> getTrie = new UrlPathTrie<>();
     private final UrlPathTrie<Filter> postTrie = new UrlPathTrie<>();
@@ -25,17 +25,17 @@ public class TrieRouter {
 
     private final Filter notFound;
 
-    public TrieRouter(Filter notFound) {
+    public Router(Filter notFound) {
         this.notFound = notFound;
     }
 
-    public TrieRouter() {
+    public Router() {
         this(null);
     }
 
     private Filter use;
 
-    public TrieRouter use(Filter filter) {
+    public Router use(Filter filter) {
         if (filter == null) {
             return this;
         }
@@ -78,7 +78,7 @@ public class TrieRouter {
         };
     }
 
-    public TrieRouter handle(HttpMethod method, String path, Filter filter) {
+    public Router handle(HttpMethod method, String path, Filter filter) {
         Args.notNull(method, "Argument method cannot be null");
         Args.notNull(path, "Argument path cannot be null");
         Args.notNull(filter, "Argument filter cannot be null");
@@ -103,39 +103,39 @@ public class TrieRouter {
         return this;
     }
 
-    public TrieRouter get(String path, Filter filter) {
+    public Router get(String path, Filter filter) {
         return handle(HttpMethod.GET, path, filter);
     }
 
-    public TrieRouter post(String path, Filter filter) {
+    public Router post(String path, Filter filter) {
         return handle(HttpMethod.POST, path, filter);
     }
 
-    public TrieRouter put(String path, Filter filter) {
+    public Router put(String path, Filter filter) {
         return handle(HttpMethod.PUT, path, filter);
     }
 
-    public TrieRouter delete(String path, Filter filter) {
+    public Router delete(String path, Filter filter) {
         return handle(HttpMethod.DELETE, path, filter);
     }
 
-    public TrieRouter patch(String path, Filter filter) {
+    public Router patch(String path, Filter filter) {
         return handle(HttpMethod.PATCH, path, filter);
     }
 
-    public TrieRouter head(String path, Filter filter) {
+    public Router head(String path, Filter filter) {
         return handle(HttpMethod.HEAD, path, filter);
     }
 
-    public TrieRouter options(String path, Filter filter) {
+    public Router options(String path, Filter filter) {
         return handle(HttpMethod.OPTIONS, path, filter);
     }
 
-    public TrieRouter trace(String path, Filter filter) {
+    public Router trace(String path, Filter filter) {
         return handle(HttpMethod.TRACE, path, filter);
     }
 
-    public TrieRouter nest(String prefix, Nest builder) {
+    public Router nest(String prefix, Nest builder) {
         var prefixPath = UrlPath.of(prefix);
         if (prefixPath.length() == 0) {
             throw new IllegalArgumentException("Invalid prefix: " + prefix);

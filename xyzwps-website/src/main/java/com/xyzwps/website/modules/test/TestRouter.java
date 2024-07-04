@@ -1,10 +1,10 @@
 package com.xyzwps.website.modules.test;
 
-import com.xyzwps.lib.express.filter.TrieRouter;
+import com.xyzwps.lib.express.filter.Router;
 import jakarta.inject.Singleton;
 
 @Singleton
-public class TestRouter extends TrieRouter.Nest {
+public class TestRouter extends Router.Nest {
 
     public TestRouter() {
         this.get("count", new TestCountFilter(2)

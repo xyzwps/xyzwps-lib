@@ -2,7 +2,7 @@ package com.xyzwps.website.modules.debug;
 
 import com.xyzwps.lib.express.HttpHeaders;
 import com.xyzwps.lib.express.filter.BasicAuth;
-import com.xyzwps.lib.express.filter.TrieRouter;
+import com.xyzwps.lib.express.filter.Router;
 import com.xyzwps.website.common.JSON;
 import com.xyzwps.website.db.MainDatabase;
 import jakarta.inject.Singleton;
@@ -13,7 +13,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Singleton
-public class DebugRouter extends TrieRouter.Nest {
+public class DebugRouter extends Router.Nest {
 
     public DebugRouter(BasicAuth basicAuth, MainDatabase maindb) {
         this

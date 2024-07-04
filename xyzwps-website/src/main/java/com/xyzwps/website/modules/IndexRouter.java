@@ -4,7 +4,7 @@ import com.xyzwps.lib.express.Filter;
 import com.xyzwps.lib.express.HttpRequest;
 import com.xyzwps.lib.express.HttpResponse;
 import com.xyzwps.lib.express.HttpStatus;
-import com.xyzwps.lib.express.filter.TrieRouter;
+import com.xyzwps.lib.express.filter.Router;
 import com.xyzwps.website.common.JSON;
 import com.xyzwps.website.modules.conf.ConfRouter;
 import com.xyzwps.website.modules.debug.DebugRouter;
@@ -20,7 +20,7 @@ import java.util.Map;
 
 @Singleton
 @JBossLog
-public class IndexRouter extends TrieRouter {
+public class IndexRouter extends Router {
 
     public IndexRouter(ConfRouter confRouter,
                        DebugRouter debugRouter,
