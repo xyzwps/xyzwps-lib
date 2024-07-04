@@ -12,14 +12,14 @@ import java.util.List;
  */
 public class Router {
 
-    private final UrlPathTrie<Filter> getTrie = new UrlPathTrie<>();
-    private final UrlPathTrie<Filter> postTrie = new UrlPathTrie<>();
-    private final UrlPathTrie<Filter> putTrie = new UrlPathTrie<>();
-    private final UrlPathTrie<Filter> deleteTrie = new UrlPathTrie<>();
-    private final UrlPathTrie<Filter> patchTrie = new UrlPathTrie<>();
-    private final UrlPathTrie<Filter> headTrie = new UrlPathTrie<>();
-    private final UrlPathTrie<Filter> optionsTrie = new UrlPathTrie<>();
-    private final UrlPathTrie<Filter> traceTrie = new UrlPathTrie<>();
+    private final UrlPathTrie<Api> getTrie = new UrlPathTrie<>();
+    private final UrlPathTrie<Api> postTrie = new UrlPathTrie<>();
+    private final UrlPathTrie<Api> putTrie = new UrlPathTrie<>();
+    private final UrlPathTrie<Api> deleteTrie = new UrlPathTrie<>();
+    private final UrlPathTrie<Api> patchTrie = new UrlPathTrie<>();
+    private final UrlPathTrie<Api> headTrie = new UrlPathTrie<>();
+    private final UrlPathTrie<Api> optionsTrie = new UrlPathTrie<>();
+    private final UrlPathTrie<Api> traceTrie = new UrlPathTrie<>();
 
     private final List<Api> apis = new ArrayList<>();
 
@@ -48,34 +48,38 @@ public class Router {
         return this;
     }
 
-
-    public Filter toFilter() {
-        return (req, resp, next) -> {
-            var up = UrlPath.of(req.path());
-            var filter = switch (req.method()) {
-                case GET -> getTrie.match(up);
-                case POST -> postTrie.match(up);
-                case PUT -> putTrie.match(up);
-                case DELETE -> deleteTrie.match(up);
-                case PATCH -> patchTrie.match(up);
-                case HEAD -> headTrie.match(up);
-                case OPTIONS -> optionsTrie.match(up);
-                case TRACE -> traceTrie.match(up);
-                case CONNECT -> throw new IllegalArgumentException("CONNECT method is not supported");
-            };
-
-            if (filter == null) {
-                if (notFound != null) {
-                    notFound.filter(req, resp, next);
-                } else {
-                    resp.status(HttpStatus.NOT_FOUND);
-                    resp.headers().set(HttpHeaders.CONTENT_TYPE, "text/html");
-                    resp.send("<html><head><title>Not Found</title></head><body>Not Found</body></html>".getBytes());
-                }
-            } else {
-                filter.filter(req, resp, next);
-            }
+    public void filter(HttpRequest req, HttpResponse resp, Filter.Next next) {
+        var up = UrlPath.of(req.path());
+        var api = switch (req.method()) {
+            case GET -> getTrie.match(up);
+            case POST -> postTrie.match(up);
+            case PUT -> putTrie.match(up);
+            case DELETE -> deleteTrie.match(up);
+            case PATCH -> patchTrie.match(up);
+            case HEAD -> headTrie.match(up);
+            case OPTIONS -> optionsTrie.match(up);
+            case TRACE -> traceTrie.match(up);
+            case CONNECT -> throw new IllegalArgumentException("CONNECT method is not supported");
         };
+
+        if (api == null) {
+            if (notFound != null) {
+                notFound.filter(req, resp, next);
+            } else {
+                resp.status(HttpStatus.NOT_FOUND);
+                resp.headers().set(HttpHeaders.CONTENT_TYPE, "text/html");
+                resp.send("<html><head><title>Not Found</title></head><body>Not Found</body></html>".getBytes());
+            }
+        } else {
+            final UrlPath ap = api.path();
+            final int len = Math.min(ap.length(), up.length());
+            for (int i = 0; i < len; i++) {
+                if (ap.get(i) instanceof UrlSegment.Param param) {
+                    req.pathVariables().add(param.name(), up.get(i).text());
+                }
+            }
+            api.filter.filter(req, resp, next);
+        }
     }
 
     public Router handle(HttpMethod method, String path, Filter filter) {
@@ -84,22 +88,23 @@ public class Router {
         Args.notNull(filter, "Argument filter cannot be null");
 
         var up = UrlPath.of(path);
+        var api = new Api(method, up, use.andThen(filter));
         try {
             switch (method) {
-                case GET -> getTrie.insert(up, use.andThen(filter));
-                case POST -> postTrie.insert(up, use.andThen(filter));
-                case PUT -> putTrie.insert(up, use.andThen(filter));
-                case DELETE -> deleteTrie.insert(up, use.andThen(filter));
-                case PATCH -> patchTrie.insert(up, use.andThen(filter));
-                case HEAD -> headTrie.insert(up, use.andThen(filter));
-                case OPTIONS -> optionsTrie.insert(up, use.andThen(filter));
-                case TRACE -> traceTrie.insert(up, use.andThen(filter));
+                case GET -> getTrie.insert(up, api);
+                case POST -> postTrie.insert(up, api);
+                case PUT -> putTrie.insert(up, api);
+                case DELETE -> deleteTrie.insert(up, api);
+                case PATCH -> patchTrie.insert(up, api);
+                case HEAD -> headTrie.insert(up, api);
+                case OPTIONS -> optionsTrie.insert(up, api);
+                case TRACE -> traceTrie.insert(up, api);
                 case CONNECT -> throw new IllegalArgumentException("CONNECT method is not supported");
             }
         } catch (DuplicatePathException e) {
             throw new IllegalArgumentException("Duplicate route: " + method + " " + path);
         }
-        apis.add(new Api(method, path));
+        apis.add(api);
         return this;
     }
 
@@ -223,6 +228,6 @@ public class Router {
         }
     }
 
-    public record Api(HttpMethod method, String path) {
+    private record Api(HttpMethod method, UrlPath path, Filter filter) {
     }
 }

@@ -26,7 +26,7 @@ public class HttpServerLayer {
                 .use(logRequestCostFilter)
                 .use(new Static(conf.getRouterStaticDirectory()).serve())
                 .use(spaFallbackFilter)
-                .use(routerBuilder.toFilter());
+                .use(routerBuilder::filter);
     }
 
     public void start() {
