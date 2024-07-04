@@ -17,6 +17,7 @@ public final class BasicAuth implements Filter {
     private static void unauthorized(HttpResponse resp) {
         resp.status(HttpStatus.UNAUTHORIZED);
         resp.headers().set("WWW-Authenticate", "Basic realm=\"Invalid credential.\"");
+        resp.send(new byte[0]);
     }
 
     @Override

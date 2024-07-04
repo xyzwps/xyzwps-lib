@@ -6,8 +6,6 @@ import com.xyzwps.lib.express.HttpResponse;
 import com.xyzwps.lib.express.HttpStatus;
 import com.xyzwps.lib.express.filter.Router;
 import com.xyzwps.website.common.JSON;
-import com.xyzwps.website.modules.conf.ConfRouter;
-import com.xyzwps.website.modules.debug.DebugRouter;
 import com.xyzwps.website.modules.test.TestCountFilter;
 import com.xyzwps.website.modules.test.TestRouter;
 import com.xyzwps.website.modules.user.UserRouter;
@@ -22,9 +20,7 @@ import java.util.Map;
 @JBossLog
 public class IndexRouter extends Router {
 
-    public IndexRouter(ConfRouter confRouter,
-                       DebugRouter debugRouter,
-                       TestRouter testRouter,
+    public IndexRouter(TestRouter testRouter,
                        UserRouter userRouter) {
 
         this.use(this::handleError)
@@ -34,8 +30,6 @@ public class IndexRouter extends Router {
                     resp.send("[\"Hello\",\"World\"]".getBytes());
                 })
                 .use(new TestCountFilter(1))
-                .nest("/api/conf", confRouter)
-                .nest("/api/debug", debugRouter)
                 .nest("/api/test", testRouter)
                 .nest("/api/users", userRouter);
     }
