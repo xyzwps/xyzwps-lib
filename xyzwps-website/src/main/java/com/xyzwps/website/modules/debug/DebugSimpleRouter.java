@@ -2,7 +2,7 @@ package com.xyzwps.website.modules.debug;
 
 import com.xyzwps.lib.express.HttpHeaders;
 import com.xyzwps.lib.express.filter.BasicAuth;
-import com.xyzwps.lib.express.filter.Router;
+import com.xyzwps.lib.express.filter.SimpleRouter;
 import com.xyzwps.website.common.JSON;
 import com.xyzwps.website.db.MainDatabase;
 import jakarta.inject.Singleton;
@@ -13,9 +13,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Singleton
-public class DebugRouter extends Router {
+public class DebugSimpleRouter extends SimpleRouter {
 
-    public DebugRouter(BasicAuth basicAuth, MainDatabase maindb) {
+    public DebugSimpleRouter(BasicAuth basicAuth, MainDatabase maindb) {
         this
                 .get("/{id}", (req, resp) -> {
                     req.attribute("haha", "ha\nha");

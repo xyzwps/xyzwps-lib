@@ -1,7 +1,7 @@
 package com.xyzwps.website.modules.conf;
 
 import com.xyzwps.lib.express.HttpHeaders;
-import com.xyzwps.lib.express.filter.Router;
+import com.xyzwps.lib.express.filter.SimpleRouter;
 import com.xyzwps.website.conf.Configurations;
 import com.xyzwps.website.common.JSON;
 import jakarta.inject.Singleton;
@@ -9,9 +9,9 @@ import jakarta.inject.Singleton;
 import java.util.HashMap;
 
 @Singleton
-public class ConfRouter extends Router {
+public class ConfSimpleRouter extends SimpleRouter {
 
-    public ConfRouter(Configurations conf) {
+    public ConfSimpleRouter(Configurations conf) {
         this.get("", (req, resp) -> {
             resp.ok();
             resp.headers().set(HttpHeaders.CONTENT_TYPE, "application/json");

@@ -1,8 +1,6 @@
 plugins {
     jacoco
     java
-    `java-library`
-    `maven-publish`
 }
 
 group = "com.xyzwps.lib"
@@ -31,9 +29,4 @@ tasks.test {
 
 tasks.jacocoTestReport {
     dependsOn(tasks.test)
-}
-
-java {
-    withJavadocJar()
-    withSourcesJar()
 }

@@ -11,7 +11,7 @@ import java.util.List;
 /**
  * A router that can be used to handle requests.
  */
-public class Router {
+public class SimpleRouter {
 
     private final List<Filter> used = new ArrayList<>();
 
@@ -75,7 +75,7 @@ public class Router {
                 }
             } else if (item instanceof Item.Nested nested) {
                 if (nested.prefix.prefixOf(path, start) instanceof UrlPath.MatchResult.Matched matched) {
-                    if (nested.router.match(method, path, start + nested.prefix.length()) instanceof MatchResult.Matched nestedMatched) {
+                    if (nested.simpleRouter.match(method, path, start + nested.prefix.length()) instanceof MatchResult.Matched nestedMatched) {
                         var pathVariables = new ArrayList<>(matched.pathVariables());
                         pathVariables.addAll(nestedMatched.pathVariables());
                         return new MatchResult.Matched(
@@ -95,7 +95,7 @@ public class Router {
      * @param filter the filter to use; if null, it will be ignored
      * @return this router
      */
-    public Router use(Filter filter) {
+    public SimpleRouter use(Filter filter) {
         if (filter != null) {
             used.add(filter);
         }
@@ -111,7 +111,7 @@ public class Router {
      * @param handler the handler to use; filter and handler cannot be both null
      * @return this router
      */
-    public Router handle(HttpMethod method, String path, Filter filter, Handler handler) {
+    public SimpleRouter handle(HttpMethod method, String path, Filter filter, Handler handler) {
         if (method == HttpMethod.CONNECT) {
             throw new IllegalArgumentException("CONNECT method is not supported");
         }
@@ -158,7 +158,7 @@ public class Router {
      * @param handler the handler to use; cannot be null
      * @return this router
      */
-    public Router handle(HttpMethod method, String path, Handler handler) {
+    public SimpleRouter handle(HttpMethod method, String path, Handler handler) {
         return handle(method, path, null, handler);
     }
 
@@ -170,7 +170,7 @@ public class Router {
      * @param filter the filter to use; cannot be null
      * @return this router
      */
-    public Router handle(HttpMethod method, String path, Filter filter) {
+    public SimpleRouter handle(HttpMethod method, String path, Filter filter) {
         return handle(method, path, filter, null);
     }
 
@@ -181,7 +181,7 @@ public class Router {
      * @param handler the handler to use; cannot be null
      * @return this router
      */
-    public Router get(String path, Handler handler) {
+    public SimpleRouter get(String path, Handler handler) {
         return handle(HttpMethod.GET, path, handler);
     }
 
@@ -192,7 +192,7 @@ public class Router {
      * @param handler the handler to use; cannot be null
      * @return this router
      */
-    public Router post(String path, Handler handler) {
+    public SimpleRouter post(String path, Handler handler) {
         return handle(HttpMethod.POST, path, handler);
     }
 
@@ -203,7 +203,7 @@ public class Router {
      * @param handler the handler to use; cannot be null
      * @return this router
      */
-    public Router put(String path, Handler handler) {
+    public SimpleRouter put(String path, Handler handler) {
         return handle(HttpMethod.PUT, path, handler);
     }
 
@@ -214,7 +214,7 @@ public class Router {
      * @param handler the handler to use; cannot be null
      * @return this router
      */
-    public Router delete(String path, Handler handler) {
+    public SimpleRouter delete(String path, Handler handler) {
         return handle(HttpMethod.DELETE, path, handler);
     }
 
@@ -225,7 +225,7 @@ public class Router {
      * @param handler the handler to use; cannot be null
      * @return this router
      */
-    public Router patch(String path, Handler handler) {
+    public SimpleRouter patch(String path, Handler handler) {
         return handle(HttpMethod.PATCH, path, handler);
     }
 
@@ -236,7 +236,7 @@ public class Router {
      * @param handler the handler to use; cannot be null
      * @return this router
      */
-    public Router head(String path, Handler handler) {
+    public SimpleRouter head(String path, Handler handler) {
         return handle(HttpMethod.HEAD, path, handler);
     }
 
@@ -247,7 +247,7 @@ public class Router {
      * @param handler the handler to use; cannot be null
      * @return this router
      */
-    public Router options(String path, Handler handler) {
+    public SimpleRouter options(String path, Handler handler) {
         return handle(HttpMethod.OPTIONS, path, handler);
     }
 
@@ -258,7 +258,7 @@ public class Router {
      * @param handler the handler to use; cannot be null
      * @return this router
      */
-    public Router trace(String path, Handler handler) {
+    public SimpleRouter trace(String path, Handler handler) {
         return handle(HttpMethod.TRACE, path, handler);
     }
 
@@ -270,7 +270,7 @@ public class Router {
      * @param handler the handler to use; filter and handler cannot be both null
      * @return this router
      */
-    public Router get(String path, Filter filter, Handler handler) {
+    public SimpleRouter get(String path, Filter filter, Handler handler) {
         return handle(HttpMethod.GET, path, filter, handler);
     }
 
@@ -282,7 +282,7 @@ public class Router {
      * @param handler the handler to use; filter and handler cannot be both null
      * @return this router
      */
-    public Router post(String path, Filter filter, Handler handler) {
+    public SimpleRouter post(String path, Filter filter, Handler handler) {
         return handle(HttpMethod.POST, path, filter, handler);
     }
 
@@ -294,7 +294,7 @@ public class Router {
      * @param handler the handler to use; filter and handler cannot be both null
      * @return this router
      */
-    public Router put(String path, Filter filter, Handler handler) {
+    public SimpleRouter put(String path, Filter filter, Handler handler) {
         return handle(HttpMethod.PUT, path, filter, handler);
     }
 
@@ -306,7 +306,7 @@ public class Router {
      * @param handler the handler to use; filter and handler cannot be both null
      * @return this router
      */
-    public Router delete(String path, Filter filter, Handler handler) {
+    public SimpleRouter delete(String path, Filter filter, Handler handler) {
         return handle(HttpMethod.DELETE, path, filter, handler);
     }
 
@@ -318,7 +318,7 @@ public class Router {
      * @param handler the handler to use; filter and handler cannot be both null
      * @return this router
      */
-    public Router patch(String path, Filter filter, Handler handler) {
+    public SimpleRouter patch(String path, Filter filter, Handler handler) {
         return handle(HttpMethod.PATCH, path, filter, handler);
     }
 
@@ -330,7 +330,7 @@ public class Router {
      * @param handler the handler to use; filter and handler cannot be both null
      * @return this router
      */
-    public Router head(String path, Filter filter, Handler handler) {
+    public SimpleRouter head(String path, Filter filter, Handler handler) {
         return handle(HttpMethod.HEAD, path, filter, handler);
     }
 
@@ -342,7 +342,7 @@ public class Router {
      * @param handler the handler to use; filter and handler cannot be both null
      * @return this router
      */
-    public Router options(String path, Filter filter, Handler handler) {
+    public SimpleRouter options(String path, Filter filter, Handler handler) {
         return handle(HttpMethod.OPTIONS, path, filter, handler);
     }
 
@@ -354,7 +354,7 @@ public class Router {
      * @param handler the handler to use; filter and handler cannot be both null
      * @return this router
      */
-    public Router trace(String path, Filter filter, Handler handler) {
+    public SimpleRouter trace(String path, Filter filter, Handler handler) {
         return handle(HttpMethod.TRACE, path, filter, handler);
     }
 
@@ -366,7 +366,7 @@ public class Router {
      * @param filter the filter to use; cannot be null
      * @return this router
      */
-    public Router get(String path, Filter filter) {
+    public SimpleRouter get(String path, Filter filter) {
         return handle(HttpMethod.GET, path, filter);
     }
 
@@ -377,7 +377,7 @@ public class Router {
      * @param filter the filter to use; cannot be null
      * @return this router
      */
-    public Router post(String path, Filter filter) {
+    public SimpleRouter post(String path, Filter filter) {
         return handle(HttpMethod.POST, path, filter);
     }
 
@@ -388,7 +388,7 @@ public class Router {
      * @param filter the filter to use; cannot be null
      * @return this router
      */
-    public Router put(String path, Filter filter) {
+    public SimpleRouter put(String path, Filter filter) {
         return handle(HttpMethod.PUT, path, filter);
     }
 
@@ -399,7 +399,7 @@ public class Router {
      * @param filter the filter to use; cannot be null
      * @return this router
      */
-    public Router delete(String path, Filter filter) {
+    public SimpleRouter delete(String path, Filter filter) {
         return handle(HttpMethod.DELETE, path, filter);
     }
 
@@ -410,7 +410,7 @@ public class Router {
      * @param filter the filter to use; cannot be null
      * @return this router
      */
-    public Router patch(String path, Filter filter) {
+    public SimpleRouter patch(String path, Filter filter) {
         return handle(HttpMethod.PATCH, path, filter);
     }
 
@@ -421,7 +421,7 @@ public class Router {
      * @param filter the filter to use; cannot be null
      * @return this router
      */
-    public Router head(String path, Filter filter) {
+    public SimpleRouter head(String path, Filter filter) {
         return handle(HttpMethod.HEAD, path, filter);
     }
 
@@ -432,7 +432,7 @@ public class Router {
      * @param filter the filter to use; cannot be null
      * @return this router
      */
-    public Router options(String path, Filter filter) {
+    public SimpleRouter options(String path, Filter filter) {
         return handle(HttpMethod.OPTIONS, path, filter);
     }
 
@@ -443,7 +443,7 @@ public class Router {
      * @param filter the filter to use; cannot be null
      * @return this router
      */
-    public Router trace(String path, Filter filter) {
+    public SimpleRouter trace(String path, Filter filter) {
         return handle(HttpMethod.TRACE, path, filter);
     }
 
@@ -452,10 +452,10 @@ public class Router {
      *
      * @param prefix the prefix; cannot be null or empty; cannot contain '**'
      * @param filter the filter to use; if null, it will be ignored
-     * @param router the router to nest; cannot be null
+     * @param simpleRouter the router to nest; cannot be null
      * @return this router
      */
-    public Router nest(String prefix, Filter filter, Router router) {
+    public SimpleRouter nest(String prefix, Filter filter, SimpleRouter simpleRouter) {
         var prefixPath = UrlPath.of(prefix);
         if (prefixPath.length() == 0) {
             throw new IllegalArgumentException("Invalid prefix: " + prefix);
@@ -464,14 +464,14 @@ public class Router {
             throw new IllegalArgumentException("Invalid prefix: " + prefix + ". Prefix cannot be contains **.");
         }
 
-        Args.notNull(router, "router cannot be null");
+        Args.notNull(simpleRouter, "router cannot be null");
 
         var filters = new ArrayList<>(used);
         if (filter != null) {
             filters.add(filter);
         }
 
-        items.add(new Item.Nested(prefixPath, composeFilters(filters), router));
+        items.add(new Item.Nested(prefixPath, composeFilters(filters), simpleRouter));
 
         return this;
     }
@@ -480,11 +480,11 @@ public class Router {
      * Nest a router under a prefix.
      *
      * @param prefix the prefix; cannot be null or empty; cannot contain '**'
-     * @param router the router to nest; cannot be null
+     * @param simpleRouter the router to nest; cannot be null
      * @return this router
      */
-    public Router nest(String prefix, Router router) {
-        return nest(prefix, null, router);
+    public SimpleRouter nest(String prefix, SimpleRouter simpleRouter) {
+        return nest(prefix, null, simpleRouter);
     }
 
     private sealed interface Item {
@@ -492,7 +492,7 @@ public class Router {
         record Handled(HttpMethod method, UrlPath path, Filter filter) implements Item {
         }
 
-        record Nested(UrlPath prefix, Filter filter, Router router) implements Item {
+        record Nested(UrlPath prefix, Filter filter, SimpleRouter simpleRouter) implements Item {
         }
     }
 

@@ -4,11 +4,11 @@ import com.xyzwps.lib.express.Filter;
 import com.xyzwps.lib.express.HttpRequest;
 import com.xyzwps.lib.express.HttpResponse;
 import com.xyzwps.lib.express.HttpStatus;
-import com.xyzwps.lib.express.filter.Router;
+import com.xyzwps.lib.express.filter.SimpleRouter;
 import com.xyzwps.website.common.JSON;
-import com.xyzwps.website.modules.conf.ConfRouter;
-import com.xyzwps.website.modules.debug.DebugRouter;
-import com.xyzwps.website.modules.user.UserRouter;
+import com.xyzwps.website.modules.conf.ConfSimpleRouter;
+import com.xyzwps.website.modules.debug.DebugSimpleRouter;
+import com.xyzwps.website.modules.user.UserSimpleRouter;
 import io.avaje.validation.ConstraintViolation;
 import io.avaje.validation.ConstraintViolationException;
 import jakarta.inject.Singleton;
@@ -18,11 +18,11 @@ import java.util.Map;
 
 @Singleton
 @JBossLog
-public class IndexRouter extends Router {
+public class IndexSimpleRouter extends SimpleRouter {
 
-    public IndexRouter(ConfRouter confRouter,
-                       DebugRouter debugRouter,
-                       UserRouter userRouter) {
+    public IndexSimpleRouter(ConfSimpleRouter confRouter,
+                             DebugSimpleRouter debugRouter,
+                             UserSimpleRouter userRouter) {
 
         this.use(this::handleError)
                 .get("/api/hello/world", (req, resp) -> {

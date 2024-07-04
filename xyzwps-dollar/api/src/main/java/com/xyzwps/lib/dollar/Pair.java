@@ -6,8 +6,10 @@ import java.util.Objects;
  * A simple tuple with two elements. Null elements are acceptable.
  * It can also represent the key-value pair.
  *
- * @param <F> first element type
- * @param <S> second element type
+ * @param first  first element
+ * @param second second element
+ * @param <F>    first element type
+ * @param <S>    second element type
  */
 public record Pair<F, S>(F first, S second) {
 

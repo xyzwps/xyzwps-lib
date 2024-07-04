@@ -1,6 +1,6 @@
 package com.xyzwps.website.modules.user;
 
-import com.xyzwps.lib.express.filter.Router;
+import com.xyzwps.lib.express.filter.SimpleRouter;
 import com.xyzwps.website.Person;
 import com.xyzwps.website.filter.JsonHandlerFactory;
 import com.xyzwps.website.filter.LogRequestCostFilter;
@@ -11,11 +11,11 @@ import jakarta.inject.Singleton;
 import org.jboss.logging.Logger;
 
 @Singleton
-public class UserRouter extends Router {
+public class UserSimpleRouter extends SimpleRouter {
 
     private static final Logger log = Logger.getLogger(LogRequestCostFilter.class);
 
-    public UserRouter(UserHandler users, JsonHandlerFactory json, LoginBasicHandler basicLogin) {
+    public UserSimpleRouter(UserHandler users, JsonHandlerFactory json, LoginBasicHandler basicLogin) {
 
         this
                 .post("/login/basic", json.create(LoginBasicPayload.class, basicLogin::login))

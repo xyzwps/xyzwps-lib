@@ -11,11 +11,20 @@ import java.util.function.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * Test cases for {@link ChainFactory} and {@link MapEntryChainFactory}.
+ *
+ * @param cf chain factory
+ * @param mf map entry chain factory
+ */
 public record ChainCases(
         ChainFactory cf,
         MapEntryChainFactory mf
 ) {
 
+    /**
+     * Run all test cases.
+     */
     public void test() {
         testChain();
         testMapEntryChain();
