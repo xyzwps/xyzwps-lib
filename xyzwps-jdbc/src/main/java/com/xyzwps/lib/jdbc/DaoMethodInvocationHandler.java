@@ -2,8 +2,11 @@ package com.xyzwps.lib.jdbc;
 
 import com.xyzwps.lib.bedrock.BeanParam;
 import com.xyzwps.lib.bedrock.Param;
+import com.xyzwps.lib.bedrock.UnimplementedException;
 import com.xyzwps.lib.bedrock.lang.DefaultValues;
 import com.xyzwps.lib.dollar.Pair;
+import com.xyzwps.lib.jdbc.method2sql.MethodName2Sql;
+import com.xyzwps.lib.jdbc.method2sql.SqlInfo;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
@@ -12,30 +15,76 @@ import java.sql.*;
 import java.util.*;
 import java.util.regex.Pattern;
 
+// TODO: try to use cache to improve performance
 record DaoMethodInvocationHandler(Class<?> daoInterface, TransactionContext ctx) implements InvocationHandler {
 
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
         var $query = method.getAnnotation(Query.class);
         if ($query != null) {
-            return handleQuery(ctx, $query, method, args);
+            return handleQuery(ctx, $query.sql(), method, args);
         }
 
         var $execute = method.getAnnotation(Execute.class);
         if ($execute != null) {
-            return handleExecute(ctx, $execute, method, args);
+            return handleExecute(ctx, $execute.value(), method, args);
         }
 
-        throw new DbException("No annotation found for method " + method.getName() + " in " + daoInterface.getCanonicalName() + ".");
+        var $table = daoInterface.getAnnotation(Table.class);
+        if ($table != null) {
+            var tableName = $table.value();
+            if (tableName == null || tableName.isBlank()) {
+                throw new DbException("The table name of " + daoInterface.getCanonicalName() + " must be specified.");
+            }
+            return handleAutomatedExecution(ctx, tableName, method, args);
+        }
+
+        throw new DbException(defaultErrorMessage(method, daoInterface));
     }
 
+    private static String defaultErrorMessage(Method method, Class<?> daoInterface) {
+        return String.format("Maybe you should add @Query or @Execute annotation to method %s, or add @Table annotation to type %s.",
+                method.getName(), daoInterface.getCanonicalName());
+    }
 
-    private static Object handleQuery(TransactionContext ctx, Query query, Method method, Object[] args) throws SQLException {
+    private static Object handleAutomatedExecution(TransactionContext ctx, String tableName, Method method, Object[] args) throws SQLException {
+        var methodName = switch (method.getName()) {
+            case "findAll" -> "find";
+            case "getAll" -> "get";
+            case "countAll" -> "count";
+            case "updateAll" -> "update";
+            case "deleteAll" -> "delete";
+            default -> method.getName();
+        };
+
+        SqlInfo sqlInfo;
+        try {
+            sqlInfo = MethodName2Sql.getSql(methodName, tableName);
+        } catch (Exception e) {
+            throw new DbException("Cannot generate SQL for method " + methodName + " in " + method.getDeclaringClass().getCanonicalName() + ".", e);
+        }
+
+        if (sqlInfo == null) {
+            throw new IllegalStateException("Maybe a bug!");
+        }
+
+
+        if (sqlInfo.placeholderIsIn().hasTrue()) {
+            throw UnimplementedException.todo(); // TODO: 支持 where in
+        } else {
+            return switch (sqlInfo.sqlType()) {
+                case SELECT, COUNT -> handleQuery(ctx, sqlInfo.sql(), method, args);
+                case UPDATE, DELETE -> handleExecute(ctx, sqlInfo.sql(), method, args);
+            };
+        }
+    }
+
+    private static Object handleQuery(TransactionContext ctx, String sql, Method method, Object[] args) throws SQLException {
         var returnType = determineQueryReturnType(method);
         var resultType = returnType.first();
         var elementType = returnType.second();
 
-        try (var statement = execute(ctx, query.sql(), method, args, false); var rs = statement.getResultSet()) {
+        try (var statement = execute(ctx, sql, method, args, false); var rs = statement.getResultSet()) {
             var list = ctx.rs2b().toList(rs, elementType);
             return switch (resultType) {
                 case SINGLE -> list.isEmpty() ? DefaultValues.get(elementType) : list.getFirst();
@@ -46,14 +95,14 @@ record DaoMethodInvocationHandler(Class<?> daoInterface, TransactionContext ctx)
         }
     }
 
-    private static Object handleExecute(TransactionContext ctx, Execute execute, Method method, Object[] args) throws SQLException {
-        var returnType = determineExecuteReturnType(method, execute);
+    private static Object handleExecute(TransactionContext ctx, String sql, Method method, Object[] args) throws SQLException {
+        var returnType = determineExecuteReturnType(method);
         var resultType = returnType.first();
         var elementType = returnType.second();
 
         if (resultType == ExecuteResultType.BATCH) {
             var list = getListArgument(args);
-            var nps = NamedPreparedSql.create(execute.sql());
+            var nps = NamedPreparedSql.create(sql);
             try (var s = ctx.prepareStatement(nps.sql())) {
                 for (var it : list) {
                     setNamedPreparedStatementArgs(s, nps.names(), it);
@@ -64,7 +113,7 @@ record DaoMethodInvocationHandler(Class<?> daoInterface, TransactionContext ctx)
             }
         }
 
-        try (var statement = execute(ctx, execute.sql(), method, args, resultType == ExecuteResultType.GENERATED_KEYS)) {
+        try (var statement = execute(ctx, sql, method, args, resultType == ExecuteResultType.GENERATED_KEYS)) {
             return switch (resultType) {
                 case VOID -> null;
                 case AFFECTED_ROWS -> statement.getUpdateCount();
@@ -96,9 +145,9 @@ record DaoMethodInvocationHandler(Class<?> daoInterface, TransactionContext ctx)
         throw new DbException("The first argument of batch execute method must be a List.");
     }
 
-    private static Pair<ExecuteResultType, Class<?>> determineExecuteReturnType(Method method, Execute execute) {
+    private static Pair<ExecuteResultType, Class<?>> determineExecuteReturnType(Method method) {
         var returnType = method.getGenericReturnType();
-        if (execute.batch()) {
+        if (method.getAnnotation(Batch.class) != null) {
             if (returnType instanceof Class<?> clazz) {
                 if (!clazz.getName().equals("void")) {
                     throw new DbException("The return type of batch execute method " + method.getName() + " must be void.");
@@ -125,7 +174,7 @@ record DaoMethodInvocationHandler(Class<?> daoInterface, TransactionContext ctx)
             if (clazz.getName().equals("void")) {
                 return Pair.of(ExecuteResultType.VOID, null);
             }
-            if (execute.returnGeneratedKeys()) {
+            if (method.getAnnotation(GeneratedKeys.class) != null) {
                 return Pair.of(ExecuteResultType.GENERATED_KEYS, clazz);
             }
             if (clazz.equals(int.class) || clazz.equals(Integer.class) || clazz.equals(long.class) || clazz.equals(Long.class)) {

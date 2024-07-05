@@ -14,6 +14,13 @@ public final class Args {
         return value;
     }
 
+    public static int lt(int value, int bound, String message) {
+        if (value >= bound) {
+            throw new IllegalArgumentException(message);
+        }
+        return value;
+    }
+
     public static int ge(int value, int bound, String message) {
         if (value < bound) {
             throw new IllegalArgumentException(message);
