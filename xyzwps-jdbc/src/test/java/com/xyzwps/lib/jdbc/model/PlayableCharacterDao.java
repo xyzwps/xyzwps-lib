@@ -58,6 +58,7 @@ public interface PlayableCharacterDao {
     @Execute("update playable_characters set remark = :remark where uid = :id")
     int updateRemark(@Param("id") long id, @Param("remark") String remark);
 
+    // TODO: 这是面向数据表的操作，想办法改成面向实体类的操作
     void updateSetRemarkByUid(String remark, long id);
 
     void deleteByUid(long id);

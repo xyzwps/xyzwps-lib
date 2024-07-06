@@ -32,4 +32,25 @@ public class Database {
             throw new DbException("Failed to get connection", e);
         }
     }
+
+    public <R> R tx(SqlFunction<TransactionContext, R> handler) {
+        try (var conn = ds.getConnection()) {
+            var tx = new TransactionContext(conn, rs2b);
+            try {
+                conn.setAutoCommit(false);
+                var r = handler.apply(tx);
+                conn.commit();
+                return r;
+            } catch (Exception e) {
+                try {
+                    conn.rollback();
+                } catch (SQLException e2) {
+                    throw new DbException("Rollback failed", e2);
+                }
+                throw new DbException("Transaction failed", e);
+            }
+        } catch (SQLException e) {
+            throw new DbException("Failed to get connection", e);
+        }
+    }
 }
