@@ -10,13 +10,6 @@ import java.lang.annotation.*;
 @Documented
 public @interface Column {
     /**
-     * The name of the column in the database table.
-     *
-     * @return the name of the column in the database table
-     */
-    String name();
-
-    /**
      * The implementation class of the {@link ColumnPropertyMapper} for the column.
      *
      * @return The implementation class of the {@link ColumnPropertyMapper} for the column.

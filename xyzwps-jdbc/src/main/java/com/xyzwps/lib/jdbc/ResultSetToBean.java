@@ -105,9 +105,7 @@ public final class ResultSetToBean {
             var name = prop.name();
             var anno = prop.getAnnotation(Column.class);
 
-            // TODO: cache column name, entity info
-            var column = (anno == null) ? $.snakeCase(name) : anno.name();
-
+            var column = $.snakeCase(name);
             ColumnPropertyMapper<?> mapper = anno != null && anno.mapper() != ColumnPropertyMapper.None.class
                     ? getFromClass(anno.mapper())
                     : getters.get(type);
