@@ -1,6 +1,5 @@
 package com.xyzwps.website.modules.user.service;
 
-import com.xyzwps.website.db.MainDatabase;
 import com.xyzwps.website.modules.sms.model.VcodeScene;
 import com.xyzwps.website.modules.sms.service.VcodeService;
 import jakarta.inject.Singleton;
@@ -11,8 +10,6 @@ import lombok.extern.jbosslog.JBossLog;
 @JBossLog
 @AllArgsConstructor
 public class SimpleAuthenticationService {
-
-    private final MainDatabase maindb;
 
     private final VcodeService vcodeService;
 

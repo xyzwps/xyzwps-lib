@@ -4,6 +4,7 @@ import com.xyzwps.website.db.MainDatabase;
 import com.xyzwps.website.modules.user.dao.UserDao;
 import com.xyzwps.website.modules.user.entity.User;
 import com.xyzwps.website.modules.user.entity.UserStatus;
+import jakarta.inject.Provider;
 import jakarta.inject.Singleton;
 import lombok.AllArgsConstructor;
 import lombok.extern.jbosslog.JBossLog;
@@ -15,7 +16,7 @@ import java.time.Instant;
 @JBossLog
 public class UserService {
 
-    private final MainDatabase mainDb;
+    private final Provider<MainDatabase> mainDb$;
 
     public void createUserByPhone(String phone) {
         var newUser = User.builder()
@@ -29,7 +30,7 @@ public class UserService {
                 .updateTime(Instant.now())
                 .build();
 
-        var id = mainDb.tx((tx) -> {
+        var id = mainDb$.get().tx((tx) -> {
             var dao = tx.createDao(UserDao.class);
             return dao.insert(newUser);
         });

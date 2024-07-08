@@ -6,6 +6,7 @@ import com.xyzwps.lib.express.filter.Router;
 import com.xyzwps.website.common.JSON;
 import com.xyzwps.website.conf.Configurations;
 import com.xyzwps.website.db.MainDatabase;
+import jakarta.inject.Provider;
 import jakarta.inject.Singleton;
 
 import java.time.LocalDateTime;
@@ -16,7 +17,7 @@ import java.util.Map;
 @Singleton
 public class TestRouter extends Router.Nest {
 
-    public TestRouter(Configurations conf, BasicAuth basicAuth, MainDatabase maindb) {
+    public TestRouter(Configurations conf, BasicAuth basicAuth, Provider<MainDatabase> maindb$) {
         this.get("count", new TestCountFilter(2).andThen(new TestCountFilter(3)).andThen((req, resp, next) -> {
                     resp.ok();
                     resp.send("Hello, World!".getBytes());
@@ -33,7 +34,7 @@ public class TestRouter extends Router.Nest {
 
                     var map = new HashMap<String, Object>();
 
-                    maindb.tx(tx -> {
+                    maindb$.get().tx(tx -> {
                         var dao = tx.createDao(TestDao.class);
                         map.put("jdbc", dao.count());
                     });
