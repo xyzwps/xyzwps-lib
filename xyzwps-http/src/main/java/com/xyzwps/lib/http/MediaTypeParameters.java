@@ -1,4 +1,4 @@
-package lib.jsdom.mimetype;
+package com.xyzwps.lib.http;
 
 
 import java.util.HashMap;
@@ -7,7 +7,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.function.BiConsumer;
 
-public final class MimeTypeParameters {
+public final class MediaTypeParameters {
     private final Map<String, String> map = new HashMap<>();
 
     public int size() {
@@ -28,11 +28,11 @@ public final class MimeTypeParameters {
         name = Objects.requireNonNull(name, "MIME type parameter name cannot be null").toLowerCase();
         value = Objects.requireNonNull(value, "MIME type parameter value cannot be null");
 
-        if (!MimeType.solelyContainsHTTPTokenCodePoints(name)) {
+        if (!MediaType.solelyContainsHTTPTokenCodePoints(name)) {
             throw new IllegalArgumentException("Invalid MIME type parameter name \"" + name +
                                                "\": only HTTP token code points are valid.");
         }
-        if (!MimeType.soleyContainsHTTPQuotedStringTokenCodePoints(value)) {
+        if (!MediaType.soleyContainsHTTPQuotedStringTokenCodePoints(value)) {
             throw new IllegalArgumentException("Invalid MIME type parameter value \"" + value
                                                + "\":only HTTP quoted - string token code points are valid.");
         }

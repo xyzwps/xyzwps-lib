@@ -2,7 +2,7 @@ package com.xyzwps.lib.express.server.bio;
 
 import com.xyzwps.lib.express.*;
 import com.xyzwps.lib.express.server.commons.SimpleCookie;
-import lib.jsdom.mimetype.MimeType;
+import com.xyzwps.lib.http.MediaType;
 
 import java.net.URI;
 import java.util.HashMap;
@@ -21,7 +21,7 @@ public final class BioHttpRequest implements HttpRequest {
     private final Map<String, Object> attributes;
     private Object body;
 
-    private final MimeType contentType;
+    private final MediaType contentType;
 
     public BioHttpRequest(HttpMethod method, URI uri, HttpProtocol protocol, HttpHeaders headers, Object body) {
         this.path = Objects.requireNonNull(uri).getPath();
@@ -33,7 +33,7 @@ public final class BioHttpRequest implements HttpRequest {
         this.body = body;
 
         var contentTypeStr = headers.contentType();
-        this.contentType = contentTypeStr == null ? null : MimeType.parse(contentTypeStr);
+        this.contentType = contentTypeStr == null ? null : MediaType.parse(contentTypeStr);
         this.pathVariables = new HttpPathVariables();
         this.attributes = new HashMap<>();
 
@@ -91,7 +91,7 @@ public final class BioHttpRequest implements HttpRequest {
     }
 
     @Override
-    public MimeType contentType() {
+    public MediaType contentType() {
         return contentType;
     }
 

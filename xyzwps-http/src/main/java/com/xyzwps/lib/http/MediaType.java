@@ -1,18 +1,18 @@
-package lib.jsdom.mimetype;
+package com.xyzwps.lib.http;
 
 import java.util.regex.Pattern;
 
 /**
  * @see <a href="https://github.com/jsdom/whatwg-mimetype/blob/main/lib/serializer.js">jsdom | whatwg-mimetype/lib/serializer.js</a>
  */
-public final class MimeType {
+public final class MediaType {
 
     public final String type;
     public final String subtype;
-    public final MimeTypeParameters parameters = new MimeTypeParameters();
+    public final MediaTypeParameters parameters = new MediaTypeParameters();
     public final String essence;
 
-    private MimeType(String type, String subtype) {
+    private MediaType(String type, String subtype) {
         {
             type = type.toLowerCase();
             if (type.isEmpty()) {
@@ -63,14 +63,14 @@ public final class MimeType {
         return sb.toString();
     }
 
-    private MimeType param(String name, String value) {
+    private MediaType param(String name, String value) {
         this.parameters.set(name, value);
         return this;
     }
 
-    public static MimeType parse(String input) {
+    public static MediaType parse(String input) {
         if (input == null) {
-            throw new IllegalArgumentException("Cannot parse null to " + MimeType.class.getSimpleName());
+            throw new IllegalArgumentException("Cannot parse null to " + MediaType.class.getSimpleName());
         }
 
         input = removeLeadingAndTrailingHTTPWhitespace(input);
@@ -105,7 +105,7 @@ public final class MimeType {
             throw new IllegalArgumentException("Invalid mime subtype \"" + subType + '"');
         }
 
-        var mime = new MimeType(type, subType);
+        var mime = new MediaType(type, subType);
 
         while (position < input.length()) {
             // Skip past ";"

@@ -2,9 +2,9 @@ package com.xyzwps.lib.express.filter;
 
 import com.xyzwps.lib.bedrock.Args;
 import com.xyzwps.lib.express.Filter;
+import com.xyzwps.lib.http.MediaType;
 import com.xyzwps.lib.json.JsonException;
 import com.xyzwps.lib.json.JsonMapper;
-import lib.jsdom.mimetype.MimeType;
 
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -42,7 +42,7 @@ public final class JsonParser {
         };
     }
 
-    private <T> Filter parseBody(Class<T> tClass, MimeType type) {
+    private <T> Filter parseBody(Class<T> tClass, MediaType type) {
         return (req, resp, next) -> {
             var is = (InputStream) req.body();
             try {

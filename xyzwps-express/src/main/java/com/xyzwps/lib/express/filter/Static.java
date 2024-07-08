@@ -1,7 +1,7 @@
 package com.xyzwps.lib.express.filter;
 
 import com.xyzwps.lib.express.*;
-import lib.jshttp.mimedb.MimeDb;
+import com.xyzwps.lib.http.MimeDb;
 import org.jboss.logging.Logger;
 
 import java.io.BufferedInputStream;

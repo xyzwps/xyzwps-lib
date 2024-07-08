@@ -1,6 +1,6 @@
 package com.xyzwps.lib.express;
 
-import lib.jsdom.mimetype.MimeType;
+import com.xyzwps.lib.http.MediaType;
 
 import java.util.List;
 import java.util.Map;
@@ -59,7 +59,7 @@ public interface HttpRequest {
      *
      * @return null if <code>Content-Type</code> header does not exist
      */
-    MimeType contentType();
+    MediaType contentType();
 
     /**
      * Get the current request body representation.

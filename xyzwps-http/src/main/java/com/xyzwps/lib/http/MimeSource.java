@@ -1,4 +1,4 @@
-package lib.jshttp.mimedb;
+package com.xyzwps.lib.http;
 
 public enum MimeSource {
     IANA,

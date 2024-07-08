@@ -3,8 +3,8 @@ package com.xyzwps.lib.express.server.helidon;
 import com.xyzwps.lib.bedrock.Args;
 import com.xyzwps.lib.express.*;
 import com.xyzwps.lib.express.server.commons.SimpleCookie;
+import com.xyzwps.lib.http.MediaType;
 import io.helidon.webserver.http.ServerRequest;
-import lib.jsdom.mimetype.MimeType;
 
 import java.io.InputStream;
 import java.util.HashMap;
@@ -17,7 +17,7 @@ class HelidonHttpRequest implements HttpRequest {
     private final ServerRequest req;
     private final HttpMethod method;
     private final HttpHeaders headers;
-    private final MimeType contentType;
+    private final MediaType contentType;
     private final HttpSearchParams searchParams;
     private final HttpPathVariables pathVariables;
     private final Cookies cookies;
@@ -41,7 +41,7 @@ class HelidonHttpRequest implements HttpRequest {
         this.headers = HelidonHelper.createHttpHeader(request.headers());
 
         var type = headers.get(HttpHeaders.CONTENT_TYPE);
-        this.contentType = type == null ? null : MimeType.parse(type);
+        this.contentType = type == null ? null : MediaType.parse(type);
 
         this.searchParams = HttpSearchParams.parse(req.query().rawValue());
         this.pathVariables = new HttpPathVariables();
@@ -81,7 +81,7 @@ class HelidonHttpRequest implements HttpRequest {
     }
 
     @Override
-    public MimeType contentType() {
+    public MediaType contentType() {
         return contentType;
     }
 

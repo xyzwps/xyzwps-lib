@@ -1,1 +1,0 @@
-Based on [`whatwg-mimetype`](https://github.com/jsdom/whatwg-mimetype) 4.0.0

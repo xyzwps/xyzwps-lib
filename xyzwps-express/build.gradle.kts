@@ -14,8 +14,7 @@ repositories {
 }
 
 dependencies {
-    api(project(":lib:jsdom:mimetype"))
-    api(project(":lib:jshttp:mime-db"))
+    api(project(":xyzwps-http"))
     api(project(":xyzwps-bedrock"))
     api(project(":xyzwps-dollar"))
     api(project(":xyzwps-json"))

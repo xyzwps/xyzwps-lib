@@ -36,7 +36,6 @@ dependencyResolutionManagement {
     }
 }
 
-include("doc")
 include("xyzwps-bean")
 include("xyzwps-bedrock")
 include(
@@ -55,8 +54,8 @@ include(
     "xyzwps-express:server-commons",
     "xyzwps-express:server-helidon"
 )
+include("xyzwps-http")
 include("xyzwps-jdbc")
 include("xyzwps-json")
 include("xyzwps-website")
-include("lib:jsdom:mimetype")
-include("lib:jshttp:mime-db")
+
