@@ -2,7 +2,7 @@ import ky from 'ky';
 
 export const getConf = async (): Promise<Either<Error, Conf>> => {
   try {
-    const body = await ky.get('/api/conf').json();
+    const body = await ky.get('/api/test/conf').json();
     return { type: 'right', value: body as Conf };
   } catch (e) {
     if (e instanceof Error) {

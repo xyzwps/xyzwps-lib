@@ -68,7 +68,7 @@ public class Router {
             } else {
                 resp.status(HttpStatus.NOT_FOUND);
                 resp.headers().set(HttpHeaders.CONTENT_TYPE, "text/html");
-                resp.send("<html><head><title>Not Found</title></head><body>Not Found</body></html>".getBytes());
+                resp.send(String.format("<html><head><title>Not Found: %s %s</title></head><body>Not Found</body></html>", req.method(), req.path()).getBytes());
             }
         } else {
             final UrlPath ap = api.path();

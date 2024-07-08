@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import reactLogo from '../assets/react.svg';
 import viteLogo from '/vite.svg';
-import { getConf } from '../apis/conf';
+import { getConf } from '../apis/test';
 
 export default function IndexPage() {
   const [count, setCount] = useState(0);

@@ -2,6 +2,7 @@ import { Outlet, RouterProvider, Link, createRouter, createRoute, createRootRout
 import { TanStackRouterDevtools } from '@tanstack/router-devtools';
 import IndexPage from './pages/IndexPage';
 import AboutPage from './pages/AboutPage';
+import SimpleRegisterPage from './pages/register/SimpleRegisterPage';
 import './App.css';
 
 const rootRoute = createRootRoute({
@@ -29,7 +30,13 @@ const aboutRoute = createRoute({
   component: AboutPage,
 });
 
-const routeTree = rootRoute.addChildren([indexRoute, aboutRoute]);
+const simpleResigerRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/register/simple',
+  component: SimpleRegisterPage,
+});
+
+const routeTree = rootRoute.addChildren([indexRoute, aboutRoute, simpleResigerRoute]);
 
 const router = createRouter({ routeTree });
 

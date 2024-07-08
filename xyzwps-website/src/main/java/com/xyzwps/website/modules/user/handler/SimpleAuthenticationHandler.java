@@ -21,12 +21,14 @@ public class SimpleAuthenticationHandler {
 
 
     public Object sendRegisterVcode(HttpRequest req, HttpResponse resp, SendRegisterVcodePayload payload) {
+        // TODO: 检查是否已经注册
         validator.validate(payload);
         authenticationService.sendRegisterVcode(payload.getPhone());
         return OK.INSTANCE;
     }
 
     public Object register(HttpRequest req, HttpResponse resp, SimpleRegisterPayload payload) {
+        // TODO: 检查是否已经注册
         validator.validate(payload);
         authenticationService.register(payload.getPhone(), payload.getVcode());
         return OK.INSTANCE;
