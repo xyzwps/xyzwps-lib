@@ -16,10 +16,9 @@ repositories {
 }
 
 dependencies {
-    implementation(project(":xyzwps-dollar:api"))
-    testImplementation(platform(libs.junit.bom))
-    testImplementation(libs.junit.jupiter)
-    testImplementation(project(":xyzwps-dollar:test-cases"))
+    implementation(project(":xyzwps-dollar-api"))
+    implementation(platform(libs.junit.bom))
+    implementation(libs.junit.jupiter)
 }
 
 tasks.test {

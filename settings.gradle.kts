@@ -40,12 +40,12 @@ include("xyzwps-bean")
 include("xyzwps-bedrock")
 include(
     "xyzwps-dollar", //
-    "xyzwps-dollar:api",
-    "xyzwps-dollar:generator",
-    "xyzwps-dollar:iterator",
-    "xyzwps-dollar:performance",
-    "xyzwps-dollar:seq",
-    "xyzwps-dollar:test-cases"
+    "xyzwps-dollar-api",
+    "xyzwps-dollar-generator",
+    "xyzwps-dollar-iterator",
+    "xyzwps-dollar-perf",
+    "xyzwps-dollar-seq",
+    "xyzwps-dollar-test-cases"
 )
 include(
     "xyzwps-express",  //

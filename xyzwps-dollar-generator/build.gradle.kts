@@ -1,8 +1,6 @@
 plugins {
     jacoco
     java
-    `java-library`
-    `maven-publish`
 }
 
 group = "com.xyzwps.lib"
@@ -18,10 +16,10 @@ repositories {
 }
 
 dependencies {
-    implementation(project(":xyzwps-dollar:api"))
+    implementation(project(":xyzwps-dollar-api"))
     testImplementation(platform(libs.junit.bom))
     testImplementation(libs.junit.jupiter)
-    testImplementation(project(":xyzwps-dollar:test-cases"))
+    testImplementation(project(":xyzwps-dollar-test-cases"))
 }
 
 tasks.test {
@@ -31,9 +29,4 @@ tasks.test {
 
 tasks.jacocoTestReport {
     dependsOn(tasks.test)
-}
-
-java {
-    withJavadocJar()
-    withSourcesJar()
 }
