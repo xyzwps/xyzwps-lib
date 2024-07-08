@@ -49,10 +49,10 @@ include(
 )
 include(
     "xyzwps-express",  //
-    "xyzwps-express:server-bio",
-    "xyzwps-express:server-nio",
-    "xyzwps-express:server-commons",
-    "xyzwps-express:server-helidon"
+    "xyzwps-express-bio",
+    "xyzwps-express-nio",
+    "xyzwps-express-commons",
+    "xyzwps-express-helidon"
 )
 include("xyzwps-http")
 include("xyzwps-jdbc")

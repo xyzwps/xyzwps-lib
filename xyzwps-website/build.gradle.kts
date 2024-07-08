@@ -17,7 +17,7 @@ object Versions {
 
 dependencies {
     implementation(project(":xyzwps-express"))
-    implementation(project(":xyzwps-express:server-bio"))
+    implementation(project(":xyzwps-express-bio"))
     implementation(project(":xyzwps-jdbc"))
     implementation(libs.hikari)
     implementation(libs.mysql)
