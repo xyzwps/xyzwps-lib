@@ -1,6 +1,6 @@
 <!--suppress MavenPropertyInParent -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <name>xyzwps-website</name>
@@ -16,6 +16,7 @@
 
     <properties>
         <version.avaje.inject>9.12</version.avaje.inject>
+        <version.avaje.validator>1.5</version.avaje.validator>
     </properties>
 
     <dependencies>
@@ -50,34 +51,58 @@
             <version>1.4.3</version>
         </dependency>
         <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>${app.version.lombok}</version>
+            <scope>provided</scope>
+        </dependency>
+        <!-- avaje should be after lombok -->
+        <dependency>
             <groupId>io.avaje</groupId>
             <artifactId>avaje-inject</artifactId>
             <version>${version.avaje.inject}</version>
         </dependency>
         <dependency>
             <groupId>io.avaje</groupId>
-            <artifactId>avaje-inject-generator</artifactId>
-            <version>${version.avaje.inject}</version>
-            <scope>provided</scope>
-            <optional>true</optional>
-        </dependency>
-        <dependency>
-            <groupId>io.avaje</groupId>
             <artifactId>avaje-validator</artifactId>
-            <version>1.5</version>
+            <version>${version.avaje.validator}</version>
         </dependency>
         <dependency>
             <groupId>io.avaje</groupId>
             <artifactId>avaje-validator-constraints</artifactId>
-            <version>1.5</version>
+            <version>${version.avaje.validator}</version>
         </dependency>
-        <dependency>
-            <groupId>io.avaje</groupId>
-            <artifactId>avaje-validator-generator</artifactId>
-            <version>1.5</version>
-            <scope>provided</scope>
-        </dependency>
-
     </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.13.0</version>
+                <configuration>
+                    <source>${java.version}</source>
+                    <target>${java.version}</target>
+                    <annotationProcessorPaths>
+                        <path>
+                            <groupId>org.projectlombok</groupId>
+                            <artifactId>lombok</artifactId>
+                            <version>${app.version.lombok}</version>
+                        </path>
+                        <path>
+                            <groupId>io.avaje</groupId>
+                            <artifactId>avaje-inject-generator</artifactId>
+                            <version>${version.avaje.inject}</version>
+                        </path>
+                        <path>
+                            <groupId>io.avaje</groupId>
+                            <artifactId>avaje-validator-generator</artifactId>
+                            <version>${version.avaje.validator}</version>
+                        </path>
+                    </annotationProcessorPaths>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 
 </project>
