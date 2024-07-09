@@ -1,0 +1,29 @@
+<!--suppress MavenPropertyInParent -->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <name>xyzwps-dollar</name>
+
+    <parent>
+        <groupId>com.xyzwps.lib</groupId>
+        <artifactId>xyzwps-lib-parent</artifactId>
+        <version>${app.version}</version>
+    </parent>
+
+    <artifactId>xyzwps-dollar</artifactId>
+    <packaging>jar</packaging>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.xyzwps.lib</groupId>
+            <artifactId>xyzwps-dollar-api</artifactId>
+            <version>${app.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.xyzwps.lib</groupId>
+            <artifactId>xyzwps-dollar-seq</artifactId>
+            <version>${app.version}</version>
+        </dependency>
+    </dependencies>
+</project>

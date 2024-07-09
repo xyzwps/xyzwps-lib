@@ -1,0 +1,93 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <name>xyzwps-lib</name>
+    <url>http:// TODO: xx</url>
+
+    <properties>
+        <java.version>21</java.version>
+        <maven.compiler.source>21</maven.compiler.source>
+        <maven.compiler.target>21</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <app.version>0.2.0-snapshot</app.version>
+        <app.version.lombok>1.18.34</app.version.lombok>
+        <app.version.junit>5.10.3</app.version.junit>
+        <app.version.testcontainers>1.19.8</app.version.testcontainers>
+    </properties>
+
+    <groupId>com.xyzwps.lib</groupId>
+    <artifactId>xyzwps-lib-parent</artifactId>
+    <version>${app.version}</version>
+    <packaging>pom</packaging>
+
+    <modules>
+        <module>xyzwps-bean</module>
+        <module>xyzwps-bedrock</module>
+        <module>xyzwps-dollar</module>
+        <module>xyzwps-dollar-api</module>
+        <module>xyzwps-dollar-generator</module>
+        <module>xyzwps-dollar-iterator</module>
+        <module>xyzwps-dollar-seq</module>
+        <module>xyzwps-dollar-test-cases</module>
+        <module>xyzwps-express</module>
+        <module>xyzwps-express-bio</module>
+        <module>xyzwps-express-commons</module>
+        <module>xyzwps-express-helidon</module>
+        <module>xyzwps-express-nio</module>
+        <module>xyzwps-http</module>
+        <module>xyzwps-jdbc</module>
+        <module>xyzwps-json</module>
+        <module>xyzwps-website</module>
+    </modules>
+
+    <repositories>
+        <repository>
+            <id>maven-public-ali</id>
+            <url>https://maven.aliyun.com/repository/public</url>
+        </repository>
+    </repositories>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.junit</groupId>
+            <artifactId>junit-bom</artifactId>
+            <version>${app.version.junit}</version>
+            <type>pom</type>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <version>${app.version.junit}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>${app.version.lombok}</version>
+            <scope>provided</scope>
+        </dependency>
+    </dependencies>
+
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.13.0</version>
+                <configuration>
+                    <source>${java.version}</source>
+                    <target>${java.version}</target>
+                    <annotationProcessorPaths>
+                        <path>
+                            <groupId>org.projectlombok</groupId>
+                            <artifactId>lombok</artifactId>
+                            <version>${app.version.lombok}</version>
+                        </path>
+                    </annotationProcessorPaths>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+</project>

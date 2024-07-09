@@ -1,0 +1,83 @@
+<!--suppress MavenPropertyInParent -->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <name>xyzwps-website</name>
+
+    <parent>
+        <groupId>com.xyzwps.lib</groupId>
+        <artifactId>xyzwps-lib-parent</artifactId>
+        <version>${app.version}</version>
+    </parent>
+
+    <artifactId>xyzwps-website</artifactId>
+    <packaging>jar</packaging>
+
+    <properties>
+        <version.avaje.inject>9.12</version.avaje.inject>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.xyzwps.lib</groupId>
+            <artifactId>xyzwps-express</artifactId>
+            <version>${app.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.xyzwps.lib</groupId>
+            <artifactId>xyzwps-express-bio</artifactId>
+            <version>${app.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.xyzwps.lib</groupId>
+            <artifactId>xyzwps-jdbc</artifactId>
+            <version>${app.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.mysql</groupId>
+            <artifactId>mysql-connector-j</artifactId>
+            <version>9.0.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.zaxxer</groupId>
+            <artifactId>HikariCP</artifactId>
+            <version>5.1.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.typesafe</groupId>
+            <artifactId>config</artifactId>
+            <version>1.4.3</version>
+        </dependency>
+        <dependency>
+            <groupId>io.avaje</groupId>
+            <artifactId>avaje-inject</artifactId>
+            <version>${version.avaje.inject}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.avaje</groupId>
+            <artifactId>avaje-inject-generator</artifactId>
+            <version>${version.avaje.inject}</version>
+            <scope>provided</scope>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>io.avaje</groupId>
+            <artifactId>avaje-validator</artifactId>
+            <version>1.5</version>
+        </dependency>
+        <dependency>
+            <groupId>io.avaje</groupId>
+            <artifactId>avaje-validator-constraints</artifactId>
+            <version>1.5</version>
+        </dependency>
+        <dependency>
+            <groupId>io.avaje</groupId>
+            <artifactId>avaje-validator-generator</artifactId>
+            <version>1.5</version>
+            <scope>provided</scope>
+        </dependency>
+
+    </dependencies>
+
+</project>
