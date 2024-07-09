@@ -14,7 +14,6 @@ class MethodName2SqlTests {
         void updateSetStatus() {
             var sql = MethodName2Sql.getSql("updateSetStatus", "user");
             assertEquals("UPDATE user SET status = ?", sql.sql());
-            assertEquals(new BooleanList(false), sql.placeholderIsIn());
             assertEquals(SqlType.UPDATE, sql.sqlType());
         }
 
@@ -22,7 +21,6 @@ class MethodName2SqlTests {
         void updateSetStatusAndCreatedAt() {
             var sql = MethodName2Sql.getSql("updateSetStatusAndCreatedAt", "user");
             assertEquals("UPDATE user SET status = ?, created_at = ?", sql.sql());
-            assertEquals(new BooleanList(false, false), sql.placeholderIsIn());
             assertEquals(SqlType.UPDATE, sql.sqlType());
         }
 
@@ -39,7 +37,6 @@ class MethodName2SqlTests {
         void findLimit() {
             var sql = MethodName2Sql.getSql("findLimit", "user");
             assertEquals("SELECT * FROM user LIMIT ?", sql.sql());
-            assertEquals(new BooleanList(false), sql.placeholderIsIn());
             assertEquals(SqlType.SELECT, sql.sqlType());
         }
     }
@@ -51,7 +48,6 @@ class MethodName2SqlTests {
         void findOrderById() {
             var sql = MethodName2Sql.getSql("findOrderById", "user");
             assertEquals("SELECT * FROM user ORDER BY id ASC", sql.sql());
-            assertEquals(new BooleanList(), sql.placeholderIsIn());
             assertEquals(SqlType.SELECT, sql.sqlType());
         }
 
@@ -59,7 +55,6 @@ class MethodName2SqlTests {
         void findOrderByIdDesc() {
             var sql = MethodName2Sql.getSql("findOrderByIdDesc", "user");
             assertEquals("SELECT * FROM user ORDER BY id DESC", sql.sql());
-            assertEquals(new BooleanList(), sql.placeholderIsIn());
             assertEquals(SqlType.SELECT, sql.sqlType());
         }
 
@@ -67,7 +62,6 @@ class MethodName2SqlTests {
         void findOrderByIdAscAgeDesc() {
             var sql = MethodName2Sql.getSql("findOrderByIdAscAgeDesc", "user");
             assertEquals("SELECT * FROM user ORDER BY id ASC, age DESC", sql.sql());
-            assertEquals(new BooleanList(), sql.placeholderIsIn());
             assertEquals(SqlType.SELECT, sql.sqlType());
         }
 
@@ -75,7 +69,6 @@ class MethodName2SqlTests {
         void findOrderByIdAscAge() {
             var sql = MethodName2Sql.getSql("findOrderByIdAscAge", "user");
             assertEquals("SELECT * FROM user ORDER BY id ASC, age ASC", sql.sql());
-            assertEquals(new BooleanList(), sql.placeholderIsIn());
             assertEquals(SqlType.SELECT, sql.sqlType());
         }
     }
@@ -87,7 +80,6 @@ class MethodName2SqlTests {
         void findByStarIsNotNull() {
             var sql = MethodName2Sql.getSql("findByStarIsNotNull", "user");
             assertEquals("SELECT * FROM user WHERE star IS NOT NULL", sql.sql());
-            assertEquals(new BooleanList(), sql.placeholderIsIn());
             assertEquals(SqlType.SELECT, sql.sqlType());
         }
 
@@ -95,7 +87,6 @@ class MethodName2SqlTests {
         void findByStarNotNull() {
             var sql = MethodName2Sql.getSql("findByStarNotNull", "user");
             assertEquals("SELECT * FROM user WHERE star IS NOT NULL", sql.sql());
-            assertEquals(new BooleanList(), sql.placeholderIsIn());
             assertEquals(SqlType.SELECT, sql.sqlType());
         }
 
@@ -103,7 +94,6 @@ class MethodName2SqlTests {
         void findByStarIsNotNullAndAgeNotNull() {
             var sql = MethodName2Sql.getSql("findByStarIsNotNullAndAgeNotNull", "user");
             assertEquals("SELECT * FROM user WHERE star IS NOT NULL AND age IS NOT NULL", sql.sql());
-            assertEquals(new BooleanList(), sql.placeholderIsIn());
             assertEquals(SqlType.SELECT, sql.sqlType());
         }
 
@@ -111,7 +101,6 @@ class MethodName2SqlTests {
         void findByStarIsNotNullOrAgeNotNullAndGenderNotNull() {
             var sql = MethodName2Sql.getSql("findByStarIsNotNullOrAgeNotNullAndGenderNotNull", "user");
             assertEquals("SELECT * FROM user WHERE star IS NOT NULL OR age IS NOT NULL AND gender IS NOT NULL", sql.sql());
-            assertEquals(new BooleanList(), sql.placeholderIsIn());
             assertEquals(SqlType.SELECT, sql.sqlType());
         }
     }
@@ -122,7 +111,6 @@ class MethodName2SqlTests {
         void findByStarIsNull() {
             var sql = MethodName2Sql.getSql("findByStarIsNull", "user");
             assertEquals("SELECT * FROM user WHERE star IS NULL", sql.sql());
-            assertEquals(new BooleanList(), sql.placeholderIsIn());
             assertEquals(SqlType.SELECT, sql.sqlType());
         }
 
@@ -130,7 +118,6 @@ class MethodName2SqlTests {
         void findByStarNull() {
             var sql = MethodName2Sql.getSql("findByStarNull", "user");
             assertEquals("SELECT * FROM user WHERE star IS NULL", sql.sql());
-            assertEquals(new BooleanList(), sql.placeholderIsIn());
             assertEquals(SqlType.SELECT, sql.sqlType());
         }
 
@@ -138,7 +125,6 @@ class MethodName2SqlTests {
         void findByStarIsNullAndAgeNull() {
             var sql = MethodName2Sql.getSql("findByStarIsNullAndAgeNull", "user");
             assertEquals("SELECT * FROM user WHERE star IS NULL AND age IS NULL", sql.sql());
-            assertEquals(new BooleanList(), sql.placeholderIsIn());
             assertEquals(SqlType.SELECT, sql.sqlType());
         }
 
@@ -146,7 +132,6 @@ class MethodName2SqlTests {
         void findByStarIsNullOrAgeNullAndGenderNull() {
             var sql = MethodName2Sql.getSql("findByStarIsNullOrAgeNullAndGenderNull", "user");
             assertEquals("SELECT * FROM user WHERE star IS NULL OR age IS NULL AND gender IS NULL", sql.sql());
-            assertEquals(new BooleanList(), sql.placeholderIsIn());
             assertEquals(SqlType.SELECT, sql.sqlType());
         }
     }
@@ -158,7 +143,6 @@ class MethodName2SqlTests {
         void findByAgeNotBetweenAnd() {
             var sql = MethodName2Sql.getSql("findByAgeNotBetweenAnd", "user");
             assertEquals("SELECT * FROM user WHERE age NOT BETWEEN ? AND ?", sql.sql());
-            assertEquals(new BooleanList(false, false), sql.placeholderIsIn());
             assertEquals(SqlType.SELECT, sql.sqlType());
         }
 
@@ -166,7 +150,6 @@ class MethodName2SqlTests {
         void findByAgeNotBetweenAndAndGender() {
             var sql = MethodName2Sql.getSql("findByAgeNotBetweenAndAndGender", "user");
             assertEquals("SELECT * FROM user WHERE age NOT BETWEEN ? AND ? AND gender = ?", sql.sql());
-            assertEquals(new BooleanList(false, false, false), sql.placeholderIsIn());
             assertEquals(SqlType.SELECT, sql.sqlType());
         }
     }
@@ -177,7 +160,6 @@ class MethodName2SqlTests {
         void findByAgeBetweenAnd() {
             var sql = MethodName2Sql.getSql("findByAgeBetweenAnd", "user");
             assertEquals("SELECT * FROM user WHERE age BETWEEN ? AND ?", sql.sql());
-            assertEquals(new BooleanList(false, false), sql.placeholderIsIn());
             assertEquals(SqlType.SELECT, sql.sqlType());
         }
 
@@ -185,7 +167,6 @@ class MethodName2SqlTests {
         void findByAgeBetweenAndAndGender() {
             var sql = MethodName2Sql.getSql("findByAgeBetweenAndAndGender", "user");
             assertEquals("SELECT * FROM user WHERE age BETWEEN ? AND ? AND gender = ?", sql.sql());
-            assertEquals(new BooleanList(false, false, false), sql.placeholderIsIn());
             assertEquals(SqlType.SELECT, sql.sqlType());
         }
     }
@@ -197,7 +178,6 @@ class MethodName2SqlTests {
         void findByAgeNotIn() {
             var sql = MethodName2Sql.getSql("findByAgeNotIn", "user");
             assertEquals("SELECT * FROM user WHERE age NOT IN (?)", sql.sql());
-            assertEquals(new BooleanList(true), sql.placeholderIsIn());
             assertEquals(SqlType.SELECT, sql.sqlType());
         }
     }
@@ -209,7 +189,6 @@ class MethodName2SqlTests {
         void findByAgeIn() {
             var sql = MethodName2Sql.getSql("findByAgeIn", "user");
             assertEquals("SELECT * FROM user WHERE age IN (?)", sql.sql());
-            assertEquals(new BooleanList(true), sql.placeholderIsIn());
             assertEquals(SqlType.SELECT, sql.sqlType());
         }
     }
@@ -220,7 +199,6 @@ class MethodName2SqlTests {
         void findByDisplayNameNotLike() {
             var sql = MethodName2Sql.getSql("findByDisplayNameNotLike", "user");
             assertEquals("SELECT * FROM user WHERE display_name NOT LIKE ?", sql.sql());
-            assertEquals(new BooleanList(false), sql.placeholderIsIn());
             assertEquals(SqlType.SELECT, sql.sqlType());
         }
     }
@@ -231,7 +209,6 @@ class MethodName2SqlTests {
         void findByDisplayNameLike() {
             var sql = MethodName2Sql.getSql("findByDisplayNameLike", "user");
             assertEquals("SELECT * FROM user WHERE display_name LIKE ?", sql.sql());
-            assertEquals(new BooleanList(false), sql.placeholderIsIn());
             assertEquals(SqlType.SELECT, sql.sqlType());
         }
     }
@@ -242,7 +219,6 @@ class MethodName2SqlTests {
         void findByAgeLe() {
             var sql = MethodName2Sql.getSql("findByAgeLe", "user");
             assertEquals("SELECT * FROM user WHERE age <= ?", sql.sql());
-            assertEquals(new BooleanList(false), sql.placeholderIsIn());
             assertEquals(SqlType.SELECT, sql.sqlType());
         }
     }
@@ -253,7 +229,6 @@ class MethodName2SqlTests {
         void findByAgeLt() {
             var sql = MethodName2Sql.getSql("findByAgeLt", "user");
             assertEquals("SELECT * FROM user WHERE age < ?", sql.sql());
-            assertEquals(new BooleanList(false), sql.placeholderIsIn());
             assertEquals(SqlType.SELECT, sql.sqlType());
         }
     }
@@ -264,7 +239,6 @@ class MethodName2SqlTests {
         void findByAgeGe() {
             var sql = MethodName2Sql.getSql("findByAgeGe", "user");
             assertEquals("SELECT * FROM user WHERE age >= ?", sql.sql());
-            assertEquals(new BooleanList(false), sql.placeholderIsIn());
             assertEquals(SqlType.SELECT, sql.sqlType());
         }
     }
@@ -275,7 +249,6 @@ class MethodName2SqlTests {
         void findByAgeGt() {
             var sql = MethodName2Sql.getSql("findByAgeGt", "user");
             assertEquals("SELECT * FROM user WHERE age > ?", sql.sql());
-            assertEquals(new BooleanList(false), sql.placeholderIsIn());
             assertEquals(SqlType.SELECT, sql.sqlType());
         }
     }
@@ -286,7 +259,6 @@ class MethodName2SqlTests {
         void findByAgeNe() {
             var sql = MethodName2Sql.getSql("findByAgeNe", "user");
             assertEquals("SELECT * FROM user WHERE age != ?", sql.sql());
-            assertEquals(new BooleanList(false), sql.placeholderIsIn());
             assertEquals(SqlType.SELECT, sql.sqlType());
         }
     }
@@ -297,7 +269,6 @@ class MethodName2SqlTests {
         void findByAgeEq() {
             var sql = MethodName2Sql.getSql("findByAgeEq", "user");
             assertEquals("SELECT * FROM user WHERE age = ?", sql.sql());
-            assertEquals(new BooleanList(false), sql.placeholderIsIn());
             assertEquals(SqlType.SELECT, sql.sqlType());
         }
 
@@ -305,7 +276,6 @@ class MethodName2SqlTests {
         void findByAge() {
             var sql = MethodName2Sql.getSql("findByAgeEq", "user");
             assertEquals("SELECT * FROM user WHERE age = ?", sql.sql());
-            assertEquals(new BooleanList(false), sql.placeholderIsIn());
             assertEquals(SqlType.SELECT, sql.sqlType());
         }
     }
@@ -317,7 +287,6 @@ class MethodName2SqlTests {
         void findByAgeAndGender() {
             var sql = MethodName2Sql.getSql("findByAgeAndGender", "user");
             assertEquals("SELECT * FROM user WHERE age = ? AND gender = ?", sql.sql());
-            assertEquals(new BooleanList(false, false), sql.placeholderIsIn());
             assertEquals(SqlType.SELECT, sql.sqlType());
         }
     }
@@ -328,7 +297,6 @@ class MethodName2SqlTests {
         void findByAgeOrGender() {
             var sql = MethodName2Sql.getSql("findByAgeOrGender", "user");
             assertEquals("SELECT * FROM user WHERE age = ? OR gender = ?", sql.sql());
-            assertEquals(new BooleanList(false, false), sql.placeholderIsIn());
             assertEquals(SqlType.SELECT, sql.sqlType());
         }
     }
@@ -340,7 +308,6 @@ class MethodName2SqlTests {
         void deleteByAge() {
             var sql = MethodName2Sql.getSql("deleteByAge", "user");
             assertEquals("DELETE FROM user WHERE age = ?", sql.sql());
-            assertEquals(new BooleanList(false), sql.placeholderIsIn());
             assertEquals(SqlType.DELETE, sql.sqlType());
         }
 
@@ -348,7 +315,6 @@ class MethodName2SqlTests {
         void deleteByAgeAndName() {
             var sql = MethodName2Sql.getSql("deleteByAgeAndName", "user");
             assertEquals("DELETE FROM user WHERE age = ? AND name = ?", sql.sql());
-            assertEquals(new BooleanList(false, false), sql.placeholderIsIn());
             assertEquals(SqlType.DELETE, sql.sqlType());
         }
 
@@ -356,7 +322,6 @@ class MethodName2SqlTests {
         void delete() {
             var sql = MethodName2Sql.getSql("delete", "user");
             assertEquals("DELETE FROM user", sql.sql());
-            assertEquals(new BooleanList(), sql.placeholderIsIn());
             assertEquals(SqlType.DELETE, sql.sqlType());
         }
     }
@@ -368,7 +333,6 @@ class MethodName2SqlTests {
         void updateSetAge() {
             var sql = MethodName2Sql.getSql("updateSetAge", "user");
             assertEquals("UPDATE user SET age = ?", sql.sql());
-            assertEquals(new BooleanList(false), sql.placeholderIsIn());
             assertEquals(SqlType.UPDATE, sql.sqlType());
         }
 
@@ -376,7 +340,6 @@ class MethodName2SqlTests {
         void updateSetAgeAndName() {
             var sql = MethodName2Sql.getSql("updateSetAgeAndName", "user");
             assertEquals("UPDATE user SET age = ?, name = ?", sql.sql());
-            assertEquals(new BooleanList(false, false), sql.placeholderIsIn());
             assertEquals(SqlType.UPDATE, sql.sqlType());
         }
 
@@ -384,7 +347,6 @@ class MethodName2SqlTests {
         void updateSetAgeAndNameWhereId() {
             var sql = MethodName2Sql.getSql("updateSetAgeAndNameWhereId", "user");
             assertEquals("UPDATE user SET age = ?, name = ? WHERE id = ?", sql.sql());
-            assertEquals(new BooleanList(false, false, false), sql.placeholderIsIn());
             assertEquals(SqlType.UPDATE, sql.sqlType());
         }
 
@@ -401,7 +363,6 @@ class MethodName2SqlTests {
         void count() {
             var sql = MethodName2Sql.getSql("count", "user");
             assertEquals("SELECT COUNT(*) FROM user", sql.sql());
-            assertEquals(new BooleanList(), sql.placeholderIsIn());
             assertEquals(SqlType.COUNT, sql.sqlType());
         }
 
@@ -409,7 +370,6 @@ class MethodName2SqlTests {
         void countByAge() {
             var sql = MethodName2Sql.getSql("countByAge", "user");
             assertEquals("SELECT COUNT(*) FROM user WHERE age = ?", sql.sql());
-            assertEquals(new BooleanList(false), sql.placeholderIsIn());
             assertEquals(SqlType.COUNT, sql.sqlType());
         }
 
@@ -417,7 +377,6 @@ class MethodName2SqlTests {
         void countByAgeAndGender() {
             var sql = MethodName2Sql.getSql("countByAgeAndGender", "user");
             assertEquals("SELECT COUNT(*) FROM user WHERE age = ? AND gender = ?", sql.sql());
-            assertEquals(new BooleanList(false, false), sql.placeholderIsIn());
             assertEquals(SqlType.COUNT, sql.sqlType());
         }
     }
@@ -430,7 +389,6 @@ class MethodName2SqlTests {
         void get() {
             var sql = MethodName2Sql.getSql("get", "user");
             assertEquals("SELECT * FROM user", sql.sql());
-            assertEquals(new BooleanList(), sql.placeholderIsIn());
             assertEquals(SqlType.SELECT, sql.sqlType());
         }
 
@@ -438,7 +396,6 @@ class MethodName2SqlTests {
         void find() {
             var sql = MethodName2Sql.getSql("find", "user");
             assertEquals("SELECT * FROM user", sql.sql());
-            assertEquals(new BooleanList(), sql.placeholderIsIn());
             assertEquals(SqlType.SELECT, sql.sqlType());
         }
 
@@ -446,7 +403,6 @@ class MethodName2SqlTests {
         void findById() {
             var sql = MethodName2Sql.getSql("findById", "user");
             assertEquals("SELECT * FROM user WHERE id = ?", sql.sql());
-            assertEquals(new BooleanList(false), sql.placeholderIsIn());
             assertEquals(SqlType.SELECT, sql.sqlType());
         }
 
@@ -454,7 +410,6 @@ class MethodName2SqlTests {
         void getByDisplayName() {
             var sql = MethodName2Sql.getSql("getByDisplayName", "user");
             assertEquals("SELECT * FROM user WHERE display_name = ?", sql.sql());
-            assertEquals(new BooleanList(false), sql.placeholderIsIn());
             assertEquals(SqlType.SELECT, sql.sqlType());
         }
 
@@ -462,7 +417,6 @@ class MethodName2SqlTests {
         void getWhereUserRegisterTime() {
             var sql = MethodName2Sql.getSql("getWhereUserRegisterTime", "user");
             assertEquals("SELECT * FROM user WHERE user_register_time = ?", sql.sql());
-            assertEquals(new BooleanList(false), sql.placeholderIsIn());
             assertEquals(SqlType.SELECT, sql.sqlType());
         }
 
@@ -470,7 +424,6 @@ class MethodName2SqlTests {
         void findOrderByIdLimit() {
             var sql = MethodName2Sql.getSql("findOrderByIdLimit", "user");
             assertEquals("SELECT * FROM user ORDER BY id ASC LIMIT ?", sql.sql());
-            assertEquals(new BooleanList(false), sql.placeholderIsIn());
             assertEquals(SqlType.SELECT, sql.sqlType());
         }
 
@@ -478,7 +431,6 @@ class MethodName2SqlTests {
         void findByIdOrderByIdDescLimit() {
             var sql = MethodName2Sql.getSql("findByIdOrderByIdDescLimit", "user");
             assertEquals("SELECT * FROM user WHERE id = ? ORDER BY id DESC LIMIT ?", sql.sql());
-            assertEquals(new BooleanList(false, false), sql.placeholderIsIn());
             assertEquals(SqlType.SELECT, sql.sqlType());
         }
     }

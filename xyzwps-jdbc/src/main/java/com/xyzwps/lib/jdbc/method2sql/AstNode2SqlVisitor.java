@@ -7,8 +7,6 @@ class AstNode2SqlVisitor implements AstNodeVisitor {
 
     private final StringBuilder sb = new StringBuilder();
 
-    private final BooleanList placeholderIsIn = new BooleanList();
-
     private SqlType sqlType = null;
 
     AstNode2SqlVisitor(String tableName) {
@@ -16,7 +14,7 @@ class AstNode2SqlVisitor implements AstNodeVisitor {
     }
 
     public SqlInfo toSql() {
-        return new SqlInfo(sb.toString(), placeholderIsIn, sqlType);
+        return new SqlInfo(sb.toString(), sqlType);
     }
 
     @Override
@@ -72,56 +70,48 @@ class AstNode2SqlVisitor implements AstNodeVisitor {
     public void visit(AstNode.EqExp eqExp) {
         eqExp.column().visit(this);
         sb.append(" = ?");
-        placeholderIsIn.add(false);
     }
 
     @Override
     public void visit(AstNode.NeExp neExp) {
         neExp.column().visit(this);
         sb.append(" != ?");
-        placeholderIsIn.add(false);
     }
 
     @Override
     public void visit(AstNode.GtExp gtExp) {
         gtExp.column().visit(this);
         sb.append(" > ?");
-        placeholderIsIn.add(false);
     }
 
     @Override
     public void visit(AstNode.GeExp geExp) {
         geExp.column().visit(this);
         sb.append(" >= ?");
-        placeholderIsIn.add(false);
     }
 
     @Override
     public void visit(AstNode.LeExp leExp) {
         leExp.column().visit(this);
         sb.append(" <= ?");
-        placeholderIsIn.add(false);
     }
 
     @Override
     public void visit(AstNode.LtExp ltExp) {
         ltExp.column().visit(this);
         sb.append(" < ?");
-        placeholderIsIn.add(false);
     }
 
     @Override
     public void visit(AstNode.LikeExp likeExp) {
         likeExp.column().visit(this);
         sb.append(" LIKE ?");
-        placeholderIsIn.add(false);
     }
 
     @Override
     public void visit(AstNode.NotLikeExp notLikeExp) {
         notLikeExp.column().visit(this);
         sb.append(" NOT LIKE ?");
-        placeholderIsIn.add(false);
     }
 
     @Override
@@ -140,30 +130,24 @@ class AstNode2SqlVisitor implements AstNodeVisitor {
     public void visit(AstNode.BetweenAndExp betweenExp) {
         betweenExp.column().visit(this);
         sb.append(" BETWEEN ? AND ?");
-        placeholderIsIn.add(false);
-        placeholderIsIn.add(false);
     }
 
     @Override
     public void visit(AstNode.NotBetweenAndExp notBetweenExp) {
         notBetweenExp.column().visit(this);
         sb.append(" NOT BETWEEN ? AND ?");
-        placeholderIsIn.add(false);
-        placeholderIsIn.add(false);
     }
 
     @Override
     public void visit(AstNode.InExp inExp) {
         inExp.column().visit(this);
         sb.append(" IN (?)");
-        placeholderIsIn.add(true);
     }
 
     @Override
     public void visit(AstNode.NotInExp notInExp) {
         notInExp.column().visit(this);
         sb.append(" NOT IN (?)");
-        placeholderIsIn.add(true);
     }
 
     @Override
@@ -209,7 +193,6 @@ class AstNode2SqlVisitor implements AstNodeVisitor {
     @Override
     public void visit(AstNode.LimitPart limitPart) {
         sb.append(" LIMIT ?");
-        placeholderIsIn.add(false);
     }
 
     @Override
@@ -231,7 +214,6 @@ class AstNode2SqlVisitor implements AstNodeVisitor {
     public void visit(AstNode.SetList setList) {
         setList.first().visit(this);
         sb.append(" = ?");
-        placeholderIsIn.add(false);
         if (setList.rest() != null) {
             sb.append(", ");
             setList.rest().visit(this);

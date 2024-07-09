@@ -18,6 +18,8 @@ record DaoFactoryTestCases(Database db) {
         findByName();
         batchInsert();
         findAll();
+        getByRegionInOrderByUid();
+        getByRegions();
         findOrderByAge();
         findByRegionOrderByAgeDesc();
         findById();
@@ -78,6 +80,26 @@ record DaoFactoryTestCases(Database db) {
             assertAll.accept(dao.find());
             assertAll.accept(dao.get());
             assertAll.accept(dao.getAll());
+        });
+    }
+
+    void getByRegionInOrderByUid() {
+        db.tx(tx -> {
+            var dao = DaoFactory.createDao(PlayableCharacterDao.class, tx);
+            assertIterableEquals(dao.getByRegionInOrderByUid(List.of("枫丹", "璃月")), List.of(
+                    new PlayableCharacter(1, "Keqing", LIYUE, 17, true, F, null, LocalDateTime.of(2023, 10, 10, 12, 0, 0)),
+                    new PlayableCharacter(5, "Navia", FONTAINE, 24, false, F, null, LocalDateTime.of(2023, 10, 10, 12, 0, 0))
+            ));
+        });
+    }
+
+    void getByRegions() {
+        db.tx(tx -> {
+            var dao = DaoFactory.createDao(PlayableCharacterDao.class, tx);
+            assertIterableEquals(dao.getByRegions(List.of("枫丹", "璃月")), List.of(
+                    new PlayableCharacter(5, "Navia", FONTAINE, 24, false, F, null, LocalDateTime.of(2023, 10, 10, 12, 0, 0)),
+                    new PlayableCharacter(1, "Keqing", LIYUE, 17, true, F, null, LocalDateTime.of(2023, 10, 10, 12, 0, 0))
+            ));
         });
     }
 

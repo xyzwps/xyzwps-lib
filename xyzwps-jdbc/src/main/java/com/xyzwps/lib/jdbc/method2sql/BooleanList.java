@@ -40,24 +40,6 @@ public final class BooleanList {
         return list[index];
     }
 
-    public boolean hasTrue() {
-        for (int i = 0; i < size; i++) {
-            if (list[i]) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    public boolean hasFalse() {
-        for (int i = 0; i < size; i++) {
-            if (!list[i]) {
-                return true;
-            }
-        }
-        return false;
-    }
-
     public int size() {
         return size;
     }
