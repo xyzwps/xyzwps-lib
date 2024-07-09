@@ -8,6 +8,7 @@ import com.xyzwps.website.conf.Configurations;
 import com.xyzwps.website.db.MainDatabase;
 import jakarta.inject.Provider;
 import jakarta.inject.Singleton;
+import lombok.extern.slf4j.Slf4j;
 
 import java.time.LocalDateTime;
 import java.util.Date;
@@ -16,6 +17,7 @@ import java.util.Map;
 
 import static manifold.collections.api.range.RangeFun.to;
 
+@Slf4j
 @Singleton
 public class TestRouter extends Router.Nest {
 
@@ -37,6 +39,13 @@ public class TestRouter extends Router.Nest {
                     }
                     res.ok();
                     res.send("Hello, Manifold!".getBytes());
+                })
+                .post("manifold", (req, resp, next) -> {
+                    var body = req.json(TestManifoldPayload.class);
+                    log.info("body: {}", body.getHello());
+                    resp.ok();
+                    resp.headers().set(HttpHeaders.CONTENT_TYPE, "application/json");
+                    resp.send(JSON.stringify(body).getBytes());
                 })
                 .get("/:id", (req, resp, next) -> {
                     req.attribute("haha", "ha\nha");

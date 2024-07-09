@@ -78,6 +78,11 @@
             <artifactId>manifold-collections</artifactId>
             <version>${version.manifold}</version>
         </dependency>
+        <dependency>
+            <groupId>systems.manifold</groupId>
+            <artifactId>manifold-ext-rt</artifactId>
+            <version>${version.manifold}</version>
+        </dependency>
     </dependencies>
 
     <build>
@@ -108,6 +113,11 @@
                             <groupId>io.avaje</groupId>
                             <artifactId>avaje-validator-generator</artifactId>
                             <version>${version.avaje.validator}</version>
+                        </path>
+                        <path>
+                            <groupId>systems.manifold</groupId>
+                            <artifactId>manifold-ext</artifactId>
+                            <version>${version.manifold}</version>
                         </path>
                         <path>
                             <groupId>systems.manifold</groupId>
