@@ -19,10 +19,8 @@ public interface Filter {
         if (after == null) {
             return this;
         }
-
-        return (request, response, next) -> this.filter(request, response, (req, res) -> after.filter(req, res, next));
+        return new AndThenFilter(this, after);
     }
-
 
     Filter EMPTY = (request, response, next) -> next.next(request, response);
 

@@ -1,9 +1,7 @@
 package com.xyzwps.website.modules.test;
 
-import com.xyzwps.lib.express.HttpHeaders;
 import com.xyzwps.lib.express.filter.BasicAuth;
 import com.xyzwps.lib.express.filter.Router;
-import com.xyzwps.website.common.JSON;
 import com.xyzwps.website.conf.Configurations;
 import com.xyzwps.website.db.MainDatabase;
 import jakarta.inject.Provider;
@@ -13,7 +11,6 @@ import lombok.extern.slf4j.Slf4j;
 import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Map;
 
 import static manifold.collections.api.range.RangeFun.to;
 
@@ -22,19 +19,14 @@ import static manifold.collections.api.range.RangeFun.to;
 public class TestRouter extends Router.Nest {
 
     public TestRouter(Configurations conf, BasicAuth basicAuth, Provider<MainDatabase> maindb$) {
-        this.get("count", new TestCountFilter(2).andThen(new TestCountFilter(3)).andThen((req, resp, next) -> {
-                    resp.ok();
-                    resp.send("Hello, World!".getBytes());
-                }))
+        this.get("count", new TestCountFilter(2) + new TestCountFilter(3) + new HelloWorldFilter())
                 .get("conf", (req, resp, next) -> {
-                    resp.ok();
-                    resp.headers().set(HttpHeaders.CONTENT_TYPE, "application/json");
                     var map = new HashMap<String, Object>();
                     map.put("name", conf.getAppName());
-                    resp.send(JSON.stringify(map, true).getBytes());
+                    resp.sendJson(map);
                 })
                 .get("manifold", (req, res, next) -> {
-                    for(var i : 1 to 5) {
+                    for (var i : 1to 5) {
                         System.out.println(i);
                     }
                     res.ok();
@@ -43,9 +35,7 @@ public class TestRouter extends Router.Nest {
                 .post("manifold", (req, resp, next) -> {
                     var body = req.json(TestManifoldPayload.class);
                     log.info("body: {}", body.getHello());
-                    resp.ok();
-                    resp.headers().set(HttpHeaders.CONTENT_TYPE, "application/json");
-                    resp.send(JSON.stringify(body).getBytes());
+                    resp.sendJson(body);
                 })
                 .get("/:id", (req, resp, next) -> {
                     req.attribute("haha", "ha\nha");
@@ -57,10 +47,6 @@ public class TestRouter extends Router.Nest {
                         map.put("jdbc", dao.count());
                     });
 
-                    resp.ok();
-                    resp.headers().set(HttpHeaders.CONTENT_TYPE, "application/json");
-
-
                     map.put("protocol", req.protocol());
                     map.put("method", req.method());
                     map.put("path", req.path());
@@ -71,13 +57,9 @@ public class TestRouter extends Router.Nest {
                     map.put("date", new Date());
                     map.put("localDateTime", LocalDateTime.now());
 
-                    resp.send(JSON.stringify(map, true).getBytes());
+                    resp.sendJson(map);
                 })
-                .get("/auth", basicAuth.andThen((req, resp, next) -> {
-                    resp.ok();
-                    resp.headers().set(HttpHeaders.CONTENT_TYPE, "application/json");
-                    resp.send(JSON.stringify(Map.of("ok", true), true).getBytes());
-                }));
+                .get("/auth", basicAuth + new HelloWorldFilter());
     }
 
 }
