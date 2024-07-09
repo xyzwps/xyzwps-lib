@@ -14,6 +14,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+import static manifold.collections.api.range.RangeFun.to;
+
 @Singleton
 public class TestRouter extends Router.Nest {
 
@@ -28,6 +30,13 @@ public class TestRouter extends Router.Nest {
                     var map = new HashMap<String, Object>();
                     map.put("name", conf.getAppName());
                     resp.send(JSON.stringify(map, true).getBytes());
+                })
+                .get("manifold", (req, res, next) -> {
+                    for(var i : 1 to 5) {
+                        System.out.println(i);
+                    }
+                    res.ok();
+                    res.send("Hello, Manifold!".getBytes());
                 })
                 .get("/:id", (req, resp, next) -> {
                     req.attribute("haha", "ha\nha");
