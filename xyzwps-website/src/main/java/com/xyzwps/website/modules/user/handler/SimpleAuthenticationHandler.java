@@ -1,5 +1,6 @@
 package com.xyzwps.website.modules.user.handler;
 
+import com.xyzwps.lib.express.Filter;
 import com.xyzwps.lib.express.HttpRequest;
 import com.xyzwps.lib.express.HttpResponse;
 import com.xyzwps.lib.express.SetCookie;
@@ -20,26 +21,29 @@ public class SimpleAuthenticationHandler {
     private final SimpleAuthenticationService authenticationService;
 
 
-    public Object sendRegisterVcode(HttpRequest req, HttpResponse resp, SendRegisterVcodePayload payload) {
+    public void sendRegisterVcode(HttpRequest req, HttpResponse resp, Filter.Next next) {
+        var payload = req.json(SendRegisterVcodePayload.class);
         // TODO: 检查是否已经注册
         validator.validate(payload);
         authenticationService.sendRegisterVcode(payload.getPhone());
-        return OK.INSTANCE;
+        resp.sendJson(OK.INSTANCE);
     }
 
-    public Object register(HttpRequest req, HttpResponse resp, SimpleRegisterPayload payload) {
+    public void register(HttpRequest req, HttpResponse resp, Filter.Next next) {
+        var payload = req.json(SimpleRegisterPayload.class);
         // TODO: 检查是否已经注册
         validator.validate(payload);
         authenticationService.register(payload.getPhone(), payload.getVcode());
-        return OK.INSTANCE;
+        resp.sendJson(OK.INSTANCE);
     }
 
-    public Object login(HttpRequest req, HttpResponse resp, LoginBasicPayload payload) {
+    public void login(HttpRequest req, HttpResponse resp, Filter.Next next) {
+        var payload = req.json(LoginBasicPayload.class);
         validator.validate(payload);
 
         var setCookies = resp.cookies();
         setCookies.add(new SetCookie("a", "b").path("/").secure(true));
         setCookies.add(new SetCookie("c", "d").path("/").httpOnly(true));
-        return payload;
+        resp.sendJson(payload);
     }
 }
