@@ -5,8 +5,8 @@ import com.xyzwps.lib.express.HttpHeaders;
 import com.xyzwps.lib.express.HttpResponse;
 import com.xyzwps.lib.express.HttpStatus;
 import com.xyzwps.lib.express.SetCookies;
-import com.xyzwps.lib.express.server.commons.SimpleHttpHeaders;
-import com.xyzwps.lib.express.server.commons.header.HeaderDateValue;
+import com.xyzwps.lib.express.commons.SimpleHttpHeaders;
+import com.xyzwps.lib.express.commons.HeaderDateValue;
 import io.helidon.http.HeaderNames;
 import io.helidon.webserver.http.ServerResponse;
 

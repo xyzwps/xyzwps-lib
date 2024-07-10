@@ -19,11 +19,7 @@
             <groupId>com.xyzwps.lib</groupId>
             <artifactId>xyzwps-express</artifactId>
             <version>${app.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.xyzwps.lib</groupId>
-            <artifactId>xyzwps-express-commons</artifactId>
-            <version>${app.version}</version>
+            <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>io.helidon.webserver</groupId>

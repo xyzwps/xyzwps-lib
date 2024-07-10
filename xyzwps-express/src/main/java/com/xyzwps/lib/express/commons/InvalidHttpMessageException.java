@@ -1,4 +1,4 @@
-package com.xyzwps.lib.express.server.commons;
+package com.xyzwps.lib.express.commons;
 
 public final class InvalidHttpMessageException extends Exception {
     public InvalidHttpMessageException(String message) {

@@ -31,7 +31,6 @@
         <module>xyzwps-dollar-test-cases</module>
         <module>xyzwps-express</module>
         <module>xyzwps-express-bio</module>
-        <module>xyzwps-express-commons</module>
         <module>xyzwps-express-helidon</module>
         <module>xyzwps-http</module>
         <module>xyzwps-jdbc</module>

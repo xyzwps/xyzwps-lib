@@ -1,4 +1,4 @@
-package com.xyzwps.lib.express.server.commons;
+package com.xyzwps.lib.express.commons;
 
 import com.xyzwps.lib.express.BadProtocolException;
 import com.xyzwps.lib.express.HttpMethod;

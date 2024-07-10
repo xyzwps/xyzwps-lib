@@ -1,6 +1,6 @@
 package com.xyzwps.lib.express.server.bio.util;
 
-import com.xyzwps.lib.express.server.commons.ByteArray;
+import com.xyzwps.lib.express.commons.ByteArray;
 
 import java.io.IOException;
 import java.io.InputStream;

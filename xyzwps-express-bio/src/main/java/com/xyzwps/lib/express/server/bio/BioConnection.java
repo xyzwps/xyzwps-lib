@@ -3,8 +3,8 @@ package com.xyzwps.lib.express.server.bio;
 import com.xyzwps.lib.bedrock.Args;
 import com.xyzwps.lib.express.*;
 import com.xyzwps.lib.express.server.bio.common.ContentLengthInputStream;
-import com.xyzwps.lib.express.server.commons.KeepAliveConfig;
-import com.xyzwps.lib.express.server.commons.KeepAliveInfo;
+import com.xyzwps.lib.express.commons.KeepAliveConfig;
+import com.xyzwps.lib.express.commons.KeepAliveInfo;
 import org.jboss.logging.Logger;
 
 import java.io.*;

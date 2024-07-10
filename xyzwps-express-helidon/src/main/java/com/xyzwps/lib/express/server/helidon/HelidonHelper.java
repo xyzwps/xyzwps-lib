@@ -1,7 +1,7 @@
 package com.xyzwps.lib.express.server.helidon;
 
 import com.xyzwps.lib.express.HttpHeaders;
-import com.xyzwps.lib.express.server.commons.SimpleHttpHeaders;
+import com.xyzwps.lib.express.commons.SimpleHttpHeaders;
 import io.helidon.http.Headers;
 
 class HelidonHelper {
