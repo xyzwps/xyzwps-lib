@@ -6,7 +6,6 @@ import com.xyzwps.lib.express.HttpResponse;
 import com.xyzwps.lib.express.HttpStatus;
 import com.xyzwps.lib.express.filter.Router;
 import com.xyzwps.website.common.JSON;
-import com.xyzwps.website.modules.test.TestCountFilter;
 import com.xyzwps.website.modules.test.TestRouter;
 import com.xyzwps.website.modules.user.UserRouter;
 import io.avaje.validation.ConstraintViolation;
@@ -29,7 +28,6 @@ public class IndexRouter extends Router {
                     resp.headers().set("Content-Type", "application/json");
                     resp.send("[\"Hello\",\"World\"]".getBytes());
                 })
-                .use(new TestCountFilter(1))
                 .nest("/api/test", testRouter)
                 .nest("/api/users", userRouter);
     }

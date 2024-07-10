@@ -33,7 +33,6 @@
         <module>xyzwps-express-bio</module>
         <module>xyzwps-express-commons</module>
         <module>xyzwps-express-helidon</module>
-        <module>xyzwps-express-nio</module>
         <module>xyzwps-http</module>
         <module>xyzwps-jdbc</module>
         <module>xyzwps-json</module>

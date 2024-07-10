@@ -19,7 +19,7 @@ import static manifold.collections.api.range.RangeFun.to;
 public class TestRouter extends Router.Nest {
 
     public TestRouter(Configurations conf, BasicAuth basicAuth, Provider<MainDatabase> maindb$) {
-        this.get("count", new TestCountFilter(2) + new TestCountFilter(3) + new HelloWorldFilter())
+        this.get("count", new TestCountFilter(1) + new TestCountFilter(2) + new HelloWorldFilter())
                 .get("conf", (req, resp, next) -> {
                     var map = new HashMap<String, Object>();
                     map.put("name", conf.getAppName());
