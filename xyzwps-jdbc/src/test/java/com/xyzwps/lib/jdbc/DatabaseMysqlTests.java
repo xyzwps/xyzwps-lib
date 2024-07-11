@@ -7,6 +7,8 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.testcontainers.containers.MySQLContainer;
 
+import java.sql.SQLException;
+
 class DatabaseMysqlTests {
 
     static MySQLContainer<?> mysqlContainer;
@@ -28,7 +30,7 @@ class DatabaseMysqlTests {
         conf.setJdbcUrl(mysqlContainer.getJdbcUrl());
         conf.setUsername("test");
         conf.setPassword("test");
-        conf.setDriverClassName("com.mysql.jdbc.Driver");
+        conf.setDriverClassName("com.mysql.cj.jdbc.Driver");
 
         var db = new Database(new HikariDataSource(conf));
         init(db);
@@ -36,20 +38,21 @@ class DatabaseMysqlTests {
     }
 
     void init(Database db) {
-        db.tx(tx -> {
-            try (var s = tx.createStatement()) {
-                s.execute("""
-                        CREATE TABLE playable_characters (
-                            uid        bigint NOT NULL PRIMARY KEY AUTO_INCREMENT,
-                            name       VARCHAR(255) NOT NULL,
-                            region     VARCHAR(8) NOT NULL,
-                            age        INT NOT NULL,
-                            use_sword  BOOLEAN NOT NULL DEFAULT FALSE,
-                            gender     enum('F', 'M'),
-                            remark     varchar(20) DEFAULT NULL,
-                            created_at TIMESTAMP NOT NULL
-                        )""");
-            }
-        });
+        var ctx = db.autoCommitTransactionContext();
+        try (var s = ctx.createStatement()) {
+            s.execute("""
+                    CREATE TABLE playable_characters (
+                        uid        bigint NOT NULL PRIMARY KEY AUTO_INCREMENT,
+                        name       VARCHAR(255) NOT NULL,
+                        region     VARCHAR(8) NOT NULL,
+                        age        INT NOT NULL,
+                        use_sword  BOOLEAN NOT NULL DEFAULT FALSE,
+                        gender     enum('F', 'M'),
+                        remark     varchar(20) DEFAULT NULL,
+                        created_at TIMESTAMP NOT NULL
+                    )""");
+        } catch (SQLException e) {
+            throw new DbException("Failed to init database", e);
+        }
     }
 }

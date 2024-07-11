@@ -2,10 +2,11 @@ package com.xyzwps.lib.jdbc;
 
 import java.lang.reflect.Proxy;
 import java.util.*;
+import java.util.function.Supplier;
 
 public final class DaoFactory {
 
-    public static <T> T createDao(Class<T> daoInterface, TransactionContext transactionContext) {
+    public static <T> T createDao(Class<T> daoInterface, Supplier<TransactionContext> transactionContextGetter) {
         Objects.requireNonNull(daoInterface);
 
         if (!daoInterface.isInterface()) {
@@ -16,7 +17,7 @@ public final class DaoFactory {
         return (T) Proxy.newProxyInstance(
                 daoInterface.getClassLoader(),
                 new Class<?>[]{daoInterface},
-                new DaoMethodInvocationHandler(daoInterface, transactionContext)
+                new DaoMethodInvocationHandler(daoInterface, transactionContextGetter)
         );
     }
 

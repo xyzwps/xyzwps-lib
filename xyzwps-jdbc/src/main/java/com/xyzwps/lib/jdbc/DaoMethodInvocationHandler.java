@@ -10,38 +10,41 @@ import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.sql.*;
 import java.util.*;
+import java.util.function.Supplier;
 
 // TODO: try to use cache to improve performance
-record DaoMethodInvocationHandler(Class<?> daoInterface, TransactionContext ctx) implements InvocationHandler {
+record DaoMethodInvocationHandler(Class<?> daoInterface, Supplier<TransactionContext> ctxGetter) implements InvocationHandler {
 
     private static final Object[] EMPTY_ARGS = new Object[0];
 
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-        if (args == null) {
-            args = EMPTY_ARGS;
-        }
-
-        var $query = method.getAnnotation(Query.class);
-        if ($query != null) {
-            return handleQuery(ctx, $query.sql(), method, args);
-        }
-
-        var $execute = method.getAnnotation(Execute.class);
-        if ($execute != null) {
-            return handleExecute(ctx, $execute.value(), method, args);
-        }
-
-        var $table = daoInterface.getAnnotation(Table.class);
-        if ($table != null) {
-            var tableName = $table.value();
-            if (tableName == null || tableName.isBlank()) {
-                throw new DbException("The table name of " + daoInterface.getCanonicalName() + " must be specified.");
+        try(var ctx = ctxGetter.get()) {
+            if (args == null) {
+                args = EMPTY_ARGS;
             }
-            return handleAutomatedExecution(ctx, tableName, method, args);
-        }
 
-        throw new DbException(defaultErrorMessage(method, daoInterface));
+            var $query = method.getAnnotation(Query.class);
+            if ($query != null) {
+                return handleQuery(ctx, $query.sql(), method, args);
+            }
+
+            var $execute = method.getAnnotation(Execute.class);
+            if ($execute != null) {
+                return handleExecute(ctx, $execute.value(), method, args);
+            }
+
+            var $table = daoInterface.getAnnotation(Table.class);
+            if ($table != null) {
+                var tableName = $table.value();
+                if (tableName == null || tableName.isBlank()) {
+                    throw new DbException("The table name of " + daoInterface.getCanonicalName() + " must be specified.");
+                }
+                return handleAutomatedExecution(ctx, tableName, method, args);
+            }
+
+            throw new DbException(defaultErrorMessage(method, daoInterface));
+        }
     }
 
     private static String defaultErrorMessage(Method method, Class<?> daoInterface) {

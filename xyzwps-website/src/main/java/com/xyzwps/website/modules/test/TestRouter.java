@@ -2,6 +2,7 @@ package com.xyzwps.website.modules.test;
 
 import com.xyzwps.lib.express.filter.BasicAuth;
 import com.xyzwps.lib.express.filter.Router;
+import com.xyzwps.lib.jdbc.DaoFactory;
 import com.xyzwps.website.conf.Configurations;
 import com.xyzwps.website.db.MainDatabase;
 import jakarta.inject.Provider;
@@ -19,6 +20,7 @@ import static manifold.collections.api.range.RangeFun.to;
 public class TestRouter extends Router.Nest {
 
     public TestRouter(Configurations conf, BasicAuth basicAuth, Provider<MainDatabase> maindb$) {
+        var testDao = DaoFactory.createDao(TestDao.class, maindb$.get()::autoCommitTransactionContext);
         this.get("count", new TestCountFilter(1) + new TestCountFilter(2) + new HelloWorldFilter())
                 .get("conf", (req, resp, next) -> {
                     var map = new HashMap<String, Object>();
@@ -42,11 +44,7 @@ public class TestRouter extends Router.Nest {
 
                     var map = new HashMap<String, Object>();
 
-                    maindb$.get().tx(tx -> {
-                        var dao = tx.createDao(TestDao.class);
-                        map.put("jdbc", dao.count());
-                    });
-
+                    map.put("jdbc", testDao.count());
                     map.put("protocol", req.protocol());
                     map.put("method", req.method());
                     map.put("path", req.path());
