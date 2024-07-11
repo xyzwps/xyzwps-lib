@@ -7,17 +7,22 @@ import java.util.TreeMap;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
+import static com.xyzwps.lib.dollar.Dollar.$.*;
+import static com.xyzwps.lib.dollar.Dollar.*;
+
 import static org.junit.jupiter.api.Assertions.*;
 
-class MapUtilsTests implements MapUtils {
+class MapUtilsTests {
 
 
     @Test
     void testIsEmpty() {
-        assertTrue(isEmpty(null));
+        final Map<?, ?> nullMap = null;
+
+        assertTrue(isEmpty(nullMap));
         assertTrue(isEmpty($.hashMap()));
 
-        assertFalse(isNotEmpty(null));
+        assertFalse(isNotEmpty(nullMap));
         assertFalse(isNotEmpty($.hashMap()));
     }
 
@@ -114,7 +119,9 @@ class MapUtilsTests implements MapUtils {
 
     @Test
     void testSize() {
-        assertEquals(0, size(null));
+        final Map<?, ?> nullMap = null;
+
+        assertEquals(0, size(nullMap));
         assertEquals(0, size($.hashMap()));
         assertEquals(1, size($.hashMap(1, 1)));
     }

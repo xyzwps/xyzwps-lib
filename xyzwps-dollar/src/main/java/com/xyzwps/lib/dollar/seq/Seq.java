@@ -2,6 +2,7 @@ package com.xyzwps.lib.dollar.seq;
 
 
 import com.xyzwps.lib.dollar.Direction;
+import com.xyzwps.lib.dollar.Dollar;
 import com.xyzwps.lib.dollar.Pair;
 import com.xyzwps.lib.dollar.util.*;
 
@@ -74,7 +75,7 @@ public interface Seq<T> {
      * @return the compact {@link Seq}
      */
     default Seq<T> compact() {
-        return this.filter(t -> !SharedUtils.isFalsey(t));
+        return this.filter(t -> !Dollar.$.isFalsey(t));
     }
 
     /**
@@ -200,7 +201,7 @@ public interface Seq<T> {
      * @return the joined string
      */
     default String join(String sep) {
-        return this.reduce(new StringJoiner(SharedUtils.defaultTo(sep, "null")), (t, joiner) -> {
+        return this.reduce(new StringJoiner(Dollar.$.defaultTo(sep, "null")), (t, joiner) -> {
             joiner.add(t == null ? null : t.toString());
             return joiner;
         }).toString();

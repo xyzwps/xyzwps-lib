@@ -6,7 +6,7 @@ import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import static com.xyzwps.lib.dollar.DollarFunctions.*;
+import static com.xyzwps.lib.dollar.Dollar.$.*;
 
 class MapFactoryTests {
 

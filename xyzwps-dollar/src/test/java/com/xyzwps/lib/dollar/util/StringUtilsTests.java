@@ -5,7 +5,9 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class StringUtilsTests implements StringUtils {
+import static com.xyzwps.lib.dollar.Dollar.$.*;
+
+class StringUtilsTests {
 
     @Test
     void testCamelCase() {
@@ -19,10 +21,12 @@ class StringUtilsTests implements StringUtils {
 
     @Test
     void testIsEmpty() {
-        assertTrue(isEmpty(null));
+        final String nullString = null;
+
+        assertTrue(isEmpty(nullString));
         assertTrue(isEmpty(""));
 
-        assertFalse(isNotEmpty(null));
+        assertFalse(isNotEmpty(nullString));
         assertFalse(isNotEmpty(""));
     }
 
@@ -136,7 +140,9 @@ class StringUtilsTests implements StringUtils {
             assertThrows(IllegalArgumentException.class, () -> take("a", n));
         }
 
-        assertEquals("", take(null, 100));
+        final String nullString = null;
+
+        assertEquals("", take(nullString, 100));
         assertEquals("", take("100", 0));
 
         assertEquals("abc", take("abcdefg", 3));

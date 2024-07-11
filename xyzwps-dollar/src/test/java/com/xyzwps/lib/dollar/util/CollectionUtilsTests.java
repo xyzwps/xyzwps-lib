@@ -12,7 +12,10 @@ import static com.xyzwps.lib.dollar.Direction.ASC;
 import static com.xyzwps.lib.dollar.Direction.DESC;
 import static org.junit.jupiter.api.Assertions.*;
 
-class CollectionUtilsTests implements CollectionUtils {
+import static com.xyzwps.lib.dollar.Dollar.$.*;
+import static com.xyzwps.lib.dollar.Dollar.$;
+
+class CollectionUtilsTests {
 
     @Test
     void testChunk() {
@@ -186,10 +189,12 @@ class CollectionUtilsTests implements CollectionUtils {
     @SuppressWarnings("ConstantValue")
     @Test
     void testIsEmpty() {
-        assertTrue(isEmpty(null));
+        final List<?> nullList = null;
+
+        assertTrue(isEmpty(nullList));
         assertTrue(isEmpty($.arrayList()));
 
-        assertFalse(isNotEmpty(null));
+        assertFalse(isNotEmpty(nullList));
         assertFalse(isNotEmpty($.arrayList()));
     }
 
@@ -291,7 +296,9 @@ class CollectionUtilsTests implements CollectionUtils {
 
     @Test
     void testSize() {
-        assertEquals(0, size(null));
+        final List<?> nullList = null;
+
+        assertEquals(0, size(nullList));
         assertEquals(0, size($.arrayList()));
         assertEquals(1, size($.arrayList(1)));
     }

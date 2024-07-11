@@ -4,7 +4,9 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class ObjectUtilsTests implements ObjectUtils {
+import static com.xyzwps.lib.dollar.Dollar.$.*;
+
+public class ObjectUtilsTests {
 
     @Test
     void testDefaultTo() {

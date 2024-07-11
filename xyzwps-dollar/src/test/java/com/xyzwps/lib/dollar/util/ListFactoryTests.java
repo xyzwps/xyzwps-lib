@@ -6,7 +6,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import static com.xyzwps.lib.dollar.DollarFunctions.*;
+import static com.xyzwps.lib.dollar.Dollar.$.*;
 
 class ListFactoryTests {
 

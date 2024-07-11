@@ -45,7 +45,7 @@ public interface Chain<T> {
      * @return a Chain for next stage
      */
     default Chain<T> compact() {
-        return this.filter(it -> !SharedUtils.isFalsey(it));
+        return this.filter(it -> !Dollar.$.isFalsey(it));
     }
 
     /**
