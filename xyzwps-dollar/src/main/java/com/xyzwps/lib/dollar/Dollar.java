@@ -1,8 +1,7 @@
 package com.xyzwps.lib.dollar;
 
+import com.xyzwps.lib.dollar.seq.MapEntrySeq;
 import com.xyzwps.lib.dollar.seq.Seq;
-import com.xyzwps.lib.dollar.seq.SeqChain;
-import com.xyzwps.lib.dollar.seq.SeqMapEntryChain;
 import com.xyzwps.lib.dollar.util.*;
 
 import java.util.*;
@@ -28,8 +27,8 @@ public final class Dollar {
      * @param <T>  list element type
      * @return a list stage
      */
-    public static <T> Chain<T> $(Iterable<T> list) {
-        return new SeqChain<>(Seq.from(list));
+    public static <T> Seq<T> $(Iterable<T> list) {
+        return Seq.from(list);
     }
 
 
@@ -41,10 +40,8 @@ public final class Dollar {
      * @param <V> map value type
      * @return a map stage
      */
-    public static <K, V> MapEntryChain<K, V> $(Map<K, V> map) {
-        if (map == null || map.isEmpty()) return new SeqMapEntryChain<>(null);
-
-        return new SeqMapEntryChain<>(Seq.from(map.entrySet()));
+    public static <K, V> MapEntrySeq<K, V> $(Map<K, V> map) {
+        return MapEntrySeq.from(map);
     }
 
 
@@ -59,8 +56,8 @@ public final class Dollar {
          * @param <T> element type
          * @return list stage
          */
-        public static <T> Chain<T> empty() {
-            return new SeqChain<>(null);
+        public static <T> Seq<T> empty() {
+            return Seq.empty();
         }
 
         /**
@@ -71,12 +68,10 @@ public final class Dollar {
          * @param <V>         the type of values
          * @return a new chain of map entries
          */
-        public static <K, V> MapEntryChain<K, V> fromMapSupplier(Supplier<Map<K, V>> mapProducer) {
+        public static <K, V> MapEntrySeq<K, V> fromMapSupplier(Supplier<Map<K, V>> mapProducer) {
             Objects.requireNonNull(mapProducer);
-            return new SeqMapEntryChain<>(Seq.create(() -> {
-                Map<K, V> map = Dollar.$.defaultTo(mapProducer.get(), Collections.emptyMap());
-                return map.entrySet();
-            }));
+            // TODO: 修改 api 形式
+            return MapEntrySeq.from(mapProducer.get());
         }
 
 
@@ -88,12 +83,12 @@ public final class Dollar {
          * @return list stage
          */
         @SafeVarargs
-        public static <T> Chain<T> just(T... args) {
-            return new SeqChain<>(Seq.just(args));
+        public static <T> Seq<T> just(T... args) {
+            return Seq.just(args);
         }
 
-        public static Chain<Integer> infinite(int start) {
-            return new SeqChain<>(Seq.infinite(start));
+        public static Seq<Integer> infinite(int start) {
+            return Seq.infinite(start);
         }
 
         /**
@@ -103,8 +98,8 @@ public final class Dollar {
          * @param end   range end - excluded
          * @return list stage
          */
-        public static Chain<Integer> range(int start, int end) {
-            return Dollar.$(new RangeIterable(start, end));
+        public static Seq<Integer> range(int start, int end) {
+            return Seq.range(start, end);
         }
 
         /**

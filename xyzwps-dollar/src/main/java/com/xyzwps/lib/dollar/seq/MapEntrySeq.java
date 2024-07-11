@@ -36,11 +36,14 @@ public interface MapEntrySeq<K, V> {
      */
     default MapEntrySeq<K, V> filter(BiPredicate<K, V> predicateFn) {
         Objects.requireNonNull(predicateFn);
-        return kvConsumer -> this.forEach((k, v) -> {
-            if (predicateFn.test(k, v)) {
-                kvConsumer.accept(k, v);
-            }
-        });
+        return kvConsumer -> {
+            Objects.requireNonNull(kvConsumer);
+            this.forEach((k, v) -> {
+                if (predicateFn.test(k, v)) {
+                    kvConsumer.accept(k, v);
+                }
+            });
+        };
     }
 
     /**
@@ -62,13 +65,16 @@ public interface MapEntrySeq<K, V> {
     default <K2> MapEntrySeq<K2, V> mapKeys(Function<K, K2> mapKeyFn) {
         Objects.requireNonNull(mapKeyFn);
         final HashSet<K2> dedupSet = new HashSet<>();
-        return k2vConsumer -> this.forEach((k, v) -> {
-            K2 k2 = mapKeyFn.apply(k);
-            if (!dedupSet.contains(k2)) {
-                dedupSet.add(k2);
-                k2vConsumer.accept(k2, v);
-            }
-        });
+        return k2vConsumer -> {
+            Objects.requireNonNull(k2vConsumer);
+            this.forEach((k, v) -> {
+                K2 k2 = mapKeyFn.apply(k);
+                if (!dedupSet.contains(k2)) {
+                    dedupSet.add(k2);
+                    k2vConsumer.accept(k2, v);
+                }
+            });
+        };
     }
 
     /**
@@ -81,13 +87,16 @@ public interface MapEntrySeq<K, V> {
     default <K2> MapEntrySeq<K2, V> mapKeys(BiFunction<K, V, K2> mapKeyFn) {
         Objects.requireNonNull(mapKeyFn);
         final HashSet<K2> dedupSet = new HashSet<>();
-        return k2vConsumer -> this.forEach((k, v) -> {
-            K2 k2 = mapKeyFn.apply(k, v);
-            if (!dedupSet.contains(k2)) {
-                dedupSet.add(k2);
-                k2vConsumer.accept(k2, v);
-            }
-        });
+        return k2vConsumer -> {
+            Objects.requireNonNull(k2vConsumer);
+            this.forEach((k, v) -> {
+                K2 k2 = mapKeyFn.apply(k, v);
+                if (!dedupSet.contains(k2)) {
+                    dedupSet.add(k2);
+                    k2vConsumer.accept(k2, v);
+                }
+            });
+        };
     }
 
     /**
@@ -99,7 +108,10 @@ public interface MapEntrySeq<K, V> {
      */
     default <V2> MapEntrySeq<K, V2> mapValues(Function<V, V2> mapValueFn) {
         Objects.requireNonNull(mapValueFn);
-        return kv2Consumer -> this.forEach((k, v) -> kv2Consumer.accept(k, mapValueFn.apply(v)));
+        return kv2Consumer -> {
+            Objects.requireNonNull(kv2Consumer);
+            this.forEach((k, v) -> kv2Consumer.accept(k, mapValueFn.apply(v)));
+        };
     }
 
     /**
@@ -111,7 +123,10 @@ public interface MapEntrySeq<K, V> {
      */
     default <V2> MapEntrySeq<K, V2> mapValues(BiFunction<V, K, V2> mapValueFn) {
         Objects.requireNonNull(mapValueFn);
-        return kv2Consumer -> this.forEach((k, v) -> kv2Consumer.accept(k, mapValueFn.apply(v, k)));
+        return kv2Consumer -> {
+            Objects.requireNonNull(kv2Consumer);
+            this.forEach((k, v) -> kv2Consumer.accept(k, mapValueFn.apply(v, k)));
+        };
     }
 
     /**
@@ -140,6 +155,10 @@ public interface MapEntrySeq<K, V> {
         return result;
     }
 
+    default HashMap<K, V> toMap() {
+        return value();
+    }
+
     /**
      * Get values in the sequence.
      *
@@ -159,7 +178,7 @@ public interface MapEntrySeq<K, V> {
      * @return the empty sequence
      */
     static <K, V> MapEntrySeq<K, V> empty() {
-        return Functions::consumeNothing;
+        return Objects::requireNonNull;
     }
 
     /**
@@ -171,6 +190,9 @@ public interface MapEntrySeq<K, V> {
      * @return the sequence
      */
     static <K, V> MapEntrySeq<K, V> from(Map<K, V> map) {
-        return map == null || map.isEmpty() ? empty() : map::forEach;
+        return map == null || map.isEmpty() ? empty() : (consumer -> {
+            Objects.requireNonNull(consumer);
+            map.forEach(consumer);
+        });
     }
 }

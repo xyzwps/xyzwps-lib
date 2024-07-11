@@ -32,7 +32,7 @@ class DeprecatedTests {
 
     @Test
     void flatMap() {
-        assertEquals("[2, 3, 4, 6, 6, 9]", $.just(1, 2, 3).flatMap(i -> $.just(i * 2, i * 3).toList()).toList().toString());
+        assertEquals("[2, 3, 4, 6, 6, 9]", $.just(1, 2, 3).flatMap(i -> $.just(i * 2, i * 3)).toList().toString());
         assertEquals("[]", $.just(1, 2, 3).flatMap(i -> null).toList().toString());
     }
 

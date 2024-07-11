@@ -87,7 +87,9 @@ public interface Seq<T> {
     default Seq<T> concat(Iterable<T> seq2) {
         return tConsumer -> {
             this.forEach(tConsumer);
-            seq2.forEach(tConsumer);
+            if (seq2 != null) {
+                seq2.forEach(tConsumer);
+            }
         };
     }
 
@@ -103,6 +105,7 @@ public interface Seq<T> {
      * <br/>Result {@link Seq}.
      */
     default Seq<T> filter(Predicate<T> predicate) {
+        Objects.requireNonNull(predicate);
         return tConsumer -> this.forEach(t -> {
             if (predicate.test(t)) {
                 tConsumer.accept(t);
@@ -123,6 +126,7 @@ public interface Seq<T> {
      * <br/>Result {@link Seq}.
      */
     default Seq<T> filter(ObjIntPredicate<T> predicate) {
+        Objects.requireNonNull(predicate);
         var counter = new Counter(0);
         return tConsumer -> this.forEach(t -> {
             if (predicate.test(t, counter.getAndIncr())) {
@@ -153,6 +157,7 @@ public interface Seq<T> {
      * @return the flat mapped {@link Seq}
      */
     default <R> Seq<R> flatMap(Function<T, Seq<R>> flatMapFn) {
+        Objects.requireNonNull(flatMapFn);
         return consumer -> this.forEach(t -> {
             Seq<R> rt = flatMapFn.apply(t);
             if (rt != null) {
@@ -167,6 +172,7 @@ public interface Seq<T> {
      * @param handler the handler function
      */
     default void forEach(ObjIntConsumer<? super T> handler) {
+        Objects.requireNonNull(handler);
         Counter counter = new Counter(0);
         this.forEach(t -> handler.accept(t, counter.getAndIncr()));
     }
@@ -180,9 +186,12 @@ public interface Seq<T> {
      */
     default <K> MapEntrySeq<K, List<T>> groupBy(Function<T, K> toKey) {
         Objects.requireNonNull(toKey);
-        Map<K, List<T>> map = new HashMap<>();
-        this.forEach(t -> map.computeIfAbsent(toKey.apply(t), k -> new ArrayList<>()).add(t));
-        return map::forEach;
+        return (BiConsumer<K, List<T>> consumer) -> {
+            Objects.requireNonNull(consumer);
+            Map<K, List<T>> map = new HashMap<>();
+            this.forEach(t -> map.computeIfAbsent(toKey.apply(t), k -> new ArrayList<>()).add(t));
+            map.forEach(consumer);
+        };
     }
 
     /**
@@ -201,7 +210,7 @@ public interface Seq<T> {
      * @return the joined string
      */
     default String join(String sep) {
-        return this.reduce(new StringJoiner(Dollar.$.defaultTo(sep, "null")), (t, joiner) -> {
+        return this.reduce(new StringJoiner(sep == null ? "null" : sep), (t, joiner) -> {
             joiner.add(t == null ? null : t.toString());
             return joiner;
         }).toString();
@@ -216,9 +225,12 @@ public interface Seq<T> {
      */
     default <K> MapEntrySeq<K, T> keyBy(Function<T, K> toKey) {
         Objects.requireNonNull(toKey);
-        Map<K, T> map = new HashMap<>();
-        this.forEach(t -> map.computeIfAbsent(toKey.apply(t), k -> t));
-        return map::forEach;
+        return (BiConsumer<K, T> consumer) -> {
+            Objects.requireNonNull(consumer);
+            map(it -> Map.entry(toKey.apply(it), it))
+                    .uniqueBy(Map.Entry::getKey)
+                    .forEach(entry -> consumer.accept(entry.getKey(), entry.getValue()));
+        };
     }
 
     /**
@@ -236,6 +248,7 @@ public interface Seq<T> {
      * <br/>Mapping result {@link Seq}.
      */
     default <R> Seq<R> map(Function<T, R> mapFn) {
+        Objects.requireNonNull(mapFn);
         return rConsumer -> this.forEach(t -> rConsumer.accept(mapFn.apply(t)));
     }
 
@@ -269,6 +282,8 @@ public interface Seq<T> {
      * @return the ordered {@link Seq}
      */
     default <K extends Comparable<K>> Seq<T> orderBy(Function<T, K> toKey, Direction direction) {
+        Objects.requireNonNull(toKey);
+        Objects.requireNonNull(direction);
         return consumer -> {
             ArrayList<T> list = this.toList();
             Comparator<T> comparator = direction == Direction.DESC ? descComparator(toKey) : ascComparator(toKey);
@@ -330,6 +345,7 @@ public interface Seq<T> {
      * @return the skipped {@link Seq}
      */
     default Seq<T> skipWhile(Predicate<T> predicate) {
+        Objects.requireNonNull(predicate);
         return tConsumer -> {
             boolean[] next = {true};
             this.forEach(t -> {
@@ -389,6 +405,14 @@ public interface Seq<T> {
             list.add(t);
             return list;
         });
+    }
+
+    default int size() {
+        return this.reduce(0, (t, size) -> size + 1);
+    }
+
+    default Iterator<T> iterator() {
+        return this.toList().iterator(); // TODO: 搞一个 lazy iterator
     }
 
     /**
