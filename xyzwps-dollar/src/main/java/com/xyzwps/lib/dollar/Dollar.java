@@ -2,6 +2,8 @@ package com.xyzwps.lib.dollar;
 
 import com.xyzwps.lib.dollar.util.*;
 
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.*;
 import java.util.function.*;
 
@@ -117,6 +119,7 @@ public final class Dollar {
          *
          * @param value which to be checked
          * @return true if it would be considered as false
+         * @see <a href="https://developer.mozilla.org/en-US/docs/Glossary/Falsy">MDN: Falsy</a>
          */
         public static boolean isFalsey(Object value) {
             return value == null
@@ -125,7 +128,12 @@ public final class Dollar {
                     || Objects.equals(value, 0)
                     || Objects.equals(value, 0L)
                     || Objects.equals(value, 0.0)
-                    || Objects.equals(value, 0.0f);
+                    || Objects.equals(value, 0.0f)
+                    || Objects.equals(value, (short) 0)
+                    || Objects.equals(value, Float.NaN)
+                    || Objects.equals(value, Double.NaN)
+                    || Objects.equals(value, BigInteger.ZERO)
+                    || Objects.equals(value, BigDecimal.ZERO);
         }
 
         /**
