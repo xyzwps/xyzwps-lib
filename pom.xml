@@ -26,11 +26,6 @@
         <module>xyzwps-bean</module>
         <module>xyzwps-bedrock</module>
         <module>xyzwps-dollar</module>
-        <module>xyzwps-dollar-api</module>
-        <module>xyzwps-dollar-generator</module>
-        <module>xyzwps-dollar-iterator</module>
-        <module>xyzwps-dollar-seq</module>
-        <module>xyzwps-dollar-test-cases</module>
         <module>xyzwps-express</module>
         <module>xyzwps-express-bio</module>
         <module>xyzwps-express-helidon</module>

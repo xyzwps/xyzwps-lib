@@ -15,15 +15,5 @@
     <packaging>jar</packaging>
 
     <dependencies>
-        <dependency>
-            <groupId>com.xyzwps.lib</groupId>
-            <artifactId>xyzwps-dollar-api</artifactId>
-            <version>${app.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.xyzwps.lib</groupId>
-            <artifactId>xyzwps-dollar-seq</artifactId>
-            <version>${app.version}</version>
-        </dependency>
     </dependencies>
 </project>
