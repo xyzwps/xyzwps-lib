@@ -14,10 +14,6 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class CollectionUtilsTests implements CollectionUtils {
 
-
-    private static final ListFactory $ = new ListFactory() {
-    };
-
     @Test
     void testChunk() {
         String[] cases = new String[]{

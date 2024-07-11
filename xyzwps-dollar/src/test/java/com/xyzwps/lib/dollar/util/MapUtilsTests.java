@@ -11,8 +11,6 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class MapUtilsTests implements MapUtils {
 
-    private static final MapFactory $ = new MapFactory() {
-    };
 
     @Test
     void testIsEmpty() {

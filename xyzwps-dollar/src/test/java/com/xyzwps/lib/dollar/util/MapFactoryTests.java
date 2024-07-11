@@ -6,7 +6,9 @@ import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class MapFactoryTests implements MapFactory {
+import static com.xyzwps.lib.dollar.DollarFunctions.*;
+
+class MapFactoryTests {
 
     @Test
     void testHashMap() {

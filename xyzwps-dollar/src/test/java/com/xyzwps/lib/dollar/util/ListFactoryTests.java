@@ -6,7 +6,9 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-class ListFactoryTests implements ListFactory {
+import static com.xyzwps.lib.dollar.DollarFunctions.*;
+
+class ListFactoryTests {
 
     @Test
     void testArrayList() {
