@@ -10,6 +10,8 @@ import com.xyzwps.lib.dollar.util.ObjIntPredicate;
 import java.util.*;
 import java.util.function.*;
 
+import static com.xyzwps.lib.dollar.Dollar.*;
+
 /**
  * A chain backed by a {@link Seq}.
  *
@@ -76,7 +78,7 @@ public class SeqChain<T> implements Chain<T> {
     @Override
     public <K> MapEntryChain<K, List<T>> groupBy(Function<T, K> toKey) {
         Objects.requireNonNull(toKey);
-        return SeqMapEntryChainFactory.INSTANCE.from(() -> {
+        return $.fromMapSupplier(() -> {
             Map<K, List<T>> map = new HashMap<>();
             this.forEach(t -> map.computeIfAbsent(toKey.apply(t), k -> new ArrayList<>()).add(t));
             return map;

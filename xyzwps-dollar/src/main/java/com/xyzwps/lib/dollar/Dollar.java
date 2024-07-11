@@ -1,7 +1,8 @@
 package com.xyzwps.lib.dollar;
 
-import com.xyzwps.lib.dollar.seq.SeqChainFactory;
-import com.xyzwps.lib.dollar.seq.SeqMapEntryChainFactory;
+import com.xyzwps.lib.dollar.seq.Seq;
+import com.xyzwps.lib.dollar.seq.SeqChain;
+import com.xyzwps.lib.dollar.seq.SeqMapEntryChain;
 import com.xyzwps.lib.dollar.util.*;
 
 import java.util.*;
@@ -14,15 +15,10 @@ import static com.xyzwps.lib.dollar.util.Comparators.descComparator;
  * Where to start.
  * <p>
  * TODO: optimize for RandomAccess
- * TODO: 写中文文档
  * TODO: add examples
  * TODO: all apis should be null tolerant
- * TODO: 探索怎么能把这东西搞优雅了
  */
 public final class Dollar {
-
-    private static final ChainFactory cf = SeqChainFactory.INSTANCE;
-    private static final MapEntryChainFactory mf = SeqMapEntryChainFactory.INSTANCE;
 
 
     /**
@@ -33,7 +29,7 @@ public final class Dollar {
      * @return a list stage
      */
     public static <T> Chain<T> $(Iterable<T> list) {
-        return cf.from(list);
+        return new SeqChain<>(Seq.from(list));
     }
 
 
@@ -46,7 +42,9 @@ public final class Dollar {
      * @return a map stage
      */
     public static <K, V> MapEntryChain<K, V> $(Map<K, V> map) {
-        return mf.from(map);
+        if (map == null || map.isEmpty()) return new SeqMapEntryChain<>(null);
+
+        return new SeqMapEntryChain<>(Seq.from(map.entrySet()));
     }
 
 
@@ -62,7 +60,23 @@ public final class Dollar {
          * @return list stage
          */
         public static <T> Chain<T> empty() {
-            return SeqChainFactory.INSTANCE.empty();
+            return new SeqChain<>(null);
+        }
+
+        /**
+         * Create a new chain of map entries from the specified map producer.
+         *
+         * @param mapProducer the producer of the map
+         * @param <K>         the type of keys
+         * @param <V>         the type of values
+         * @return a new chain of map entries
+         */
+        public static <K, V> MapEntryChain<K, V> fromMapSupplier(Supplier<Map<K, V>> mapProducer) {
+            Objects.requireNonNull(mapProducer);
+            return new SeqMapEntryChain<>(Seq.create(() -> {
+                Map<K, V> map = Dollar.$.defaultTo(mapProducer.get(), Collections.emptyMap());
+                return map.entrySet();
+            }));
         }
 
 
@@ -75,9 +89,12 @@ public final class Dollar {
          */
         @SafeVarargs
         public static <T> Chain<T> just(T... args) {
-            return SeqChainFactory.INSTANCE.just(args);
+            return new SeqChain<>(Seq.just(args));
         }
 
+        public static Chain<Integer> infinite(int start) {
+            return new SeqChain<>(Seq.infinite(start));
+        }
 
         /**
          * Handle a range.
@@ -87,7 +104,7 @@ public final class Dollar {
          * @return list stage
          */
         public static Chain<Integer> range(int start, int end) {
-            return SeqChainFactory.INSTANCE.range(start, end);
+            return Dollar.$(new RangeIterable(start, end));
         }
 
         /**
@@ -110,12 +127,12 @@ public final class Dollar {
          */
         public static boolean isFalsey(Object value) {
             return value == null
-                   || Objects.equals(value, false)
-                   || "".equals(value)
-                   || Objects.equals(value, 0)
-                   || Objects.equals(value, 0L)
-                   || Objects.equals(value, 0.0)
-                   || Objects.equals(value, 0.0f);
+                    || Objects.equals(value, false)
+                    || "".equals(value)
+                    || Objects.equals(value, 0)
+                    || Objects.equals(value, 0L)
+                    || Objects.equals(value, 0.0)
+                    || Objects.equals(value, 0.0f);
         }
 
         /**
