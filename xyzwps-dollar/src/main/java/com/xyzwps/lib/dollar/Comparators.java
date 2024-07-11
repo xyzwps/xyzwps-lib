@@ -1,4 +1,4 @@
-package com.xyzwps.lib.dollar.util;
+package com.xyzwps.lib.dollar;
 
 import java.util.Comparator;
 import java.util.function.Function;

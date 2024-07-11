@@ -1,4 +1,4 @@
-package com.xyzwps.lib.dollar.util;
+package com.xyzwps.lib.dollar;
 
 /**
  * A type of triple arguments function.

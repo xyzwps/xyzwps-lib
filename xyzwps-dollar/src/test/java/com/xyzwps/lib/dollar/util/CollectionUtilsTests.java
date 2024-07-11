@@ -1,5 +1,6 @@
 package com.xyzwps.lib.dollar.util;
 
+import com.xyzwps.lib.dollar.ObjIntFunction;
 import com.xyzwps.lib.dollar.Pair;
 import org.junit.jupiter.api.Test;
 

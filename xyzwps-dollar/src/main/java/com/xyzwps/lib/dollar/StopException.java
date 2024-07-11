@@ -1,4 +1,4 @@
-package com.xyzwps.lib.dollar.seq;
+package com.xyzwps.lib.dollar;
 
 
 class StopException extends RuntimeException {

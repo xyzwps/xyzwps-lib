@@ -1,6 +1,5 @@
 package com.xyzwps.lib.dollar;
 
-import com.xyzwps.lib.dollar.seq.Seq;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;

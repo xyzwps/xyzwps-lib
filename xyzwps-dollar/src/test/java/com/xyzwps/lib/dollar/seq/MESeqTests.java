@@ -1,5 +1,6 @@
 package com.xyzwps.lib.dollar.seq;
 
+import com.xyzwps.lib.dollar.MapEntrySeq;
 import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;

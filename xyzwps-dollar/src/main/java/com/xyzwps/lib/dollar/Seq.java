@@ -1,15 +1,12 @@
-package com.xyzwps.lib.dollar.seq;
+package com.xyzwps.lib.dollar;
 
 
-import com.xyzwps.lib.dollar.Direction;
-import com.xyzwps.lib.dollar.Dollar;
-import com.xyzwps.lib.dollar.Pair;
 import com.xyzwps.lib.dollar.util.*;
 
 import java.util.*;
 import java.util.function.*;
 
-import static com.xyzwps.lib.dollar.util.Comparators.*;
+import static com.xyzwps.lib.dollar.Comparators.*;
 
 /**
  * The sequential handlers of elements.

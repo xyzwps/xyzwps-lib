@@ -1,7 +1,5 @@
-package com.xyzwps.lib.dollar.seq;
+package com.xyzwps.lib.dollar;
 
-import com.xyzwps.lib.dollar.util.Function3;
-import com.xyzwps.lib.dollar.util.Functions;
 import com.xyzwps.lib.dollar.util.ObjectHolder;
 
 import java.util.HashMap;

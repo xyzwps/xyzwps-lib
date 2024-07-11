@@ -1,6 +1,5 @@
 package com.xyzwps.lib.dollar;
 
-import com.xyzwps.lib.dollar.seq.Seq;
 import com.xyzwps.lib.dollar.util.*;
 
 import java.util.*;

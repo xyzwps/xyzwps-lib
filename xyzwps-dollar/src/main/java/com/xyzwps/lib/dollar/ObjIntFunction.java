@@ -1,4 +1,4 @@
-package com.xyzwps.lib.dollar.util;
+package com.xyzwps.lib.dollar;
 
 /**
  * {@link ObjIntFunction} represents a function accepting two arguments,

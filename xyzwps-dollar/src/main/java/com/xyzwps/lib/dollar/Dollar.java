@@ -1,14 +1,12 @@
 package com.xyzwps.lib.dollar;
 
-import com.xyzwps.lib.dollar.seq.MapEntrySeq;
-import com.xyzwps.lib.dollar.seq.Seq;
 import com.xyzwps.lib.dollar.util.*;
 
 import java.util.*;
 import java.util.function.*;
 
-import static com.xyzwps.lib.dollar.util.Comparators.ascComparator;
-import static com.xyzwps.lib.dollar.util.Comparators.descComparator;
+import static com.xyzwps.lib.dollar.Comparators.ascComparator;
+import static com.xyzwps.lib.dollar.Comparators.descComparator;
 
 /**
  * Where to start.
