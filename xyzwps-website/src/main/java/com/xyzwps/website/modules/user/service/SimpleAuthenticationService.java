@@ -4,10 +4,8 @@ import com.xyzwps.website.modules.sms.model.VcodeScene;
 import com.xyzwps.website.modules.sms.service.VcodeService;
 import jakarta.inject.Singleton;
 import lombok.AllArgsConstructor;
-import lombok.extern.jbosslog.JBossLog;
 
 @Singleton
-@JBossLog
 @AllArgsConstructor
 public class SimpleAuthenticationService {
 

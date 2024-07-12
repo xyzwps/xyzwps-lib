@@ -5,13 +5,13 @@ import com.xyzwps.website.modules.user.entity.User;
 import com.xyzwps.website.modules.user.entity.UserStatus;
 import jakarta.inject.Singleton;
 import lombok.AllArgsConstructor;
-import lombok.extern.jbosslog.JBossLog;
+import lombok.extern.slf4j.Slf4j;
 
 import java.time.Instant;
 
+@Slf4j
 @Singleton
 @AllArgsConstructor
-@JBossLog
 public class UserService {
 
     private final UserDao userDao;
@@ -28,6 +28,6 @@ public class UserService {
                 .updateTime(Instant.now())
                 .build();
         var id = userDao.insert(newUser);
-        log.infof("create user: %d", id);
+        log.info("create user: {}", id);
     }
 }

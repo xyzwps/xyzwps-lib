@@ -8,12 +8,13 @@ import com.xyzwps.website.filter.LogRequestCostFilter;
 import com.xyzwps.website.filter.SpaFallbackFilter;
 import com.xyzwps.website.modules.IndexRouter;
 import jakarta.inject.Singleton;
-import org.jboss.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Singleton
 public class HttpServerLayer {
 
-    private static final Logger log = Logger.getLogger(LogRequestCostFilter.class);
+    private static final Logger log = LoggerFactory.getLogger(LogRequestCostFilter.class);
 
     private final ServerConfig serverConfig;
 
@@ -30,7 +31,7 @@ public class HttpServerLayer {
     }
 
     public void start() {
-        log.infof("=====> server is listening at %s <=====\n", serverConfig.port);
+        log.info("=====> server is listening at {} <=====", serverConfig.port);
         new BioServer().start(this.serverConfig);
     }
 }

@@ -3,9 +3,9 @@ package com.xyzwps.website.modules.test;
 import com.xyzwps.lib.express.Filter;
 import com.xyzwps.lib.express.HttpRequest;
 import com.xyzwps.lib.express.HttpResponse;
-import lombok.extern.jbosslog.JBossLog;
+import lombok.extern.slf4j.Slf4j;
 
-@JBossLog
+@Slf4j
 public record TestCountFilter(int count) implements Filter {
 
     private static final String ATTR = "__test_count_filter__";
@@ -27,6 +27,6 @@ public record TestCountFilter(int count) implements Filter {
             request.attribute(ATTR, s + "a" + count);
         }
 
-        log.infof(" > count: %s", request.attribute(ATTR));
+        log.info(" > count: {}", request.attribute(ATTR));
     }
 }

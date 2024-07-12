@@ -11,12 +11,12 @@ import com.xyzwps.website.modules.user.UserRouter;
 import io.avaje.validation.ConstraintViolation;
 import io.avaje.validation.ConstraintViolationException;
 import jakarta.inject.Singleton;
-import lombok.extern.jbosslog.JBossLog;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.Map;
 
 @Singleton
-@JBossLog
+@Slf4j
 public class IndexRouter extends Router {
 
     public IndexRouter(TestRouter testRouter,
@@ -36,7 +36,7 @@ public class IndexRouter extends Router {
         try {
             next.next(req, resp);
         } catch (Exception ex) {
-            log.errorf(ex, "Error in request");
+            log.error("Error in request", ex);
             switch (ex) {
                 case ConstraintViolationException e -> {
                     var message = e.violations().stream().findFirst()
