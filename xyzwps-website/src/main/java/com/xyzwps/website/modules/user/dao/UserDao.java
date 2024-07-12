@@ -1,11 +1,13 @@
 package com.xyzwps.website.modules.user.dao;
 
+import com.xyzwps.lib.ap.Dao;
 import com.xyzwps.lib.bedrock.BeanParam;
 import com.xyzwps.lib.jdbc.Execute;
 import com.xyzwps.lib.jdbc.GeneratedKeys;
 import com.xyzwps.lib.jdbc.Table;
 import com.xyzwps.website.modules.user.entity.User;
 
+@Dao
 @Table("users")
 public interface UserDao {
 

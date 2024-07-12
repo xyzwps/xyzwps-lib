@@ -1,11 +1,8 @@
 package com.xyzwps.website.modules.user.service;
 
-import com.xyzwps.lib.jdbc.DaoFactory;
-import com.xyzwps.website.db.MainDatabase;
 import com.xyzwps.website.modules.user.dao.UserDao;
 import com.xyzwps.website.modules.user.entity.User;
 import com.xyzwps.website.modules.user.entity.UserStatus;
-import jakarta.inject.Provider;
 import jakarta.inject.Singleton;
 import lombok.AllArgsConstructor;
 import lombok.extern.jbosslog.JBossLog;
@@ -17,10 +14,9 @@ import java.time.Instant;
 @JBossLog
 public class UserService {
 
-    private final Provider<MainDatabase> mainDb$;
+    private final UserDao userDao;
 
     public void createUserByPhone(String phone) {
-        var dao = DaoFactory.createDao(UserDao.class, mainDb$.get()::autoCommitTransactionContext);
         var newUser = User.builder()
                 .phone(phone)
                 .displayName("xx")
@@ -31,7 +27,7 @@ public class UserService {
                 .createTime(Instant.now())
                 .updateTime(Instant.now())
                 .build();
-        var id = dao.insert(newUser);
+        var id = userDao.insert(newUser);
         log.infof("create user: %d", id);
     }
 }
