@@ -14,5 +14,5 @@ public @interface Query {
      *
      * @return SQL statement.
      */
-    String sql();
+    String value();
 }

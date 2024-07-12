@@ -1,8 +1,9 @@
-package com.xyzwps.lib.jdbc;
+package com.xyzwps.lib.jdbc.methodinvocation;
 
 import com.xyzwps.lib.bedrock.BeanParam;
 import com.xyzwps.lib.bedrock.Param;
 import com.xyzwps.lib.dollar.Pair;
+import com.xyzwps.lib.jdbc.DbException;
 import com.xyzwps.lib.jdbc.method2sql.BooleanList;
 
 import java.lang.reflect.Method;

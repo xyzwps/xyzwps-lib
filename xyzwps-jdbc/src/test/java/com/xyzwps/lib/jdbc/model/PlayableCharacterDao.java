@@ -24,19 +24,19 @@ public interface PlayableCharacterDao {
 
     List<PlayableCharacter> findByRegionOrderByAgeDesc(String region);
 
-    @Query(sql = "SELECT * FROM playable_characters ORDER BY uid ASC")
+    @Query("SELECT * FROM playable_characters ORDER BY uid ASC")
     List<PlayableCharacter> findAll();
 
-    @Query(sql = "SELECT * FROM playable_characters WHERE uid = ?")
+    @Query("SELECT * FROM playable_characters WHERE uid = ?")
     PlayableCharacter findById(long id);
 
-    @Query(sql = "SELECT * FROM playable_characters WHERE uid = ?")
+    @Query("SELECT * FROM playable_characters WHERE uid = ?")
     Optional<PlayableCharacter> findOptionalById(long id);
 
-    @Query(sql = "SELECT COUNT(*) FROM playable_characters")
+    @Query("SELECT COUNT(*) FROM playable_characters")
     int count();
 
-    @Query(sql = "SELECT COUNT(*) FROM playable_characters where region = :region and gender = :gender")
+    @Query("SELECT COUNT(*) FROM playable_characters where region = :region and gender = :gender")
     int countByRegionAndGender(@Param("region") String region, @Param("gender") Gender gender);
 
     int countByRegion(String region);
@@ -62,7 +62,7 @@ public interface PlayableCharacterDao {
 
     void deleteByUid(long id);
 
-    @Query(sql = "SELECT * FROM playable_characters WHERE region in (:regions) order by uid desc")
+    @Query("SELECT * FROM playable_characters WHERE region in (:regions) order by uid desc")
     List<PlayableCharacter> getByRegions(@Param("regions") List<String> regions);
 
     List<PlayableCharacter> getByRegionInOrderByUid(List<String> regions);

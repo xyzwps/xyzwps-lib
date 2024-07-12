@@ -1,5 +1,7 @@
 package com.xyzwps.lib.jdbc;
 
+import com.xyzwps.lib.jdbc.methodinvocation.DaoMethodInvocationHandler;
+
 import java.lang.reflect.Proxy;
 import java.util.*;
 import java.util.function.Supplier;

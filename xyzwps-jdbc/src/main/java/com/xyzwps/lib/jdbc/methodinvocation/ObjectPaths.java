@@ -1,6 +1,7 @@
-package com.xyzwps.lib.jdbc;
+package com.xyzwps.lib.jdbc.methodinvocation;
 
 import com.xyzwps.lib.beans.BeanUtils;
+import com.xyzwps.lib.jdbc.*;
 
 import java.util.Map;
 

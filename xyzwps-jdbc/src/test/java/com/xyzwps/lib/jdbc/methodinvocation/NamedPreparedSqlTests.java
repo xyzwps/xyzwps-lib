@@ -1,4 +1,4 @@
-package com.xyzwps.lib.jdbc;
+package com.xyzwps.lib.jdbc.methodinvocation;
 
 import org.junit.jupiter.api.Test;
 
@@ -6,7 +6,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class NamedPreparedSqlTests {
+class NamedPreparedSqlTests {
 
     @Test
     void duplicatedNames() {

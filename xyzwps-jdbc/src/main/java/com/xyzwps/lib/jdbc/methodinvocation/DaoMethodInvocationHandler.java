@@ -1,32 +1,33 @@
-package com.xyzwps.lib.jdbc;
+package com.xyzwps.lib.jdbc.methodinvocation;
 
 import com.xyzwps.lib.bedrock.lang.DefaultValues;
-import com.xyzwps.lib.dollar.Pair;
+import com.xyzwps.lib.jdbc.*;
 import com.xyzwps.lib.jdbc.method2sql.MethodName2Sql;
 import com.xyzwps.lib.jdbc.method2sql.SqlInfo;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
-import java.lang.reflect.ParameterizedType;
 import java.sql.*;
 import java.util.*;
 import java.util.function.Supplier;
 
 // TODO: try to use cache to improve performance
-record DaoMethodInvocationHandler(Class<?> daoInterface, Supplier<TransactionContext> ctxGetter) implements InvocationHandler {
+public
+record DaoMethodInvocationHandler(Class<?> daoInterface,
+                                  Supplier<TransactionContext> ctxGetter) implements InvocationHandler {
 
     private static final Object[] EMPTY_ARGS = new Object[0];
 
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-        try(var ctx = ctxGetter.get()) {
+        try (var ctx = ctxGetter.get()) {
             if (args == null) {
                 args = EMPTY_ARGS;
             }
 
             var $query = method.getAnnotation(Query.class);
             if ($query != null) {
-                return handleQuery(ctx, $query.sql(), method, args);
+                return handleQuery(ctx, $query.value(), method, args);
             }
 
             var $execute = method.getAnnotation(Execute.class);
@@ -80,25 +81,20 @@ record DaoMethodInvocationHandler(Class<?> daoInterface, Supplier<TransactionCon
     }
 
     private static Object handleQuery(TransactionContext ctx, String sql, Method method, Object[] args) throws SQLException {
-        var returnType = determineQueryReturnType(method);
-        var resultType = returnType.first();
-        var elementType = returnType.second();
+        var returnType = QueryResultInfo.from(method);
+        var resultType = returnType.resultType();
+        var elementType = returnType.elementType();
 
         try (var statement = execute(ctx, sql, method, args, false); var rs = statement.getResultSet()) {
             var list = ctx.rs2b().toList(rs, elementType);
-            return switch (resultType) {
-                case SINGLE -> list.isEmpty() ? DefaultValues.get(elementType) : list.getFirst();
-                case OPTIONAL -> list.isEmpty() ? Optional.empty() : Optional.of(list.getFirst());
-                case LIST -> list;
-                case LINKED_LIST -> new LinkedList<>(list);
-            };
+            return resultType.apply(list, elementType);
         }
     }
 
     private static Object handleExecute(TransactionContext ctx, String sql, Method method, Object[] args) throws SQLException {
-        var returnType = determineExecuteReturnType(method);
-        var resultType = returnType.first();
-        var elementType = returnType.second();
+        var returnType = ExecuteResultInfo.from(method);
+        var resultType = returnType.resultType();
+        var elementType = returnType.elementType();
 
         if (resultType == ExecuteResultType.BATCH) {
             var list = getListArgument(args);
@@ -143,82 +139,6 @@ record DaoMethodInvocationHandler(Class<?> daoInterface, Supplier<TransactionCon
             return list;
         }
         throw new DbException("The first argument of batch execute method must be a List.");
-    }
-
-    private static Pair<ExecuteResultType, Class<?>> determineExecuteReturnType(Method method) {
-        var returnType = method.getGenericReturnType();
-        if (method.getAnnotation(Batch.class) != null) {
-            if (returnType instanceof Class<?> clazz) {
-                if (!clazz.getName().equals("void")) {
-                    throw new DbException("The return type of batch execute method " + method.getName() + " must be void.");
-                }
-                var params = method.getParameters();
-                if (params.length != 1) {
-                    throw new DbException("The batch execute method " + method.getName() + " must have only one parameter.");
-                }
-                var paramType = params[0].getParameterizedType();
-                if (paramType instanceof Class<?> c && List.class.isAssignableFrom(c)) {
-                    return Pair.of(ExecuteResultType.BATCH, null);
-                } else if (paramType instanceof ParameterizedType pt) {
-                    var rawType = pt.getRawType();
-                    if (rawType instanceof Class<?> c && List.class.isAssignableFrom(c)) {
-                        return Pair.of(ExecuteResultType.BATCH, clazz);
-                    }
-                }
-                throw new DbException("The parameter of batch execute method " + method.getName() + " must be a List.");
-            }
-            throw new DbException("The return type of batch execute method " + method.getName() + " must be void.");
-        }
-
-        if (returnType instanceof Class<?> clazz) {
-            if (clazz.getName().equals("void")) {
-                return Pair.of(ExecuteResultType.VOID, null);
-            }
-            if (method.getAnnotation(GeneratedKeys.class) != null) {
-                return Pair.of(ExecuteResultType.GENERATED_KEYS, clazz);
-            }
-            if (clazz.equals(int.class) || clazz.equals(Integer.class) || clazz.equals(long.class) || clazz.equals(Long.class)) {
-                return Pair.of(ExecuteResultType.AFFECTED_ROWS, clazz);
-            }
-        }
-
-        throw new DbException("Unsupported return type of execute method " + method.getName() + ".");
-    }
-
-    private static Pair<QueryResultType, Class<?>> determineQueryReturnType(Method method) {
-        var returnType = method.getGenericReturnType();
-
-        if (returnType instanceof Class<?> clazz) {
-            if (clazz.getName().equals("void")) {
-                throw new DbException("The return type of query method " + method.getName() + " cannot be void.");
-            }
-            return Pair.of(QueryResultType.SINGLE, clazz);
-        }
-
-        if (returnType instanceof ParameterizedType pt) {
-            //noinspection ExtractMethodRecommender
-            var rawType = pt.getRawType();
-            QueryResultType resultType;
-            //noinspection IfCanBeSwitch
-            if (rawType.equals(Iterable.class) || rawType.equals(Collection.class) || rawType.equals(List.class) || rawType.equals(ArrayList.class)) {
-                resultType = QueryResultType.LIST;
-            } else if (rawType.equals(LinkedList.class)) {
-                resultType = QueryResultType.LINKED_LIST;
-            } else if (rawType.equals(Optional.class)) {
-                resultType = QueryResultType.OPTIONAL;
-            } else {
-                throw new DbException("Unsupported return type of query method " + method.getName() + ".");
-            }
-
-            var firstArg = pt.getActualTypeArguments()[0];
-            if (firstArg instanceof Class<?> clazz) {
-                return Pair.of(resultType, clazz);
-            } else {
-                throw new DbException("Unsupported return type of query method " + method.getName() + ".");
-            }
-        }
-
-        throw new DbException("Unsupported return type of query method " + method.getName() + ".");
     }
 
     private static Statement execute(TransactionContext ctx, String sql, Method method, Object[] args, boolean returnAutoGeneratedKeys) throws SQLException {
@@ -270,17 +190,4 @@ record DaoMethodInvocationHandler(Class<?> daoInterface, Supplier<TransactionCon
         }
     }
 
-    enum QueryResultType {
-        SINGLE,
-        LIST,
-        LINKED_LIST,
-        OPTIONAL
-    }
-
-    enum ExecuteResultType {
-        VOID,
-        BATCH,
-        AFFECTED_ROWS,
-        GENERATED_KEYS
-    }
 }

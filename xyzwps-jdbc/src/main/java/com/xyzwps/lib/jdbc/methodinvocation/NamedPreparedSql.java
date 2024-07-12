@@ -1,7 +1,8 @@
-package com.xyzwps.lib.jdbc;
+package com.xyzwps.lib.jdbc.methodinvocation;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Pattern;
 
 /**
@@ -22,6 +23,8 @@ record NamedPreparedSql(String sql, List<String> names) {
 
     private static final Pattern NAMED_PARAMS = Pattern.compile("(:([a-zA-Z_][a-zA-Z0-9_]*\\.)?[a-zA-Z_][a-zA-Z0-9_]*)");
 
+    private static final ConcurrentHashMap<String, NamedPreparedSql> CACHE = new ConcurrentHashMap<>();
+
     /**
      * Create a NamedPreparedSql object. For example:
      * <pre>
@@ -38,7 +41,12 @@ record NamedPreparedSql(String sql, List<String> names) {
      * @param sql named-parameter sql
      * @return NamedPreparedSql object
      */
-    public static NamedPreparedSql create(String sql) {
+    static NamedPreparedSql create(String sql) {
+        var cached = CACHE.get(sql);
+        if (cached != null) {
+            return cached;
+        }
+
         var params = new ArrayList<String>();
         var matcher = NAMED_PARAMS.matcher(sql);
         var psql = new StringBuilder();
@@ -49,10 +57,14 @@ record NamedPreparedSql(String sql, List<String> names) {
             params.add(matcher.group().substring(1));
         }
         if (start == 0) {
-            return new NamedPreparedSql(sql, List.of());
+            var np = new NamedPreparedSql(sql, List.of());
+            CACHE.putIfAbsent(sql, np);
+            return np;
         } else {
             psql.append(sql, start, sql.length());
-            return new NamedPreparedSql(psql.toString(), params);
+            var np = new NamedPreparedSql(psql.toString(), params);
+            CACHE.putIfAbsent(sql, np);
+            return np;
         }
     }
 

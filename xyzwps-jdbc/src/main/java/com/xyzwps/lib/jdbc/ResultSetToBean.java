@@ -1,6 +1,7 @@
 package com.xyzwps.lib.jdbc;
 
 import com.xyzwps.lib.beans.BeanUtils;
+import com.xyzwps.lib.jdbc.methodinvocation.InstanceUtils;
 
 import java.lang.reflect.Type;
 import java.math.BigDecimal;
