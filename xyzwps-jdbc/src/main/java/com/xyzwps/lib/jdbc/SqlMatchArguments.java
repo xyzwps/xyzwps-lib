@@ -2,7 +2,6 @@ package com.xyzwps.lib.jdbc;
 
 import com.xyzwps.lib.bedrock.BeanParam;
 import com.xyzwps.lib.bedrock.Param;
-import com.xyzwps.lib.bedrock.StringUtils;
 import com.xyzwps.lib.dollar.Pair;
 import com.xyzwps.lib.jdbc.method2sql.BooleanList;
 
@@ -10,6 +9,8 @@ import java.lang.reflect.Method;
 import java.text.MessageFormat;
 import java.util.*;
 import java.util.regex.Pattern;
+
+import static com.xyzwps.lib.dollar.Dollar.*;
 
 class SqlMatchArguments {
 
@@ -47,7 +48,7 @@ class SqlMatchArguments {
             throw new DbException("The number of arguments in method " + method.getName() + " does not match the number of placeholders in SQL.");
         }
 
-        var formattedSql = StringUtils.replaceAll(npsql.sql(), IN_PLACEHOLDER, i -> "{" + i + "}");
+        var formattedSql = $.replaceAll(npsql.sql(), IN_PLACEHOLDER, i -> "{" + i + "}");
         List<Object> newArgs = new ArrayList<>();
         List<String> formatArgs = new ArrayList<>();
 

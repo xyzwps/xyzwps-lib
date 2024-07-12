@@ -3,6 +3,8 @@ package com.xyzwps.lib.dollar.util;
 import org.junit.jupiter.api.Test;
 
 
+import java.util.regex.Pattern;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 import static com.xyzwps.lib.dollar.Dollar.$.*;
@@ -165,4 +167,15 @@ class StringUtilsTests {
         assertEquals("abc", takeRight("abc", 100));
     }
 
+
+    @Test
+    void replaceAll3() {
+        var pattern = Pattern.compile("\\{}");
+
+        assertNull(replaceAll(null, null, null));
+        assertEquals("abc", replaceAll("abc", null, null));
+        assertEquals("abc", replaceAll("abc", pattern, null));
+
+        assertEquals("a={0} b={1} c={2}", replaceAll("a={} b={} c={}", pattern, i -> "{" + i + "}"));
+    }
 }
