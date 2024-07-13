@@ -1,7 +1,10 @@
 package com.xyzwps.lib.express;
 
+import com.xyzwps.lib.bedrock.lang.DefaultValues;
 import com.xyzwps.lib.express.util.SimpleMultiValuesMap;
 
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
@@ -34,6 +37,48 @@ public final class HttpSearchParams extends SimpleMultiValuesMap<String, String>
             params.append(name, value);
         }
         return params;
+    }
+
+    @SuppressWarnings("unchecked")
+    public <T> T get(String name, Class<T> type) {
+        // TODO: 类型转化
+        var value = this.get(name);
+        if (value == null) {
+            return (T) DefaultValues.get(type);
+        }
+
+        if (type == String.class) {
+            return (T) value;
+        }
+        if (type == Short.class || type == short.class) {
+            return (T) Short.valueOf(value);
+        }
+        if (type == Integer.class || type == int.class) {
+            return (T) Integer.valueOf(value);
+        }
+        if (type == Long.class || type == long.class) {
+            return (T) Long.valueOf(value);
+        }
+        if (type == Double.class || type == double.class) {
+            return (T) Double.valueOf(value);
+        }
+        if (type == Float.class || type == float.class) {
+            return (T) Float.valueOf(value);
+        }
+        if (type == Boolean.class || type == boolean.class) {
+            return (T) Boolean.valueOf(value);
+        }
+        if (type == BigInteger.class) {
+            return (T) new BigInteger(value);
+        }
+        if (type == BigDecimal.class) {
+            return (T) new BigDecimal(value);
+        }
+        if (type.isEnum()) {
+            return (T) Enum.valueOf((Class<Enum>) type, value);
+        }
+
+        throw new UnsupportedOperationException("Unsupported type: " + type.getName());
     }
 
     private static String decode(String str) {

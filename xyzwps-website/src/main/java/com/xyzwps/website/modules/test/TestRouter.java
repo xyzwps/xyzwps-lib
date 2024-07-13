@@ -3,7 +3,6 @@ package com.xyzwps.website.modules.test;
 import com.xyzwps.lib.express.filter.BasicAuth;
 import com.xyzwps.lib.express.filter.Router;
 import com.xyzwps.website.conf.Configurations;
-import jakarta.inject.Provider;
 import jakarta.inject.Singleton;
 import lombok.extern.slf4j.Slf4j;
 

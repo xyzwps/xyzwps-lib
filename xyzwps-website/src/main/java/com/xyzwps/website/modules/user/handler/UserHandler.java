@@ -1,10 +1,6 @@
 package com.xyzwps.website.modules.user.handler;
 
-import com.xyzwps.lib.express.Filter;
-import com.xyzwps.lib.express.Handler;
-import com.xyzwps.lib.express.HttpRequest;
-import com.xyzwps.lib.express.HttpResponse;
-import com.xyzwps.website.Person;
+import com.xyzwps.website.modules.test.Person;
 import com.xyzwps.website.filter.JsonHandler;
 import jakarta.inject.Singleton;
 
