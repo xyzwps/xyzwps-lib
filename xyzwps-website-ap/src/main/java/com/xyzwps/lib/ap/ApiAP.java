@@ -1,6 +1,10 @@
 package com.xyzwps.lib.ap;
 
 import com.google.auto.service.AutoService;
+import com.xyzwps.lib.ap.dsl.AnnotationElement;
+import com.xyzwps.lib.ap.dsl.ClassElement;
+import com.xyzwps.lib.ap.dsl.FieldElement;
+import com.xyzwps.lib.ap.dsl.ToJavaClassVisitor;
 
 import javax.annotation.processing.AbstractProcessor;
 import javax.annotation.processing.Processor;
@@ -59,6 +63,15 @@ public class ApiAP extends AbstractProcessor {
         var apiPrefix = typeElement.getAnnotation(API.class).value();
 
         var generatedClassName = simpleName + "RouterAP";
+
+        var generatedClass = new ClassElement(packageName, generatedClassName)
+                .shouldBePublic()
+                .addAnnotation(new AnnotationElement("jakarta.inject", "Singleton"))
+                .addField(new FieldElement(packageName, simpleName, "apis").shouldBePrivate().shouldBeFinal());
+        var toJavaClass = new ToJavaClassVisitor();
+        generatedClass.visit(toJavaClass);
+        System.out.println(toJavaClass.toJavaClass());
+
 
         var sb = new StringBuilder();
         sb.append("package ").append(packageName).append(";\n");

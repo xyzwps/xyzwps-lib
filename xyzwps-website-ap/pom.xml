@@ -24,6 +24,12 @@
             <artifactId>auto-service-annotations</artifactId>
             <version>${version.auto-service}</version>
         </dependency>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>${app.version.lombok}</version>
+            <scope>provided</scope>
+        </dependency>
     </dependencies>
 
     <build>
@@ -37,6 +43,11 @@
                     <target>${java.version}</target>
                     <encoding>UTF-8</encoding>
                     <annotationProcessorPaths>
+                        <path>
+                            <groupId>org.projectlombok</groupId>
+                            <artifactId>lombok</artifactId>
+                            <version>${app.version.lombok}</version>
+                        </path>
                         <path>
                             <groupId>com.google.auto.service</groupId>
                             <artifactId>auto-service</artifactId>
