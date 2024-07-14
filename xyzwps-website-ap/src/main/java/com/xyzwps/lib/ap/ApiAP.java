@@ -62,16 +62,18 @@ public class ApiAP extends AbstractProcessor {
         var apiPrefix = typeElement.getAnnotation(API.class).value();
 
         var generatedClassName = simpleName + "RouterAP";
+
         var generatedClassType = new FullTypeNameElement(packageName, generatedClassName);
-
         var apiClassType = new FullTypeNameElement(packageName, simpleName);
-
         var annoSingleton = new FullTypeNameElement("jakarta.inject", "Singleton");
+        var routerType = new FullTypeNameElement("com.xyzwps.lib.express.filter", "Router");
 
         var generatedClass = new ClassElement(generatedClassType)
                 .shouldBePublic()
                 .addAnnotation(new AnnotationElement(annoSingleton))
-                .addField(new FieldElement(apiClassType, "apis").shouldBePrivate().shouldBeFinal());
+                .addField(new FieldElement(apiClassType, "apis").shouldBePrivate().shouldBeFinal())
+                .addMethod(new MethodElement(null, "buildApis")
+                        .addArgument(new ArgumentElement(routerType, "router")));
         var toJavaClass = new ToJavaClassVisitor();
         generatedClass.visit(toJavaClass);
         System.out.println(toJavaClass.toJavaClass());

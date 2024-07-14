@@ -14,6 +14,7 @@ public final class ClassElement implements Element {
 
     private final List<FieldElement> fields = new ArrayList<>();
     private final List<AnnotationElement> annotations = new ArrayList<>();
+    private final List<MethodElement> methods = new ArrayList<>();
 
     public ClassElement(FullTypeNameElement type) {
         this.type = type;
@@ -37,6 +38,13 @@ public final class ClassElement implements Element {
     public ClassElement addField(FieldElement fieldElement) {
         if (fieldElement != null) {
             this.fields.add(fieldElement);
+        }
+        return this;
+    }
+
+    public ClassElement addMethod(MethodElement methodElement) {
+        if (methodElement != null) {
+            this.methods.add(methodElement);
         }
         return this;
     }

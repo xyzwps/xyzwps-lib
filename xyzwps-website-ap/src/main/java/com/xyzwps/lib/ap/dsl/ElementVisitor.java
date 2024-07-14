@@ -11,4 +11,6 @@ public interface ElementVisitor {
     void visit(MethodElement method);
 
     void visit(FullTypeNameElement fullTypeName);
+
+    void visit(ArgumentElement argument);
 }

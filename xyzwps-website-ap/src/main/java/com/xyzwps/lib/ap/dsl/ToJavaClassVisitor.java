@@ -48,6 +48,8 @@ public class ToJavaClassVisitor implements ElementVisitor {
         this.tabs--;
         appendTabs().append("}\n");
 
+        e.getMethods().forEach(this::visit);
+
         sb.append("}\n");
     }
 
@@ -71,13 +73,23 @@ public class ToJavaClassVisitor implements ElementVisitor {
     }
 
     @Override
-    public void visit(MethodElement methodElement) {
+    public void visit(MethodElement e) {
+        // TODO: modifiers
 
+        var returnType = e.getReturnType() == null ? "void" : e.getReturnType().getClassName();
+
+        e.getAnnotations().forEach(this::visit);
+        appendTabs().append("public ").append(returnType).append(" ").append(e.getName()).append("() {\n");
+
+        appendTabs().append("}\n");
     }
 
     @Override
     public void visit(FullTypeNameElement fullTypeName) {
 
+    }
+
+    public void visit(ArgumentElement argumentElement) {
     }
 
     public String toJavaClass() {
