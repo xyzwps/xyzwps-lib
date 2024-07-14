@@ -13,7 +13,11 @@ public final class MethodElement implements Element {
     private final List<AnnotationElement> annotations = new ArrayList<>();
     private final List<ArgumentElement> arguments = new ArrayList<>();
 
-    // TODO: 重构 modifier
+    private AccessLevel accessLevel = AccessLevel.PUBLIC;
+
+    private final List<String> lines = new ArrayList<>();
+
+    private boolean isStatic = false;
 
     public MethodElement(FullTypeNameElement returnType, String name) {
         this.returnType = returnType;
@@ -30,6 +34,25 @@ public final class MethodElement implements Element {
     public MethodElement addArgument(ArgumentElement argumentElement) {
         if (argumentElement != null) {
             this.arguments.add(argumentElement);
+        }
+        return this;
+    }
+
+    public MethodElement accessLevel(AccessLevel accessLevel) {
+        if (accessLevel != null) {
+            this.accessLevel = accessLevel;
+        }
+        return this;
+    }
+
+    public MethodElement isStatic(boolean isStatic) {
+        this.isStatic = isStatic;
+        return this;
+    }
+
+    public MethodElement addLine(String line, Object... args) {
+        if (line != null) {
+            this.lines.add(String.format(line, args));
         }
         return this;
     }

@@ -6,7 +6,8 @@ public interface ElementVisitor {
 
     void visit(FieldElement field);
 
-    void visit(AnnotationElement annotation);
+    // TODO: 这个 api 有点奇怪，需要重构
+    void visit(AnnotationElement annotation, boolean inline);
 
     void visit(MethodElement method);
 

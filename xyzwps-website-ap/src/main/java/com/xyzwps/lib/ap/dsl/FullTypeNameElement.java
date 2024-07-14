@@ -17,4 +17,8 @@ public class FullTypeNameElement implements Element {
     public void visit(ElementVisitor visitor) {
         visitor.visit(this);
     }
+
+    public String getFullName() {
+        return packageName + "." + className;
+    }
 }

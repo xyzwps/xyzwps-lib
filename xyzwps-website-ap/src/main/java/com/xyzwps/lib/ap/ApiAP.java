@@ -9,11 +9,17 @@ import javax.annotation.processing.RoundEnvironment;
 import javax.annotation.processing.SupportedAnnotationTypes;
 import javax.lang.model.element.*;
 import javax.lang.model.element.Element;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.UncheckedIOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import static com.xyzwps.lib.ap.dsl.AccessLevel.*;
 
 @AutoService(Processor.class)
 @SupportedAnnotationTypes("com.xyzwps.lib.ap.API")
@@ -40,8 +46,8 @@ public class ApiAP extends AbstractProcessor {
                             .filter(it -> !it.getSimpleName().toString().equals("<init>"))
                             .collect(Collectors.toList());
                     if (!methods.isEmpty()) {
-                        generateRouterClass(typeElement, methods);
-                        writeJavaFile();
+                        var source = generateRouterClass(typeElement, methods);
+                        writeJavaFile(source.getKey(), source.getValue());
                     }
                 }
             }
@@ -49,11 +55,18 @@ public class ApiAP extends AbstractProcessor {
         return true;
     }
 
-    private static void writeJavaFile() {
-        // TODO:
+    private void writeJavaFile(FullTypeNameElement generatedClassName, String sourceCode) {
+        try {
+            var sourceFile = processingEnv.getFiler().createSourceFile(generatedClassName.getFullName());
+            try (var out = new PrintWriter(sourceFile.openWriter())) {
+                out.write(sourceCode);
+            }
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
+        }
     }
 
-    private static void generateRouterClass(TypeElement typeElement, List<ExecutableElement> methods) {
+    private static Map.Entry<FullTypeNameElement, String> generateRouterClass(TypeElement typeElement, List<ExecutableElement> methods) {
         var daoClassName = typeElement.getQualifiedName().toString();
         var i = daoClassName.lastIndexOf(".");
         var packageName = daoClassName.substring(0, i);
@@ -67,59 +80,39 @@ public class ApiAP extends AbstractProcessor {
         var apiClassType = new FullTypeNameElement(packageName, simpleName);
         var annoSingleton = new FullTypeNameElement("jakarta.inject", "Singleton");
         var routerType = new FullTypeNameElement("com.xyzwps.lib.express.filter", "Router");
+        var httpMethodType = new FullTypeNameElement("com.xyzwps.lib.express", "HttpMethod");
+        var jsonType = new FullTypeNameElement("com.xyzwps.website.common", "JSON");
+        var routerMakerType = new FullTypeNameElement("com.xyzwps.website.filter", "RouterMaker");
+
+        var buildApisMethod = new MethodElement(null, "make")
+                .addArgument(new ArgumentElement(routerType, "router"))
+                .addLine("router");
+        handleMethods(methods, apiPrefix, buildApisMethod);
+        buildApisMethod.addLine(";");
 
         var generatedClass = new ClassElement(generatedClassType)
                 .shouldBePublic()
                 .addAnnotation(new AnnotationElement(annoSingleton))
-                .addField(new FieldElement(apiClassType, "apis").shouldBePrivate().shouldBeFinal())
-                .addMethod(new MethodElement(null, "buildApis")
-                        .addArgument(new ArgumentElement(routerType, "router")));
+                .addImplementedInterface(routerMakerType)
+                .addField(new FieldElement(apiClassType, "apis").accessLevel(PRIVATE).shouldBeFinal())
+                .addImport(httpMethodType)
+                .addImport(jsonType)
+                .addMethod(buildApisMethod);
         var toJavaClass = new ToJavaClassVisitor();
         generatedClass.visit(toJavaClass);
-        System.out.println(toJavaClass.toJavaClass());
-
-
-        var sb = new StringBuilder();
-        sb.append("package ").append(packageName).append(";\n");
-        sb.append('\n');
-        sb.append("import ").append(daoClassName).append(";\n");
-        sb.append("import com.xyzwps.lib.express.filter.Router;\n");
-        sb.append("import com.xyzwps.lib.express.HttpMethod;\n");
-        sb.append("import com.xyzwps.website.common.JSON;\n");
-        sb.append("import jakarta.inject.Singleton;\n");
-        sb.append("\n");
-        sb.append("@Singleton\n");
-        sb.append("public class ").append(generatedClassName).append(" {\n");
-        sb.append("\n");
-        sb.append("    private final ").append(simpleName).append(" apis;\n");
-        sb.append("\n");
-        sb.append("    public ").append(generatedClassName).append("(").append(simpleName).append(" apis) {\n");
-        sb.append("        this.apis = apis;\n");
-        sb.append("    }\n");
-        sb.append("\n");
-        sb.append("    public void register(Router router) {\n");
-        sb.append("        router\n");
-        for (var method : methods) {
-            var apiInfo = getApiInfo(method);
-            sb.append("    ");
-            sb.append("        .handle(HttpMethod.").append(apiInfo.method).append(", ")
-                    .append("\"").append(apiPrefix).append(apiInfo.path).append("\", ")
-                    .append("(req, res, next) -> {\n");
-            handleMethod(method, sb);
-            sb.append("            })\n");
-        }
-        sb.append("        ;\n");
-        sb.append("    }\n");
-
-        sb.append('}');
-
-        System.out.println(sb);
+        return Map.entry(generatedClassType, toJavaClass.toJavaClass());
     }
 
-    private static final String TAB4 = "                ";
+    private static void handleMethods(List<ExecutableElement> executableElements, String apiPrefix, MethodElement methodElement) {
+        for (var method : executableElements) {
+            handleMethod(method, apiPrefix, methodElement);
+        }
+    }
 
+    private static void handleMethod(ExecutableElement method, String apiPrefix, MethodElement e) {
+        var apiInfo = getApiInfo(method);
+        e.addLine("    .handle(HttpMethod.%s, \"%s\", (req, res, next) -> {", apiInfo.method, apiPrefix + apiInfo.path);
 
-    private static void handleMethod(ExecutableElement method, StringBuilder sb) {
         var params = method.getParameters();
         var argNames = new ArrayList<String>();
         for (var param : params) {
@@ -129,21 +122,19 @@ public class ApiAP extends AbstractProcessor {
                     var name = searchParam.value();
                     var argName = "sp_" + name;
                     argNames.add(argName);
-                    sb.append(TAB4)
-                            .append("var ").append(argName).append(" = req.searchParams().get(\"").append(name).append("\", ")
-                            .append(param.asType().toString()).append(".class);\n");
+                    e.addLine("        var %s = req.searchParams().get(\"%s\", %s.class);", argName, name, param.asType().toString());
                     continue;
                 }
             }
         }
 
-        // TODO: handle void
-        sb.append(TAB4).append("var result = apis.").append(method.getSimpleName()).append("(")
-                .append(String.join(", ", argNames)).append(");\n");
-        sb.append(TAB4).append("res.ok();\n");
-        sb.append(TAB4).append("res.headers().set(\"Content-Type\", \"application/json\");\n");
-        sb.append(TAB4).append("res.send(JSON.stringify(result).getBytes());\n");
+        e.addLine("        var result = apis.%s(%s);", method.getSimpleName(), String.join(", ", argNames));
+        e.addLine("        res.ok();");
+        e.addLine("        res.headers().set(\"Content-Type\", \"application/json\");");
+        e.addLine("        res.send(JSON.stringify(result).getBytes());");
+        e.addLine("    })");
     }
+
 
     private static ApiInfo getApiInfo(ExecutableElement method) {
         var get = method.getAnnotation(GET.class);

@@ -10,7 +10,7 @@ public final class FieldElement implements Element {
     private final FullTypeNameElement type;
     private final String name;
 
-    private boolean isPrivate = false;
+    private AccessLevel accessLevel = AccessLevel.PRIVATE;
     private boolean isFinal = false;
     private boolean isStatic = false;
 
@@ -26,8 +26,10 @@ public final class FieldElement implements Element {
         visitor.visit(this);
     }
 
-    public FieldElement shouldBePrivate() {
-        this.isPrivate = true;
+    public FieldElement accessLevel(AccessLevel accessLevel) {
+        if (accessLevel != null) {
+            this.accessLevel = accessLevel;
+        }
         return this;
     }
 

@@ -14,7 +14,10 @@ public class GetImportsVisitor implements ElementVisitor {
     @Override
     public void visit(ClassElement e) {
         e.getFields().forEach(this::visit);
-        e.getAnnotations().forEach(this::visit);
+        e.getAnnotations().forEach(a -> this.visit(a, true));
+        e.getMethods().forEach(this::visit);
+        e.getImports().forEach(this::visit);
+        e.getImplementedInterfaces().forEach(this::visit);
     }
 
     @Override
@@ -23,7 +26,7 @@ public class GetImportsVisitor implements ElementVisitor {
     }
 
     @Override
-    public void visit(AnnotationElement e) {
+    public void visit(AnnotationElement e, boolean inline) {
         this.visit(e.getType());
     }
 
@@ -33,7 +36,7 @@ public class GetImportsVisitor implements ElementVisitor {
             this.visit(returnType);
         }
 
-        e.getAnnotations().forEach(this::visit);
+        e.getAnnotations().forEach(a -> this.visit(a, true));
         e.getArguments().forEach(this::visit);
     }
 

@@ -16,6 +16,10 @@ public final class ClassElement implements Element {
     private final List<AnnotationElement> annotations = new ArrayList<>();
     private final List<MethodElement> methods = new ArrayList<>();
 
+    private final List<FullTypeNameElement> implementedInterfaces = new ArrayList<>();
+
+    private final List<FullTypeNameElement> imports = new ArrayList<>();
+
     public ClassElement(FullTypeNameElement type) {
         this.type = type;
     }
@@ -52,6 +56,20 @@ public final class ClassElement implements Element {
     public ClassElement addAnnotation(AnnotationElement annotationElement) {
         if (annotationElement != null) {
             this.annotations.add(annotationElement);
+        }
+        return this;
+    }
+
+    public ClassElement addImplementedInterface(FullTypeNameElement fullTypeNameElement) {
+        if (fullTypeNameElement != null) {
+            this.implementedInterfaces.add(fullTypeNameElement);
+        }
+        return this;
+    }
+
+    public ClassElement addImport(FullTypeNameElement fullTypeNameElement) {
+        if (fullTypeNameElement != null) {
+            this.imports.add(fullTypeNameElement);
         }
         return this;
     }

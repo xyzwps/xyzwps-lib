@@ -23,10 +23,21 @@ public class ToJavaClassVisitor implements ElementVisitor {
         imports.getImports().forEach(i -> sb.append("import ").append(i).append(";\n"));
         sb.append("\n");
 
-        e.getAnnotations().forEach(this::visit);
+        e.getAnnotations().forEach(a -> this.visit(a, false));
         sb.append(e.isPublic() ? "public " : "")
                 .append(e.isFinal() ? "final " : "")
-                .append("class ").append(className).append(" {\n");
+                .append("class ").append(className);
+
+        if (!e.getImplementedInterfaces().isEmpty()) {
+            sb.append(" implements ");
+            for (int j = 0; j < e.getImplementedInterfaces().size(); j++) {
+                var itf = e.getImplementedInterfaces().get(j);
+                if (j > 0) sb.append(", ");
+                sb.append(itf.getClassName());
+            }
+        }
+
+        sb.append(" {\n");
 
         this.tabs++;
         e.getFields().forEach(this::visit);
@@ -55,32 +66,59 @@ public class ToJavaClassVisitor implements ElementVisitor {
 
     @Override
     public void visit(FieldElement e) {
-        e.getAnnotations().forEach(this::visit);
+        e.getAnnotations().forEach(a -> this.visit(a, false));
         var type = e.getType();
         appendTabs()
-                .append(e.isPrivate() ? "private " : "")
+                .append(switch (e.getAccessLevel()) {
+                    case PUBLIC -> "public ";
+                    case PRIVATE -> "private ";
+                    case PROTECTED -> "protected ";
+                    case PACKAGE -> "";
+                })
                 .append(e.isStatic() ? "static " : "")
                 .append(e.isFinal() ? "final " : "")
                 .append(type.getClassName()).append(" ").append(e.getName()).append(";\n");
     }
 
     @Override
-    public void visit(AnnotationElement e) {
-        appendTabs()
-                .append("@").append(e.getType().getClassName()).append("(");
-        // TODO: values
-        sb.append(")\n");
+    public void visit(AnnotationElement e, boolean inline) {
+        if (inline) {
+            sb.append("@").append(e.getType().getClassName()).append("(");
+            // TODO: values
+            sb.append(") ");
+        } else {
+
+            appendTabs()
+                    .append("@").append(e.getType().getClassName()).append("(");
+            // TODO: values
+            sb.append(")\n");
+        }
     }
 
     @Override
     public void visit(MethodElement e) {
-        // TODO: modifiers
-
         var returnType = e.getReturnType() == null ? "void" : e.getReturnType().getClassName();
+        e.getAnnotations().forEach(a -> this.visit(a, false));
+        appendTabs()
+                .append(switch (e.getAccessLevel()) {
+                    case PACKAGE -> " ";
+                    case PUBLIC -> "public ";
+                    case PRIVATE -> "private ";
+                    case PROTECTED -> "protected ";
+                })
+                .append(e.isStatic() ? "static " : "")
+                .append(returnType).append(" ").append(e.getName()).append("(");
+        for (int i = 0; i < e.getArguments().size(); i++) {
+            var arg = e.getArguments().get(i);
+            if (i > 0) sb.append(", ");
 
-        e.getAnnotations().forEach(this::visit);
-        appendTabs().append("public ").append(returnType).append(" ").append(e.getName()).append("() {\n");
-
+            arg.getAnnotations().forEach(a -> this.visit(a, true));
+            sb.append(arg.getType().getClassName()).append(" ").append(arg.getName());
+        }
+        sb.append(") {\n");
+        this.tabs++;
+        e.getLines().forEach(l -> appendTabs().append(l).append("\n"));
+        this.tabs--;
         appendTabs().append("}\n");
     }
 

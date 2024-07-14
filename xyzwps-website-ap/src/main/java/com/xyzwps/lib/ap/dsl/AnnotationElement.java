@@ -18,7 +18,7 @@ public final class AnnotationElement implements Element {
 
     @Override
     public void visit(ElementVisitor visitor) {
-        visitor.visit(this);
+        visitor.visit(this, false);
     }
 
     public AnnotationElement set(String name, String value) {
