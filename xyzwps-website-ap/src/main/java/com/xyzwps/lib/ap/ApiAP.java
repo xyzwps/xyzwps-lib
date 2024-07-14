@@ -1,19 +1,18 @@
 package com.xyzwps.lib.ap;
 
 import com.google.auto.service.AutoService;
-import com.xyzwps.lib.ap.dsl.AnnotationElement;
-import com.xyzwps.lib.ap.dsl.ClassElement;
-import com.xyzwps.lib.ap.dsl.FieldElement;
-import com.xyzwps.lib.ap.dsl.ToJavaClassVisitor;
+import com.xyzwps.lib.ap.dsl.*;
 
 import javax.annotation.processing.AbstractProcessor;
 import javax.annotation.processing.Processor;
 import javax.annotation.processing.RoundEnvironment;
 import javax.annotation.processing.SupportedAnnotationTypes;
 import javax.lang.model.element.*;
+import javax.lang.model.element.Element;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @AutoService(Processor.class)
@@ -39,7 +38,7 @@ public class ApiAP extends AbstractProcessor {
                             .flatMap(it -> it instanceof ExecutableElement executableElement
                                     ? Stream.of(executableElement) : Stream.of())
                             .filter(it -> !it.getSimpleName().toString().equals("<init>"))
-                            .toList();
+                            .collect(Collectors.toList());
                     if (!methods.isEmpty()) {
                         generateRouterClass(typeElement, methods);
                         writeJavaFile();
@@ -63,11 +62,16 @@ public class ApiAP extends AbstractProcessor {
         var apiPrefix = typeElement.getAnnotation(API.class).value();
 
         var generatedClassName = simpleName + "RouterAP";
+        var generatedClassType = new FullTypeNameElement(packageName, generatedClassName);
 
-        var generatedClass = new ClassElement(packageName, generatedClassName)
+        var apiClassType = new FullTypeNameElement(packageName, simpleName);
+
+        var annoSingleton = new FullTypeNameElement("jakarta.inject", "Singleton");
+
+        var generatedClass = new ClassElement(generatedClassType)
                 .shouldBePublic()
-                .addAnnotation(new AnnotationElement("jakarta.inject", "Singleton"))
-                .addField(new FieldElement(packageName, simpleName, "apis").shouldBePrivate().shouldBeFinal());
+                .addAnnotation(new AnnotationElement(annoSingleton))
+                .addField(new FieldElement(apiClassType, "apis").shouldBePrivate().shouldBeFinal());
         var toJavaClass = new ToJavaClassVisitor();
         generatedClass.visit(toJavaClass);
         System.out.println(toJavaClass.toJavaClass());

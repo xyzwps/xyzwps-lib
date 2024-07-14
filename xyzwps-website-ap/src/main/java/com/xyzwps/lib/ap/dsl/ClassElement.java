@@ -7,8 +7,7 @@ import java.util.List;
 
 @Getter
 public final class ClassElement implements Element {
-    private final String packageName;
-    private final String className;
+    private final FullTypeNameElement type;
 
     private boolean isFinal = false;
     private boolean isPublic = false;
@@ -16,9 +15,8 @@ public final class ClassElement implements Element {
     private final List<FieldElement> fields = new ArrayList<>();
     private final List<AnnotationElement> annotations = new ArrayList<>();
 
-    public ClassElement(String packageName, String className) {
-        this.packageName = packageName;
-        this.className = className;
+    public ClassElement(FullTypeNameElement type) {
+        this.type = type;
     }
 
     @Override

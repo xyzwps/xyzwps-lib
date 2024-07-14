@@ -18,11 +18,19 @@ public class GetImportsVisitor implements ElementVisitor {
 
     @Override
     public void visit(FieldElement e) {
-        imports.add(e.getTypePackageName() + "." + e.getTypeClassName());
+        var type = e.getType();
+        imports.add(type.getPackageName() + "." + type.getClassName());
     }
 
     @Override
     public void visit(AnnotationElement e) {
-        imports.add(e.getAnnoPackageName() + "." + e.getAnnoClassName());
+        var type = e.getType();
+        imports.add(type.getPackageName() + "." + type.getClassName());
+    }
+
+    public void visit(MethodElement e) {
+    }
+
+    public void visit(FullTypeNameElement e) {
     }
 }

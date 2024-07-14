@@ -7,8 +7,7 @@ import java.util.List;
 
 @Getter
 public final class FieldElement implements Element {
-    private final String typePackageName;
-    private final String typeClassName;
+    private final FullTypeNameElement type;
     private final String name;
 
     private boolean isPrivate = false;
@@ -17,9 +16,8 @@ public final class FieldElement implements Element {
 
     private final List<AnnotationElement> annotations = new ArrayList<>();
 
-    public FieldElement(String typePackageName, String typeClassName, String name) {
-        this.typePackageName = typePackageName;
-        this.typeClassName = typeClassName;
+    public FieldElement(FullTypeNameElement type, String name) {
+        this.type = type;
         this.name = name;
     }
 

@@ -8,14 +8,12 @@ import java.util.Map;
 @Getter
 public final class AnnotationElement implements Element {
 
-    public final String annoPackageName;
-    public final String annoClassName;
+    public final FullTypeNameElement type;
 
     private final Map<String, String> values = new HashMap<>();
 
-    public AnnotationElement(String annoPackageName, String annoClassName) {
-        this.annoPackageName = annoPackageName;
-        this.annoClassName = annoClassName;
+    public AnnotationElement(FullTypeNameElement type) {
+        this.type = type;
     }
 
     @Override
