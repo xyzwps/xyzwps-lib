@@ -3,13 +3,14 @@ package com.xyzwps.lib.ap;
 import com.google.auto.service.AutoService;
 import com.xyzwps.lib.ap.dsl.*;
 import com.xyzwps.lib.ap.util.CanonicalName;
+import com.xyzwps.lib.ap.util.FromTypeMirror;
 
 import javax.annotation.processing.AbstractProcessor;
 import javax.annotation.processing.Processor;
 import javax.annotation.processing.RoundEnvironment;
 import javax.annotation.processing.SupportedAnnotationTypes;
 import javax.lang.model.element.*;
-import javax.lang.model.type.MirroredTypesException;
+import javax.lang.model.type.*;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.UncheckedIOException;
@@ -154,7 +155,7 @@ public class ApiAP extends AbstractProcessor {
                     var name = searchParam.value();
                     var argName = "sp_" + name;
                     argNames.add(argName);
-                    e.addLine("        var %s = req.searchParams().get(\"%s\", %s.class);", argName, name, param.asType().toString());
+                    e.addLine("        var %s = req.searchParams().get(\"%s\", %s.class);", argName, name, typeCanonicalName(param.asType()));
                     continue;
                 }
             }
@@ -164,7 +165,7 @@ public class ApiAP extends AbstractProcessor {
                     var name = headerParam.value();
                     var argName = "hp_" + name;
                     argNames.add(argName);
-                    e.addLine("        var %s = req.header(\"%s\", %s.class);", argName, name, param.asType().toString());
+                    e.addLine("        var %s = req.header(\"%s\", %s.class);", argName, name, typeCanonicalName(param.asType()));
                     continue;
                 }
             }
@@ -174,7 +175,7 @@ public class ApiAP extends AbstractProcessor {
                     var name = pathParam.value();
                     var argName = "pp_" + name;
                     argNames.add(argName);
-                    e.addLine("        var %s = req.pathVariables().get(\"%s\", %s.class);", argName, name, param.asType().toString());
+                    e.addLine("        var %s = req.pathVariables().get(\"%s\", %s.class);", argName, name, typeCanonicalName(param.asType()));
                     continue;
                 }
             }
@@ -183,26 +184,26 @@ public class ApiAP extends AbstractProcessor {
                 if (bodyParam != null) {
                     var argName = "body";
                     argNames.add(argName);
-                    e.addLine("        var %s = req.json(%s.class, JSON.JM);", argName, param.asType().toString());
+                    e.addLine("        var %s = req.json(%s.class, JSON.JM);", argName, typeCanonicalName(param.asType()));
                     continue;
                 }
             }
             {
-                if (param.asType().toString().equals("com.xyzwps.lib.express.HttpRequest")) {
+                if (typeCanonicalName(param.asType()).equals("com.xyzwps.lib.express.HttpRequest")) {
                     var argName = "req";
                     argNames.add(argName);
                     continue;
                 }
             }
             {
-                if (param.asType().toString().equals("com.xyzwps.lib.express.HttpResponse")) {
+                if (typeCanonicalName(param.asType()).equals("com.xyzwps.lib.express.HttpResponse")) {
                     var argName = "res";
                     argNames.add(argName);
                     continue;
                 }
             }
 
-            throw new IllegalStateException("Unsupported parameter type: " + param.asType().toString());
+            throw new IllegalStateException("Unsupported parameter type: " + typeCanonicalName(param.asType()));
         }
 
         e.addLine("        var result = apis.%s(%s);", method.getSimpleName(), String.join(", ", argNames));
@@ -212,6 +213,10 @@ public class ApiAP extends AbstractProcessor {
         e.addLine("    })");
     }
 
+
+    private static String typeCanonicalName(TypeMirror mirror) {
+        return FromTypeMirror.canonicalName(mirror);
+    }
 
     private static ApiInfo getApiInfo(ExecutableElement method) {
         List<String> filters = new ArrayList<>();
@@ -297,7 +302,6 @@ public class ApiAP extends AbstractProcessor {
     private static String classNameToVarName(String className) {
         return className.substring(0, 1).toLowerCase() + className.substring(1);
     }
-
 
 
 }

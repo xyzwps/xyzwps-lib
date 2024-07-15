@@ -5,6 +5,9 @@ import com.xyzwps.lib.express.HttpRequest;
 import com.xyzwps.lib.express.filter.BasicAuth;
 import com.xyzwps.lib.express.filter.NoopFilter;
 import com.xyzwps.website.conf.Configurations;
+import io.avaje.validation.ValidMethod;
+import io.avaje.validation.constraints.NotEmpty;
+import io.avaje.validation.constraints.Positive;
 import jakarta.inject.Singleton;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -24,8 +27,9 @@ public class TestApis {
 
     private final Configurations conf;
 
+    @ValidMethod
     @GET("/get-person")
-    public Person getPerson(@SearchParam("id") int id) {
+    public Person getPerson(@SearchParam("id") @Positive(message = "Search param id should be positive.") int id) {
         return new Person(id, "张三");
     }
 
@@ -42,7 +46,7 @@ public class TestApis {
     }
 
     @GET("/:id")
-    public Map<String, Object> pathVar(@PathParam("id") String id, HttpRequest req) {
+    public Map<String, Object> pathVar(@PathParam("id") @NotEmpty(message = "Path param id should not be empty.") String id, HttpRequest req) {
         req.attribute("haha", "ha\nha");
 
         var map = new HashMap<String, Object>();
