@@ -9,6 +9,7 @@ import javax.annotation.processing.RoundEnvironment;
 import javax.annotation.processing.SupportedAnnotationTypes;
 import javax.lang.model.element.*;
 import javax.lang.model.element.Element;
+import javax.lang.model.type.MirroredTypesException;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.UncheckedIOException;
@@ -92,16 +93,18 @@ public class ApiAP extends AbstractProcessor {
         var jsonType = new FullTypeNameElement("com.xyzwps.website.common", "JSON");
         var routerMakerType = new FullTypeNameElement("com.xyzwps.website.filter", "RouterMaker");
 
-        var buildApisMethod = new MethodElement(null, "make")
-                .addArgument(new ArgumentElement(routerType, "router"))
-                .addLine("router");
-        handleMethods(methods, apiPrefix, buildApisMethod);
-        buildApisMethod.addLine(";");
-
         var generatedClass = new ClassElement(generatedClassType)
                 .shouldBePublic()
                 .addAnnotation(new AnnotationElement(annoSingleton))
-                .addImplementedInterface(routerMakerType)
+                .addImplementedInterface(routerMakerType);
+
+        var buildApisMethod = new MethodElement(null, "make")
+                .addArgument(new ArgumentElement(routerType, "router"))
+                .addLine("router");
+        handleMethods(generatedClass, methods, apiPrefix, buildApisMethod);
+        buildApisMethod.addLine(";");
+
+        generatedClass
                 .addField(new FieldElement(apiClassType, "apis").accessLevel(PRIVATE).shouldBeFinal())
                 .addImport(httpMethodType)
                 .addImport(jsonType)
@@ -113,15 +116,40 @@ public class ApiAP extends AbstractProcessor {
         return Map.entry(generatedClassType, toJavaClass.toJavaClass());
     }
 
-    private static void handleMethods(List<ExecutableElement> executableElements, String apiPrefix, MethodElement methodElement) {
+    private static void handleMethods(ClassElement classElement, List<ExecutableElement> executableElements, String apiPrefix, MethodElement methodElement) {
         for (var method : executableElements) {
-            handleMethod(method, apiPrefix, methodElement);
+            handleMethod(classElement, method, apiPrefix, methodElement);
         }
     }
 
-    private static void handleMethod(ExecutableElement method, String apiPrefix, MethodElement e) {
+    private static void handleMethod(ClassElement classElement, ExecutableElement method, String apiPrefix, MethodElement e) {
         var apiInfo = getApiInfo(method);
-        e.addLine("    .handle(HttpMethod.%s, \"%s\", (req, res, next) -> {", apiInfo.method, apiPrefix + apiInfo.path);
+
+        var filterFieldNames = new ArrayList<String>();
+        apiInfo.filters.forEach(it -> {
+            var i = it.lastIndexOf(".");
+            var packageName = it.substring(0, i);
+            var className = it.substring(i + 1);
+            var filterType = new FullTypeNameElement(packageName, className);
+            var filterFieldName = classNameToVarName(className);
+            classElement.addField(new FieldElement(filterType, filterFieldName).accessLevel(PRIVATE).shouldBeFinal());
+            filterFieldNames.add(filterFieldName);
+        });
+
+        var filterPart = new StringBuilder();
+        for (int i = 0; i < filterFieldNames.size(); i++) {
+            var name = filterFieldNames.get(i);
+            if (i == 0) {
+                filterPart.append(name);
+            } else {
+                filterPart.append(".andThen(").append(name).append(")");
+            }
+        }
+        if (!filterFieldNames.isEmpty()) {
+            filterPart.append(",");
+        }
+
+        e.addLine("    .%s(\"%s\", %s (req, res) -> {", apiInfo.method, apiPrefix + apiInfo.path, filterPart);
 
         var params = method.getParameters();
         var argNames = new ArrayList<String>();
@@ -192,35 +220,52 @@ public class ApiAP extends AbstractProcessor {
 
 
     private static ApiInfo getApiInfo(ExecutableElement method) {
+        List<String> filters = new ArrayList<>();
+
         var get = method.getAnnotation(GET.class);
         if (get != null) {
-            return new ApiInfo("GET", get.value());
+            try {
+                for (var filter : get.filters()) {
+                    filters.add(filter.getCanonicalName());
+                }
+            } catch (MirroredTypesException e) {
+                for (var type : e.getTypeMirrors()) {
+                    filters.add(type.toString());
+                }
+            }
+            return new ApiInfo("get", get.value(), filters);
         }
 
         var post = method.getAnnotation(POST.class);
         if (post != null) {
-            return new ApiInfo("POST", post.value());
+            return new ApiInfo("post", post.value(), filters);
         }
 
         var put = method.getAnnotation(PUT.class);
         if (put != null) {
-            return new ApiInfo("PUT", put.value());
+            return new ApiInfo("put", put.value(), filters);
         }
 
         var delete = method.getAnnotation(DELETE.class);
         if (delete != null) {
-            return new ApiInfo("DELETE", delete.value());
+            return new ApiInfo("delete", delete.value(), filters);
         }
 
         var patch = method.getAnnotation(PATCH.class);
         if (patch != null) {
-            return new ApiInfo("PATCH", patch.value());
+            return new ApiInfo("patch", patch.value(), filters);
         }
 
         // TODO: more methods
         throw new RuntimeException("Maybe a bug!");
     }
 
-    private record ApiInfo(String method, String path) {
+    private record ApiInfo(String method, String path, List<String> filters) {
     }
+
+
+    private static String classNameToVarName(String className) {
+        return className.substring(0, 1).toLowerCase() + className.substring(1);
+    }
+
 }

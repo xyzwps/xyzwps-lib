@@ -82,6 +82,14 @@ public class Router {
         }
     }
 
+    public Router handle(HttpMethod method, String path, Filter filter, Handler handler) {
+        return handle(method, path, filter.andThen(handler.toFilter()));
+    }
+
+    public Router handle(HttpMethod method, String path, Handler handler) {
+        return handle(method, path, handler.toFilter());
+    }
+
     public Router handle(HttpMethod method, String path, Filter filter) {
         Args.notNull(method, "Argument method cannot be null");
         Args.notNull(path, "Argument path cannot be null");
@@ -112,32 +120,96 @@ public class Router {
         return handle(HttpMethod.GET, path, filter);
     }
 
+    public Router get(String path, Handler handler) {
+        return handle(HttpMethod.GET, path, handler);
+    }
+
+    public Router get(String path, Filter filter, Handler handler) {
+        return handle(HttpMethod.GET, path, filter, handler);
+    }
+
     public Router post(String path, Filter filter) {
         return handle(HttpMethod.POST, path, filter);
+    }
+
+    public Router post(String path, Handler handler) {
+        return handle(HttpMethod.POST, path, handler);
+    }
+
+    public Router post(String path, Filter filter, Handler handler) {
+        return handle(HttpMethod.POST, path, filter, handler);
     }
 
     public Router put(String path, Filter filter) {
         return handle(HttpMethod.PUT, path, filter);
     }
 
+    public Router put(String path, Handler handler) {
+        return handle(HttpMethod.PUT, path, handler);
+    }
+
+    public Router put(String path, Filter filter, Handler handler) {
+        return handle(HttpMethod.PUT, path, filter, handler);
+    }
+
     public Router delete(String path, Filter filter) {
         return handle(HttpMethod.DELETE, path, filter);
+    }
+
+    public Router delete(String path, Handler handler) {
+        return handle(HttpMethod.DELETE, path, handler);
+    }
+
+    public Router delete(String path, Filter filter, Handler handler) {
+        return handle(HttpMethod.DELETE, path, filter, handler);
     }
 
     public Router patch(String path, Filter filter) {
         return handle(HttpMethod.PATCH, path, filter);
     }
 
+    public Router patch(String path, Handler handler) {
+        return handle(HttpMethod.PATCH, path, handler);
+    }
+
+    public Router patch(String path, Filter filter, Handler handler) {
+        return handle(HttpMethod.PATCH, path, filter, handler);
+    }
+
     public Router head(String path, Filter filter) {
         return handle(HttpMethod.HEAD, path, filter);
+    }
+
+    public Router head(String path, Handler handler) {
+        return handle(HttpMethod.HEAD, path, handler);
+    }
+
+    public Router head(String path, Filter filter, Handler handler) {
+        return handle(HttpMethod.HEAD, path, filter, handler);
     }
 
     public Router options(String path, Filter filter) {
         return handle(HttpMethod.OPTIONS, path, filter);
     }
 
+    public Router options(String path, Handler handler) {
+        return handle(HttpMethod.OPTIONS, path, handler);
+    }
+
+    public Router options(String path, Filter filter, Handler handler) {
+        return handle(HttpMethod.OPTIONS, path, filter, handler);
+    }
+
     public Router trace(String path, Filter filter) {
         return handle(HttpMethod.TRACE, path, filter);
+    }
+
+    public Router trace(String path, Handler handler) {
+        return handle(HttpMethod.TRACE, path, handler);
+    }
+
+    public Router trace(String path, Filter filter, Handler handler) {
+        return handle(HttpMethod.TRACE, path, filter, handler);
     }
 
     public Router nest(String prefix, Nest builder) {

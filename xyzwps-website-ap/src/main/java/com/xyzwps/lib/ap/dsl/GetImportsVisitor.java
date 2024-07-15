@@ -13,7 +13,7 @@ public class GetImportsVisitor implements ElementVisitor {
 
     @Override
     public void visit(ClassElement e) {
-        e.getFields().forEach(this::visit);
+        e.getFields().forEach((key, value) -> value.visit(this));
         e.getAnnotations().forEach(a -> this.visit(a, true));
         e.getMethods().forEach(this::visit);
         e.getImports().forEach(this::visit);

@@ -3,6 +3,8 @@ package com.xyzwps.website.modules.test;
 
 import com.xyzwps.lib.ap.*;
 import com.xyzwps.lib.express.HttpRequest;
+import com.xyzwps.lib.express.filter.BasicAuth;
+import com.xyzwps.lib.express.filter.NoopFilter;
 import com.xyzwps.website.conf.Configurations;
 import jakarta.inject.Singleton;
 import lombok.AllArgsConstructor;
@@ -51,6 +53,11 @@ public class TestApis {
         return body;
     }
 
+    @GET(value = "/auth", filters = {NoopFilter.class, BasicAuth.class})
+    public Map<String, Object> auth() {
+        return Map.of("Hello", "World");
+    }
+
     @GET("/:id")
     public Map<String, Object> pathVar(@PathParam("id") String id, HttpRequest req) {
         req.attribute("haha", "ha\nha");
@@ -65,6 +72,7 @@ public class TestApis {
         map.put("searchParams", req.searchParams());
         map.put("attributes", req.attributes());
         map.put("pathVars", req.pathVariables());
+        map.put("id", id);
         map.put("date", new Date());
         map.put("localDateTime", LocalDateTime.now());
 

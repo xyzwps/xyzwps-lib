@@ -1,5 +1,7 @@
 package com.xyzwps.lib.ap.dsl;
 
+import java.util.ArrayList;
+
 public class ToJavaClassVisitor implements ElementVisitor {
 
     private final StringBuilder sb = new StringBuilder();
@@ -40,24 +42,25 @@ public class ToJavaClassVisitor implements ElementVisitor {
         sb.append(" {\n");
 
         this.tabs++;
-        e.getFields().forEach(this::visit);
+        var fields = new ArrayList<>(e.getFields().values());
+        fields.forEach(value -> value.visit(this));
 
         sb.append("\n");
 
         appendTabs().append("public ").append(className).append("(");
-        for (int i = 0; i < e.getFields().size(); i++) {
-            var f = e.getFields().get(i);
+        for (int i = 0; i < fields.size(); i++) {
+            var f = fields.get(i);
             if (i > 0) sb.append(", ");
 
             sb.append(f.getType().getClassName()).append(" ").append(f.getName());
         }
         sb.append(") {\n");
         this.tabs++;
-        for (var f : e.getFields()) {
+        for (var f : fields) {
             appendTabs().append("this.").append(f.getName()).append(" = ").append(f.getName()).append(";\n");
         }
         this.tabs--;
-        appendTabs().append("}\n");
+        appendTabs().append("}\n\n");
 
         e.getMethods().forEach(this::visit);
 

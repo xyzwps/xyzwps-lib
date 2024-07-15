@@ -9,10 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Singleton
 public class TestRouter extends Router.Nest {
-
     public TestRouter(Configurations conf, BasicAuth basicAuth, TestDao testDao) {
-        this.get("count", new TestCountFilter(1) + new TestCountFilter(2) + new HelloWorldFilter())
-                .get("/auth", basicAuth + new HelloWorldFilter());
+        this.get("count", new TestCountFilter(1) + new TestCountFilter(2) + new HelloWorldFilter());
     }
-
 }

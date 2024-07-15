@@ -3,7 +3,9 @@ package com.xyzwps.lib.ap.dsl;
 import lombok.Getter;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Getter
 public final class ClassElement implements Element {
@@ -12,7 +14,7 @@ public final class ClassElement implements Element {
     private boolean isFinal = false;
     private boolean isPublic = false;
 
-    private final List<FieldElement> fields = new ArrayList<>();
+    private final Map<String, FieldElement> fields = new HashMap<>();
     private final List<AnnotationElement> annotations = new ArrayList<>();
     private final List<MethodElement> methods = new ArrayList<>();
 
@@ -41,7 +43,7 @@ public final class ClassElement implements Element {
 
     public ClassElement addField(FieldElement fieldElement) {
         if (fieldElement != null) {
-            this.fields.add(fieldElement);
+            this.fields.put(fieldElement.getName(), fieldElement);
         }
         return this;
     }

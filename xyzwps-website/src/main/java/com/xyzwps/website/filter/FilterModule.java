@@ -2,6 +2,7 @@ package com.xyzwps.website.filter;
 
 import com.xyzwps.lib.express.filter.BasicAuth;
 import com.xyzwps.lib.express.filter.JsonParser;
+import com.xyzwps.lib.express.filter.NoopFilter;
 import com.xyzwps.website.common.JSON;
 import io.avaje.inject.Bean;
 import io.avaje.inject.Factory;
@@ -12,6 +13,11 @@ public class FilterModule {
     @Bean
     public static BasicAuth provideBasicAuth() {
         return new BasicAuth((username, password) -> "scott".equals(username) && "tiger".equals(password));
+    }
+
+    @Bean
+    public static NoopFilter provideNoopFilter() {
+        return NoopFilter.INSTANCE;
     }
 
     @Bean
