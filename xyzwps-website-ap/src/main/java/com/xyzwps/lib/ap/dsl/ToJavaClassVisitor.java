@@ -1,7 +1,5 @@
 package com.xyzwps.lib.ap.dsl;
 
-import java.util.ArrayList;
-
 public class ToJavaClassVisitor implements ElementVisitor {
 
     private final StringBuilder sb = new StringBuilder();
@@ -14,19 +12,22 @@ public class ToJavaClassVisitor implements ElementVisitor {
     }
 
     @Override
-    public void visit(ClassElement e) {
-        sb.append("package ").append(e.getType().getPackageName()).append(";\n");
+    public void visit($Class e) {
+        sb.append("package ").append(e.getType().packageName()).append(";\n");
         sb.append("\n");
 
-        var className = e.getType().getClassName();
+        var className = e.getType().className();
 
         var imports = new GetImportsVisitor();
         e.visit(imports);
         imports.getImports().forEach(i -> sb.append("import ").append(i).append(";\n"));
         sb.append("\n");
 
-        e.getAnnotations().forEach(a -> this.visit(a, false));
-        sb.append(e.isPublic() ? "public " : "")
+        e.getAnnotations().forEach(a -> {
+            a.visit(this);
+            sb.append("\n");
+        });
+        sb.append(e.getAccessLevel().toSourceCode())
                 .append(e.isFinal() ? "final " : "")
                 .append("class ").append(className);
 
@@ -35,14 +36,14 @@ public class ToJavaClassVisitor implements ElementVisitor {
             for (int j = 0; j < e.getImplementedInterfaces().size(); j++) {
                 var itf = e.getImplementedInterfaces().get(j);
                 if (j > 0) sb.append(", ");
-                sb.append(itf.getClassName());
+                sb.append(itf.className());
             }
         }
 
         sb.append(" {\n");
 
         this.tabs++;
-        var fields = new ArrayList<>(e.getFields().values());
+        var fields = e.getFields();
         fields.forEach(value -> value.visit(this));
 
         sb.append("\n");
@@ -52,7 +53,7 @@ public class ToJavaClassVisitor implements ElementVisitor {
             var f = fields.get(i);
             if (i > 0) sb.append(", ");
 
-            sb.append(f.getType().getClassName()).append(" ").append(f.getName());
+            sb.append(f.getType().className()).append(" ").append(f.getName());
         }
         sb.append(") {\n");
         this.tabs++;
@@ -68,55 +69,37 @@ public class ToJavaClassVisitor implements ElementVisitor {
     }
 
     @Override
-    public void visit(FieldElement e) {
-        e.getAnnotations().forEach(a -> this.visit(a, false));
+    public void visit($Field e) {
+        e.getAnnotations().forEach(this::visit);
         var type = e.getType();
         appendTabs()
-                .append(switch (e.getAccessLevel()) {
-                    case PUBLIC -> "public ";
-                    case PRIVATE -> "private ";
-                    case PROTECTED -> "protected ";
-                    case PACKAGE -> "";
-                })
+                .append(e.getAccessLevel().toSourceCode())
                 .append(e.isStatic() ? "static " : "")
                 .append(e.isFinal() ? "final " : "")
-                .append(type.getClassName()).append(" ").append(e.getName()).append(";\n");
+                .append(type.className()).append(" ").append(e.getName()).append(";\n");
     }
 
     @Override
-    public void visit(AnnotationElement e, boolean inline) {
-        if (inline) {
-            sb.append("@").append(e.getType().getClassName()).append("(");
-            // TODO: values
-            sb.append(") ");
-        } else {
-
-            appendTabs()
-                    .append("@").append(e.getType().getClassName()).append("(");
-            // TODO: values
-            sb.append(")\n");
-        }
+    public void visit($Annotation e) {
+        sb.append("@").append(e.getType().className()).append("(");
+        // TODO: values
+        sb.append(") ");
     }
 
     @Override
-    public void visit(MethodElement e) {
-        var returnType = e.getReturnType() == null ? "void" : e.getReturnType().getClassName();
-        e.getAnnotations().forEach(a -> this.visit(a, false));
+    public void visit($Method e) {
+        var returnType = e.getReturnType() == null ? "void" : e.getReturnType().className();
+        e.getAnnotations().forEach(this::visit);
         appendTabs()
-                .append(switch (e.getAccessLevel()) {
-                    case PACKAGE -> " ";
-                    case PUBLIC -> "public ";
-                    case PRIVATE -> "private ";
-                    case PROTECTED -> "protected ";
-                })
+                .append(e.getAccessLevel().toSourceCode())
                 .append(e.isStatic() ? "static " : "")
                 .append(returnType).append(" ").append(e.getName()).append("(");
         for (int i = 0; i < e.getArguments().size(); i++) {
             var arg = e.getArguments().get(i);
             if (i > 0) sb.append(", ");
 
-            arg.getAnnotations().forEach(a -> this.visit(a, true));
-            sb.append(arg.getType().getClassName()).append(" ").append(arg.getName());
+            arg.getAnnotations().forEach(this::visit);
+            sb.append(arg.getType().className()).append(" ").append(arg.getName());
         }
         sb.append(") {\n");
         this.tabs++;
@@ -126,11 +109,11 @@ public class ToJavaClassVisitor implements ElementVisitor {
     }
 
     @Override
-    public void visit(FullTypeNameElement fullTypeName) {
+    public void visit($Type fullTypeName) {
 
     }
 
-    public void visit(ArgumentElement argumentElement) {
+    public void visit($Arg $Arg) {
     }
 
     public String toJavaClass() {

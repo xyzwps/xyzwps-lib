@@ -6,12 +6,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Getter
-public final class MethodElement implements Element {
+public final class $Method implements Element {
 
-    private final FullTypeNameElement returnType;
+    private final $Type returnType;
     private final String name;
-    private final List<AnnotationElement> annotations = new ArrayList<>();
-    private final List<ArgumentElement> arguments = new ArrayList<>();
+    private final List<$Annotation> annotations = new ArrayList<>();
+    private final List<$Arg> arguments = new ArrayList<>();
 
     private AccessLevel accessLevel = AccessLevel.PUBLIC;
 
@@ -19,38 +19,38 @@ public final class MethodElement implements Element {
 
     private boolean isStatic = false;
 
-    public MethodElement(FullTypeNameElement returnType, String name) {
+    $Method($Type returnType, String name) {
         this.returnType = returnType;
         this.name = name;
     }
 
-    public MethodElement addAnnotation(AnnotationElement annotationElement) {
-        if (annotationElement != null) {
-            this.annotations.add(annotationElement);
+    public $Method addAnnotation($Annotation $annotation) {
+        if ($annotation != null) {
+            this.annotations.add($annotation);
         }
         return this;
     }
 
-    public MethodElement addArgument(ArgumentElement argumentElement) {
-        if (argumentElement != null) {
-            this.arguments.add(argumentElement);
+    public $Method addArgument($Arg $Arg) {
+        if ($Arg != null) {
+            this.arguments.add($Arg);
         }
         return this;
     }
 
-    public MethodElement accessLevel(AccessLevel accessLevel) {
+    public $Method accessLevel(AccessLevel accessLevel) {
         if (accessLevel != null) {
             this.accessLevel = accessLevel;
         }
         return this;
     }
 
-    public MethodElement isStatic(boolean isStatic) {
+    public $Method isStatic(boolean isStatic) {
         this.isStatic = isStatic;
         return this;
     }
 
-    public MethodElement addLine(String line, Object... args) {
+    public $Method addLine(String line, Object... args) {
         if (line != null) {
             this.lines.add(String.format(line, args));
         }

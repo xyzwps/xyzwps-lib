@@ -9,4 +9,6 @@ import java.lang.annotation.Target;
 @Target(ElementType.METHOD)
 public @interface PATCH {
     String value() default "/";
+
+    Class<?>[] filters() default {};
 }

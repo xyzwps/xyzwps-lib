@@ -8,7 +8,6 @@ import javax.annotation.processing.Processor;
 import javax.annotation.processing.RoundEnvironment;
 import javax.annotation.processing.SupportedAnnotationTypes;
 import javax.lang.model.element.*;
-import javax.lang.model.element.Element;
 import javax.lang.model.type.MirroredTypesException;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -21,6 +20,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static com.xyzwps.lib.ap.dsl.AccessLevel.*;
+import static com.xyzwps.lib.ap.dsl.Dsl.*;
 
 @AutoService(Processor.class)
 @SupportedAnnotationTypes("com.xyzwps.lib.ap.API")
@@ -29,8 +29,7 @@ public class ApiAP extends AbstractProcessor {
     public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
         try {
             for (TypeElement annotation : annotations) {
-                Set<? extends Element> annotatedElements = roundEnv.getElementsAnnotatedWith(annotation);
-                for (Element element : annotatedElements) {
+                for (var element : roundEnv.getElementsAnnotatedWith(annotation)) {
                     if (element instanceof TypeElement typeElement) {
                         var typeClassName = typeElement.getQualifiedName().toString();
                         var apiPrefix = typeElement.getAnnotation(API.class).value();
@@ -62,7 +61,7 @@ public class ApiAP extends AbstractProcessor {
         return true;
     }
 
-    private void writeJavaFile(FullTypeNameElement generatedClassName, String sourceCode) {
+    private void writeJavaFile($Type generatedClassName, String sourceCode) {
         try {
             var sourceFile = processingEnv.getFiler().createSourceFile(generatedClassName.getFullName());
             try (var out = new PrintWriter(sourceFile.openWriter())) {
@@ -73,7 +72,7 @@ public class ApiAP extends AbstractProcessor {
         }
     }
 
-    private static Map.Entry<FullTypeNameElement, String> generateRouterClass(TypeElement typeElement, List<ExecutableElement> methods) {
+    private static Map.Entry<$Type, String> generateRouterClass(TypeElement typeElement, List<ExecutableElement> methods) {
         var daoClassName = typeElement.getQualifiedName().toString();
         var i = daoClassName.lastIndexOf(".");
         var packageName = daoClassName.substring(0, i);
@@ -81,48 +80,48 @@ public class ApiAP extends AbstractProcessor {
 
         var apiPrefix = typeElement.getAnnotation(API.class).value();
 
-        var generatedClassName = simpleName + "RouterAP";
+        var generatedClassName = simpleName + "Router$AP";
 
-        var generatedClassType = new FullTypeNameElement(packageName, generatedClassName);
-        var apiClassType = new FullTypeNameElement(packageName, simpleName);
-        var annoSingleton = new FullTypeNameElement("jakarta.inject", "Singleton");
-        var routerType = new FullTypeNameElement("com.xyzwps.lib.express.filter", "Router");
-        var httpMethodType = new FullTypeNameElement("com.xyzwps.lib.express", "HttpMethod");
-        var httpRequestType = new FullTypeNameElement("com.xyzwps.lib.express", "HttpRequest");
-        var httpResponseType = new FullTypeNameElement("com.xyzwps.lib.express", "HttpResponse");
-        var jsonType = new FullTypeNameElement("com.xyzwps.website.common", "JSON");
-        var routerMakerType = new FullTypeNameElement("com.xyzwps.website.filter", "RouterMaker");
+        var generatedClassType = $type(packageName, generatedClassName);
+        var apiClassType = $type(packageName, simpleName);
+        var annoSingleton = $type("jakarta.inject", "Singleton");
+        var routerType = $type("com.xyzwps.lib.express.filter", "Router");
+        var httpMethodType = $type("com.xyzwps.lib.express", "HttpMethod");
+        var httpRequestType = $type("com.xyzwps.lib.express", "HttpRequest");
+        var httpResponseType = $type("com.xyzwps.lib.express", "HttpResponse");
+        var jsonType = $type("com.xyzwps.website.common", "JSON");
+        var routerMakerType = $type("com.xyzwps.website.filter", "RouterMaker");
 
-        var generatedClass = new ClassElement(generatedClassType)
-                .shouldBePublic()
-                .addAnnotation(new AnnotationElement(annoSingleton))
-                .addImplementedInterface(routerMakerType);
+        var generatedClass = $class(generatedClassType)
+                .usePublic()
+                .doAnnotate($annotation(annoSingleton))
+                .doImplement(routerMakerType);
 
-        var buildApisMethod = new MethodElement(null, "make")
-                .addArgument(new ArgumentElement(routerType, "router"))
+        var buildApisMethod = $method(null, "make")
+                .addArgument($arg(routerType, "router"))
                 .addLine("router");
         handleMethods(generatedClass, methods, apiPrefix, buildApisMethod);
         buildApisMethod.addLine(";");
 
         generatedClass
-                .addField(new FieldElement(apiClassType, "apis").accessLevel(PRIVATE).shouldBeFinal())
-                .addImport(httpMethodType)
-                .addImport(jsonType)
-                .addImport(httpRequestType)
-                .addImport(httpResponseType)
+                .addField($field(apiClassType, "apis").accessLevel(PRIVATE).shouldBeFinal())
+                .doImport(httpMethodType)
+                .doImport(jsonType)
+                .doImport(httpRequestType)
+                .doImport(httpResponseType)
                 .addMethod(buildApisMethod);
         var toJavaClass = new ToJavaClassVisitor();
         generatedClass.visit(toJavaClass);
         return Map.entry(generatedClassType, toJavaClass.toJavaClass());
     }
 
-    private static void handleMethods(ClassElement classElement, List<ExecutableElement> executableElements, String apiPrefix, MethodElement methodElement) {
+    private static void handleMethods($Class $class, List<ExecutableElement> executableElements, String apiPrefix, $Method $method) {
         for (var method : executableElements) {
-            handleMethod(classElement, method, apiPrefix, methodElement);
+            handleMethod($class, method, apiPrefix, $method);
         }
     }
 
-    private static void handleMethod(ClassElement classElement, ExecutableElement method, String apiPrefix, MethodElement e) {
+    private static void handleMethod($Class $class, ExecutableElement method, String apiPrefix, $Method e) {
         var apiInfo = getApiInfo(method);
 
         var filterFieldNames = new ArrayList<String>();
@@ -130,9 +129,9 @@ public class ApiAP extends AbstractProcessor {
             var i = it.lastIndexOf(".");
             var packageName = it.substring(0, i);
             var className = it.substring(i + 1);
-            var filterType = new FullTypeNameElement(packageName, className);
+            var filterType = $type(packageName, className);
             var filterFieldName = classNameToVarName(className);
-            classElement.addField(new FieldElement(filterType, filterFieldName).accessLevel(PRIVATE).shouldBeFinal());
+            $class.addField($field(filterType, filterFieldName).accessLevel(PRIVATE).shouldBeFinal());
             filterFieldNames.add(filterFieldName);
         });
 
@@ -238,21 +237,57 @@ public class ApiAP extends AbstractProcessor {
 
         var post = method.getAnnotation(POST.class);
         if (post != null) {
+            try {
+                for (var filter : post.filters()) {
+                    filters.add(filter.getCanonicalName());
+                }
+            } catch (MirroredTypesException e) {
+                for (var type : e.getTypeMirrors()) {
+                    filters.add(type.toString());
+                }
+            }
             return new ApiInfo("post", post.value(), filters);
         }
 
         var put = method.getAnnotation(PUT.class);
         if (put != null) {
+            try {
+                for (var filter : put.filters()) {
+                    filters.add(filter.getCanonicalName());
+                }
+            } catch (MirroredTypesException e) {
+                for (var type : e.getTypeMirrors()) {
+                    filters.add(type.toString());
+                }
+            }
             return new ApiInfo("put", put.value(), filters);
         }
 
         var delete = method.getAnnotation(DELETE.class);
         if (delete != null) {
+            try {
+                for (var filter : delete.filters()) {
+                    filters.add(filter.getCanonicalName());
+                }
+            } catch (MirroredTypesException e) {
+                for (var type : e.getTypeMirrors()) {
+                    filters.add(type.toString());
+                }
+            }
             return new ApiInfo("delete", delete.value(), filters);
         }
 
         var patch = method.getAnnotation(PATCH.class);
         if (patch != null) {
+            try {
+                for (var filter : patch.filters()) {
+                    filters.add(filter.getCanonicalName());
+                }
+            } catch (MirroredTypesException e) {
+                for (var type : e.getTypeMirrors()) {
+                    filters.add(type.toString());
+                }
+            }
             return new ApiInfo("patch", patch.value(), filters);
         }
 

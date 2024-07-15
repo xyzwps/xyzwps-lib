@@ -6,17 +6,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Getter
-public final class FieldElement implements Element {
-    private final FullTypeNameElement type;
+public final class $Field implements Element {
+    private final $Type type;
     private final String name;
 
     private AccessLevel accessLevel = AccessLevel.PRIVATE;
     private boolean isFinal = false;
     private boolean isStatic = false;
 
-    private final List<AnnotationElement> annotations = new ArrayList<>();
+    private final List<$Annotation> annotations = new ArrayList<>();
 
-    public FieldElement(FullTypeNameElement type, String name) {
+    $Field($Type type, String name) {
         this.type = type;
         this.name = name;
     }
@@ -26,25 +26,25 @@ public final class FieldElement implements Element {
         visitor.visit(this);
     }
 
-    public FieldElement accessLevel(AccessLevel accessLevel) {
+    public $Field accessLevel(AccessLevel accessLevel) {
         if (accessLevel != null) {
             this.accessLevel = accessLevel;
         }
         return this;
     }
 
-    public FieldElement shouldBeStatic() {
+    public $Field shouldBeStatic() {
         this.isStatic = true;
         return this;
     }
 
-    public FieldElement shouldBeFinal() {
+    public $Field shouldBeFinal() {
         this.isFinal = true;
         return this;
     }
 
-    public FieldElement addAnnotation(AnnotationElement annotationElement) {
-        this.annotations.add(annotationElement);
+    public $Field addAnnotation($Annotation $annotation) {
+        this.annotations.add($annotation);
         return this;
     }
 }

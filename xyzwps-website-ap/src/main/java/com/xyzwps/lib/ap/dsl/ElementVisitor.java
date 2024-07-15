@@ -2,16 +2,15 @@ package com.xyzwps.lib.ap.dsl;
 
 public interface ElementVisitor {
 
-    void visit(ClassElement clazz);
+    void visit($Class clazz);
 
-    void visit(FieldElement field);
+    void visit($Field field);
 
-    // TODO: 这个 api 有点奇怪，需要重构
-    void visit(AnnotationElement annotation, boolean inline);
+    void visit($Annotation annotation);
 
-    void visit(MethodElement method);
+    void visit($Method method);
 
-    void visit(FullTypeNameElement fullTypeName);
+    void visit($Type fullTypeName);
 
-    void visit(ArgumentElement argument);
+    void visit($Arg argument);
 }

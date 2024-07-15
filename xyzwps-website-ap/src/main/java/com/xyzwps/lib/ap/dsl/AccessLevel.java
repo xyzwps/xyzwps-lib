@@ -5,4 +5,13 @@ public enum AccessLevel {
     PROTECTED,
     PRIVATE,
     PACKAGE;
+
+    public String toSourceCode() {
+        return switch (this) {
+            case PUBLIC -> "public ";
+            case PROTECTED -> "protected ";
+            case PRIVATE -> "private ";
+            case PACKAGE -> " ";
+        };
+    }
 }

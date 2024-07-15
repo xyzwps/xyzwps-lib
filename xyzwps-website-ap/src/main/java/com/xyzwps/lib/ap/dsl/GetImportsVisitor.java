@@ -12,39 +12,39 @@ public class GetImportsVisitor implements ElementVisitor {
 
 
     @Override
-    public void visit(ClassElement e) {
-        e.getFields().forEach((key, value) -> value.visit(this));
-        e.getAnnotations().forEach(a -> this.visit(a, true));
-        e.getMethods().forEach(this::visit);
-        e.getImports().forEach(this::visit);
-        e.getImplementedInterfaces().forEach(this::visit);
+    public void visit($Class e) {
+        e.getFields().forEach(f -> f.visit(this));
+        e.getAnnotations().forEach(a -> a.visit(this));
+        e.getMethods().forEach(it -> it.visit(this));
+        e.getImports().forEach(it -> it.visit(this));
+        e.getImplementedInterfaces().forEach(it -> it.visit(this));
     }
 
     @Override
-    public void visit(FieldElement e) {
-        this.visit(e.getType());
+    public void visit($Field e) {
+        e.getType().visit(this);
     }
 
     @Override
-    public void visit(AnnotationElement e, boolean inline) {
-        this.visit(e.getType());
+    public void visit($Annotation e) {
+        e.getType().visit(this);
     }
 
-    public void visit(MethodElement e) {
+    public void visit($Method e) {
         var returnType = e.getReturnType();
         if (returnType != null) {
             this.visit(returnType);
         }
 
-        e.getAnnotations().forEach(a -> this.visit(a, true));
+        e.getAnnotations().forEach(a -> a.visit(this));
         e.getArguments().forEach(this::visit);
     }
 
-    public void visit(FullTypeNameElement e) {
-        imports.add(e.getPackageName() + "." + e.getClassName());
+    public void visit($Type e) {
+        imports.add(e.packageName() + "." + e.className());
     }
 
-    public void visit(ArgumentElement e) {
+    public void visit($Arg e) {
         this.visit(e.getType());
     }
 }
