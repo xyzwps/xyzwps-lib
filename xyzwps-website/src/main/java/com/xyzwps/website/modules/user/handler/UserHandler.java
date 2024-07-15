@@ -1,5 +1,6 @@
 package com.xyzwps.website.modules.user.handler;
 
+import com.xyzwps.website.common.JSON;
 import com.xyzwps.website.modules.test.Person;
 import com.xyzwps.website.filter.JsonHandler;
 import jakarta.inject.Singleton;
@@ -14,7 +15,7 @@ public class UserHandler {
     }
 
     public JsonHandler create() {
-        return (req, resp) -> req.json(Person.class);
+        return (req, resp) -> req.json(Person.class, JSON.JM);
     }
 
 }

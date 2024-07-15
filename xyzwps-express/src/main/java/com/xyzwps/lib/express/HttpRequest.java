@@ -1,7 +1,14 @@
 package com.xyzwps.lib.express;
 
+import com.xyzwps.lib.bedrock.lang.DefaultValues;
 import com.xyzwps.lib.http.MediaType;
+import com.xyzwps.lib.json.JsonException;
+import com.xyzwps.lib.json.JsonMapper;
 
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
 
@@ -39,6 +46,19 @@ public interface HttpRequest {
      */
     String header(String name);
 
+    @SuppressWarnings("unchecked")
+    default <T> T header(String name, Class<T> type) {
+        var value = header(name);
+        if (value == null) {
+            return (T) DefaultValues.get(type);
+        }
+
+        if (type == String.class) {
+            return (T) value;
+        }
+        throw new UnsupportedOperationException("Unsupported header type: " + type.getCanonicalName());
+    }
+
     /**
      * Get all header values by name.
      *
@@ -67,6 +87,27 @@ public interface HttpRequest {
      * @return request body representation in current stage. Null maybe returned.
      */
     Object body();
+
+    default <T> T json(Class<T> clazz, JsonMapper jm) {
+        var contentType = this.contentType();
+        if (contentType == null) {
+            throw HttpException.badRequest("Content-Type is not json");
+        }
+        if (!contentType.isApplicationJson()) {
+            throw HttpException.badRequest("Content-Type is not json");
+        }
+        if (!(this.body() instanceof InputStream is)) {
+            throw HttpException.internalServerError("Request body has been parsed");
+        }
+
+        try {
+            var charset = contentType.parameters.get("charset").map(Charset::forName).orElse(StandardCharsets.UTF_8);
+            var reader = new InputStreamReader(is, charset);
+            return jm.parse(reader, clazz);
+        } catch (JsonException e) {
+            throw HttpException.badRequest("Invalid json format");
+        }
+    }
 
     /**
      * Replace body by specified object, for example, parsed body.
