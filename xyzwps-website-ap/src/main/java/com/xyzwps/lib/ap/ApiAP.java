@@ -160,9 +160,8 @@ public class ApiAP extends AbstractProcessor {
                 var bodyParam = param.getAnnotation(Body.class);
                 if (bodyParam != null) {
                     var argName = "body";
-                    // TODO: 处理dddd
                     argNames.add(argName);
-                    e.addLine("        var %s = JSON.parse(req.body(), %s.class);", argName, param.asType().toString());
+                    e.addLine("        var %s = req.json(%s.class, JSON.JM);", argName, param.asType().toString());
                     continue;
                 }
             }

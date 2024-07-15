@@ -1,13 +1,12 @@
 package com.xyzwps.website.modules.test;
 
 
-import com.xyzwps.lib.ap.API;
-import com.xyzwps.lib.ap.GET;
-import com.xyzwps.lib.ap.PathParam;
-import com.xyzwps.lib.ap.SearchParam;
+import com.xyzwps.lib.ap.*;
 import com.xyzwps.lib.express.HttpRequest;
+import com.xyzwps.website.conf.Configurations;
 import jakarta.inject.Singleton;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 import java.time.LocalDateTime;
 import java.util.Date;
@@ -19,9 +18,12 @@ import static manifold.collections.api.range.RangeFun.to;
 @Singleton
 @AllArgsConstructor
 @API("/api/test")
+@Slf4j
 public class TestApis {
 
     private final TestDao testDao;
+
+    private final Configurations conf;
 
     @GET("/get-person")
     public Person getPerson(@SearchParam("id") int id) {
@@ -34,6 +36,19 @@ public class TestApis {
             System.out.println(i);
         }
         return "Hello, Manifold";
+    }
+
+    @GET("/conf")
+    public Map<String, Object> conf() {
+        var map = new HashMap<String, Object>();
+        map.put("name", conf.getAppName());
+        return map;
+    }
+
+    @POST("/manifold")
+    public TestManifoldPayload manifoldPayload(@Body TestManifoldPayload body) {
+        log.info("body: {}", body.getHello());
+        return body;
     }
 
     @GET("/:id")
