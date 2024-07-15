@@ -1,6 +1,5 @@
 package com.xyzwps.website.modules.test;
 
-
 import com.xyzwps.lib.ap.*;
 import com.xyzwps.lib.express.HttpRequest;
 import com.xyzwps.lib.express.filter.BasicAuth;
@@ -14,8 +13,6 @@ import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-
-import static manifold.collections.api.range.RangeFun.to;
 
 @Singleton
 @AllArgsConstructor
@@ -32,25 +29,11 @@ public class TestApis {
         return new Person(id, "张三");
     }
 
-    @GET("/manifold")
-    public String manifold() {
-        for (var i : 1to 5) {
-            System.out.println(i);
-        }
-        return "Hello, Manifold";
-    }
-
     @GET("/conf")
     public Map<String, Object> conf() {
         var map = new HashMap<String, Object>();
         map.put("name", conf.getAppName());
         return map;
-    }
-
-    @POST("/manifold")
-    public TestManifoldPayload manifoldPayload(@Body TestManifoldPayload body) {
-        log.info("body: {}", body.getHello());
-        return body;
     }
 
     @GET(value = "/auth", filters = {NoopFilter.class, BasicAuth.class})

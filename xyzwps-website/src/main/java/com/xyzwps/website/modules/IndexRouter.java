@@ -7,8 +7,6 @@ import com.xyzwps.lib.express.HttpStatus;
 import com.xyzwps.lib.express.filter.Router;
 import com.xyzwps.website.common.JSON;
 import com.xyzwps.website.filter.RouterMaker;
-import com.xyzwps.website.modules.test.TestRouter;
-import com.xyzwps.website.modules.user.UserRouter;
 import io.avaje.validation.ConstraintViolation;
 import io.avaje.validation.ConstraintViolationException;
 import jakarta.inject.Singleton;
@@ -21,20 +19,9 @@ import java.util.Map;
 @Slf4j
 public class IndexRouter extends Router {
 
-    public IndexRouter(TestRouter testRouter,
-                       UserRouter userRouter,
-                       List<RouterMaker> routerMakers) {
-
+    public IndexRouter(List<RouterMaker> routerMakers) {
         this.use(this::handleError);
         routerMakers.forEach(maker -> maker.make(this));
-        this
-                .get("/api/hello/world", (req, resp, next) -> {
-                    resp.ok();
-                    resp.headers().set("Content-Type", "application/json");
-                    resp.send("[\"Hello\",\"World\"]".getBytes());
-                })
-                .nest("/api/test", testRouter)
-                .nest("/api/users", userRouter);
     }
 
     private void handleError(HttpRequest req, HttpResponse resp, Filter.Next next) {

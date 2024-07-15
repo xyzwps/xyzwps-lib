@@ -2,6 +2,7 @@ package com.xyzwps.lib.ap;
 
 import com.google.auto.service.AutoService;
 import com.xyzwps.lib.ap.dsl.*;
+import com.xyzwps.lib.ap.util.CanonicalName;
 
 import javax.annotation.processing.AbstractProcessor;
 import javax.annotation.processing.Processor;
@@ -39,8 +40,8 @@ public class ApiAP extends AbstractProcessor {
                                 .filter(it -> {
                                     var modifiers = it.getModifiers();
                                     return modifiers.contains(Modifier.PUBLIC)
-                                           && !modifiers.contains(Modifier.STATIC)
-                                           && !modifiers.contains(Modifier.ABSTRACT);
+                                            && !modifiers.contains(Modifier.STATIC)
+                                            && !modifiers.contains(Modifier.ABSTRACT);
                                 })
                                 .flatMap(it -> it instanceof ExecutableElement executableElement
                                         ? Stream.of(executableElement) : Stream.of())
@@ -73,17 +74,10 @@ public class ApiAP extends AbstractProcessor {
     }
 
     private static Map.Entry<$Type, String> generateRouterClass(TypeElement typeElement, List<ExecutableElement> methods) {
-        var daoClassName = typeElement.getQualifiedName().toString();
-        var i = daoClassName.lastIndexOf(".");
-        var packageName = daoClassName.substring(0, i);
-        var simpleName = daoClassName.substring(i + 1);
-
-        var apiPrefix = typeElement.getAnnotation(API.class).value();
-
-        var generatedClassName = simpleName + "Router$AP";
-
-        var generatedClassType = $type(packageName, generatedClassName);
-        var apiClassType = $type(packageName, simpleName);
+        var daoClassName = CanonicalName.of(typeElement.getQualifiedName().toString());
+        var generatedClassName = daoClassName.className() + "Router$AP";
+        var generatedClassType = $type(daoClassName.packageName(), generatedClassName);
+        var apiClassType = $type(daoClassName.packageName(), daoClassName.className());
         var annoSingleton = $type("jakarta.inject", "Singleton");
         var routerType = $type("com.xyzwps.lib.express.filter", "Router");
         var httpMethodType = $type("com.xyzwps.lib.express", "HttpMethod");
@@ -100,6 +94,7 @@ public class ApiAP extends AbstractProcessor {
         var buildApisMethod = $method(null, "make")
                 .addArgument($arg(routerType, "router"))
                 .addLine("router");
+        var apiPrefix = typeElement.getAnnotation(API.class).value();
         handleMethods(generatedClass, methods, apiPrefix, buildApisMethod);
         buildApisMethod.addLine(";");
 
@@ -302,5 +297,7 @@ public class ApiAP extends AbstractProcessor {
     private static String classNameToVarName(String className) {
         return className.substring(0, 1).toLowerCase() + className.substring(1);
     }
+
+
 
 }

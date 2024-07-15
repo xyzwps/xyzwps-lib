@@ -16,7 +16,6 @@
 
     <properties>
         <version.avaje.validator>1.5</version.avaje.validator>
-        <version.manifold>2024.1.23</version.manifold>
     </properties>
 
     <dependencies>
@@ -77,16 +76,6 @@
             <artifactId>avaje-validator-constraints</artifactId>
             <version>${version.avaje.validator}</version>
         </dependency>
-        <dependency>
-            <groupId>systems.manifold</groupId>
-            <artifactId>manifold-collections</artifactId>
-            <version>${version.manifold}</version>
-        </dependency>
-        <dependency>
-            <groupId>systems.manifold</groupId>
-            <artifactId>manifold-ext-rt</artifactId>
-            <version>${version.manifold}</version>
-        </dependency>
     </dependencies>
 
     <build>
@@ -99,9 +88,6 @@
                     <source>${java.version}</source>
                     <target>${java.version}</target>
                     <encoding>UTF-8</encoding>
-                    <compilerArgs>
-                        <arg>-Xplugin:Manifold</arg>
-                    </compilerArgs>
                     <annotationProcessorPaths>
                         <path>
                             <groupId>org.projectlombok</groupId>
@@ -122,16 +108,6 @@
                             <groupId>io.avaje</groupId>
                             <artifactId>avaje-validator-generator</artifactId>
                             <version>${version.avaje.validator}</version>
-                        </path>
-                        <path>
-                            <groupId>systems.manifold</groupId>
-                            <artifactId>manifold-ext</artifactId>
-                            <version>${version.manifold}</version>
-                        </path>
-                        <path>
-                            <groupId>systems.manifold</groupId>
-                            <artifactId>manifold-collections</artifactId>
-                            <version>${version.manifold}</version>
                         </path>
                     </annotationProcessorPaths>
                 </configuration>

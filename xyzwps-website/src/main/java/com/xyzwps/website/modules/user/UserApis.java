@@ -1,10 +1,8 @@
-package com.xyzwps.website.modules.user.handler;
+package com.xyzwps.website.modules.user;
 
-import com.xyzwps.lib.express.Filter;
-import com.xyzwps.lib.express.HttpRequest;
+import com.xyzwps.lib.ap.*;
 import com.xyzwps.lib.express.HttpResponse;
 import com.xyzwps.lib.express.SetCookie;
-import com.xyzwps.website.common.JSON;
 import com.xyzwps.website.common.OK;
 import com.xyzwps.website.modules.user.payload.LoginBasicPayload;
 import com.xyzwps.website.modules.user.payload.SendRegisterVcodePayload;
@@ -14,37 +12,49 @@ import io.avaje.validation.Validator;
 import jakarta.inject.Singleton;
 import lombok.AllArgsConstructor;
 
+import java.util.Map;
+
 @Singleton
+@API("/api/users")
 @AllArgsConstructor
-public class SimpleAuthenticationHandler {
+public class UserApis {
 
     private final Validator validator;
     private final SimpleAuthenticationService authenticationService;
 
-
-    public void sendRegisterVcode(HttpRequest req, HttpResponse resp, Filter.Next next) {
-        var payload = req.json(SendRegisterVcodePayload.class, JSON.JM);
-        // TODO: 检查是否已经注册
+    @POST("/register/simple/vcode")
+    public OK sendRegisterVcode(@Body SendRegisterVcodePayload payload) {
         validator.validate(payload);
+        // TODO: 检查是否已经注册
         authenticationService.sendRegisterVcode(payload.getPhone());
-        resp.sendJson(OK.INSTANCE);
+        return OK.INSTANCE;
     }
 
-    public void register(HttpRequest req, HttpResponse resp, Filter.Next next) {
-        var payload = req.json(SimpleRegisterPayload.class, JSON.JM);
-        // TODO: 检查是否已经注册
+    @POST("/register/simple")
+    public OK register(@Body SimpleRegisterPayload payload) {
         validator.validate(payload);
+        // TODO: 检查是否已经注册
         authenticationService.register(payload.getPhone(), payload.getVcode());
-        resp.sendJson(OK.INSTANCE);
+        return OK.INSTANCE;
     }
 
-    public void login(HttpRequest req, HttpResponse resp, Filter.Next next) {
-        var payload = req.json(LoginBasicPayload.class, JSON.JM);
+    @POST("/login/simple")
+    public LoginBasicPayload login(@Body LoginBasicPayload payload, HttpResponse resp) {
         validator.validate(payload);
 
         var setCookies = resp.cookies();
         setCookies.add(new SetCookie("a", "b").path("/").secure(true));
         setCookies.add(new SetCookie("c", "d").path("/").httpOnly(true));
-        resp.sendJson(payload);
+        return payload;
+    }
+
+    @GET("/:id")
+    public Map<String, Object> getById(@PathParam("id") int id) {
+        return Map.of("id", id);
+    }
+
+    @POST("/:id")
+    public Map<String, Object> create(@PathParam("id") int id) {
+        return Map.of("id", id);
     }
 }
