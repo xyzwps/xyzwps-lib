@@ -1,8 +1,6 @@
 package com.xyzwps.lib.openapi;
 
-import lombok.Getter;
 
-@Getter
 public class ExternalDocumentation implements OASElement {
     private final String url;
     private String description;
@@ -11,7 +9,15 @@ public class ExternalDocumentation implements OASElement {
         this.url = url;
     }
 
-    public ExternalDocumentation setDescription(String description) {
+    public String url() {
+        return url;
+    }
+
+    public String description() {
+        return description;
+    }
+
+    public ExternalDocumentation description(String description) {
         this.description = description;
         return this;
     }

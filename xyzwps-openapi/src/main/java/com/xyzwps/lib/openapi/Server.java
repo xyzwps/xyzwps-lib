@@ -1,12 +1,9 @@
 package com.xyzwps.lib.openapi;
 
-import lombok.Getter;
-
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
-@Getter
 public class Server implements OASElement {
     private final String url;
     private String description;
@@ -16,9 +13,21 @@ public class Server implements OASElement {
         this.url = Objects.requireNonNull(url);
     }
 
-    public Server setDescription(String description) {
+    public String url() {
+        return url;
+    }
+
+    public String description() {
+        return description;
+    }
+
+    public Server description(String description) {
         this.description = description;
         return this;
+    }
+
+    public Map<String, ServerVariable> variables() {
+        return variables;
     }
 
     public Server addVariable(String name, ServerVariable variable) {

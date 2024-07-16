@@ -1,8 +1,5 @@
 package com.xyzwps.lib.openapi;
 
-import lombok.Getter;
-
-@Getter
 public class Contact implements OASElement {
     private final String name;
     private String url;
@@ -12,12 +9,24 @@ public class Contact implements OASElement {
         this.name = name;
     }
 
-    public Contact setUrl(String url) {
+    public String name() {
+        return name;
+    }
+
+    public String url() {
+        return url;
+    }
+
+    public Contact url(String url) {
         this.url = url;
         return this;
     }
 
-    public Contact setEmail(String email) {
+    public String email() {
+        return email;
+    }
+
+    public Contact email(String email) {
         this.email = email;
         return this;
     }

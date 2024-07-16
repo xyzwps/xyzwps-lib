@@ -1,8 +1,6 @@
 package com.xyzwps.lib.openapi;
 
-import lombok.Getter;
 
-@Getter
 public class Tag implements OASElement {
     private final String name;
     private String description;
@@ -12,12 +10,24 @@ public class Tag implements OASElement {
         this.name = name;
     }
 
-    public Tag setDescription(String description) {
+    public String name() {
+        return name;
+    }
+
+    public String description() {
+        return description;
+    }
+
+    public Tag description(String description) {
         this.description = description;
         return this;
     }
 
-    public Tag setExternalDocs(ExternalDocumentation externalDocs) {
+    public ExternalDocumentation externalDocs() {
+        return externalDocs;
+    }
+
+    public Tag externalDocs(ExternalDocumentation externalDocs) {
         this.externalDocs = externalDocs;
         return this;
     }
