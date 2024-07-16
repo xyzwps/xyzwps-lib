@@ -1,6 +1,7 @@
 package com.xyzwps.lib.express;
 
 import com.xyzwps.lib.bedrock.lang.DefaultValues;
+import com.xyzwps.lib.http.HttpMethod;
 import com.xyzwps.lib.http.MediaType;
 import com.xyzwps.lib.json.JsonException;
 import com.xyzwps.lib.json.JsonMapper;

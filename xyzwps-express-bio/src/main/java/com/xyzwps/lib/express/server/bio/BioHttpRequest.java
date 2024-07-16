@@ -2,6 +2,7 @@ package com.xyzwps.lib.express.server.bio;
 
 import com.xyzwps.lib.express.*;
 import com.xyzwps.lib.express.commons.SimpleCookie;
+import com.xyzwps.lib.http.HttpMethod;
 import com.xyzwps.lib.http.MediaType;
 
 import java.net.URI;

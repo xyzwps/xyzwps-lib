@@ -34,6 +34,7 @@
         <module>xyzwps-http</module>
         <module>xyzwps-jdbc</module>
         <module>xyzwps-json</module>
+        <module>xyzwps-openapi</module>
         <module>xyzwps-website</module>
         <module>xyzwps-website-ap</module>
     </modules>

@@ -1,7 +1,7 @@
 package com.xyzwps.lib.express.commons;
 
 import com.xyzwps.lib.express.BadProtocolException;
-import com.xyzwps.lib.express.HttpMethod;
+import com.xyzwps.lib.http.HttpMethod;
 import com.xyzwps.lib.express.HttpProtocol;
 
 import java.net.URI;
