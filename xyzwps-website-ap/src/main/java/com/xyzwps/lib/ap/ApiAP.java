@@ -41,8 +41,8 @@ public class ApiAP extends AbstractProcessor {
                                 .filter(it -> {
                                     var modifiers = it.getModifiers();
                                     return modifiers.contains(Modifier.PUBLIC)
-                                            && !modifiers.contains(Modifier.STATIC)
-                                            && !modifiers.contains(Modifier.ABSTRACT);
+                                           && !modifiers.contains(Modifier.STATIC)
+                                           && !modifiers.contains(Modifier.ABSTRACT);
                                 })
                                 .flatMap(it -> it instanceof ExecutableElement executableElement
                                         ? Stream.of(executableElement) : Stream.of())
@@ -149,58 +149,46 @@ public class ApiAP extends AbstractProcessor {
         var params = method.getParameters();
         var argNames = new ArrayList<String>();
         for (var param : params) {
-            {
-                var searchParam = param.getAnnotation(SearchParam.class);
-                if (searchParam != null) {
-                    var name = searchParam.value();
-                    var argName = "sp_" + name;
-                    argNames.add(argName);
-                    e.addLine("        var %s = req.searchParams().get(\"%s\", %s.class);", argName, name, typeCanonicalName(param.asType()));
-                    continue;
-                }
+            var searchParam = param.getAnnotation(SearchParam.class);
+            if (searchParam != null) {
+                var name = searchParam.value();
+                var argName = "sp_" + name;
+                argNames.add(argName);
+                e.addLine("        var %s = req.searchParams().get(\"%s\", %s.class);", argName, name, typeCanonicalName(param.asType()));
+                continue;
             }
-            {
-                var headerParam = param.getAnnotation(HeaderParam.class);
-                if (headerParam != null) {
-                    var name = headerParam.value();
-                    var argName = "hp_" + name;
-                    argNames.add(argName);
-                    e.addLine("        var %s = req.header(\"%s\", %s.class);", argName, name, typeCanonicalName(param.asType()));
-                    continue;
-                }
+            var headerParam = param.getAnnotation(HeaderParam.class);
+            if (headerParam != null) {
+                var name = headerParam.value();
+                var argName = "hp_" + name;
+                argNames.add(argName);
+                e.addLine("        var %s = req.header(\"%s\", %s.class);", argName, name, typeCanonicalName(param.asType()));
+                continue;
             }
-            {
-                var pathParam = param.getAnnotation(PathParam.class);
-                if (pathParam != null) {
-                    var name = pathParam.value();
-                    var argName = "pp_" + name;
-                    argNames.add(argName);
-                    e.addLine("        var %s = req.pathVariables().get(\"%s\", %s.class);", argName, name, typeCanonicalName(param.asType()));
-                    continue;
-                }
+            var pathParam = param.getAnnotation(PathParam.class);
+            if (pathParam != null) {
+                var name = pathParam.value();
+                var argName = "pp_" + name;
+                argNames.add(argName);
+                e.addLine("        var %s = req.pathVariables().get(\"%s\", %s.class);", argName, name, typeCanonicalName(param.asType()));
+                continue;
             }
-            {
-                var bodyParam = param.getAnnotation(Body.class);
-                if (bodyParam != null) {
-                    var argName = "body";
-                    argNames.add(argName);
-                    e.addLine("        var %s = req.json(%s.class, JSON.JM);", argName, typeCanonicalName(param.asType()));
-                    continue;
-                }
+            var bodyParam = param.getAnnotation(Body.class);
+            if (bodyParam != null) {
+                var argName = "body";
+                argNames.add(argName);
+                e.addLine("        var %s = req.json(%s.class, JSON.JM);", argName, typeCanonicalName(param.asType()));
+                continue;
             }
-            {
-                if (typeCanonicalName(param.asType()).equals("com.xyzwps.lib.express.HttpRequest")) {
-                    var argName = "req";
-                    argNames.add(argName);
-                    continue;
-                }
+            if (typeCanonicalName(param.asType()).equals("com.xyzwps.lib.express.HttpRequest")) {
+                var argName = "req";
+                argNames.add(argName);
+                continue;
             }
-            {
-                if (typeCanonicalName(param.asType()).equals("com.xyzwps.lib.express.HttpResponse")) {
-                    var argName = "res";
-                    argNames.add(argName);
-                    continue;
-                }
+            if (typeCanonicalName(param.asType()).equals("com.xyzwps.lib.express.HttpResponse")) {
+                var argName = "res";
+                argNames.add(argName);
+                continue;
             }
 
             throw new IllegalStateException("Unsupported parameter type: " + typeCanonicalName(param.asType()));
