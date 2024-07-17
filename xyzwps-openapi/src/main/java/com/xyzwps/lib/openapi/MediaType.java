@@ -32,14 +32,14 @@ public class MediaType implements OASElement {
         return examples;
     }
 
-    public MediaType addExample(String name, Example example) {
+    public MediaType addToExamples(String name, Example example) {
         if (example != null) {
             examples.put(name, example);
         }
         return this;
     }
 
-    public MediaType addExample(String name, Reference reference) {
+    public MediaType addToExamples(String name, Reference reference) {
         if (reference != null) {
             examples.put(name, reference);
         }

@@ -2,6 +2,7 @@ package com.xyzwps.lib.openapi;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.TreeSet;
 import java.util.regex.Pattern;
 
@@ -344,7 +345,7 @@ public class ToYamlVisitor implements OAEVisitor {
                     case Parameter it -> it.accept(this);
                     case Reference it -> it.accept(this);
                     default -> throw new IllegalStateException("Unsupported parameter type: " +
-                                                               p.getClass().getCanonicalName());
+                            p.getClass().getCanonicalName());
                 }
             }
         }
@@ -358,6 +359,7 @@ public class ToYamlVisitor implements OAEVisitor {
 
     @Override
     public void visit(Reference r) {
+        lines.add(new Line(indent, "$ref: '" + r.$ref() + "'"));
 
     }
 
@@ -372,8 +374,63 @@ public class ToYamlVisitor implements OAEVisitor {
     }
 
     @Override
-    public void visit(Response response) {
+    public void visit(Response it) {
+        lines.add(new Line(indent, "description: " + unescape(it.description())));
 
+        var headers = it.headers();
+        if (headers != null && !headers.isEmpty()) {
+            lines.add(new Line(indent, "headers:"));
+            indent++;
+            var keySet = new TreeSet<>(headers.keySet());
+            for (var key : keySet) {
+                lines.add(new Line(indent, key + ":"));
+                indent++;
+                var header = headers.get(key);
+                switch (header) {
+                    case Header h -> h.accept(this);
+                    case Reference r -> r.accept(this);
+                    default -> throw new IllegalStateException("Unsupported header type: " +
+                            header.getClass().getCanonicalName());
+                }
+                indent--;
+            }
+            indent--;
+        }
+
+        var content = it.content();
+        if (content != null && !content.isEmpty()) {
+            lines.add(new Line(indent, "content:"));
+            indent++;
+            var keySet = new TreeSet<>(content.keySet());
+            for (var key : keySet) {
+                lines.add(new Line(indent, key + ":"));
+                indent++;
+                var mediaType = content.get(key);
+                mediaType.accept(this);
+                indent--;
+            }
+            indent--;
+        }
+
+        var links = it.links();
+        if (links != null && !links.isEmpty()) {
+            lines.add(new Line(indent, "links:"));
+            indent++;
+            var keySet = new TreeSet<>(links.keySet());
+            for (var key : keySet) {
+                lines.add(new Line(indent, key + ":"));
+                indent++;
+                var link = links.get(key);
+                switch (link) {
+                    case Link l -> l.accept(this);
+                    case Reference r -> r.accept(this);
+                    default -> throw new IllegalStateException("Unsupported link type: " +
+                            link.getClass().getCanonicalName());
+                }
+                indent--;
+            }
+            indent--;
+        }
     }
 
 
@@ -394,12 +451,62 @@ public class ToYamlVisitor implements OAEVisitor {
 
     @Override
     public void visit(Schema schema) {
+        switch (schema) {
+            case Schema.RefSchema it -> {
+                lines.add(new Line(indent, "$ref: '" + it.$ref() + "'"));
+            }
+            case Schema.ArraySchema it -> {
+            }
+            case Schema.BooleanSchema it -> {
+            }
+            case Schema.IntegerSchema it -> {
+            }
+            case Schema.ObjectSchema it -> {
+            }
+            case Schema.StringSchema it -> {
+            }
+            case Schema.EnumSchema it -> {
+            }
+        }
 
     }
 
     @Override
     public void visit(Example example) {
+        var summary = example.summary();
+        if (summary != null) {
+            lines.add(new Line(indent, "summary: " + unescape(summary)));
+        }
 
+        var description = example.description();
+        if (description != null) {
+            lines.add(new Line(indent, "description: " + unescape(description)));
+        }
+
+        var value = example.value();
+        if (value != null) {
+            switch (value) {
+                case String s -> lines.add(new Line(indent, "value: " + unescape(s)));
+                case Map x -> {
+                    Map<String, String> m = (Map<String, String>) x;
+                    lines.add(new Line(indent, "value:"));
+                    indent++;
+                    var keySet = new TreeSet<>(m.keySet());
+                    for (var key : keySet) {
+                        var v = m.get(key);
+                        lines.add(new Line(indent, key + ": " + unescape(v)));
+                    }
+                    indent--;
+                }
+                default -> throw new IllegalStateException("Unsupported value type: " +
+                        value.getClass().getCanonicalName());
+            }
+        }
+
+        var externalValue = example.externalValue();
+        if (externalValue != null) {
+            lines.add(new Line(indent, "externalValue: " + unescape(externalValue)));
+        }
     }
 
     @Override
@@ -408,7 +515,55 @@ public class ToYamlVisitor implements OAEVisitor {
     }
 
     @Override
-    public void visit(MediaType mediaType) {
+    public void visit(MediaType it) {
+        var schema = it.schema();
+        if (schema != null) {
+            lines.add(new Line(indent, "schema:"));
+            indent++;
+            schema.accept(this);
+            indent--;
+        }
+
+        var example = it.example();
+        if (example != null) {
+            lines.add(new Line(indent, "example: " + unescape(example)));
+        }
+
+        var examples = it.examples();
+        if (examples != null && !examples.isEmpty()) {
+            lines.add(new Line(indent, "examples:"));
+            indent++;
+            var keySet = new TreeSet<>(examples.keySet());
+            for (var key : keySet) {
+                lines.add(new Line(indent, key + ":"));
+                indent++;
+                var exam = examples.get(key);
+                switch (exam) {
+                    case Example e -> e.accept(this);
+                    case Reference r -> r.accept(this);
+                    default -> throw new IllegalStateException("Unsupported example type: " +
+                            exam.getClass().getCanonicalName());
+                }
+                indent--;
+            }
+            indent--;
+        }
+
+        var encoding = it.encoding();
+        if (encoding != null && !encoding.isEmpty()) {
+            lines.add(new Line(indent, "encoding:"));
+            indent++;
+            var keySet = new TreeSet<>(encoding.keySet());
+            for (var key : keySet) {
+                lines.add(new Line(indent, key + ":"));
+                indent++;
+                var enc = encoding.get(key);
+                enc.accept(this);
+                indent--;
+            }
+            indent--;
+        }
+
 
     }
 
