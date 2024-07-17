@@ -37,7 +37,57 @@ public class ToJsonVisitor implements OAEVisitor {
 
     @Override
     public void visit(Document doc) {
+        json.objectOpen();
 
+        json.value("openapi").colon().value(doc.openapi());
+
+        json.comma();
+        json.value("info").colon();
+        doc.info().accept(this);
+
+        var servers = doc.servers();
+        if (servers != null && !servers.isEmpty()) {
+            json.comma();
+            json.value("servers").colon().arrayOpen();
+            int i = 0;
+            for (var server : servers) {
+                if (i++ > 0) {
+                    json.comma();
+                }
+                server.accept(this);
+            }
+            json.arrayClose();
+        }
+
+        var paths = doc.paths();
+        if (paths != null) {
+            json.comma();
+            json.value("paths").colon();
+            paths.accept(this);
+        }
+
+        var tags = doc.tags();
+        if (tags != null && !tags.isEmpty()) {
+            json.comma();
+            json.value("tags").colon().arrayOpen();
+            int i = 0;
+            for (var tag : tags) {
+                if (i++ > 0) {
+                    json.comma();
+                }
+                tag.accept(this);
+            }
+            json.arrayClose();
+        }
+
+        var externalDocs = doc.externalDocs();
+        if (externalDocs != null) {
+            json.comma();
+            json.value("externalDocs").colon();
+            externalDocs.accept(this);
+        }
+
+        json.objectClose();
     }
 
     @Override
@@ -160,12 +210,12 @@ public class ToJsonVisitor implements OAEVisitor {
         json.value("default").colon().value(v.defaultValue());
 
         var enums = v.enums();
-        if (enums != null && ! enums.isEmpty()) {
+        if (enums != null && !enums.isEmpty()) {
             json.comma().value("enum").colon().arrayOpen();
 
             int i = 0;
             for (var e : enums) {
-                if (i++ >0) {
+                if (i++ > 0) {
                     json.comma();
                 }
                 json.value(e);

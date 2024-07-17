@@ -64,7 +64,49 @@ public class ToYamlVisitor implements OAEVisitor {
 
     @Override
     public void visit(Document doc) {
+        lines.add(new Line(indent, "openapi: " + doc.openapi()));
 
+        lines.add(new Line(indent, "info:"));
+        indent++;
+        doc.info().accept(this);
+        indent--;
+
+        var servers = doc.servers();
+        if (servers != null && !servers.isEmpty()) {
+            lines.add(new Line(indent, "servers:"));
+            indent++;
+            for (var server : servers) {
+                lines.add(null);
+                server.accept(this);
+            }
+            indent--;
+        }
+
+        var paths = doc.paths();
+        if (paths != null) {
+            indent++;
+            paths.accept(this);
+            indent--;
+        }
+
+        var tags = doc.tags();
+        if (tags != null && !tags.isEmpty()) {
+            lines.add(new Line(indent, "tags:"));
+            indent++;
+            for (var tag : tags) {
+                lines.add(null);
+                tag.accept(this);
+            }
+            indent--;
+        }
+
+        var externalDocs = doc.externalDocs();
+        if (externalDocs != null) {
+            lines.add(new Line(indent, "externalDocs:"));
+            indent++;
+            externalDocs.accept(this);
+            indent--;
+        }
     }
 
     @Override
