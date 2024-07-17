@@ -252,4 +252,34 @@ public class ToJsonVisitor implements OAEVisitor {
 
         json.objectClose();
     }
+
+    @Override
+    public void visit(Operation op) {
+
+    }
+
+    @Override
+    public void visit(PathItem item) {
+
+    }
+
+    @Override
+    public void visit(Parameter p) {
+
+    }
+
+    @Override
+    public void visit(Reference r) {
+
+    }
+
+    @Override
+    public void visit(Responses response) {
+
+    }
+
+    @Override
+    public void visit(RequestBody body) {
+
+    }
 }

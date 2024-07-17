@@ -235,6 +235,36 @@ public class ToYamlVisitor implements OAEVisitor {
         }
     }
 
+    @Override
+    public void visit(Operation op) {
+
+    }
+
+    @Override
+    public void visit(PathItem item) {
+
+    }
+
+    @Override
+    public void visit(Parameter p) {
+
+    }
+
+    @Override
+    public void visit(Reference r) {
+
+    }
+
+    @Override
+    public void visit(RequestBody body) {
+
+    }
+
+    @Override
+    public void visit(Responses response) {
+
+    }
+
     private record Line(int indent, String text) {
     }
 }

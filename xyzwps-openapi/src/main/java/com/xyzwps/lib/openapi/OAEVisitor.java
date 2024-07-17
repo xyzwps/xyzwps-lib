@@ -14,9 +14,21 @@ public interface OAEVisitor {
 
     void visit(Paths paths);
 
+    void visit(PathItem item);
+
+    void visit(Operation op);
+
     void visit(Server server);
 
     void visit(ServerVariable serverVariable);
 
     void visit(Tag tag);
+
+    void visit(Parameter p);
+
+    void visit(Reference r);
+
+    void visit(RequestBody body);
+
+    void visit(Responses response);
 }
