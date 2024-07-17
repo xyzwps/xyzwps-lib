@@ -31,4 +31,20 @@ public interface OAEVisitor {
     void visit(RequestBody body);
 
     void visit(Responses response);
+
+    void visit(Response response);
+
+    void visit(Header header);
+
+    void visit(Schema schema);
+
+    void visit(Encoding encoding);
+
+    void visit(MediaType mediaType);
+
+    void visit(Example example);
+
+    void visit(Style style);
+
+    void visit(Link link);
 }

@@ -14,7 +14,7 @@ public class Paths implements OASElement {
         return this;
     }
 
-    public Set<String> keySet() {
+    public Set<String> pathSet() {
         return items.keySet();
     }
 

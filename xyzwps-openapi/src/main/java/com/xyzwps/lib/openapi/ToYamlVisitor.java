@@ -172,7 +172,16 @@ public class ToYamlVisitor implements OAEVisitor {
 
     @Override
     public void visit(Paths paths) {
-
+        var pathSet = paths.pathSet();
+        for (var path : pathSet) {
+            var item = paths.item(path);
+            if (item != null) {
+                lines.add(new Line(indent, path + ":"));
+                indent++;
+                item.accept(this);
+                indent--;
+            }
+        }
     }
 
     @Override
@@ -243,7 +252,104 @@ public class ToYamlVisitor implements OAEVisitor {
     @Override
     public void visit(PathItem item) {
 
+        var $ref = item.$ref();
+        if ($ref != null) {
+            lines.add(new Line(indent, "$ref: " + unescape($ref)));
+        }
+
+        var summary = item.summary();
+        if (summary != null) {
+            lines.add(new Line(indent, "summary: " + unescape(summary)));
+        }
+
+        var description = item.description();
+        if (description != null) {
+            lines.add(new Line(indent, "description: " + unescape(description)));
+        }
+
+        var get = item.get();
+        if (get != null) {
+            lines.add(new Line(indent, "get:"));
+            indent++;
+            get.accept(this);
+            indent--;
+        }
+
+        var post = item.post();
+        if (post != null) {
+            lines.add(new Line(indent, "post:"));
+            indent++;
+            post.accept(this);
+            indent--;
+        }
+
+        var put = item.put();
+        if (put != null) {
+            lines.add(new Line(indent, "put:"));
+            indent++;
+            put.accept(this);
+            indent--;
+        }
+
+        var delete = item.delete();
+        if (delete != null) {
+            lines.add(new Line(indent, "delete:"));
+            indent++;
+            delete.accept(this);
+            indent--;
+        }
+
+        var head = item.head();
+        if (head != null) {
+            lines.add(new Line(indent, "head:"));
+            indent++;
+            head.accept(this);
+            indent--;
+        }
+
+        var patch = item.patch();
+        if (patch != null) {
+            lines.add(new Line(indent, "patch:"));
+            indent++;
+            patch.accept(this);
+            indent--;
+        }
+
+        var trace = item.trace();
+        if (trace != null) {
+            lines.add(new Line(indent, "trace:"));
+            indent++;
+            trace.accept(this);
+            indent--;
+        }
+
+        var servers = item.servers();
+        if (servers != null && !servers.isEmpty()) {
+            lines.add(new Line(indent, "servers:"));
+            indent++;
+            for (var server : servers) {
+                lines.add(null);
+                server.accept(this);
+            }
+            indent--;
+        }
+
+        var parameters = item.parameters();
+        if (parameters != null && !parameters.isEmpty()) {
+            lines.add(new Line(indent, "parameters:"));
+            indent++;
+            for (var p : parameters) {
+                lines.add(null);
+                switch (p) {
+                    case Parameter it -> it.accept(this);
+                    case Reference it -> it.accept(this);
+                    default -> throw new IllegalStateException("Unsupported parameter type: " +
+                                                               p.getClass().getCanonicalName());
+                }
+            }
+        }
     }
+
 
     @Override
     public void visit(Parameter p) {
@@ -262,6 +368,47 @@ public class ToYamlVisitor implements OAEVisitor {
 
     @Override
     public void visit(Responses response) {
+
+    }
+
+    @Override
+    public void visit(Response response) {
+
+    }
+
+
+    @Override
+    public void visit(Link link) {
+
+    }
+
+    @Override
+    public void visit(Style style) {
+
+    }
+
+    @Override
+    public void visit(Header header) {
+
+    }
+
+    @Override
+    public void visit(Schema schema) {
+
+    }
+
+    @Override
+    public void visit(Example example) {
+
+    }
+
+    @Override
+    public void visit(Encoding encoding) {
+
+    }
+
+    @Override
+    public void visit(MediaType mediaType) {
 
     }
 

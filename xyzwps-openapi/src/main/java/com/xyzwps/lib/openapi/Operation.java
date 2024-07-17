@@ -18,6 +18,81 @@ public class Operation implements OASElement {
     // TODO: security
     private List<Server> servers;
 
+    public List<Server> servers() {
+        return servers;
+    }
+
+    public Operation addServer(Server server) {
+        if (server != null) {
+            servers.add(server);
+        }
+        return this;
+    }
+
+    public boolean deprecated() {
+        return deprecated;
+    }
+
+    public Operation deprecated(boolean deprecated) {
+        this.deprecated = deprecated;
+        return this;
+    }
+
+    public Responses responses() {
+        return responses;
+    }
+
+    public Operation responses(Responses responses) {
+        this.responses = responses;
+        return this;
+    }
+
+    public String operationId() {
+        return operationId;
+    }
+
+    public Operation operationId(String operationId) {
+        this.operationId = operationId;
+        return this;
+    }
+
+    public ExternalDocumentation externalDocs() {
+        return externalDocs;
+    }
+
+    public Operation externalDocs(ExternalDocumentation externalDocs) {
+        this.externalDocs = externalDocs;
+        return this;
+    }
+
+    public String description() {
+        return description;
+    }
+
+    public Operation description(String description) {
+        this.description = description;
+        return this;
+    }
+
+    public String summary() {
+        return summary;
+    }
+
+    public Operation summary(String summary) {
+        this.summary = summary;
+        return this;
+    }
+
+    public List<String> tags() {
+        return tags;
+    }
+
+    public Operation addTag(String tag) {
+        if (tag != null) {
+            tags.add(tag);
+        }
+        return this;
+    }
 
     public Object requestBody() {
         return requestBody;

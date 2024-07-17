@@ -5,7 +5,7 @@ import java.util.List;
 
 public class PathItem implements OASElement {
 
-    // TODO: $ref
+    private String $ref;
     private String summary;
     private String description;
     private Operation get;
@@ -17,6 +17,15 @@ public class PathItem implements OASElement {
     private Operation trace;
     private List<Server> servers = new ArrayList<>();
     private List<Object> parameters = new ArrayList<>();
+
+    public String $ref() {
+        return $ref;
+    }
+
+    public PathItem $ref(String $ref) {
+        this.$ref = $ref;
+        return this;
+    }
 
     public List<Object> parameters() {
         return parameters;
