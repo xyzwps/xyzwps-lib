@@ -345,7 +345,7 @@ public class ToYamlVisitor implements OAEVisitor {
                     case Parameter it -> it.accept(this);
                     case Reference it -> it.accept(this);
                     default -> throw new IllegalStateException("Unsupported parameter type: " +
-                            p.getClass().getCanonicalName());
+                                                               p.getClass().getCanonicalName());
                 }
             }
         }
@@ -370,7 +370,24 @@ public class ToYamlVisitor implements OAEVisitor {
 
     @Override
     public void visit(Responses response) {
+        var statusResponses = response.statusResponses();
+        if (statusResponses != null && !statusResponses.isEmpty()) {
+            var keySet = new TreeSet<>(statusResponses.keySet());
+            for (var key : keySet) {
+                lines.add(new Line(indent, key + ":"));
+                indent++;
+                statusResponses.get(key).accept(this);
+                indent--;
+            }
+        }
 
+        var defaultResponse = response.responseDefault();
+        if (defaultResponse != null) {
+            lines.add(new Line(indent, "default:"));
+            indent++;
+            defaultResponse.accept(this);
+            indent--;
+        }
     }
 
     @Override
@@ -390,7 +407,7 @@ public class ToYamlVisitor implements OAEVisitor {
                     case Header h -> h.accept(this);
                     case Reference r -> r.accept(this);
                     default -> throw new IllegalStateException("Unsupported header type: " +
-                            header.getClass().getCanonicalName());
+                                                               header.getClass().getCanonicalName());
                 }
                 indent--;
             }
@@ -425,7 +442,7 @@ public class ToYamlVisitor implements OAEVisitor {
                     case Link l -> l.accept(this);
                     case Reference r -> r.accept(this);
                     default -> throw new IllegalStateException("Unsupported link type: " +
-                            link.getClass().getCanonicalName());
+                                                               link.getClass().getCanonicalName());
                 }
                 indent--;
             }
@@ -499,7 +516,7 @@ public class ToYamlVisitor implements OAEVisitor {
                     indent--;
                 }
                 default -> throw new IllegalStateException("Unsupported value type: " +
-                        value.getClass().getCanonicalName());
+                                                           value.getClass().getCanonicalName());
             }
         }
 
@@ -542,7 +559,7 @@ public class ToYamlVisitor implements OAEVisitor {
                     case Example e -> e.accept(this);
                     case Reference r -> r.accept(this);
                     default -> throw new IllegalStateException("Unsupported example type: " +
-                            exam.getClass().getCanonicalName());
+                                                               exam.getClass().getCanonicalName());
                 }
                 indent--;
             }

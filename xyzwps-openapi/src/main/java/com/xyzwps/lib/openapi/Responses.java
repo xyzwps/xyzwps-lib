@@ -5,11 +5,11 @@ import java.util.TreeMap;
 
 public class Responses implements OASElement {
 
-    private Object responseDefault;
+    private OASElement responseDefault;
 
-    private Map<Integer, Object> statusResponses = new TreeMap<>();
+    private Map<Integer, OASElement> statusResponses = new TreeMap<>();
 
-    public Object responseDefault() {
+    public OASElement responseDefault() {
         return responseDefault;
     }
 
@@ -23,7 +23,7 @@ public class Responses implements OASElement {
         return this;
     }
 
-    public Map<Integer, Object> statusResponses() {
+    public Map<Integer, OASElement> statusResponses() {
         return statusResponses;
     }
 

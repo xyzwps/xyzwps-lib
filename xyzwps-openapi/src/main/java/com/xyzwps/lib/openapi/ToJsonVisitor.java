@@ -410,7 +410,30 @@ public class ToJsonVisitor implements OAEVisitor {
 
     @Override
     public void visit(Responses response) {
+        json.objectOpen();
+        boolean isFirst = true;
 
+        var statusResponses = response.statusResponses();
+        if (statusResponses != null && !statusResponses.isEmpty()) {
+            var keySet = new TreeSet<>(statusResponses.keySet());
+            for (var key : keySet) {
+                if (isFirst) isFirst = false;
+                else json.comma();
+
+                json.value(key + "").colon();
+                statusResponses.get(key).accept(this);
+            }
+        }
+
+        var defaultResponse = response.responseDefault();
+        if (defaultResponse != null) {
+            if (!isFirst) json.comma();
+
+            json.value("default").colon();
+            defaultResponse.accept(this);
+        }
+
+        json.objectClose();
     }
 
     @Override
