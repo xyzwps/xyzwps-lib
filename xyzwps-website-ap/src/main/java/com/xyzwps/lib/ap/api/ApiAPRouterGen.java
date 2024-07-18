@@ -38,7 +38,7 @@ public final class ApiAPRouterGen extends ApiAPGen {
         var apiClassType = $type(daoClassName.packageName(), daoClassName.className());
         var annoSingleton = $type("jakarta.inject", "Singleton");
         var routerType = $type("com.xyzwps.lib.express.filter", "Router");
-        var httpMethodType = $type("com.xyzwps.lib.express", "HttpMethod");
+        var httpMethodType = $type("com.xyzwps.lib.http", "HttpMethod");
         var httpRequestType = $type("com.xyzwps.lib.express", "HttpRequest");
         var httpResponseType = $type("com.xyzwps.lib.express", "HttpResponse");
         var jsonType = $type("com.xyzwps.website.common", "JSON");

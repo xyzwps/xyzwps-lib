@@ -383,12 +383,7 @@ public class ToJsonVisitor implements OAEVisitor {
             int i = 0;
             for (var p : parameters) {
                 if (i++ > 0) json.comma();
-                switch (p) {
-                    case Parameter it -> it.accept(this);
-                    case Reference it -> it.accept(this);
-                    default -> throw new IllegalStateException("Unsupported parameter type: " +
-                                                               p.getClass().getCanonicalName());
-                }
+                p.accept(this);
             }
             json.arrayClose();
         }
@@ -457,13 +452,7 @@ public class ToJsonVisitor implements OAEVisitor {
             for (var key : keySet) {
                 if (i++ > 0) json.comma();
                 json.value(key).colon();
-                var header = headers.get(key);
-                switch (header) {
-                    case Header h -> h.accept(this);
-                    case Reference r -> r.accept(this);
-                    default -> throw new IllegalStateException("Unsupported header type: " +
-                                                               header.getClass().getCanonicalName());
-                }
+                headers.get(key).accept(this);
             }
             json.objectClose();
         }
@@ -493,13 +482,7 @@ public class ToJsonVisitor implements OAEVisitor {
             for (var key : keySet) {
                 if (i++ > 0) json.comma();
                 json.value(key).colon();
-                var link = links.get(key);
-                switch (link) {
-                    case Link l -> l.accept(this);
-                    case Reference r -> r.accept(this);
-                    default -> throw new IllegalStateException("Unsupported link type: " +
-                                                               link.getClass().getCanonicalName());
-                }
+                links.get(key).accept(this);
             }
             json.objectClose();
         }
@@ -636,13 +619,7 @@ public class ToJsonVisitor implements OAEVisitor {
             for (var key : keySet) {
                 if (i++ > 0) json.comma();
                 json.value(key).colon();
-                var exam = examples.get(key);
-                switch (exam) {
-                    case Example e -> e.accept(this);
-                    case Reference r -> r.accept(this);
-                    default -> throw new IllegalStateException("Unsupported example type: " +
-                                                               exam.getClass().getCanonicalName());
-                }
+                examples.get(key).accept(this);
             }
             json.objectClose();
         }

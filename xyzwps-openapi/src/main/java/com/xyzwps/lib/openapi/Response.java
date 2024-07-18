@@ -7,9 +7,9 @@ import java.util.TreeMap;
 public class Response implements OASElement {
 
     private final String description;
-    private Map<String, Object> headers = new TreeMap<>();
+    private Map<String, OASElement> headers = new TreeMap<>();
     private Map<String, MediaType> content = new TreeMap<>();
-    private Map<String, Object> links = new TreeMap<>();
+    private Map<String, OASElement> links = new TreeMap<>();
 
     public String description() {
         return description;
@@ -19,7 +19,7 @@ public class Response implements OASElement {
         this.description = Objects.requireNonNull(description);
     }
 
-    public Map<String, Object> headers() {
+    public Map<String, OASElement> headers() {
         return headers;
     }
 
@@ -48,7 +48,7 @@ public class Response implements OASElement {
         return this;
     }
 
-    public Map<String, Object> links() {
+    public Map<String, OASElement> links() {
         return links;
     }
 

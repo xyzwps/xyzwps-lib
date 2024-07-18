@@ -11,6 +11,14 @@
         <version>${app.version}</version>
     </parent>
 
+    <dependencies>
+        <dependency>
+            <groupId>com.xyzwps.lib</groupId>
+            <artifactId>xyzwps-dollar</artifactId>
+            <version>${app.version}</version>
+        </dependency>
+    </dependencies>
+
     <artifactId>xyzwps-http</artifactId>
     <packaging>jar</packaging>
 </project>

@@ -341,12 +341,7 @@ public class ToYamlVisitor implements OAEVisitor {
             indent++;
             for (var p : parameters) {
                 lines.add(null);
-                switch (p) {
-                    case Parameter it -> it.accept(this);
-                    case Reference it -> it.accept(this);
-                    default -> throw new IllegalStateException("Unsupported parameter type: " +
-                                                               p.getClass().getCanonicalName());
-                }
+                p.accept(this);
             }
         }
     }
@@ -402,13 +397,7 @@ public class ToYamlVisitor implements OAEVisitor {
             for (var key : keySet) {
                 lines.add(new Line(indent, key + ":"));
                 indent++;
-                var header = headers.get(key);
-                switch (header) {
-                    case Header h -> h.accept(this);
-                    case Reference r -> r.accept(this);
-                    default -> throw new IllegalStateException("Unsupported header type: " +
-                                                               header.getClass().getCanonicalName());
-                }
+                headers.get(key).accept(this);
                 indent--;
             }
             indent--;
@@ -437,13 +426,7 @@ public class ToYamlVisitor implements OAEVisitor {
             for (var key : keySet) {
                 lines.add(new Line(indent, key + ":"));
                 indent++;
-                var link = links.get(key);
-                switch (link) {
-                    case Link l -> l.accept(this);
-                    case Reference r -> r.accept(this);
-                    default -> throw new IllegalStateException("Unsupported link type: " +
-                                                               link.getClass().getCanonicalName());
-                }
+                links.get(key).accept(this);
                 indent--;
             }
             indent--;
@@ -554,13 +537,7 @@ public class ToYamlVisitor implements OAEVisitor {
             for (var key : keySet) {
                 lines.add(new Line(indent, key + ":"));
                 indent++;
-                var exam = examples.get(key);
-                switch (exam) {
-                    case Example e -> e.accept(this);
-                    case Reference r -> r.accept(this);
-                    default -> throw new IllegalStateException("Unsupported example type: " +
-                                                               exam.getClass().getCanonicalName());
-                }
+                examples.get(key).accept(this);
                 indent--;
             }
             indent--;

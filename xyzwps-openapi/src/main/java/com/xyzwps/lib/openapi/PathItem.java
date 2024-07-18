@@ -16,7 +16,7 @@ public class PathItem implements OASElement {
     private Operation patch;
     private Operation trace;
     private List<Server> servers = new ArrayList<>();
-    private List<Object> parameters = new ArrayList<>();
+    private List<OASElement> parameters = new ArrayList<>();
 
     public String $ref() {
         return $ref;
@@ -27,7 +27,7 @@ public class PathItem implements OASElement {
         return this;
     }
 
-    public List<Object> parameters() {
+    public List<OASElement> parameters() {
         return parameters;
     }
 

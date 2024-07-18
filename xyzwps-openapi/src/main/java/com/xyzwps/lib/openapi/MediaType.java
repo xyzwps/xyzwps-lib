@@ -7,7 +7,7 @@ public class MediaType implements OASElement {
 
     private Schema schema;
     private String example;
-    private Map<String, Object> examples = new TreeMap<>();
+    private Map<String, OASElement> examples = new TreeMap<>();
     private Map<String, Encoding> encoding = new TreeMap<>();
 
     public Schema schema() {
@@ -28,7 +28,7 @@ public class MediaType implements OASElement {
         return this;
     }
 
-    public Map<String, Object> examples() {
+    public Map<String, OASElement> examples() {
         return examples;
     }
 
