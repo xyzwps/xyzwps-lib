@@ -72,4 +72,8 @@ public class Document implements OASElement {
     public void accept(OAEVisitor visitor) {
         visitor.visit(this);
     }
+
+    public void addApi(Api api) {
+
+    }
 }

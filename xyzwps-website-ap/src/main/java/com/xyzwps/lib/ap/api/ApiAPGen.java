@@ -2,10 +2,14 @@ package com.xyzwps.lib.ap.api;
 
 import com.xyzwps.lib.ap.API;
 
+import javax.annotation.processing.ProcessingEnvironment;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.Modifier;
 import javax.lang.model.element.TypeElement;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.UncheckedIOException;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -45,5 +49,16 @@ public abstract class ApiAPGen {
         return modifiers.contains(Modifier.PUBLIC)
                && !modifiers.contains(Modifier.STATIC)
                && !modifiers.contains(Modifier.ABSTRACT);
+    }
+
+    protected void writeJavaFile(String fullName, String sourceCode, ProcessingEnvironment processingEnv) {
+        try {
+            var sourceFile = processingEnv.getFiler().createSourceFile(fullName);
+            try (var out = new PrintWriter(sourceFile.openWriter())) {
+                out.write(sourceCode);
+            }
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
+        }
     }
 }

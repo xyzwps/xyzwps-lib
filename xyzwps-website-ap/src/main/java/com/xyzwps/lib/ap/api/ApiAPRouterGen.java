@@ -6,6 +6,7 @@ import com.xyzwps.lib.ap.dsl.$Type;
 import com.xyzwps.lib.ap.dsl.ToJavaClassVisitor;
 import com.xyzwps.lib.ap.util.CanonicalName;
 
+import javax.annotation.processing.ProcessingEnvironment;
 import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.TypeElement;
 import java.util.ArrayList;
@@ -23,11 +24,11 @@ public final class ApiAPRouterGen extends ApiAPGen {
         super(typeElement);
     }
 
-    public void generate(BiConsumer<$Type, String> writeJavaFile) {
+    public void generate(ProcessingEnvironment processingEnv) {
         var methods = collectApiMethods();
         if (!methods.isEmpty()) {
             var source = generateRouterClass(methods);
-            writeJavaFile.accept(source.getKey(), source.getValue());
+            writeJavaFile(source.getKey().getFullName(), source.getValue(), processingEnv);
         }
     }
 
