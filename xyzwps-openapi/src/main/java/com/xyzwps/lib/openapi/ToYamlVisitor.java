@@ -64,7 +64,7 @@ public class ToYamlVisitor implements OAEVisitor {
     }
 
     @Override
-    public void visit(Document doc) {
+    public void visit(OpenApiDocument doc) {
         lines.add(new Line(indent, "openapi: " + doc.openapi()));
 
         lines.add(new Line(indent, "info:"));

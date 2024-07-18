@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public class Document implements OASElement {
+public class OpenApiDocument implements OASElement {
     private final String openapi = "3.1.0";
     private final Info info;
     private final List<Server> servers = new ArrayList<>();
@@ -16,7 +16,7 @@ public class Document implements OASElement {
     // TODO: components
     // TODO: security
 
-    public Document(Info info) {
+    public OpenApiDocument(Info info) {
         this.info = Objects.requireNonNull(info);
     }
 
@@ -32,7 +32,7 @@ public class Document implements OASElement {
         return servers;
     }
 
-    public Document addServer(Server server) {
+    public OpenApiDocument addServer(Server server) {
         if (server != null) {
             servers.add(server);
         }
@@ -43,7 +43,7 @@ public class Document implements OASElement {
         return paths;
     }
 
-    public Document paths(Paths paths) {
+    public OpenApiDocument paths(Paths paths) {
         this.paths = paths;
         return this;
     }
@@ -52,7 +52,7 @@ public class Document implements OASElement {
         return tags;
     }
 
-    public Document addTag(Tag tag) {
+    public OpenApiDocument addTag(Tag tag) {
         if (tag != null) {
             tags.add(tag);
         }
@@ -63,7 +63,7 @@ public class Document implements OASElement {
         return externalDocs;
     }
 
-    public Document externalDocs(ExternalDocumentation externalDocs) {
+    public OpenApiDocument externalDocs(ExternalDocumentation externalDocs) {
         this.externalDocs = externalDocs;
         return this;
     }

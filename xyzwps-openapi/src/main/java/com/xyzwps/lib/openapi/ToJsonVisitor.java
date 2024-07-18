@@ -37,7 +37,7 @@ public class ToJsonVisitor implements OAEVisitor {
     }
 
     @Override
-    public void visit(Document doc) {
+    public void visit(OpenApiDocument doc) {
         json.objectOpen();
 
         json.value("openapi").colon().value(doc.openapi());

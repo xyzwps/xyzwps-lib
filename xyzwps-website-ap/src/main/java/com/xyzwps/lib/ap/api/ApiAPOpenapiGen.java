@@ -15,21 +15,24 @@ public class ApiAPOpenapiGen extends ApiAPGen {
 
     public void generate(ProcessingEnvironment processingEnv) {
         var apiClassName = CanonicalName.of(apiTypeElement.getQualifiedName().toString());
-        var className = apiClassName.className() + "OpenApi$AP";
+        var className = apiClassName.className() + "OpenApisAdder$AP";
         var packageName = apiClassName.packageName();
 
         var methods = collectApiMethods();
         var lines = new Lines();
         lines.add("package " + packageName + ";").add(null);
 
-        lines.add("import com.xyzwps.lib.openapi.Document;");
-        lines.add("import com.xyzwps.lib.openapi.Info;");
+        lines.add("import com.xyzwps.lib.openapi.OpenApiDocument;");
+        lines.add("import com.xyzwps.lib.openapi.ApisAdder;");
         lines.add("import com.xyzwps.lib.openapi.Api;");
+        lines.add("import jakarta.inject.Singleton;");
         lines.add(null);
 
-        lines.add("public class " + className + " {").indentPP().add(null);
+        lines.add("@Singleton");
+        lines.add("public class " + className + " implements ApisAdder {").indentPP().add(null);
 
-        lines.add("public static Document generate(Document doc) {").indentPP().add(null);
+
+        lines.add("public void add(OpenApiDocument doc) {").indentPP().add(null);
 
         int i = 1;
         for (var method : methods) {
@@ -56,8 +59,7 @@ public class ApiAPOpenapiGen extends ApiAPGen {
                     .add("");
         }
 
-        lines.add("return doc;");
-        lines.indentMM().add("} // end generate").add(null);
+        lines.indentMM().add("} // end add").add(null);
 
         lines.indentMM().add("} // end class");
 

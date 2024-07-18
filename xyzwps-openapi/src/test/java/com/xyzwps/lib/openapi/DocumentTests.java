@@ -8,7 +8,7 @@ class DocumentTests {
 
     @Test
     void example1() {
-        var d = new Document(new Info("title", "0.0.1-snapshot"))
+        var d = new OpenApiDocument(new Info("title", "0.0.1-snapshot"))
                 .addServer(new Server("https://development.gigantic-server.com/v1")
                         .description("Development server"))
                 .addServer(new Server("https://staging.gigantic-server.com/v1")

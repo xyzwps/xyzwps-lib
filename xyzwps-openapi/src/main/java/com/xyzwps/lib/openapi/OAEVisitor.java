@@ -4,7 +4,7 @@ public interface OAEVisitor {
 
     void visit(Contact contact);
 
-    void visit(Document doc);
+    void visit(OpenApiDocument doc);
 
     void visit(Info info);
 
