@@ -38,6 +38,7 @@ public class Example implements OASElement {
         return this;
     }
 
+    // FIXME: 这个东西略微奇怪，想办法表达一下 Any
     public Example value(Map<String, String> value) {
         this.value = value == null ? null : new TreeMap<>(value);
         return this;

@@ -61,45 +61,44 @@ class MediaTypeTests {
                       frog:
                         $ref: '#/components/examples/frog-example'
                 """, toYaml.toYaml());
+
+        var toJson = new ToJsonVisitor();
+        resp.accept(toJson);
+        assertEquals("""
+                {
+                  "description": "test",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/Pet"
+                      },
+                      "examples": {
+                        "cat": {
+                          "summary": "An example of a cat",
+                          "value": {
+                            "breed": "Persian",
+                            "color": "White",
+                            "gender": "male",
+                            "name": "Fluffy",
+                            "petType": "Cat"
+                          }
+                        },
+                        "dog": {
+                          "summary": "An example of a dog with a cat's name",
+                          "value": {
+                            "breed": "Mixed",
+                            "color": "Black",
+                            "gender": "Female",
+                            "name": "Puma",
+                            "petType": "Dog"
+                          }
+                        },
+                        "frog": {
+                          "$ref": "#/components/examples/frog-example"
+                        }
+                      }
+                    }
+                  }
+                }""", toJson.toPrettyString());
     }
-
-    /*
-     Media Type Examples
-
-    {
-      "application/json": {
-        "schema": {
-             "$ref": "#/components/schemas/Pet"
-        },
-        "examples": {
-          "cat" : {
-            "summary": "An example of a cat",
-            "value":
-              {
-                "name": "Fluffy",
-                "petType": "Cat",
-                "color": "White",
-                "gender": "male",
-                "breed": "Persian"
-              }
-          },
-          "dog": {
-            "summary": "An example of a dog with a cat's name",
-            "value" :  {
-              "name": "Puma",
-              "petType": "Dog",
-              "color": "Black",
-              "gender": "Female",
-              "breed": "Mixed"
-            },
-          "frog": {
-              "$ref": "#/components/examples/frog-example"
-            }
-          }
-        }
-      }
-    }
-
-
-     */
 }

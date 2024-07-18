@@ -2,6 +2,7 @@ package com.xyzwps.lib.openapi;
 
 import com.xyzwps.lib.openapi.json.JsonBuilder;
 
+import java.util.Map;
 import java.util.TreeSet;
 
 public class ToJsonVisitor implements OAEVisitor {
@@ -402,7 +403,9 @@ public class ToJsonVisitor implements OAEVisitor {
 
     @Override
     public void visit(Reference r) {
-
+        json.objectOpen();
+        json.value("$ref").colon().value(r.$ref());
+        json.objectClose();
     }
 
     @Override
@@ -416,8 +419,70 @@ public class ToJsonVisitor implements OAEVisitor {
     }
 
     @Override
-    public void visit(Response response) {
+    public void visit(Response it) {
 
+        json.objectOpen();
+
+        json.value("description").colon().value(it.description());
+
+        var headers = it.headers();
+        if (headers != null && !headers.isEmpty()) {
+            json.comma();
+            json.value("headers").colon().objectOpen();
+            var keySet = new TreeSet<>(headers.keySet());
+            int i = 0;
+            for (var key : keySet) {
+                if (i++ > 0) json.comma();
+                json.value(key).colon();
+                var header = headers.get(key);
+                switch (header) {
+                    case Header h -> h.accept(this);
+                    case Reference r -> r.accept(this);
+                    default -> throw new IllegalStateException("Unsupported header type: " +
+                                                               header.getClass().getCanonicalName());
+                }
+            }
+            json.objectClose();
+        }
+
+        var content = it.content();
+        if (content != null && !content.isEmpty()) {
+            json.comma();
+            json.value("content").colon().objectOpen();
+            var keySet = new TreeSet<>(content.keySet());
+            int i = 0;
+            for (var key : keySet) {
+                if (i++ > 0) json.comma();
+                json.value(key).colon();
+                var mediaType = content.get(key);
+                mediaType.accept(this);
+            }
+            json.objectClose();
+        }
+
+        var links = it.links();
+        if (links != null && !links.isEmpty()) {
+            json.comma();
+            json.value("links").colon().objectOpen();
+
+            var keySet = new TreeSet<>(links.keySet());
+            int i = 0;
+            for (var key : keySet) {
+                if (i++ > 0) json.comma();
+                json.value(key).colon();
+                var link = links.get(key);
+                switch (link) {
+                    case Link l -> l.accept(this);
+                    case Reference r -> r.accept(this);
+                    default -> throw new IllegalStateException("Unsupported link type: " +
+                                                               link.getClass().getCanonicalName());
+                }
+            }
+            json.objectClose();
+        }
+
+
+        json.objectClose();
     }
 
     @Override
@@ -437,12 +502,79 @@ public class ToJsonVisitor implements OAEVisitor {
 
     @Override
     public void visit(Schema schema) {
-
+        switch (schema) {
+            case Schema.RefSchema it -> {
+                json.objectOpen();
+                json.value("$ref").colon().value(it.$ref());
+                json.objectClose();
+            }
+            case Schema.ArraySchema it -> {
+            }
+            case Schema.BooleanSchema it -> {
+            }
+            case Schema.IntegerSchema it -> {
+            }
+            case Schema.ObjectSchema it -> {
+            }
+            case Schema.StringSchema it -> {
+            }
+            case Schema.EnumSchema it -> {
+            }
+        }
     }
 
     @Override
     public void visit(Example example) {
+        json.objectOpen();
+        boolean isFirst = true;
 
+        var summary = example.summary();
+        if (summary != null) {
+            isFirst = false;
+            json.value("summary").colon().value(summary);
+        }
+
+        var description = example.description();
+        if (description != null) {
+            if (isFirst) isFirst = false;
+            else json.comma();
+
+            json.value("description").colon().value(description);
+        }
+
+        var value = example.value();
+        if (value != null) {
+            if (isFirst) isFirst = false;
+            else json.comma();
+
+            switch (value) {
+                case String s -> json.value("value").colon().value(s);
+                case Map x -> {
+                    Map<String, String> m = (Map<String, String>) x;
+                    json.value("value").colon().objectOpen();
+                    var keySet = new TreeSet<>(m.keySet());
+                    int i = 0;
+                    for (var key : keySet) {
+                        if (i++ > 0) json.comma();
+                        var v = m.get(key);
+                        json.value(key).colon().value(v);
+                    }
+                    json.objectClose();
+                }
+                default -> throw new IllegalStateException("Unsupported value type: " +
+                                                           value.getClass().getCanonicalName());
+            }
+        }
+
+        var externalValue = example.externalValue();
+        if (externalValue != null) {
+            if (isFirst) isFirst = false;
+            else json.comma();
+
+            json.value("externalValue").colon().value(externalValue);
+        }
+
+        json.objectClose();
     }
 
     @Override
@@ -451,7 +583,65 @@ public class ToJsonVisitor implements OAEVisitor {
     }
 
     @Override
-    public void visit(MediaType mediaType) {
+    public void visit(MediaType it) {
+        json.objectOpen();
 
+        var schema = it.schema();
+        boolean isFirst = true;
+        if (schema != null) {
+            isFirst = false;
+            json.value("schema").colon();
+            schema.accept(this);
+        }
+
+        var example = it.example();
+        if (example != null) {
+            if (isFirst) isFirst = false;
+            else json.comma();
+
+            json.value("example").colon().value(example);
+        }
+
+        var examples = it.examples();
+        if (examples != null && !examples.isEmpty()) {
+            if (isFirst) isFirst = false;
+            else json.comma();
+
+            json.value("examples").colon().objectOpen();
+            var keySet = new TreeSet<>(examples.keySet());
+            int i = 0;
+            for (var key : keySet) {
+                if (i++ > 0) json.comma();
+                json.value(key).colon();
+                var exam = examples.get(key);
+                switch (exam) {
+                    case Example e -> e.accept(this);
+                    case Reference r -> r.accept(this);
+                    default -> throw new IllegalStateException("Unsupported example type: " +
+                                                               exam.getClass().getCanonicalName());
+                }
+            }
+            json.objectClose();
+        }
+
+        var encoding = it.encoding();
+        if (encoding != null && !encoding.isEmpty()) {
+            if (isFirst) isFirst = false;
+            else json.comma();
+
+            json.value("encoding").colon().objectOpen();
+            var keySet = new TreeSet<>(encoding.keySet());
+            int i = 0;
+            for (var key : keySet) {
+                if (i++ > 0) json.comma();
+
+                json.value(key).colon();
+                var enc = encoding.get(key);
+                enc.accept(this);
+            }
+            json.objectClose();
+        }
+
+        json.objectClose();
     }
 }

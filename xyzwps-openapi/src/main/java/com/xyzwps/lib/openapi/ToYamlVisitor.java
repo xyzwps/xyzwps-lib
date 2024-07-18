@@ -563,8 +563,6 @@ public class ToYamlVisitor implements OAEVisitor {
             }
             indent--;
         }
-
-
     }
 
     private record Line(int indent, String text) {
